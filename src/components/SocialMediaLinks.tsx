@@ -1,5 +1,5 @@
 import clsx from "clsx";
-import { AiFillFacebook, AiFillGithub, AiFillInstagram, AiFillTwitterCircle, AiFillYoutube } from "react-icons/ai";
+import { AiFillGithub, AiFillTwitterCircle, AiFillYoutube } from "react-icons/ai";
 
 const
   T = 'transition-all ease-in-out',

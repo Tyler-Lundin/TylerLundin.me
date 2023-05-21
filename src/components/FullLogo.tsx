@@ -11,8 +11,9 @@ export default function FullLogo() {
       'absolute top-1/2 left-4 md:left-8 lg:left-16 xl:left-24 -translate-y-1/2',
     )}>
 
-      <Logo width={30} height={30} className={'transition-all'} />
-      <h1 className={clsx('text-xl dark:text-white text-black font-black uppercase transition-all self-center')}>Tyler Lundin</h1>
+      <Logo width={30} height={30} className={'transition-all '} />
+      <h1 className={clsx('text-xl hidden md:block dark:text-white text-black font-light uppercase transition-all self-center')}>Tyler Lundin</h1>
+      <h1 className={clsx('text-xl md:hidden block dark:text-white text-black font-light uppercase transition-all self-center')}>Tyler</h1>
     </Link>
   )
 }

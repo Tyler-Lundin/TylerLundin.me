@@ -29,7 +29,7 @@ export default function MyJournal() {
 
   return (
     <Section>
-      <div className="grid p-8 place-content-center items-center gap-8 dark:bg-zinc-900 dark:shadow-emerald-400 shadow-zinc-500 shadow-xl bg-zinc-100 rounded-lg">
+      <div className="grid p-8 place-content-center items-center gap-8 dark:bg-zinc-900 border border-emerald-400 bg-zinc-100 rounded-lg">
         <h2 className={clsx('text-3xl text-center uppercase font-black text-black dark:text-zinc-200', a.className)}> My Journal </h2>
         <ul className={'text-center'}>
           {DESCRIPTION.map((text, i) => (

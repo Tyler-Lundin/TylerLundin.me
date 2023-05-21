@@ -1,12 +1,7 @@
 /** @type {import('next').NextConfig} */
+
 const nextConfig = {
-  experimental: {
-    appDir: true,
-    mdxRs: true,
-    fontLoaders: [
-      { loader: 'next/font/google', options: { subsets: ['latin'] } },
-    ]
-  },
+  pageExtensions: ['js', 'jsx', 'ts', 'tsx', 'md', 'mdx'],
   images: {
     remotePatterns: [
       {

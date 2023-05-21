@@ -35,7 +35,6 @@ export default function ResponsivePage({ children }: { children: ReactNode }) {
       }}
       className={clsx(
         'w-screen h-fit min-h-[calc(100vh_-_4rem)] overflow-x-hidden transition-all ease-in-out',
-        'bg-zinc-200 dark:bg-black',
         'grid place-items-center',
         isNavOpen && 'w-screen md:w-2/3 lg:w-3/4',
         inter.className,

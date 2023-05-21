@@ -13,8 +13,8 @@ const LINKS = [
 
 export default function Links() {
   const
-    Inactive = 'transition-all ease-in-out py-2 dark:hover:text-emerald-400 hover:font-black',
-    Active = 'transition-all ease-in-out py-3 text-black font-black dark:text-emerald-400 hover:opacity-100',
+    Inactive = 'transition-all ease-in-out py-2 text-black hover:font-black',
+    Active = 'transition-all ease-in-out py-3 text-black font-black hover:opacity-100',
     pathname = usePathname(),
     { handleToggle } = useNavigation();
 

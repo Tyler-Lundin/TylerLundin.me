@@ -8,12 +8,10 @@ export default function GalleryPage() {
   return (
     <ResponsivePage>
       <h1 className={clsx(
-        'text-4xl',
-        'font-bold',
-        'text-center',
-        'my-8',
+        'text-4xl font-bold text-center my-8',
       )}>Gallery</h1>
       <Gallery />
+      <div className="h-24" /> {/* Spacer */}
     </ResponsivePage>
   )
 }

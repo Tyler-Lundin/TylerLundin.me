@@ -48,8 +48,8 @@ export default function ContactForm() {
 
   if (isSubmitSuccessful) return (
     <div className='text-center'>
-      <h1 className='text-2xl font-black'>Thank you for your message!</h1>
-      <p className='text-lg'>We will get back to you as soon as possible.</p>
+      <h1 className='text-2xl mb-4 lg:text-5xl font-black'>Thank you for your message!</h1>
+      <p className='text-lg'>I will get back to you as soon as possible.</p>
     </div>
   )
 

@@ -9,6 +9,8 @@ const LINKS = [
   // { name: 'reviews', href: '/reviews' },
   { name: 'blog', href: '/blog' },
   { name: 'contact me', href: '/contact' },
+  { name: 'projects', href: '/projects' },
+  { name: 'gallery', href: '/gallery' },
 ];
 
 export default function Links() {

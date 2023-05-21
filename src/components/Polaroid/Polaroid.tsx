@@ -6,9 +6,6 @@ import Tilt from 'react-parallax-tilt'
 const marker = Permanent_Marker({ weight: '400', subsets: ['latin'] })
 
 const
-  Multiplyer = .2,
-  Width = 1863,
-  Height = 3648,
   PolaroidHover = 'hover:scale-105 shadow-black shadow-sm hover:shadow-2xl hover:bg-white',
   PolaroidBG = `${PolaroidHover} transition-all ease-in-out aspect-square relative overflow-hidden flex pb-[3rem] px-2 pt-3 bg-zinc-100 rounded-sm `;
 

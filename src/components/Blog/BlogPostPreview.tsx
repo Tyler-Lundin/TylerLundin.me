@@ -15,8 +15,8 @@ export default function BlogPostPreview({ slug, title, subtitle, date }: BlogPos
     <Link href={`/posts/${slug}`} key={slug} className={clsx(
       'flex flex-col gap-2',
       'p-4 transition-all duration-300 ease-in-out ',
-      'bg-zinc-100 border border-zinc-300 dark:border-black dark:bg-zinc-600 rounded-md',
-      'hover:invert',
+      'bg-zinc-100 border border-zinc-400 dark:border-emerald-400 dark:bg-zinc-900 rounded-md',
+      'hover:bg-zinc-200 dark:hover:bg-zinc-800',
       'text-gray-800 dark:text-white',
     )}>
       <li className={'flex flex-col gap-2'}>

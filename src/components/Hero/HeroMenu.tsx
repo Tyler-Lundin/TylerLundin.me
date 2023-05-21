@@ -1,23 +1,17 @@
 import useFonts from "@/hooks/useFonts";
 import clsx from "clsx";
 import LargeLink from "../LargeLink";
-import SmallLink from "../SmallLink";
 
 
 const LARGE_LINKS = [
   { linkTo: '/projects', label: 'Projects' },
   { linkTo: '/blog', label: 'Blog' },
-  { linkTo: '/gallery', label: 'Photo Gallery' },
+  { linkTo: '/gallery', label: 'Gallery' },
 ]
 
-const SMALL_LINKS = [
-  { label: 'CONTACT', linkTo: '/contact' },
-  { label: 'SOCIALS', linkTo: '/socials' },
-  { label: 'REVIEWS', linkTo: '/reviews' },
-]
 
 export default function HeroMenu() {
-  const { a, b, c } = useFonts();
+  const { a } = useFonts();
   return (
     <>
       <ul className={clsx('grid gap-1 h-fit w-full ', a.className)}>

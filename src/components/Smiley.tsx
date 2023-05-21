@@ -55,7 +55,17 @@ const Smiley = () => {
       setLeftEye({ x: 34.832 + offsets.x / 100, y: 15.275 + offsets.y / 100 })
       setRightEye({ x: 32.919 + offsets.x / 100, y: 32.01 + offsets.y / 100 })
     }
+    const handleTouchMove = (e: TouchEvent) => {
+      const offsets = {
+        x: e.touches[0].clientX - window.innerWidth / 2,
+        y: e.touches[0].clientY - window.innerHeight / 2,
+      }
+      setMouth({ x: 17.141 + offsets.x / 100, y: 25.951 + offsets.y / 100 })
+      setLeftEye({ x: 34.832 + offsets.x / 100, y: 15.275 + offsets.y / 100 })
+      setRightEye({ x: 32.919 + offsets.x / 100, y: 32.01 + offsets.y / 100 })
+    }
     window.addEventListener('mousemove', handleMouseMove)
+    window.addEventListener('touchmove', handleTouchMove)
     return () => window.removeEventListener('mousemove', handleMouseMove)
   }, [])
 

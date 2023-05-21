@@ -12,15 +12,16 @@ export default function AboutPage() {
   const { title, date, subtitle, content } = post;
   return (
     <ResponsivePage>
-      <div className={clsx('py-16',)}>
+      <div className={clsx('py-20 px-6')}>
         <BackButton href={'/'} />
-        <div className={clsx('max-w-4xl',)}>
-          <h1 className={clsx('text-4xl font-bold',)}>{title}</h1>
+        <div className={clsx('max-w-4xl')}>
+          <h1 className={clsx('text-2xl font-bold',)}>{title}</h1>
+          <h2 className={clsx('text-xl font-thin',)}>{subtitle}</h2>
           <p className={clsx('text-gray-500',)}>{date}</p>
           <article className={clsx(
-            'mt-4',
             'prose lg:prose-xl',
             'dark:invert',
+            'prose-headings:text-xl prose-headings:m-0 first:prose-headings:hidden ',
           )}>
             <Markdown>{content}</Markdown>
           </article>

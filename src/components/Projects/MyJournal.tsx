@@ -1,9 +1,10 @@
 import { SiRedux, SiReact, SiStyledcomponents, SiFirebase } from 'react-icons/si';
 import ProjectCard from "../ProjectCard";
+import { BiCodeAlt, BiLinkExternal } from 'react-icons/bi';
 
 const LINKS = [
-  { href: "https://myjournal.app/", text: "Live Site" },
-  { href: "https://github.com/Tyler-Lundin/my-journal", text: "Source Code" },
+  { href: "https://myjournal.app/", text: "Live Site", icon: <BiLinkExternal /> },
+  { href: "https://github.com/Tyler-Lundin/my-journal", text: "Source Code", icon: <BiCodeAlt /> },
   // { href: "https://www.youtube.com/watch?v=3hLmDS179YE", text: "Video" },
 ]
 

@@ -1,10 +1,11 @@
 import { TbBrandNextjs } from 'react-icons/tb';
 import { SiTailwindcss, SiMongodb, SiDaisyui } from 'react-icons/si';
 import ProjectCard from "../ProjectCard";
+import { BiCodeAlt, BiLinkExternal } from 'react-icons/bi';
 
 const LINKS = [
-  { href: 'https://suncrest-fitness-center.vercel.app/', text: 'Live Site' },
-  { href: 'https://github.com/Tyler-Lundin/SuncrestFitnessCenter', text: 'Source Code' },
+  { href: 'https://suncrest-fitness-center.vercel.app/', text: 'Live Site', icon: <BiLinkExternal /> },
+  { href: 'https://github.com/Tyler-Lundin/SuncrestFitnessCenter', text: 'Source Code', icon: <BiCodeAlt /> },
 ]
 
 const DESCRIPTION = [

@@ -3,7 +3,6 @@ import Footer from '@/components/Page/Footer'
 import './globals.css'
 import clsx from 'clsx'
 import FullLogo from '@/components/FullLogo'
-import { ThemeToggle } from '@/components/ThemeToggle'
 import Providers from '@/components/Providers'
 
 
@@ -28,7 +27,6 @@ export default function RootLayout({
           )}>
             <FullLogo />
             <Navigation />
-            <ThemeToggle />
           </header>
           <div className={clsx('mt-16 z-0')}>
             {children}

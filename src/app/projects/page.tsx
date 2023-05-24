@@ -6,7 +6,7 @@ export default function ProjectsPage() {
 
   return (
     <ResponsivePage>
-      <div className="flex flex-wrap items-center justify-center w-full h-full mb-12">
+      <div className="flex flex-wrap place-content-center items-center justify-center w-full h-full mb-12">
         <SFC />
         <MyJournal />
       </div>

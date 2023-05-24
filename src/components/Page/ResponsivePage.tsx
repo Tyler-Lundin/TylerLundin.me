@@ -10,7 +10,7 @@ const inter = Inter({ subsets: ['latin'], weight: 'variable' })
 
 export default function ResponsivePage({ children }: { children: ReactNode }) {
   const pathname = usePathname()
-  const { isNavOpen, closeNav } = useNavigation();
+  const { isNavOpen } = useNavigation();
   return (
     <motion.main
       key={pathname}
@@ -39,7 +39,6 @@ export default function ResponsivePage({ children }: { children: ReactNode }) {
         isNavOpen && 'w-screen md:w-2/3 lg:w-3/4',
         inter.className,
       )}>
-      {isNavOpen && <span className="absolute top-0 left-0 w-screen h-screen " onClick={closeNav} />}
       {children}
     </motion.main>
   )

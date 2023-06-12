@@ -3,6 +3,9 @@ import clsx from "clsx";
 import Image from "next/image";
 import list from '../../assets';
 import Tilt from 'react-parallax-tilt'
+import { Permanent_Marker } from "next/font/google";
+
+const pm = Permanent_Marker({ weight: '400', subsets: ['latin'] })
 
 
 export default function Gallery() {
@@ -14,7 +17,7 @@ export default function Gallery() {
       {list.map(({ src, alt }) => (
         <Tilt key={alt}>
           <div className={clsx(
-            'col-span-1 aspect-square relative overflow-hidden flex pb-[4rem] px-2 pt-3 bg-zinc-100 rounded-sm hover:scale-105 shadow-black shadow-sm hover:shadow-2xl hover:bg-white transition-all ease-in-out',
+            'col-span-1 aspect-square relative overflow-hidden flex pb-[4rem] px-2 pt-3 bg-zinc-300 lg:opacity-70 lg:hover:opacity-100 rounded-sm hover:scale-105 shadow-black shadow-sm hover:shadow-2xl hover:bg-white transition-all ease-in-out',
           )}>
             <Image
               src={src}
@@ -25,7 +28,7 @@ export default function Gallery() {
             <div className={clsx(
               'w-11/12 h-[3rem] grid items-center absolute left-1/2 bottom-2 px-2 -translate-x-1/2',
             )}>
-              <h5 className={clsx('text-black text-sm font-thin')}> {alt} </h5>
+              <h5 className={clsx('text-black text-md font-black uppercase', pm.className)}> {alt} </h5>
             </div>
           </div>
         </Tilt>

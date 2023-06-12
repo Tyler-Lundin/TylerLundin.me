@@ -9,7 +9,7 @@ export default function ListOfPosts() {
   ))
 
   return (
-    <ul className={'grid gap-2 h-fit'}>
+    <ul className={'grid gap-2 h-fit px-4'}>
       {postPreviews}
     </ul>
   )

@@ -20,9 +20,9 @@ export default function BlogPostPreview({ slug, title, subtitle, date }: BlogPos
       'text-gray-800 dark:text-white',
     )}>
       <li className={'flex flex-col gap-2'}>
-        <h2 className={'text-2xl font-bold'}>{title}</h2>
-        <h3 className={'text-xl font-thin'}>{subtitle}</h3>
-        <span className={'text-sm font-thin'}>{date}</span>
+        <h2 className={'text-xl md:text-2xl font-bold'}>{title}</h2>
+        <h3 className={'text-md md:text-xl font-light'}>{subtitle}</h3>
+        <span className={'text-sm font-light'}>{date}</span>
       </li>
     </Link>
   )

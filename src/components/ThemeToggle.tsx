@@ -35,7 +35,7 @@ export function ThemeToggle() {
           </DropdownMenuItem>
           <DropdownMenuItem className={`${systemTheme === 'dark' ? 'bg-blue-900  text-white' : 'bg-blue-400'} hover:bg-blue-600`} onClick={() => setTheme("system")}>
             <Icons.Laptop className="mr-2 h-4 w-4" />
-            <span className="text-black">System</span>
+            <span className="text-black dark:text-white">System</span>
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>

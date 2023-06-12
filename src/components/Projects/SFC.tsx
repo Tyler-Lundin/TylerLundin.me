@@ -22,7 +22,6 @@ const BUILT_WITH = [
   { href: 'https://daisyui.com/', text: 'DaisyUI', icon: <SiDaisyui className={ICON_STYLE} /> },
 ]
 
-
 export default function SFC() {
   return (
     <ProjectCard title={'Suncrest Fitness Center'} description={DESCRIPTION} links={LINKS} builtWith={BUILT_WITH} />

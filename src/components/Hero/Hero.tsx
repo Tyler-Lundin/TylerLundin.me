@@ -10,6 +10,7 @@ export default function Hero() {
   const { a, c } = useFonts();
   return (
     <motion.div
+      role="presentation"
       initial={{ y: 50, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.5 }}

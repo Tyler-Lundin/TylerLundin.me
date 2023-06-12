@@ -1,84 +1,154 @@
-
 "use client";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
+import SmallLoadingSpinner from "./SmallLoadingSpinner";
 
-
-
-const DEFAULT_MOUTH = "M33.47,12.79A16.735,16.735,0,0,1,0,12.79C0,8.215,33.47,8.122,33.47,12.79Z"
-const DEFAULT_LEFT_EYE = "M16.735,9.324A8.368,8.368,0,1,1,0,9.324C0,4.7,16.735,4.7,16.735,9.324Z"
-const DEFAULT_RIGHT_EYE = "M16.735,9.324A8.368,8.368,0,1,1,0,9.324C0,4.7,16.735,4.7,16.735,9.324Z"
 const TRANSITION = 'transition-colors duration-500 ease-in-out';
 
-const getRandomNumber = () => {
-  const min = 0
-  const max = 255
-  return Math.floor(Math.random() * (max - min + 1) + min)
-}
-
-
 const Smiley = () => {
-
-  const [mouth, setMouth] = useState({ x: 17.141, y: 25.951 })
-  const [leftEye, setLeftEye] = useState({ x: 34.832, y: 15.275 })
-  const [rightEye, setRightEye] = useState({ x: 32.919, y: 32.01 })
-  const [bg, setBg] = useState({
-    r: 125,
-    g: 125,
-    b: 125,
-  })
-  const [fill, setFill] = useState('black')
-  const smileyRef = useRef<SVGSVGElement>(null)
+  const [count, setCount] = useState(0);
+  const [blink, setBlink] = useState(false);
+  const smileyRef = useRef<SVGSVGElement>(null);
+  const [eyeRadius, setEyeRadius] = useState(6);
 
 
   const handleClick = () => {
-    const r = getRandomNumber()
-    const g = getRandomNumber()
-    const b = getRandomNumber()
+    countThenAddDebounce(1);
+    setCount((c) => c + 1);
 
-    if (r + g + b < 300) {
-      setFill('white')
-    } else {
-      setFill('black')
-    }
-    setBg({ r, g, b })
   }
 
-  const currentFill = `rgb(${bg.r}, ${bg.g}, ${bg.b})`
+  const [eyePos, setEyePos] = useState({ x: 0, y: 0 });
+  const [mouthPos, setMouthPos] = useState({ x: 0, y: 0 });
+  const [mouthControl, setMouthControl] = useState({ x: 0, y: 0 });
 
   useEffect(() => {
-    const handleMouseMove = (e: MouseEvent) => {
-      const offsets = {
-        x: e.clientX - window.innerWidth / 2,
-        y: e.clientY - window.innerHeight / 2,
-      }
-      setMouth({ x: 17.141 + offsets.x / 100, y: 25.951 + offsets.y / 100 })
-      setLeftEye({ x: 34.832 + offsets.x / 100, y: 15.275 + offsets.y / 100 })
-      setRightEye({ x: 32.919 + offsets.x / 100, y: 32.01 + offsets.y / 100 })
+    function handleMouseMove(event: MouseEvent) {
+      // get the bounding box of the smiley
+      if (!smileyRef.current) return;
+      const smileyRect = smileyRef.current.getBoundingClientRect();
+
+      // get the position of the mouse cursor
+      const mouseX = event.clientX;
+      const mouseY = event.clientY;
+
+      // calculate the new eye position
+      let newEyeX = ((mouseX - smileyRect.left) / smileyRect.width) * 30; // 30 is the maximum movement in X direction
+      let newEyeY = ((mouseY - smileyRect.top) / smileyRect.height) * 20; // 20 is the maximum movement in Y direction
+
+      // clamp the new eye position to the maximum allowed
+      newEyeX = Math.max(Math.min(newEyeX, 25), -25);
+      newEyeY = Math.max(Math.min(newEyeY, 3), -15);
+
+      const newMouthX = ((mouseX - smileyRect.left) / smileyRect.width) * 40 - 10; // 40 is the maximum movement in X direction, -10 for centering
+      const newMouthY = ((mouseY - smileyRect.top) / smileyRect.height) * 20 + 40; // 20 is the maximum movement in Y direction, +40 for vertical offset
+
+      const newMouthXClamped = Math.max(Math.min(newMouthX, 37), -40);
+      const newMouthYClamped = Math.max(Math.min(newMouthY, 20), -20);
+
+      let newControlX = ((mouseX - smileyRect.left) / smileyRect.width) * 20 + 30; // 20 is the maximum movement in X direction, +30 for centering
+      let newControlY = ((mouseY - smileyRect.top) / smileyRect.height) * 20 + 60; // 20 is the maximum movement in Y direction, +60 for vertical offset
+
+      // set these to state
+      setMouthControl({ x: newControlX, y: newControlY });
+
+
+      setEyePos({ x: newEyeX, y: newEyeY });
+      setMouthPos({ x: newMouthXClamped, y: newMouthYClamped });
     }
-    const handleTouchMove = (e: TouchEvent) => {
-      const offsets = {
-        x: e.touches[0].clientX - window.innerWidth / 2,
-        y: e.touches[0].clientY - window.innerHeight / 2,
-      }
-      setMouth({ x: 17.141 + offsets.x / 100, y: 25.951 + offsets.y / 100 })
-      setLeftEye({ x: 34.832 + offsets.x / 100, y: 15.275 + offsets.y / 100 })
-      setRightEye({ x: 32.919 + offsets.x / 100, y: 32.01 + offsets.y / 100 })
+
+    window.addEventListener("mousemove", handleMouseMove);
+
+    return () => {
+      window.removeEventListener("mousemove", handleMouseMove);
+    };
+  }, []);
+
+
+  useEffect(() => {
+    getSmileyCount().then(setCount);
+  }, []);
+
+  useEffect(() => {
+    const blink = () => {
+      setEyeRadius(0);
+      const blinkDuration = Math.random() * 300 + 100; // between 100-400ms
+      setTimeout(() => setEyeRadius(5), blinkDuration);
     }
-    window.addEventListener('mousemove', handleMouseMove)
-    window.addEventListener('touchmove', handleTouchMove)
-    return () => window.removeEventListener('mousemove', handleMouseMove)
-  }, [])
+
+    const startBlinking = () => {
+      const timeToNextBlink = Math.random() * 8000 + 2000; // between 2-10 seconds
+      setTimeout(() => {
+        blink();
+        startBlinking();
+      }, timeToNextBlink);
+    }
+
+    startBlinking();
+  }, []);
 
   return (
     <>
-      <svg className={'hover:scale-110 transition-all duration-500 shadow-black shadow-md rounded-full'} onTouchStart={handleClick} onClick={handleClick} ref={smileyRef} id='smiley' xmlns="http://www.w3.org/2000/svg" width={67.751} height="67.751" viewBox="0 0 67.751 67.751">
-        <path className={TRANSITION} id="Path_14" data-name="Face" d="M33.876,0A33.876,33.876,0,1,1,0,33.876,33.876,33.876,0,0,1,33.876,0Z" fill={currentFill} />
-        <path className={TRANSITION} id="Path_15" data-name="Mouth" d={DEFAULT_MOUTH} transform={`translate(${mouth.x} ${mouth.y})`} fill={fill} />
-        <path className={TRANSITION} id="Path_16" data-name="Left Eye" d={DEFAULT_LEFT_EYE} transform={`translate(${leftEye.x} ${leftEye.y}) rotate(90)`} fill={fill} />
-        <path className={TRANSITION} id="Path_17" data-name="Right Eye" d={DEFAULT_RIGHT_EYE} transform={`translate(${rightEye.x} ${rightEye.y || 32.01}) rotate(-90)`} fill={fill} />
+      {count > 0 ? <div className={'absolute -top-1/4 h-fit left-1/2 -translate-x-1/2 p-2 text-black dark:text-white text-2xl font-bold'}>{count}</div>
+        : (
+          <div className={'absolute -top-1/2 h-fit left-1/2 -translate-x-1/2'}>
+            <SmallLoadingSpinner />
+          </div>
+        )}
+      <svg
+        onClick={handleClick}
+        ref={smileyRef}
+        id="smiley"
+        width="100"
+        height="100"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <defs>
+          <clipPath id="faceClip">
+            <circle cx="50" cy="50" r="40" />
+          </clipPath>
+        </defs>
+        <circle cx="50" cy="50" r="40" stroke="black" strokeWidth="3" fill="yellow" />
+        <circle clipPath="url(#faceClip)" id="leftEye" cx={37 + eyePos.x} cy={44 + eyePos.y} r={eyeRadius} stroke="black" strokeWidth="2" fill="black" />
+        <circle clipPath="url(#faceClip)" id="rightEye" cx={63 + eyePos.x} cy={44 + eyePos.y} r={eyeRadius} stroke="black" strokeWidth="2" fill="black" />
+        <path
+          id="mouth"
+          d={`M${40 + mouthPos.x},60 Q50,${85 + mouthPos.y} ${70 + mouthPos.x},60`}
+          stroke="black"
+          strokeWidth="2"
+          fill="black"
+          clipPath="url(#faceClip)"
+        />
       </svg>
     </>
   )
 }
 
 export default Smiley;
+
+
+
+const addCount = async (addToCount: number) => {
+  console.log('adding', addToCount);
+  const res = await fetch('/api/smiley', { method: 'POST', body: JSON.stringify({ addToCount }) });
+  const { count } = await res.json();
+  return count;
+}
+
+const getSmileyCount = async () => {
+  const res = await fetch('/api/smiley', { method: 'GET' });
+  const { count } = await res.json();
+  return count;
+}
+
+const countThenAddDebounce = (() => {
+  let timeout: NodeJS.Timeout;
+  let accumulatedCount = 0;
+  return async (addToCount: number) => {
+    accumulatedCount += addToCount;
+    clearTimeout(timeout);
+    timeout = setTimeout(async () => {
+      accumulatedCount = await addCount(accumulatedCount);
+      accumulatedCount = 0;
+    }, 1000);
+  }
+})();

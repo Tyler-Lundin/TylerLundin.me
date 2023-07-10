@@ -6,7 +6,6 @@ const TRANSITION = 'transition-colors duration-500 ease-in-out';
 
 const Smiley = () => {
   const [count, setCount] = useState(0);
-  const [blink, setBlink] = useState(false);
   const smileyRef = useRef<SVGSVGElement>(null);
   const [eyeRadius, setEyeRadius] = useState(6);
 
@@ -19,7 +18,6 @@ const Smiley = () => {
 
   const [eyePos, setEyePos] = useState({ x: 0, y: 0 });
   const [mouthPos, setMouthPos] = useState({ x: 0, y: 0 });
-  const [mouthControl, setMouthControl] = useState({ x: 0, y: 0 });
 
   useEffect(() => {
     function handleMouseMove(event: MouseEvent) {
@@ -30,30 +28,29 @@ const Smiley = () => {
       // get the position of the mouse cursor
       const mouseX = event.clientX;
       const mouseY = event.clientY;
+      const XPerc = (mouseX - smileyRect.left) / smileyRect.width;
+      const YPerc = (mouseY - smileyRect.top) / smileyRect.height;
 
       // calculate the new eye position
-      let newEyeX = ((mouseX - smileyRect.left) / smileyRect.width) * 30; // 30 is the maximum movement in X direction
-      let newEyeY = ((mouseY - smileyRect.top) / smileyRect.height) * 20; // 20 is the maximum movement in Y direction
-
+      let newEyeX = XPerc * 30 - 15; // 30 is the maximum movement in X direction
+      let newEyeY = YPerc * 20; // 20 is the maximum movement in Y direction
       // clamp the new eye position to the maximum allowed
-      newEyeX = Math.max(Math.min(newEyeX, 25), -25);
-      newEyeY = Math.max(Math.min(newEyeY, 3), -15);
+      newEyeX = Math.max(Math.min(newEyeX, 30), -30);
+      newEyeY = Math.max(Math.min(newEyeY, 25), -25);
 
-      const newMouthX = ((mouseX - smileyRect.left) / smileyRect.width) * 40 - 10; // 40 is the maximum movement in X direction, -10 for centering
-      const newMouthY = ((mouseY - smileyRect.top) / smileyRect.height) * 20 + 40; // 20 is the maximum movement in Y direction, +40 for vertical offset
+      let newMouthX = XPerc * 40 - 20; // 40 is the maximum movement in X direction, -10 for centering
+      let newMouthY = YPerc * 20; // 20 is the maximum movement in Y direction, +40 for vertical offset
+      // clamp the new mouth position to the maximum allowed
+      newMouthX = Math.max(Math.min(newMouthX, 40), -40);
+      newMouthY = Math.max(Math.min(newMouthY, 25), -25);
 
-      const newMouthXClamped = Math.max(Math.min(newMouthX, 37), -40);
-      const newMouthYClamped = Math.max(Math.min(newMouthY, 20), -20);
-
-      let newControlX = ((mouseX - smileyRect.left) / smileyRect.width) * 20 + 30; // 20 is the maximum movement in X direction, +30 for centering
-      let newControlY = ((mouseY - smileyRect.top) / smileyRect.height) * 20 + 60; // 20 is the maximum movement in Y direction, +60 for vertical offset
-
+      console.table([
+        { mouseX, mouseY },
+        { mouseX: XPerc, mouseY: YPerc },
+      ])
       // set these to state
-      setMouthControl({ x: newControlX, y: newControlY });
-
-
       setEyePos({ x: newEyeX, y: newEyeY });
-      setMouthPos({ x: newMouthXClamped, y: newMouthYClamped });
+      setMouthPos({ x: newMouthX, y: newMouthY });
     }
 
     window.addEventListener("mousemove", handleMouseMove);
@@ -112,7 +109,7 @@ const Smiley = () => {
         <circle clipPath="url(#faceClip)" id="rightEye" cx={63 + eyePos.x} cy={44 + eyePos.y} r={eyeRadius} stroke="black" strokeWidth="2" fill="black" />
         <path
           id="mouth"
-          d={`M${40 + mouthPos.x},60 Q50,${85 + mouthPos.y} ${70 + mouthPos.x},60`}
+          d={`M${37 + mouthPos.x},${60 + mouthPos.y} Q${50 + mouthPos.x},${80 + mouthPos.y * 2} ${63 + mouthPos.x},${60 + mouthPos.y}`}
           stroke="black"
           strokeWidth="2"
           fill="black"

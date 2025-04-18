@@ -1,36 +1,89 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
-
-## Getting Started
-
-First, run the development server:
-
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
-
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+{
+  "site_name": "Tyler Lundin",
+  "domain": "tylerlundin.me",
+  "tagline": "Developer • Tinkerer • Creator",
+  "theme": {
+    "colors": {
+      "primary": "#4F46E5",
+      "accent": "#FBBF24",
+      "background": "#F9FAFB",
+      "text": "#1F2937"
+    },
+    "font": "Inter, sans-serif",
+    "style": "minimal, modern, clean"
+  },
+  "sections": [
+    {
+      "type": "hero",
+      "headline": "Hey, I'm Tyler 👋",
+      "subheadline": "I build beautiful, fast, and functional websites. I’m all about clean code, user-first design, and meaningful results.",
+      "cta": {
+        "label": "View My Work",
+        "link": "#projects"
+      },
+      "image": "https://via.placeholder.com/600x400?text=Hero+Image"
+    },
+    {
+      "type": "about",
+      "headline": "About Me",
+      "content": "I'm a self-taught web developer and creative problem solver. Whether I’m fixing cars, building tools, or writing code, I’m always chasing growth. I love clean design, building things from scratch, and helping small businesses stand out online.",
+      "image": "https://via.placeholder.com/400x400?text=Profile+Pic"
+    },
+    {
+      "type": "projects",
+      "headline": "Featured Projects",
+      "projects": [
+        {
+          "title": "Fast Cache Pawn",
+          "description": "A clean, responsive marketing site for a local pawn shop. Includes Google reviews, modern branding, and SEO-friendly structure.",
+          "tech_stack": ["Next.js", "TailwindCSS", "Supabase"],
+          "image": "https://via.placeholder.com/600x400?text=Project+1",
+          "link": "#"
+        },
+        {
+          "title": "MyCarTool",
+          "description": "A side project for managing personal car repairs and service records. Designed to be a mechanic’s digital companion.",
+          "tech_stack": ["React", "Firebase", "Framer Motion"],
+          "image": "https://via.placeholder.com/600x400?text=Project+2",
+          "link": "#"
+        },
+        {
+          "title": "Dev Portfolio Template",
+          "description": "A sleek portfolio template built for developers. Mobile-friendly, dark mode, and easy to customize.",
+          "tech_stack": ["Next.js", "Tailwind", "Markdown"],
+          "image": "https://via.placeholder.com/600x400?text=Project+3",
+          "link": "#"
+        }
+      ]
+    },
+    {
+      "type": "services",
+      "headline": "What I Offer",
+      "items": [
+        "Custom Website Design",
+        "Monthly Site Maintenance",
+        "Freelance Web Development",
+        "Landing Page Builds",
+        "Performance Optimization"
+      ]
+    },
+    {
+      "type": "contact",
+      "headline": "Let’s Connect",
+      "description": "Have a project in mind or just want to chat? Reach out and let's make something awesome.",
+      "email": "placeholder@tylerlundin.me",
+      "social": {
+        "github": "https://github.com/tylerlundin",
+        "linkedin": "https://linkedin.com/in/tylerlundin",
+        "twitter": "https://twitter.com/tylerlundin"
+      }
+    }
+  ],
+  "footer": {
+    "text": "© 2025 Tyler Lundin. All rights reserved.",
+    "links": [
+      { "label": "Privacy Policy", "url": "/privacy" },
+      { "label": "GitHub", "url": "https://github.com/tylerlundin" }
+    ]
+  }
+}

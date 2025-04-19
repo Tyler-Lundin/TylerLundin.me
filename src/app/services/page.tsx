@@ -11,7 +11,7 @@ export default function ServicesPage() {
   }
 
   return (
-    <main className="min-h-screen pt-16">
+    <main className="min-h-screen">
       <Services section={servicesSection} />
     </main>
   );

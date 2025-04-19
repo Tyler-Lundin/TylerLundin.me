@@ -1,10 +1,13 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Roboto } from "next/font/google";
 import "./globals.css";
-import { Header } from "@/components/layout/Header";
+import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
-
-const inter = Inter({ subsets: ["latin"] });
+import ParallaxBackground from "@/components/ParallaxBackground";
+const roboto = Roboto({
+  weight: '300',
+  subsets: ["latin"],
+});
 
 export const metadata: Metadata = {
   title: "Tyler Lundin - Developer • Tinkerer • Creator",
@@ -18,8 +21,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={inter.className}>
-        <Header />
+      <body className={roboto.className}>
+        <Navbar />
+        <ParallaxBackground />
         {children}
         <Footer />
       </body>

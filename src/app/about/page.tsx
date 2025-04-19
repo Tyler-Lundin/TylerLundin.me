@@ -11,7 +11,7 @@ export default function AboutPage() {
   }
 
   return (
-    <main className="min-h-screen pt-16">
+    <main className="min-h-screen">
       <About section={aboutSection} />
     </main>
   );

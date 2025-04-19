@@ -1,6 +1,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { ProjectsSection } from '@/types/site';
+import { IslandMarketProject } from '../projects/IslandMarketProject';
 
 interface ProjectsProps {
   section: ProjectsSection;
@@ -14,7 +15,13 @@ export function Projects({ section }: ProjectsProps) {
           {section.headline}
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {section.projects.map((project) => (
+          {/* Island Market Project with Slideshow */}
+          <div className="lg:col-span-2">
+            <IslandMarketProject />
+          </div>
+
+          {/* Other Projects */}
+          {section.projects.filter(project => project.title !== "Island Market").map((project) => (
             <div
               key={project.title}
               className="bg-white rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-shadow"
@@ -45,6 +52,8 @@ export function Projects({ section }: ProjectsProps) {
                 <Link
                   href={project.link}
                   className="inline-block text-indigo-600 hover:text-indigo-700 font-medium"
+                  target="_blank"
+                  rel="noopener noreferrer"
                 >
                   View Project →
                 </Link>

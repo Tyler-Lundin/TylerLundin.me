@@ -11,7 +11,7 @@ export default function Home() {
   }
 
   return (
-    <main className="min-h-screen">
+    <main className="">
       <Hero section={heroSection} />
     </main>
   );

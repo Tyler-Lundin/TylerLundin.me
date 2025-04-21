@@ -15,11 +15,40 @@ export function Contact({ section }: ContactProps) {
     message: '',
     budget: 'basic'
   });
+  const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
+  const [error, setError] = useState<string | null>(null);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Handle form submission
-    console.log('Form submitted:', formData);
+    setStatus('loading');
+    setError(null);
+
+    try {
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Something went wrong');
+      }
+
+      setStatus('success');
+      setFormData({
+        name: '',
+        email: '',
+        message: '',
+        budget: 'basic'
+      });
+    } catch (err) {
+      setStatus('error');
+      setError(err instanceof Error ? err.message : 'Something went wrong');
+    }
   };
 
   return (
@@ -114,11 +143,22 @@ export function Contact({ section }: ContactProps) {
                   required
                 />
               </div>
+              {error && (
+                <div className="text-red-500 text-sm">
+                  {error}
+                </div>
+              )}
+              {status === 'success' && (
+                <div className="text-green-500 text-sm">
+                  Message sent successfully! I&apos;ll get back to you soon.
+                </div>
+              )}
               <button
                 type="submit"
-                className="w-full py-3 px-6 bg-indigo-600 text-white font-medium rounded-lg hover:bg-indigo-700 transition-colors"
+                disabled={status === 'loading'}
+                className="w-full py-3 px-6 bg-indigo-600 text-white font-medium rounded-lg hover:bg-indigo-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                Send Message
+                {status === 'loading' ? 'Sending...' : 'Send Message'}
               </button>
             </form>
           </motion.div>
@@ -140,9 +180,7 @@ export function Contact({ section }: ContactProps) {
                   Let&apos;s discuss your project in detail. Book a time that works for you.
                 </p>
                 <a
-                  href="https://calendly.com/tylerlundin"
-                  target="_blank"
-                  rel="noopener noreferrer"
+                  href="/booking"
                   className="inline-flex items-center px-4 py-2 bg-white text-indigo-600 rounded-lg font-medium hover:bg-indigo-50 transition-colors"
                 >
                   Book a Call

@@ -4,6 +4,7 @@ export const siteConfig: SiteConfig = {
   site_name: "Tyler Lundin",
   domain: "tylerlundin.me",
   tagline: "Developer • Tinkerer • Creator",
+  booking_url: "http://localhost:3001/tyler-lundin-me",
   theme: {
     colors: {
       primary: "#4F46E5",
@@ -23,13 +24,13 @@ export const siteConfig: SiteConfig = {
         label: "View My Work",
         link: "#projects"
       },
-      image: "/images/hero.jpeg"
+      image: "/images/professional.png"
     },
     {
       type: "about",
       headline: "About Me",
       content: "I'm a self-taught web developer with a bias for action and zero patience for corporate fluff. I build things the hard way — from scratch — whether it's a web app, a broken-down engine, or a life worth living. Clean design, solid code, real impact — that's what I care about. This site isn't some polished brochure. It's me, unfiltered. If that works for you, cool — let's build something that actually matters.",
-      image: "/images/profile.jpg"
+      image: "/images/professional.png"
     },
     {
       type: "projects",

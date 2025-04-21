@@ -26,7 +26,7 @@ export function Hero({ section }: HeroProps) {
                 {/* Mobile Profile Picture */}
                 <div className="md:hidden w-48 h-48 rounded-full overflow-hidden border-4 border-white shadow-lg">
                   <Image
-                    src="/images/tyler.png"
+                    src="/images/professional.png"
                     alt="Tyler Lundin"
                     width={80}
                     height={80}
@@ -64,9 +64,8 @@ export function Hero({ section }: HeroProps) {
           {/* Desktop Profile Picture */}
           <div className="hidden md:flex justify-center items-center">
             <div className="w-96 h-96 rounded-full overflow-hidden border-4 border-white shadow-xl">
-             
-             <Image
-                src="/images/tyler.png"
+              <Image
+                src="/images/professional.png"
                 alt="Tyler Lundin"
                 width={256}
                 height={256}

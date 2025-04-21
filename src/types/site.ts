@@ -2,6 +2,7 @@ export interface SiteConfig {
   site_name: string;
   domain: string;
   tagline: string;
+  booking_url: string;
   theme: {
     colors: {
       primary: string;

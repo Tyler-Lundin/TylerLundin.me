@@ -3,8 +3,8 @@ import { SiteConfig } from '@/types/site';
 export const siteConfig: SiteConfig = {
   site_name: "Tyler Lundin",
   domain: "tylerlundin.me",
-  tagline: "Developer • Tinkerer • Creator",
-  booking_url: "http://localhost:3001/tyler-lundin-me",
+  tagline: "Web Developer in Logan, Utah | Northern Utah Web Development",
+  booking_url: process.env.NEXT_PUBLIC_BOOKING_URL || "https://slotfox.vercel.app/tyler-lundin-me",
   theme: {
     colors: {
       primary: "#4F46E5",
@@ -19,7 +19,7 @@ export const siteConfig: SiteConfig = {
     {
       type: "hero",
       headline: "I'm Tyler",
-      subheadline: "I build beautiful, fast, and functional websites. I'm all about clean code, user-first design, and meaningful results.",
+      subheadline: "I build beautiful, fast, and functional websites for businesses in Northern Utah. Specializing in custom web development, e-commerce solutions, and digital marketing for Cache Valley businesses.",
       cta: {
         label: "View My Work",
         link: "#projects"
@@ -29,7 +29,7 @@ export const siteConfig: SiteConfig = {
     {
       type: "about",
       headline: "About Me",
-      content: "I'm a self-taught web developer with a bias for action and zero patience for corporate fluff. I build things the hard way — from scratch — whether it's a web app, a broken-down engine, or a life worth living. Clean design, solid code, real impact — that's what I care about. This site isn't some polished brochure. It's me, unfiltered. If that works for you, cool — let's build something that actually matters.",
+      content: "I'm a web developer based in Logan, Utah, serving businesses throughout Cache Valley and Northern Utah. With a focus on clean design and solid code, I help local businesses establish a strong online presence. Whether you're in Logan, Smithfield, or anywhere in Northern Utah, I'm here to help you build a website that drives real results.",
       image: "/images/professional.png"
     },
     {
@@ -38,7 +38,7 @@ export const siteConfig: SiteConfig = {
       projects: [
         {
           title: "Island Market",
-          description: "A modern convenience store website featuring real-time store status, weather information, and community highlights. Built with a focus on user experience and responsive design, the site includes dynamic store hours display, Instagram integration, and a clean, intuitive interface.",
+          description: "A modern convenience store website for a local Cache Valley business, featuring real-time store status, weather information, and community highlights. Built with a focus on user experience and responsive design.",
           tech_stack: [
             "Next.js 15",
             "React 19",
@@ -53,7 +53,7 @@ export const siteConfig: SiteConfig = {
         },
         {
           title: "Fast Cache Pawn Website",
-          description: "A modern, responsive website for Fast Cache Pawn, a trusted pawn shop in Logan, UT. Features include service listings, Google reviews integration, contact information, and a beautiful UI with animations and parallax effects.",
+          description: "A modern, responsive website for Fast Cache Pawn, a trusted pawn shop in Logan, UT. Features include service listings, Google reviews integration, and local business optimization.",
           tech_stack: [
             "Next.js 15",
             "React 19",
@@ -86,17 +86,17 @@ export const siteConfig: SiteConfig = {
       type: "services",
       headline: "What I Offer",
       items: [
-        "Custom Website Design",
+        "Custom Website Design for Northern Utah Businesses",
         "Monthly Site Maintenance",
-        "Freelance Web Development",
-        "Landing Page Builds",
+        "Local SEO Optimization",
+        "E-commerce Solutions",
         "Performance Optimization"
       ]
     },
     {
       type: "contact",
       headline: "Let's Connect",
-      description: "Have a project in mind or just want to chat? Reach out and let's make something awesome.",
+      description: "Serving businesses in Logan, Smithfield, and throughout Cache Valley. Have a project in mind or just want to chat? Reach out and let's make something awesome for your Northern Utah business.",
       email: "placeholder@tylerlundin.me",
       social: {
         github: "https://github.com/tyler-lundin",
@@ -106,7 +106,7 @@ export const siteConfig: SiteConfig = {
     }
   ],
   footer: {
-    text: "© 2025 Tyler Lundin. All rights reserved.",
+    text: "© 2025 Tyler Lundin. Serving Northern Utah and Cache Valley.",
     links: [
       { label: "Privacy Policy", url: "/privacy" },
       { label: "GitHub", url: "https://github.com/tyler-lundin" }

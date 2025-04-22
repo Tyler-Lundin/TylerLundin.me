@@ -69,7 +69,7 @@ export function Hero({ section }: HeroProps) {
                 alt="Tyler Lundin"
                 width={384}
                 height={384}
-                className="w-full h-full object-cover -rotate-[2deg]"
+                className="w-full h-full object-cover object-top -rotate-[2deg]"
               />
             </div>
           </div>

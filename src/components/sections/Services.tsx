@@ -200,7 +200,7 @@ export function Services({ section }: ServicesProps) {
               {/* Left Content */}
               <div className="md:col-span-2 p-4 md:p-8 lg:p-12">
                 <h3 className="text-2xl font-bold mb-4 bg-gradient-to-r from-indigo-500 to-purple-600 text-transparent bg-clip-text">Need Something Different?</h3>
-                <p className="text-gray-600 mb-6">
+                <p className="text-gray-600 mb-6">s
                   I understand that every business has unique needs and budgets. Here are some flexible options:
                 </p>
                 <div className="grid md:grid-cols-2 gap-8">
@@ -272,7 +272,7 @@ export function Services({ section }: ServicesProps) {
                     </svg>
                     <h4 className="text-2xl font-bold mb-4">Custom Solutions</h4>
                     <p className="text-indigo-100 mb-6">
-                      Every project is unique. Let's work together to create a solution that fits your specific needs and budget.
+                      Every project is unique. Let&apos;s work together to create a solution that fits your specific needs and budget.
                     </p>
                     <div className="space-y-4">
                       <div className="bg-white/10 rounded-lg p-4">
@@ -308,13 +308,13 @@ export function Services({ section }: ServicesProps) {
             <div className="bg-white rounded-xl p-6 shadow-lg">
               <h4 className="text-xl font-semibold text-gray-900 mb-4">How does the live development process work?</h4>
               <p className="text-gray-600">
-                We'll schedule development sessions where you can watch me build your website in real-time. You'll have direct input on design decisions, and we can make changes immediately based on your feedback.
+                We&apos;ll schedule development sessions where you can watch me build your website in real-time. You&apos;ll have direct input on design decisions, and we can make changes immediately based on your feedback.
               </p>
             </div>
             <div className="bg-white rounded-xl p-6 shadow-lg">
-              <h4 className="text-xl font-semibold text-gray-900 mb-4">What's included in the monthly fee?</h4>
+              <h4 className="text-xl font-semibold text-gray-900 mb-4">What&apos;s included in the monthly fee?</h4>
               <p className="text-gray-600">
-                Your monthly fee covers hosting, maintenance, updates, and support. It's an all-inclusive package that ensures your website stays up-to-date and running smoothly.
+                Your monthly fee covers hosting, maintenance, updates, and support. It&apos;s an all-inclusive package that ensures your website stays up-to-date and running smoothly.
               </p>
             </div>
             <div className="bg-white rounded-xl p-6 shadow-lg">
@@ -326,7 +326,7 @@ export function Services({ section }: ServicesProps) {
             <div className="bg-white rounded-xl p-6 shadow-lg">
               <h4 className="text-xl font-semibold text-gray-900 mb-4">What if I need custom features?</h4>
               <p className="text-gray-600">
-                Custom features can be added to any plan for an additional fee. We'll discuss your specific needs and provide a custom quote for the additional development work.
+                Custom features can be added to any plan for an additional fee. We&apos;ll discuss your specific needs and provide a custom quote for the additional development work.
               </p>
             </div>
           </div>

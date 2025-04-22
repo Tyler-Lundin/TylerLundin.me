@@ -107,7 +107,7 @@ export function Contact({ section }: ContactProps) {
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5 }}
-            className="bg-white rounded-2xl shadow-xl p-8"
+            className="bg-white rounded-2xl shadow-xl p-4 md:p-8"
           >
             <h3 className="text-2xl font-bold text-gray-900 mb-6">Send a Message</h3>
             <form onSubmit={handleSubmit} className="space-y-6">
@@ -193,7 +193,7 @@ export function Contact({ section }: ContactProps) {
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5 }}
-            className="bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl shadow-xl p-8 text-white"
+            className="bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl shadow-xl p-4 md:p-8 text-white"
           >
             <h3 className="text-2xl font-bold mb-8">Other Ways to Connect</h3>
             

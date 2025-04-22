@@ -30,7 +30,7 @@ export function BookingProject({ isExpanded = false }: BookingProjectProps) {
       <ImageSlideshow 
         images={BOOKING_IMAGES}
         interval={6000}
-        className={isExpanded ? 'aspect-[16/9]' : 'aspect-video'}
+        className={isExpanded ? 'aspect-[16/9]' : 'aspect-video object-cover object-top'}
       />
       <div className="p-4 sm:p-6">
         <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-2">

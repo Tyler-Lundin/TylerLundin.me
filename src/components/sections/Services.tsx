@@ -198,8 +198,8 @@ export function Services({ section }: ServicesProps) {
           <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
             <div className="grid md:grid-cols-3">
               {/* Left Content */}
-              <div className="md:col-span-2 p-8 md:p-12">
-                <h3 className="text-2xl font-bold text-gray-900 mb-4">Need Something Different?</h3>
+              <div className="md:col-span-2 p-4 md:p-8 lg:p-12">
+                <h3 className="text-2xl font-bold mb-4 bg-gradient-to-r from-indigo-500 to-purple-600 text-transparent bg-clip-text">Need Something Different?</h3>
                 <p className="text-gray-600 mb-6">
                   I understand that every business has unique needs and budgets. Here are some flexible options:
                 </p>

@@ -20,17 +20,17 @@ export function Hero({ section }: HeroProps) {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 relative">
         <div className="grid md:grid-cols-2 gap-12 items-center">
           {/* Text Content */}
-          <div className="space-y-8">
+          <div className="space-y-8 text-center md:text-left">
             <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                {/* Mobile Profile Picture */}
-                <div className="md:hidden w-48 h-48 rounded-full overflow-hidden border-4 border-white shadow-lg">
+              {/* Mobile Profile Picture */}
+              <div className="md:hidden flex justify-center mb-8">
+                <div className="w-48 h-48 rounded-full overflow-hidden border-4 border-white shadow-lg">
                   <Image
                     src="/images/professional.png"
                     alt="Tyler Lundin"
-                    width={80}
-                    height={80}
-                    className="w-full h-full object-cover"
+                    width={192}
+                    height={192}
+                    className="w-full h-full object-cover object-top"
                   />
                 </div>
               </div>
@@ -41,7 +41,7 @@ export function Hero({ section }: HeroProps) {
             <p className="text-xl text-gray-600 leading-relaxed">
               {section.subheadline}
             </p>
-            <div className="flex flex-col sm:flex-row gap-4">
+            <div className="flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
               <Link
                 href="/projects"
                 className="inline-flex items-center justify-center px-6 py-3 rounded-full bg-indigo-600 text-white font-medium hover:bg-indigo-700 transition-colors shadow-lg hover:shadow-xl hover:-translate-y-0.5 transform duration-200"
@@ -67,8 +67,8 @@ export function Hero({ section }: HeroProps) {
               <Image
                 src="/images/professional.png"
                 alt="Tyler Lundin"
-                width={256}
-                height={256}
+                width={384}
+                height={384}
                 className="w-full h-full object-cover -rotate-[2deg]"
               />
             </div>

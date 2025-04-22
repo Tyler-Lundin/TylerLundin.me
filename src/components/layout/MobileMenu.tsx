@@ -34,7 +34,7 @@ export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
 
       {/* Slide-out Menu */}
       <div
-        className={`fixed top-6 right-0 h-full w-64 bg-white/95 backdrop-blur-sm shadow-lg z-50 transition-transform duration-300 ${
+        className={`fixed top-0 right-0 h-full w-64 bg-white/95 backdrop-blur-sm shadow-lg z-50 transition-transform duration-300 ${
           isOpen ? 'translate-x-0' : 'translate-x-full'
         }`}
       >

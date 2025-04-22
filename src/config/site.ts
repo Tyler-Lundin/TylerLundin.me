@@ -49,10 +49,10 @@ export const siteConfig: SiteConfig = {
             "PostCSS"
           ],
           image: "/images/island-market-preview.png",
-          link: "https://github.com/tyler-lundin/island-market"
+          link: "https://island-market.vercel.app/"
         },
         {
-          title: "Fast Cache Pawn Website",
+          title: "Fast Cache Pawn",
           description: "A modern, responsive website for Fast Cache Pawn, a trusted pawn shop in Logan, UT. Features include service listings, Google reviews integration, and local business optimization.",
           tech_stack: [
             "Next.js 15",
@@ -66,20 +66,6 @@ export const siteConfig: SiteConfig = {
           image: "/images/fast-cache-pawn-0.png",
           link: "https://fastcachepawn.com"
         },
-        {
-          title: "MyCarTool",
-          description: "A side project for managing personal car repairs and service records. Designed to be a mechanic's digital companion.",
-          tech_stack: ["React", "Firebase", "Framer Motion"],
-          image: "/images/mycar.png",
-          link: "#"
-        },
-        {
-          title: "Dev Portfolio Template",
-          description: "A sleek portfolio template built for developers. Mobile-friendly, dark mode, and easy to customize.",
-          tech_stack: ["Next.js", "Tailwind", "Markdown"],
-          image: "/images/dev-portfolio-template.png",
-          link: "#"
-        }
       ]
     },
     {
@@ -97,7 +83,7 @@ export const siteConfig: SiteConfig = {
       type: "contact",
       headline: "Let's Connect",
       description: "Serving businesses in Logan, Smithfield, and throughout Cache Valley. Have a project in mind or just want to chat? Reach out and let's make something awesome for your Northern Utah business.",
-      email: "placeholder@tylerlundin.me",
+      email: "msg@tylerlundin.me",
       social: {
         github: "https://github.com/tyler-lundin",
         linkedin: "https://linkedin.com/in/tyler-lundin",

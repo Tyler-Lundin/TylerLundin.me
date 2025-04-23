@@ -14,7 +14,7 @@ export function Section({ section }: SectionProps) {
     case 'hero':
       return <Hero section={section} />;
     case 'about':
-      return <About section={section} />;
+      return <About />;
     case 'projects':
       return <Projects section={section} />;
     case 'services':

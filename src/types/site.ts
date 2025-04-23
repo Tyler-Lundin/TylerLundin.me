@@ -68,6 +68,7 @@ export interface ProjectsSection extends BaseSection {
 export interface ServicesSection extends BaseSection {
   type: 'services';
   items: string[];
+  subheadline: string;
 }
 
 export interface ContactSection extends BaseSection {

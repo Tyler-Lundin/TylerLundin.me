@@ -18,8 +18,8 @@ export const siteConfig: SiteConfig = {
   sections: [
     {
       type: "hero",
-      headline: "I'm Tyler",
-      subheadline: "I build beautiful, fast, and functional websites for businesses in Northern Utah. Specializing in custom web development, e-commerce solutions, and digital marketing for Cache Valley businesses.",
+      headline: "Building Bold Websites for Businesses Ready to Stand Out",
+      subheadline: "I'm Tyler, a freelance web developer based in Northern Utah. I build sleek, blazing-fast websites that don't just look good—they perform. From custom booking systems to full-blown e-commerce, I help local businesses get seen, get booked, and get paid. Let's make your online presence impossible to ignore.",
       cta: {
         label: "View My Work",
         link: "#projects"
@@ -28,13 +28,13 @@ export const siteConfig: SiteConfig = {
     },
     {
       type: "about",
-      headline: "About Me",
+      headline: "read about me",
       content: "I'm a web developer based in Logan, Utah, serving businesses throughout Cache Valley and Northern Utah. With a focus on clean design and solid code, I help local businesses establish a strong online presence. Whether you're in Logan, Smithfield, or anywhere in Northern Utah, I'm here to help you build a website that drives real results.",
       image: "/images/professional.png"
     },
     {
       type: "projects",
-      headline: "Featured Projects",
+      headline: "view my projects",
       projects: [
         {
           title: "Island Market",
@@ -70,7 +70,8 @@ export const siteConfig: SiteConfig = {
     },
     {
       type: "services",
-      headline: "What I Offer",
+      headline: "how much will it cost?",
+      subheadline: "Transparent pricing for quality work",
       items: [
         "Custom Website Design for Northern Utah Businesses",
         "Monthly Site Maintenance",
@@ -81,7 +82,7 @@ export const siteConfig: SiteConfig = {
     },
     {
       type: "contact",
-      headline: "Let's Connect",
+      headline: "schedule a call",
       description: "Serving businesses in Logan, Smithfield, and throughout Cache Valley. Have a project in mind or just want to chat? Reach out and let's make something awesome for your Northern Utah business.",
       email: "msg@tylerlundin.me",
       social: {

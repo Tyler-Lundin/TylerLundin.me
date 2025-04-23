@@ -30,13 +30,10 @@ const AnimatedBackground = ({ children }: { children: React.ReactNode }) => {
 
   return (
     <div className="overflow-hidden relative w-[200vw] h-[200vh]">
-      <div className="z-50 absolute top-0 left-0 w-full h-full">{children}</div>
-      <div
-        className="invert group-hover:scale-125 dark:invert-0 -z-10 transition-all duration-200"
-        style={{ ...styles.layer, ...styles.layer1 }}
-      />
-      <div className="-z-20 group-hover:scale-125 dark:invert-0 transition-all duration-200" style={{ ...styles.layer, ...styles.layer2 }} />
-      <div className="z-30 group-hover:scale-125 dark:invert-0 transition-all duration-200" style={{ ...styles.layer, ...styles.layer3 }} />
+      <div className="z-50 relative">{children}</div>
+      <div className="z-30" style={{ ...styles.layer, ...styles.layer1 }} />
+      <div className="z-30" style={{ ...styles.layer, ...styles.layer2 }} />
+      <div className="z-30" style={{ ...styles.layer, ...styles.layer3 }} />
 
     </div>
   );
@@ -54,22 +51,22 @@ const styles: Record<string, React.CSSProperties> = {
     animationIterationCount: "infinite",
   },
   layer1: {
-    backgroundImage: "radial-gradient(black 1px, transparent 1px)",
-    opacity: 0.25,
-    animation: "rotateSlow 60s linear infinite reverse",
-    backgroundSize: "90px 90px",
+    backgroundImage: "radial-gradient(pink 1px, transparent 2px)",
+    opacity: 0.5,
+    animation: "rotateSlow 560s linear infinite ",
+    backgroundSize: "100px 100px",
   },
   layer2: {
-    backgroundImage: "radial-gradient(black 1px, transparent 1px)",
-    opacity: 0.35,
-    animation: "rotateMedium 50s linear infinite reverse",
-    backgroundSize: "70px 70px",
+    backgroundImage: "radial-gradient(white 1px, transparent 2px)",
+    opacity: 0.5,
+    animation: "rotateMedium 550s linear infinite ",
+    backgroundSize: "100px 100px",
   },
   layer3: {
-    backgroundImage: "radial-gradient(black 2px, transparent 2px)",
-    backgroundSize: "50px 50px",
-    opacity: 0.15,
-    animation: "rotateFast 40s linear infinite",
+    backgroundImage: "radial-gradient(yellow 1px, transparent 2px)",
+    backgroundSize: "100px 100px",
+    opacity: 0.5,
+    animation: "rotateFast 540s linear infinite",
   },
 };
 

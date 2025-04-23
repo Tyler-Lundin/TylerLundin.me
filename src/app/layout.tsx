@@ -5,7 +5,7 @@ import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import ParallaxBackground from "@/components/ParallaxBackground";
 const roboto = Roboto({
-  weight: '300',
+  weight: ['300', '400', '500', '700'],
   subsets: ["latin"],
 });
 

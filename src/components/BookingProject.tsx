@@ -1,5 +1,4 @@
 import { ImageSlideshow } from '@/components/ImageSlideshow';
-import Link from 'next/link';
 
 interface BookingProjectProps {
   isExpanded?: boolean;
@@ -12,7 +11,7 @@ const BOOKING_IMAGES = [
   '/images/slot-fox-3.png',
 ];
 
-export function BookingProject({ isExpanded = false }: BookingProjectProps) {
+export function SlotFoxProject({ isExpanded = false }: BookingProjectProps) {
   const tech_stack = [
     "Next.js 15",
     "React 19",
@@ -34,7 +33,7 @@ export function BookingProject({ isExpanded = false }: BookingProjectProps) {
       />
       <div className="p-4 sm:p-6">
         <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-2">
-          Custom Booking System
+          Slot Fox
         </h3>
         <p className="text-sm sm:text-base text-gray-600 mb-3 sm:mb-4">
           A self-hosted booking system built with modern web technologies, featuring timezone-aware scheduling, 
@@ -51,14 +50,11 @@ export function BookingProject({ isExpanded = false }: BookingProjectProps) {
             </span>
           ))}
         </div>
-        <Link
-          href="https://booking.vercel.app/"
+        <h3
           className="inline-block text-sm sm:text-base text-indigo-600 hover:text-indigo-700 font-medium"
-          target="_blank"
-          rel="noopener noreferrer"
         >
           View Project →
-        </Link>
+        </h3>
       </div>
     </div>
   );

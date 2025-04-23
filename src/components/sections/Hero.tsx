@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { HeroSection } from '@/types/site';
 import Image from 'next/image';
+import AnimatedBackground from '../AnimatedBackground';
 
 interface HeroProps {
   section: HeroSection;
@@ -63,14 +64,16 @@ export function Hero({ section }: HeroProps) {
 
           {/* Desktop Profile Picture */}
           <div className="hidden md:flex justify-center items-center">
-            <div className="w-96 h-96 rounded-full overflow-hidden border-4 border-white shadow-xl">
-              <Image
-                src="/images/professional.png"
-                alt="Tyler Lundin"
-                width={384}
-                height={384}
-                className="w-full h-full object-cover object-top -rotate-[2deg]"
-              />
+            <div className="w-[400px] h-[400px] relative bg-gradient-to-r from-red-900 via-white/75 to-blue-900 rounded-full overflow-hidden">
+              <AnimatedBackground>
+                <Image
+                  src="/images/professional.png"
+                  alt="Tyler Lundin"
+                  width={400}
+                  height={400}
+                  className="absolute z-50 -rotate-2"
+                />
+              </AnimatedBackground>
             </div>
           </div>
         </div>

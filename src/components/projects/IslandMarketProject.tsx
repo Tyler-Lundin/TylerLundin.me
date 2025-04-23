@@ -1,5 +1,4 @@
 import { ImageSlideshow } from '../ImageSlideshow';
-import Link from 'next/link';
 
 interface IslandMarketProjectProps {
   isExpanded?: boolean;
@@ -27,7 +26,7 @@ export function IslandMarketProject({ isExpanded = false }: IslandMarketProjectP
   ];
 
   return (
-    <div className={`bg-white rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-shadow ${
+    <div className={`bg-white rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-shadow cursor-pointer ${
       isExpanded ? 'w-full max-w-2xl' : 'w-full max-w-md'
     }`}>
       <ImageSlideshow 
@@ -54,14 +53,9 @@ export function IslandMarketProject({ isExpanded = false }: IslandMarketProjectP
             </span>
           ))}
         </div>
-        <Link
-          href="https://island-market.vercel.app/"
-          className="inline-block text-sm sm:text-base text-indigo-600 hover:text-indigo-700 font-medium"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
+        <div className="text-sm sm:text-base text-indigo-600 font-medium">
           View Project →
-        </Link>
+        </div>
       </div>
     </div>
   );

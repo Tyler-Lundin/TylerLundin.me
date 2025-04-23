@@ -12,7 +12,7 @@ export default function AboutPage() {
 
   return (
     <main className="">
-      <About section={aboutSection} />
+      <About />
     </main>
   );
 } 

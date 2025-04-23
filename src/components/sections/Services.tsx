@@ -80,7 +80,7 @@ export function Services({ section }: ServicesProps) {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Hero Section */}
         <div className="text-center mb-24">
-          <motion.h2 
+          <motion.h2
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
@@ -96,7 +96,7 @@ export function Services({ section }: ServicesProps) {
             transition={{ duration: 0.5, delay: 0.2 }}
             className="text-xl text-gray-600 max-w-3xl mx-auto"
           >
-            I build beautiful, functional websites with your direct input. Watch your site come to life in real-time during our development sessions.
+            {section.subheadline}
           </motion.p>
         </div>
 

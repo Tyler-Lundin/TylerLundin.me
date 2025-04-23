@@ -1,12 +1,10 @@
-import Link from 'next/link';
-
 interface GhostProjectProps {
   isExpanded?: boolean;
 }
 
 export function GhostProject({ isExpanded = false }: GhostProjectProps) {
   return (
-    <div className={`bg-white rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-shadow ${
+    <div className={`bg-white rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-shadow cursor-pointer ${
       isExpanded ? 'w-full max-w-2xl' : 'w-full max-w-md'
     }`}>
       <div className="relative aspect-video bg-gradient-to-br from-indigo-50 to-indigo-100 flex items-center justify-center">
@@ -32,12 +30,12 @@ export function GhostProject({ isExpanded = false }: GhostProjectProps) {
             Expert Development
           </span>
         </div>
-        <Link
-          href="/contact"
-          className="inline-block w-full text-center px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors text-sm sm:text-base font-medium"
-        >
+        <div className="text-sm sm:text-base text-indigo-600 font-medium">
           Let&apos;s Build Your Project →
-        </Link>
+        </div>
+        <p className="text-gray-600">
+          I&apos;ve been working with Ghost for years, and I&apos;ve built a number of custom themes and integrations.
+        </p>
       </div>
     </div>
   );

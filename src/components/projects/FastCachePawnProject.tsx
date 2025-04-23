@@ -1,5 +1,4 @@
 import { ImageSlideshow } from '../ImageSlideshow';
-import Link from 'next/link';
 
 interface FastCachePawnProjectProps {
   isExpanded?: boolean;
@@ -13,6 +12,7 @@ const FAST_CACHE_PAWN_IMAGES = [
   '/images/fast-cache-pawn-4.png',
   '/images/fast-cache-pawn-5.png',
   '/images/fast-cache-pawn-6.png',
+  '/images/fast-cache-pawn-7.png',
 ];
 
 export function FastCachePawnProject({ isExpanded = false }: FastCachePawnProjectProps) {
@@ -27,7 +27,7 @@ export function FastCachePawnProject({ isExpanded = false }: FastCachePawnProjec
   ];
 
   return (
-    <div className={`bg-white rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-shadow ${
+    <div className={`bg-white rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-shadow cursor-pointer ${
       isExpanded ? 'w-full max-w-2xl' : 'w-full max-w-md'
     }`}>
       <div className="relative">
@@ -56,14 +56,9 @@ export function FastCachePawnProject({ isExpanded = false }: FastCachePawnProjec
             </span>
           ))}
         </div>
-        <Link
-          href="https://fastcachepawn.vercel.app"
-          className="inline-block text-sm sm:text-base text-indigo-600 hover:text-indigo-700 font-medium"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
+        <div className="text-sm sm:text-base text-indigo-600 font-medium">
           View Project →
-        </Link>
+        </div>
       </div>
     </div>
   );

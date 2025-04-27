@@ -64,14 +64,14 @@ export function Hero({ section }: HeroProps) {
 
           {/* Desktop Profile Picture */}
           <div className="hidden md:flex justify-center items-center">
-            <div className="w-[400px] h-[400px] relative bg-gradient-to-r from-red-900 via-white/75 to-blue-900 rounded-full overflow-hidden">
+            <div className="w-[400px] h-[400px] border-8 border-white/80 relative bg-gradient-to-r from-red-900 via-white/75 to-blue-900 rounded-full overflow-hidden">
               <AnimatedBackground>
                 <Image
                   src="/images/professional.png"
                   alt="Tyler Lundin"
                   width={400}
                   height={400}
-                  className="absolute z-50 -rotate-2"
+                  className="absolute z-50 -rotate-2 pointer-events-none"
                 />
               </AnimatedBackground>
             </div>

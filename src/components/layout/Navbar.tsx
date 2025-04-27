@@ -2,14 +2,17 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { siteConfig } from '@/config/site';
 import MobileMenu from './MobileMenu';
 import { Logo } from './Logo';
+import { cn } from '@/lib/utils';
 
 interface NavProps {
   isScrolled: boolean;
   setIsMenuOpen: (isOpen: boolean) => void;
 }
+
 
 function MobileMenuButton({ onClick, minimal }: { onClick: () => void; minimal?: boolean }) {
   const baseClasses = "md:hidden text-gray-600 hover:text-gray-900 transition-colors duration-200";
@@ -51,10 +54,16 @@ function LogoContainer({ children, isScrolled }: { children: React.ReactNode; is
 }
 
 function DesktopNav({ isScrolled, minimal }: { isScrolled?: boolean; minimal?: boolean }) {
-  const baseClasses = "hidden md:flex w-full justify-end lg:justify-center space-x-8";
+    const pathname = usePathname();
+    const baseClasses = "hidden md:flex w-full justify-end lg:justify-center space-x-8";
   const fullNavClasses = `${baseClasses} bg-white/75 backdrop-blur-sm border-y border-gray-200 py-1 transition-all duration-300 ${
     isScrolled ? 'opacity-0 -translate-y-20' : 'opacity-100'
   }`;
+
+  function isCurrentLink(sectionType: string) {
+    return pathname === `/${sectionType}`;
+  }
+  
 
   return (
     <div className={minimal ? baseClasses : fullNavClasses}>
@@ -64,7 +73,9 @@ function DesktopNav({ isScrolled, minimal }: { isScrolled?: boolean; minimal?: b
           <Link
             key={section.type}
             href={`/${section.type}`}
-            className="text-gray-600 text-md lg:text-lg hover:text-gray-900 transition-colors duration-200"
+            className={cn(`text-gray-600 text-md lg:text-lg hover:text-gray-900 transition-colors duration-200`, {
+              'text-indigo-600': section.type === 'services'
+            }, isCurrentLink(section.type) && 'blur-[2px] opacity-50')}
           >
             {section.headline}
           </Link>

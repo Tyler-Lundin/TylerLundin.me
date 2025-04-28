@@ -4,6 +4,8 @@ import "./globals.css";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import ParallaxBackground from "@/components/ParallaxBackground";
+import { Analytics } from "@vercel/analytics/react"
+
 const roboto = Roboto({
   weight: ['300', '400', '500', '700'],
   subsets: ["latin"],
@@ -83,6 +85,7 @@ export default function RootLayout({
         <ParallaxBackground />
         {children}
         <Footer />
+        <Analytics />
       </body>
     </html>
   );

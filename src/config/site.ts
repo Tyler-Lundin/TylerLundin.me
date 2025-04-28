@@ -82,7 +82,7 @@ export const siteConfig: SiteConfig = {
     },
     {
       type: "contact",
-      headline: "schedule a call",
+      headline: "contact me",
       description: "Serving businesses in Logan, Smithfield, and throughout Cache Valley. Have a project in mind or just want to chat? Reach out and let's make something awesome for your Northern Utah business.",
       email: "msg@tylerlundin.me",
       social: {

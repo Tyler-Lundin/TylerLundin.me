@@ -1,15 +1,9 @@
 import type { Metadata } from "next";
-import { Roboto } from "next/font/google";
+import { Inter } from "next/font/google";
 import "./globals.css";
-import { Navbar } from "@/components/layout/Navbar";
-import { Footer } from "@/components/layout/Footer";
-import ParallaxBackground from "@/components/ParallaxBackground";
-import { Analytics } from "@vercel/analytics/react"
+import { SiteShell } from "@/components/layout/SiteShell";
 
-const roboto = Roboto({
-  weight: ['300', '400', '500', '700'],
-  subsets: ["latin"],
-});
+const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "Tyler Lundin - Web Developer in Logan, Utah | Northern Utah Web Development",
@@ -33,59 +27,17 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
   return (
     <html lang="en">
-      <head>
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify({
-              "@context": "https://schema.org",
-              "@type": "LocalBusiness",
-              "name": "Tyler Lundin",
-              "image": "https://tylerlundin.me/images/professional.png",
-              "description": "Professional web developer and designer based in Logan, Utah",
-              "address": {
-                "@type": "PostalAddress",
-                "addressLocality": "Logan",
-                "addressRegion": "UT",
-                "addressCountry": "US"
-              },
-              "geo": {
-                "@type": "GeoCoordinates",
-                "latitude": 41.7370,
-                "longitude": -111.8338
-              },
-              "url": "https://tylerlundin.me",
-              "telephone": "+1-435-555-5555",
-              "priceRange": "$$",
-              "openingHoursSpecification": {
-                "@type": "OpeningHoursSpecification",
-                "dayOfWeek": [
-                  "Monday",
-                  "Tuesday",
-                  "Wednesday",
-                  "Thursday",
-                  "Friday"
-                ],
-                "opens": "09:00",
-                "closes": "17:00"
-              }
-            })
-          }}
-        />
-      </head>
-      <body className={roboto.className}>
-        <Navbar />
-        <ParallaxBackground />
-        {children}
-        <Footer />
-        <Analytics />
+      <body className={inter.className}>
+        <SiteShell>
+          {children}
+        </SiteShell>
       </body>
     </html>
   );

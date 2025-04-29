@@ -24,13 +24,13 @@ export const siteConfig: SiteConfig = {
         label: "View My Work",
         link: "#projects"
       },
-      image: "/images/professional.png"
+      image: "/images/tyler.png"
     },
     {
       type: "about",
       headline: "read about me",
       content: "I'm a web developer based in Logan, Utah, serving businesses throughout Cache Valley and Northern Utah. With a focus on clean design and solid code, I help local businesses establish a strong online presence. Whether you're in Logan, Smithfield, or anywhere in Northern Utah, I'm here to help you build a website that drives real results.",
-      image: "/images/professional.png"
+      image: "/images/tyler.png"
     },
     {
       type: "projects",

@@ -29,8 +29,8 @@ const AnimatedBackground = ({ children }: { children: React.ReactNode }) => {
   }, []);
 
   return (
-    <div className="overflow-hidden relative w-[200vw] h-[200vh]">
-      <div className="z-50 relative">{children}</div>
+    <div className="overflow-hidden relative w-[300px] h-[300px] md:w-[400px] md:h-[400px] lg:w-[500px] lg:h-[500px]">
+      <div className="z-50">{children}</div>
       <div className="z-30" style={{ ...styles.layer, ...styles.layer1 }} />
       <div className="z-30" style={{ ...styles.layer, ...styles.layer2 }} />
       <div className="z-30" style={{ ...styles.layer, ...styles.layer3 }} />
@@ -51,22 +51,22 @@ const styles: Record<string, React.CSSProperties> = {
     animationIterationCount: "infinite",
   },
   layer1: {
-    backgroundImage: "radial-gradient(pink 1px, transparent 2px)",
+    backgroundImage: "radial-gradient(pink 3px, transparent 2px)",
     opacity: 0.5,
-    animation: "rotateSlow 560s linear infinite ",
+    animation: "rotateSlow 60s linear infinite ",
     backgroundSize: "100px 100px",
   },
   layer2: {
-    backgroundImage: "radial-gradient(white 1px, transparent 2px)",
+    backgroundImage: "radial-gradient(white 2px, transparent 2px)",
     opacity: 0.5,
-    animation: "rotateMedium 550s linear infinite ",
-    backgroundSize: "100px 100px",
+    animation: "rotateMedium 150s linear infinite ",
+    backgroundSize: "120px 120px",
   },
   layer3: {
     backgroundImage: "radial-gradient(yellow 1px, transparent 2px)",
     backgroundSize: "100px 100px",
     opacity: 0.5,
-    animation: "rotateFast 540s linear infinite",
+    animation: "rotateFast 120s linear infinite",
   },
 };
 

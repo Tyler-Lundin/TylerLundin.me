@@ -12,7 +12,7 @@ interface SectionProps {
 export function Section({ section }: SectionProps) {
   switch (section.type) {
     case 'hero':
-      return <Hero section={section} />;
+      return <Hero />;
     case 'about':
       return <About />;
     case 'projects':

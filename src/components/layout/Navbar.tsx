@@ -15,9 +15,9 @@ interface NavProps {
 
 
 function MobileMenuButton({ onClick, minimal }: { onClick: () => void; minimal?: boolean }) {
-  const baseClasses = "md:hidden text-gray-600 hover:text-gray-900 transition-colors duration-200";
+  const baseClasses = "md:hidden text-gray-900 hover:blur-[2px] blur-[0px] transition-all duration-300 cursor-pointer";
   const positionClasses = minimal 
-    ? "absolute top-1/2 -translate-y-1/2 right-4"
+    ? "absolute top-1/2 -translate-y-1/2  z-50 right-4"
     : "absolute top-4 right-4 z-50 text-black";
 
   return (
@@ -55,7 +55,7 @@ function LogoContainer({ children, isScrolled }: { children: React.ReactNode; is
 
 function DesktopNav({ isScrolled, minimal }: { isScrolled?: boolean; minimal?: boolean }) {
     const pathname = usePathname();
-    const baseClasses = "hidden md:flex w-full justify-end lg:justify-center space-x-8";
+    const baseClasses = "hidden md:flex w-full justify-center space-x-8";
   const fullNavClasses = `${baseClasses} bg-white/75 backdrop-blur-sm border-y border-gray-200 py-1 transition-all duration-300 ${
     isScrolled ? 'opacity-0 -translate-y-20' : 'opacity-100'
   }`;
@@ -86,9 +86,9 @@ function DesktopNav({ isScrolled, minimal }: { isScrolled?: boolean; minimal?: b
 
 function MainNav({ isScrolled, setIsMenuOpen }: NavProps) {
   return (
-    <nav className="relative z-50 transition-all duration-500 bg-white/75 backdrop-blur-sm h-32">
+    <nav className="relative z-50 transition-all duration-500 bg-gradient-to-r from-blue-700/25 via-yellow-700/25 to-purple-700/25 backdrop-blur-sm h-32">
       <div className="h-full">
-        <MobileMenuButton onClick={() => setIsMenuOpen(true)} />
+        <MobileMenuButton onClick={() => setIsMenuOpen(true)} minimal/>
         
         <LogoContainer isScrolled={isScrolled}>
           <Logo />

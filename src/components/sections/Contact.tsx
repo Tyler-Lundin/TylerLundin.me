@@ -3,6 +3,10 @@
 import { ContactSection } from '@/types/site';
 import { motion } from 'framer-motion';
 import { useState } from 'react';
+import { createBrowserClient } from '@supabase/ssr';
+import { Database } from '@/types/database.types';
+
+type ContactSubmission = Database['public']['Tables']['contact_submissions']['Insert']
 
 interface ContactProps {
   section: ContactSection;
@@ -32,14 +36,20 @@ export function Contact({ section }: ContactProps) {
     }
   ]
   
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<ContactSubmission>({
     name: '',
     email: '',
     message: '',
-    budget: 'basic'
+    budget: '',
+    status: 'new'
   });
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
   const [error, setError] = useState<string | null>(null);
+
+  const supabase = createBrowserClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  );
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -47,26 +57,19 @@ export function Contact({ section }: ContactProps) {
     setError(null);
 
     try {
-      const response = await fetch('/api/contact', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData),
-      });
+      const { error } = await supabase
+        .from('contact_submissions')
+        .insert([formData]);
 
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error || 'Something went wrong');
-      }
+      if (error) throw error;
 
       setStatus('success');
       setFormData({
         name: '',
         email: '',
         message: '',
-        budget: 'basic'
+        budget: '',
+        status: 'new'
       });
     } catch (err) {
       setStatus('error');
@@ -143,10 +146,11 @@ export function Contact({ section }: ContactProps) {
                 </label>
                 <select
                   id="budget"
-                  value={formData.budget}
+                  value={formData.budget || ''}
                   onChange={(e) => setFormData({ ...formData, budget: e.target.value })}
                   className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
                 >
+                  <option value="">Select a budget range</option>
                   {budget_options.map((option) => (
                     <option key={option.name} value={option.name}>
                       {option.name} - {option.price}
@@ -199,7 +203,7 @@ export function Contact({ section }: ContactProps) {
             
             <div className="space-y-8">
               <div>
-                <h4 className="text-lg font-semibold my-8g">Schedule a Call</h4>
+                <h4 className="text-lg font-semibold mb-4">Schedule a Call</h4>
                 <p className="text-indigo-100 mb-4">
                   Let&apos;s discuss your project in detail. Book a time that works for you.
                 </p>

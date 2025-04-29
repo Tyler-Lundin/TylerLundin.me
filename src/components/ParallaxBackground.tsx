@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState, useCallback, useRef } from 'react';
-
+import { motion } from 'framer-motion';
 export default function ParallaxBackground() {
   const [scrollPosition, setScrollPosition] = useState(0);
   const rafId = useRef<number | undefined>(undefined);
@@ -28,8 +28,13 @@ export default function ParallaxBackground() {
   }, [handleScroll]);
 
   return (
-    <div className="fixed inset-0 -z-10 bg-white">
-      <div className="absolute inset-0 bg-gradient-to-b from-white via-transparent to-white z-10" />
+    <motion.div 
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 1.5 }}
+      className="fixed inset-0 -z-10 bg-white"
+    >
+      <div className="absolute inset-0 bg-gradient-to-b from-white via-transparent to-white z-50" />
       <div 
         className="absolute inset-0"
         style={{
@@ -41,6 +46,6 @@ export default function ParallaxBackground() {
           willChange: 'transform',
         }}
       />
-    </div>
+    </motion.div>
   );
 } 

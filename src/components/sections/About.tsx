@@ -58,7 +58,7 @@ export function About() {
             >
               <AnimatedBackground>
                 <Image
-                  src="/images/professional.png"
+                  src="/images/tyler.png"
                   alt="Tyler Lundin"
                   width={400}
                   height={400}

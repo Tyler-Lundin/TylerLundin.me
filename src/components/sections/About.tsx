@@ -32,7 +32,7 @@ export function About() {
               </p>
               
               <p className="text-md text-gray-600 leading-relaxed">
-              Based in Cache Valley, I specialize in high-performance sites, custom booking platforms, and local-first SEO strategies that make businesses hard to miss. No fluff, no gimmicks—just handcrafted digital tools that do the job.
+              Based in Spokane, I specialize in high-performance sites, custom booking platforms, and local-first SEO strategies that make businesses hard to miss. No fluff, no gimmicks—just handcrafted digital tools that do the job.
               </p>
             </div>
           </motion.div>

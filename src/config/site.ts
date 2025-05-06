@@ -3,7 +3,7 @@ import { SiteConfig } from '@/types/site';
 export const siteConfig: SiteConfig = {
   site_name: "Tyler Lundin",
   domain: "tylerlundin.me",
-  tagline: "Web Developer in Logan, Utah | Northern Utah Web Development",
+  tagline: "Web Developer in Spokane, WA | Spokane Web Development",
   booking_url: process.env.NEXT_PUBLIC_BOOKING_URL || "https://slotfox.vercel.app/tyler-lundin-me",
   theme: {
     colors: {
@@ -19,7 +19,7 @@ export const siteConfig: SiteConfig = {
     {
       type: "hero",
       headline: "Building Bold Websites for Businesses Ready to Stand Out",
-      subheadline: "I'm Tyler, a freelance web developer based in Northern Utah. I build sleek, blazing-fast websites that don't just look good—they perform. From custom booking systems to full-blown e-commerce, I help local businesses get seen, get booked, and get paid. Let's make your online presence impossible to ignore.",
+      subheadline: "I'm Tyler, a freelance web developer based in Spokane, WA. I build sleek, blazing-fast websites that don't just look good—they perform. From custom booking systems to full-blown e-commerce, I help local businesses get seen, get booked, and get paid. Let's make your online presence impossible to ignore.",
       cta: {
         label: "View My Work",
         link: "#projects"
@@ -29,7 +29,7 @@ export const siteConfig: SiteConfig = {
     {
       type: "about",
       headline: "read about me",
-      content: "I'm a web developer based in Logan, Utah, serving businesses throughout Cache Valley and Northern Utah. With a focus on clean design and solid code, I help local businesses establish a strong online presence. Whether you're in Logan, Smithfield, or anywhere in Northern Utah, I'm here to help you build a website that drives real results.",
+      content: "I'm a web developer based in Spokane, WA, serving businesses throughout the Inland Northwest. With a focus on clean design and solid code, I help local businesses establish a strong online presence. Whether you're in Spokane, Spokane Valley, or anywhere in the Inland Northwest, I'm here to help you build a website that drives real results.",
       image: "/images/tyler.png"
     },
     {
@@ -73,7 +73,7 @@ export const siteConfig: SiteConfig = {
       headline: "how much will it cost?",
       subheadline: "Transparent pricing for quality work",
       items: [
-        "Custom Website Design for Northern Utah Businesses",
+        "Custom Website Design for Spokane Businesses",
         "Monthly Site Maintenance",
         "Local SEO Optimization",
         "E-commerce Solutions",
@@ -83,7 +83,7 @@ export const siteConfig: SiteConfig = {
     {
       type: "contact",
       headline: "contact me",
-      description: "Serving businesses in Logan, Smithfield, and throughout Cache Valley. Have a project in mind or just want to chat? Reach out and let's make something awesome for your Northern Utah business.",
+      description: "Serving businesses in Spokane and throughout the Inland Northwest. Have a project in mind or just want to chat? Reach out and let's make something awesome for your Spokane business.",
       email: "msg@tylerlundin.me",
       social: {
         github: "https://github.com/tyler-lundin",
@@ -93,7 +93,7 @@ export const siteConfig: SiteConfig = {
     }
   ],
   footer: {
-    text: "© 2025 Tyler Lundin. Serving Northern Utah and Cache Valley.",
+    text: "© 2025 Tyler Lundin. Serving Spokane and the Inland Northwest.",
     links: [
       { label: "Privacy Policy", url: "/privacy" },
       { label: "GitHub", url: "https://github.com/tyler-lundin" }

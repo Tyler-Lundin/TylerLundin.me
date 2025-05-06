@@ -6,12 +6,12 @@ import { SiteShell } from "@/components/layout/SiteShell";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Tyler Lundin - Web Developer in Logan, Utah | Northern Utah Web Development",
-  description: "Professional web developer and designer based in Logan, Utah. Specializing in custom website development, e-commerce solutions, and digital marketing for businesses in Northern Utah.",
-  keywords: ["web developer logan utah", "northern utah web development", "logan utah website design", "cache valley web developer", "utah web development services"],
+  title: "Tyler Lundin - Web Developer in Spokane, WA | Spokane Web Development",
+  description: "Professional web developer and designer based in Spokane, WA. Specializing in custom website development, e-commerce solutions, and digital marketing for businesses in the Inland Northwest.",
+  keywords: ["web developer spokane", "spokane web development", "spokane website design", "inland northwest web developer", "washington web development services"],
   openGraph: {
-    title: "Tyler Lundin - Web Developer in Logan, Utah",
-    description: "Professional web developer and designer based in Logan, Utah. Specializing in custom website development, e-commerce solutions, and digital marketing for businesses in Northern Utah.",
+    title: "Tyler Lundin - Web Developer in Spokane, WA",
+    description: "Professional web developer and designer based in Spokane, WA. Specializing in custom website development, e-commerce solutions, and digital marketing for businesses in the Inland Northwest.",
     url: "https://tylerlundin.me",
     siteName: "Tyler Lundin",
     locale: "en_US",
@@ -19,8 +19,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Tyler Lundin - Web Developer in Logan, Utah",
-    description: "Professional web developer and designer based in Logan, Utah. Specializing in custom website development, e-commerce solutions, and digital marketing for businesses in Northern Utah.",
+    title: "Tyler Lundin - Web Developer in Spokane, WA",
+    description: "Professional web developer and designer based in Spokane, WA. Specializing in custom website development, e-commerce solutions, and digital marketing for businesses in the Inland Northwest.",
   },
   alternates: {
     canonical: "https://tylerlundin.me",

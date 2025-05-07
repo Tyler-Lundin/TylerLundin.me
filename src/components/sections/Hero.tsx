@@ -67,12 +67,6 @@ export function Hero() {
           {/* Desktop profile image */}
           <div className="hidden md:flex justify-center items-center relative">
             <div className="bg-black w-[300px] h-[300px] md:w-[400px] md:h-[400px] lg:w-[500px] lg:h-[500px] border-[6px] border-gradient-to-r from-indigo-500 via-pink-500 to-yellow-500 animate-border rounded-full relative overflow-hidden">
-              <div className="z-[100] bg-black/40 border-12 border-white overflow-hidden rounded-full w-full h-full absolute">
-                <div className="relative w-full h-full overflow-hidden rotate-45">
-                  <div className="absolute bg-gradient-to-r invert from-indigo-400/30 via-pink-500/30 to-yellow-200/30 w-full h-full left-1/2 -translate-x-1/2 top-1/2 -z-10" />
-                  <div className="absolute bg-gradient-to-r invert from-indigo-400/30 via-pink-500/30 to-yellow-200/30 w-full h-full left-1/2 -translate-x-1/2 top-0 -translate-y-1/2 -z-10" />
-                </div>
-              </div>
               <AnimatedBackground>
                 <Image
                   src="/images/tyler.png"
@@ -80,7 +74,7 @@ export function Hero() {
                   fill
                   priority
                   sizes="(max-width: 768px) 300px, (max-width: 1200px) 400px, 500px"
-                  className="absolute inset-0 w-full h-full z-50 object-cover object-top -translate-x-[5%]  translate-y-[0%] z-10 rotate-[-3deg] pointer-events-none "
+                  className="absolute inset-0 w-full h-full z-50 object-cover object-top translate-y-[0%] z-10 pointer-events-none "
                 />
               </AnimatedBackground>
             </div>

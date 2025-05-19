@@ -2,11 +2,11 @@
 
 import Image from 'next/image';
 import { motion } from 'framer-motion';
-import AnimatedBackground from '../AnimatedBackground';
 
 export function About() {
   return (
-    <section id="about" className="py-32 bg-gradient-to-b from-white to-gray-50">
+    <section id="about" className="py-32 bg-gradient-to-b from-white dark:from-neutral-950 to-gray-50 dark:to-neutral-950">
+      
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid md:grid-cols-2 gap-12 items-center">
           {/* Content */}
@@ -18,7 +18,7 @@ export function About() {
             className="space-y-8"
           >
             <div>
-              <h2 className="text-4xl font-bold text-gray-900 mb-4">
+              <h2 className="text-4xl font-bold text-gray-900 dark:text-gray-100 mb-4">
                 Tyler Lundin: The Rogue Webdev
               </h2>
               <p className="text-xl font-bold text-indigo-600 mb-2">
@@ -56,7 +56,6 @@ export function About() {
                 ease: "easeInOut"
               }}
             >
-              <AnimatedBackground>
                 <Image
                   src="/images/tyler.png"
                   alt="Tyler Lundin"
@@ -64,7 +63,6 @@ export function About() {
                   height={400}
                   className="absolute z-50 -rotate-2"
                 />
-              </AnimatedBackground>
             </motion.div>
           </motion.div>
         </div>

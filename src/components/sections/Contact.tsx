@@ -78,7 +78,7 @@ export function Contact({ section }: ContactProps) {
   };
 
   return (
-    <section id="contact" className="py-32 bg-gradient-to-b from-white to-gray-50">
+    <section id="contact" className="py-32 bg-gradient-to-b from-white to-gray-50 dark:from-gray-900 dark:to-gray-800">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Hero Section */}
         <div className="text-center mb-24">
@@ -87,7 +87,7 @@ export function Contact({ section }: ContactProps) {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5 }}
-            className="text-5xl font-bold text-gray-900 mb-6"
+            className="text-5xl font-bold text-gray-900 dark:text-white mb-6"
           >
             {section.headline}
           </motion.h2>
@@ -96,7 +96,7 @@ export function Contact({ section }: ContactProps) {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5, delay: 0.2 }}
-            className="text-xl text-gray-600 max-w-3xl mx-auto"
+            className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto"
           >
             {section.description}
           </motion.p>
@@ -110,12 +110,12 @@ export function Contact({ section }: ContactProps) {
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5 }}
-            className="bg-white rounded-2xl shadow-xl p-4 md:p-8"
+            className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-4 md:p-8"
           >
-            <h3 className="text-2xl font-bold text-gray-900 mb-6">Send a Message</h3>
+            <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">Send a Message</h3>
             <form onSubmit={handleSubmit} className="space-y-6">
               <div>
-                <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor="name" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                   Name
                 </label>
                 <input
@@ -123,12 +123,12 @@ export function Contact({ section }: ContactProps) {
                   id="name"
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                  className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
                   required
                 />
               </div>
               <div>
-                <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                   Email
                 </label>
                 <input
@@ -136,19 +136,19 @@ export function Contact({ section }: ContactProps) {
                   id="email"
                   value={formData.email}
                   onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                  className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                  className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
                   required
                 />
               </div>
               <div>
-                <label htmlFor="budget" className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor="budget" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                   Budget Range
                 </label>
                 <select
                   id="budget"
                   value={formData.budget || ''}
                   onChange={(e) => setFormData({ ...formData, budget: e.target.value })}
-                  className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                  className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
                 >
                   <option value="">Select a budget range</option>
                   {budget_options.map((option) => (
@@ -159,7 +159,7 @@ export function Contact({ section }: ContactProps) {
                 </select>
               </div>
               <div>
-                <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor="message" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                   Message
                 </label>
                 <textarea
@@ -167,7 +167,7 @@ export function Contact({ section }: ContactProps) {
                   value={formData.message}
                   onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                   rows={4}
-                  className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                  className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
                   required
                 />
               </div>
@@ -184,7 +184,7 @@ export function Contact({ section }: ContactProps) {
               <button
                 type="submit"
                 disabled={status === 'loading'}
-                className="w-full py-3 px-6 bg-indigo-600 text-white font-medium rounded-lg hover:bg-indigo-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full py-3 px-6 bg-indigo-600 text-white font-medium rounded-lg hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {status === 'loading' ? 'Sending...' : 'Send Message'}
               </button>
@@ -203,25 +203,19 @@ export function Contact({ section }: ContactProps) {
             
             <div className="space-y-8">
               <div>
-                <h4 className="text-lg font-semibold mb-4">Call Me</h4>
+                <h4 className="text-lg font-semibold mb-4">Schedule a Call</h4>
                 <p className="text-indigo-100 mb-4">
-                  Let&apos;s discuss your project in detail. Click the button below to reveal my phone number.
+                  Let&apos;s discuss your project in detail. Book a time that works for you.
                 </p>
-                <button
-                  onClick={() => {
-                    const button = document.getElementById('phone-reveal');
-                    if (button) {
-                      button.innerHTML = '<a href="tel:5095145418" class="text-indigo-600 hover:text-indigo-700">(509) 514-5418</a>';
-                    }
-                  }}
-                  id="phone-reveal"
+                <a
+                  href="/booking"
                   className="inline-flex items-center px-4 py-2 bg-white text-indigo-600 rounded-lg font-medium hover:bg-indigo-50 transition-colors"
                 >
-                  Click to Reveal Phone Number
+                  Book a Call
                   <svg className="ml-2 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                   </svg>
-                </button>
+                </a>
               </div>
 
               <div>
@@ -266,29 +260,29 @@ export function Contact({ section }: ContactProps) {
           transition={{ duration: 0.5, delay: 0.4 }}
           className="mt-24"
         >
-          <h3 className="text-3xl font-bold text-gray-900 text-center mb-12">Common Questions</h3>
+          <h3 className="text-3xl font-bold text-gray-900 dark:text-white text-center mb-12">Common Questions</h3>
           <div className="grid md:grid-cols-2 gap-8">
-            <div className="bg-white rounded-xl p-6 shadow-lg">
-              <h4 className="text-xl font-semibold text-gray-900 mb-4">How quickly can we start?</h4>
-              <p className="text-gray-600">
+            <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg">
+              <h4 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">How quickly can we start?</h4>
+              <p className="text-gray-600 dark:text-gray-300">
                 I can typically start new projects within 1-2 weeks. For urgent projects, I can sometimes accommodate a faster start date.
               </p>
             </div>
-            <div className="bg-white rounded-xl p-6 shadow-lg">
-              <h4 className="text-xl font-semibold text-gray-900 mb-4">What&apos;s the development process?</h4>
-              <p className="text-gray-600">
+            <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg">
+              <h4 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">What&apos;s the development process?</h4>
+              <p className="text-gray-600 dark:text-gray-300">
                 We&apos;ll start with a discovery call, then move to design and development. You&apos;ll be involved throughout the process with regular updates and feedback sessions.
               </p>
             </div>
-            <div className="bg-white rounded-xl p-6 shadow-lg">
-              <h4 className="text-xl font-semibold text-gray-900 mb-4">Do you offer ongoing support?</h4>
-              <p className="text-gray-600">
+            <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg">
+              <h4 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">Do you offer ongoing support?</h4>
+              <p className="text-gray-600 dark:text-gray-300">
                 Yes! All plans include monthly maintenance and updates. I&apos;m also available for additional support and feature requests.
               </p>
             </div>
-            <div className="bg-white rounded-xl p-6 shadow-lg">
-              <h4 className="text-xl font-semibold text-gray-900 mb-4">Can I see examples of your work?</h4>
-              <p className="text-gray-600">
+            <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg">
+              <h4 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">Can I see examples of your work?</h4>
+              <p className="text-gray-600 dark:text-gray-300">
                 Absolutely! Check out my portfolio section or request specific examples during our initial call.
               </p>
             </div>

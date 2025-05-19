@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import { useState, useEffect } from "react";
-import { createBrowserClient } from "@supabase/ssr";
+import { createClient } from "@/lib/supabase/client";
 import { ChevronRight, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -20,11 +20,7 @@ export default function Banner() {
   const [latestStatus, setLatestStatus] = useState<LatestStatus | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  const supabase = createBrowserClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-  );
-
+  const supabase = createClient();
   useEffect(() => {
     const fetchLatestStatus = async () => {
       try {
@@ -35,16 +31,31 @@ export default function Banner() {
           .order("created_at", { ascending: false })
           .limit(1)
           .single();
-        if (error) throw error;
-        setLatestStatus(data);
+        
+        if (error) {
+          if (error.code === 'PGRST116') {
+            // This error code indicates no rows were returned
+            setLatestStatus(null);
+          } else {
+            throw error;
+          }
+        } else {
+          setLatestStatus(data);
+        }
       } catch (error) {
         console.error("Error fetching latest status:", error);
+        setLatestStatus(null);
       } finally {
         setIsLoading(false);
       }
     };
     fetchLatestStatus();
   }, [supabase]);
+
+  // If there are no entries and we're not loading, don't show the banner
+  if (isLoading || !latestStatus) {
+    return null;
+  }
 
   return (
     <>
@@ -83,9 +94,7 @@ export default function Banner() {
                   <span className="text-gray-400 italic text-xs truncate">loading...</span>
                 ) : latestStatus ? (
                   <span className="font-normal truncate">{latestStatus.status_text}</span>
-                ) : (
-                  <span className="text-gray-400 truncate">no status available</span>
-                )}
+                ) : null}
               </div>
 
               {/* Right Side */}

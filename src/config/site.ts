@@ -21,20 +21,20 @@ export const siteConfig: SiteConfig = {
       headline: "Building Bold Websites for Businesses Ready to Stand Out",
       subheadline: "I'm Tyler, a freelance web developer based in Spokane, WA. I build sleek, blazing-fast websites that don't just look good—they perform. From custom booking systems to full-blown e-commerce, I help local businesses get seen, get booked, and get paid. Let's make your online presence impossible to ignore.",
       cta: {
-        label: "View My Work",
+        label: "portfolio",
         link: "#projects"
       },
       image: "/images/tyler.png"
     },
     {
       type: "about",
-      headline: "read about me",
+      headline: "about",
       content: "I'm a web developer based in Spokane, WA, serving businesses throughout the Inland Northwest. With a focus on clean design and solid code, I help local businesses establish a strong online presence. Whether you're in Spokane, Spokane Valley, or anywhere in the Inland Northwest, I'm here to help you build a website that drives real results.",
       image: "/images/tyler.png"
     },
     {
       type: "projects",
-      headline: "view my projects",
+      headline: "portfolio",
       projects: [
         {
           title: "Island Market",
@@ -70,7 +70,7 @@ export const siteConfig: SiteConfig = {
     },
     {
       type: "services",
-      headline: "how much will it cost?",
+      headline: "pricing",
       subheadline: "Transparent pricing for quality work",
       items: [
         "Custom Website Design for Spokane Businesses",
@@ -82,7 +82,7 @@ export const siteConfig: SiteConfig = {
     },
     {
       type: "contact",
-      headline: "contact me",
+      headline: "contact",
       description: "Serving businesses in Spokane and throughout the Inland Northwest. Have a project in mind or just want to chat? Reach out and let's make something awesome for your Spokane business.",
       email: "msg@tylerlundin.me",
       social: {

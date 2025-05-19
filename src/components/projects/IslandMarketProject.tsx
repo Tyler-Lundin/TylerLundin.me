@@ -26,7 +26,7 @@ export function IslandMarketProject({ isExpanded = false }: IslandMarketProjectP
   ];
 
   return (
-    <div className={`bg-white rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-shadow cursor-pointer ${
+    <div className={`bg-white dark:bg-neutral-800 border border-black/25 dark:border-white/25 rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-shadow cursor-pointer ${
       isExpanded ? 'w-full max-w-2xl' : 'w-full max-w-md'
     }`}>
       <ImageSlideshow 
@@ -35,10 +35,10 @@ export function IslandMarketProject({ isExpanded = false }: IslandMarketProjectP
         className={isExpanded ? 'aspect-[16/9]' : 'aspect-video'}
       />
       <div className="p-4 sm:p-6">
-        <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-2">
+        <h3 className="text-lg sm:text-xl font-bold text-gray-900 dark:text-gray-100 mb-2">
           Island Market
         </h3>
-        <p className="text-sm sm:text-base text-gray-600 mb-3 sm:mb-4">
+        <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400 mb-3 sm:mb-4">
           A modern convenience store website featuring real-time store status, weather information, and community highlights. 
           Built with a focus on user experience and responsive design, the site includes dynamic store hours display, 
           Instagram integration, and a clean, intuitive interface.
@@ -53,7 +53,7 @@ export function IslandMarketProject({ isExpanded = false }: IslandMarketProjectP
             </span>
           ))}
         </div>
-        <div className="text-sm sm:text-base text-indigo-600 font-medium">
+        <div className="text-sm sm:text-base text-indigo-600 dark:text-emerald-300 font-medium">
           View Project →
         </div>
       </div>

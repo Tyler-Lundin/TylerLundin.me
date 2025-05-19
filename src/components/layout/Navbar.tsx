@@ -15,10 +15,10 @@ interface NavProps {
 
 
 function MobileMenuButton({ onClick, minimal }: { onClick: () => void; minimal?: boolean }) {
-  const baseClasses = "md:hidden text-gray-900 hover:blur-[2px] blur-[0px] transition-all duration-300 cursor-pointer";
+  const baseClasses = "lg:hidden text-gray-900 hover:blur-[2px] blur-[0px] transition-all duration-300 cursor-pointer dark:invert";
   const positionClasses = minimal 
-    ? "absolute top-1/2 -translate-y-1/2  z-50 right-4"
-    : "absolute top-4 right-4 z-50 text-black";
+    ? "absolute top-1/2 -translate-y-1/2  z-50 right-4 lg:right-8"
+    : "absolute top-4 right-4 lg:right-8 z-50 text-black";
 
   return (
     <button
@@ -55,8 +55,8 @@ function LogoContainer({ children, isScrolled }: { children: React.ReactNode; is
 
 function DesktopNav({ isScrolled, minimal }: { isScrolled?: boolean; minimal?: boolean }) {
     const pathname = usePathname();
-    const baseClasses = "hidden md:flex w-full justify-center space-x-8";
-  const fullNavClasses = `${baseClasses} bg-white/75 backdrop-blur-sm border-y border-gray-200 py-1 transition-all duration-300 ${
+    const baseClasses = "hidden lg:flex w-full justify-center space-x-8";
+  const fullNavClasses = `${baseClasses} bg-white/75 dark:bg-black/75 backdrop-blur-sm border-y border-gray-200 dark:border-white/25 py-1 transition-all duration-300 ${
     isScrolled ? 'opacity-0 -translate-y-20' : 'opacity-100'
   }`;
 
@@ -73,7 +73,7 @@ function DesktopNav({ isScrolled, minimal }: { isScrolled?: boolean; minimal?: b
           <Link
             key={section.type}
             href={`/${section.type}`}
-            className={cn(`text-gray-600 text-md lg:text-lg hover:text-gray-900 transition-colors duration-200`, {
+            className={cn(`text-gray-900 dark:text-white font-thin text-md lg:text-lg hover:blur-[2px] transition-all blur-[0px] duration-200`, {
               'text-indigo-600': section.type === 'services'
             }, isCurrentLink(section.type) && 'blur-[2px] opacity-50')}
           >
@@ -86,7 +86,7 @@ function DesktopNav({ isScrolled, minimal }: { isScrolled?: boolean; minimal?: b
 
 function MainNav({ isScrolled, setIsMenuOpen }: NavProps) {
   return (
-    <nav className="relative z-50 transition-all duration-500 bg-gradient-to-r from-blue-700/25 via-yellow-700/25 to-purple-700/25 backdrop-blur-sm h-32">
+    <nav className="relative z-50 transition-all duration-500 bg-gradient-to-r from-blue-700/25 dark:from-blue-950/75 via-yellow-700/25 dark:via-yellow-950/75 to-purple-700/25 dark:to-purple-950/75 backdrop-blur-sm h-32">
       <div className="h-full">
         <MobileMenuButton onClick={() => setIsMenuOpen(true)} minimal/>
         
@@ -102,7 +102,7 @@ function MainNav({ isScrolled, setIsMenuOpen }: NavProps) {
 
 function MiniNav({ isScrolled, setIsMenuOpen }: NavProps) {
   return (
-    <div className={`fixed top-0 left-0 right-0 z-50 bg-white/75 backdrop-blur-sm border-b border-gray-200 transition-all duration-300 ${
+    <div className={`fixed top-0 left-0 right-0 z-50 bg-white/75 dark:bg-black/25 backdrop-blur-md border-b border-gray-200 dark:border-white/25 transition-all duration-300 ${
       isScrolled ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-full'
     }`}>
       <div className="container mx-auto px-4 h-12 flex items-center justify-between">

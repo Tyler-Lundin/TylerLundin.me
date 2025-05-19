@@ -34,7 +34,7 @@ export default function ParallaxBackground() {
       transition={{ duration: 1.5 }}
       className="fixed inset-0 -z-10 bg-white"
     >
-      <div className="absolute inset-0 bg-gradient-to-b from-white via-transparent to-white z-50" />
+      <div className="absolute inset-0 bg-gradient-to-b from-white via-transparent to-white z-50 dark:invert" />
       <div 
         className="absolute inset-0"
         style={{

@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect } from "react";
 
-const AnimatedBackground = ({ children }: { children: React.ReactNode }) => {
+const AnimatedBackground = ({ children }: { children?: React.ReactNode }) => {
   useEffect(() => {
     // Inject keyframes manually in the browser
     const stylesString = `
@@ -29,11 +29,11 @@ const AnimatedBackground = ({ children }: { children: React.ReactNode }) => {
   }, []);
 
   return (
-    <div className="overflow-hidden relative w-[300px] h-[300px] md:w-[400px] md:h-[400px] lg:w-[500px] lg:h-[500px]">
+    <div className="overflow-hidden relative w-full -z-10 h-full invert dark:invert-0">
       <div className="z-50">{children}</div>
-      <div className="z-30" style={{ ...styles.layer, ...styles.layer1 }} />
-      <div className="z-30" style={{ ...styles.layer, ...styles.layer2 }} />
-      <div className="z-30" style={{ ...styles.layer, ...styles.layer3 }} />
+      <div className="z-30 pointer-events-none" style={{ ...styles.layer, ...styles.layer1 }} />
+      <div className="z-30 pointer-events-none" style={{ ...styles.layer, ...styles.layer2 }} />
+      <div className="z-30 pointer-events-none" style={{ ...styles.layer, ...styles.layer3 }} />
 
     </div>
   );
@@ -51,7 +51,7 @@ const styles: Record<string, React.CSSProperties> = {
     animationIterationCount: "infinite",
   },
   layer1: {
-    backgroundImage: "radial-gradient(pink 3px, transparent 2px)",
+    backgroundImage: "radial-gradient(white 1px, transparent 2px)",
     opacity: 0.5,
     animation: "rotateSlow 60s linear infinite ",
     backgroundSize: "100px 100px",
@@ -63,8 +63,8 @@ const styles: Record<string, React.CSSProperties> = {
     backgroundSize: "120px 120px",
   },
   layer3: {
-    backgroundImage: "radial-gradient(yellow 1px, transparent 2px)",
-    backgroundSize: "100px 100px",
+    backgroundImage: "radial-gradient(white 1px, transparent 2px)",
+    backgroundSize: "160px 160px",
     opacity: 0.5,
     animation: "rotateFast 120s linear infinite",
   },

@@ -76,7 +76,7 @@ export function Services({ section }: ServicesProps) {
   const [selectedTier, setSelectedTier] = useState<typeof tiers[0] | null>(null);
 
   return (
-    <section id="services" className="py-32 bg-gradient-to-b from-white to-gray-50">
+    <section id="services" className="py-32 bg-gradient-to-b from-white to-gray-50 dark:from-gray-900 dark:to-gray-800">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Hero Section */}
         <div className="text-center mb-24">
@@ -85,7 +85,7 @@ export function Services({ section }: ServicesProps) {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5 }}
-            className="text-5xl font-bold text-gray-900 mb-6"
+            className="text-5xl font-bold text-gray-900 dark:text-white mb-6"
           >
             {section.headline}
           </motion.h2>
@@ -94,7 +94,7 @@ export function Services({ section }: ServicesProps) {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5, delay: 0.2 }}
-            className="text-xl text-gray-600 max-w-3xl mx-auto"
+            className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto"
           >
             {section.subheadline}
           </motion.p>
@@ -112,8 +112,8 @@ export function Services({ section }: ServicesProps) {
               onClick={() => setSelectedTier(tier)}
               className={`p-6 rounded-xl shadow-lg transition-all duration-200 hover:shadow-xl ${
                 tier.featured 
-                  ? 'bg-indigo-600 text-white' 
-                  : 'bg-white text-gray-900 hover:bg-gray-50'
+                  ? 'bg-indigo-600 text-white dark:bg-indigo-500' 
+                  : 'bg-white dark:bg-gray-800 text-gray-900 dark:text-white hover:bg-gray-50 dark:hover:bg-gray-700'
               }`}
             >
               <h3 className="text-xl font-bold mb-2">{tier.name}</h3>
@@ -140,18 +140,18 @@ export function Services({ section }: ServicesProps) {
                 initial={{ scale: 0.9, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
                 exit={{ scale: 0.9, opacity: 0 }}
-                className="bg-white rounded-2xl shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto"
+                className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto"
                 onClick={e => e.stopPropagation()}
               >
                 <div className="p-8">
                   <div className="flex justify-between items-start mb-6">
                     <div>
-                      <h3 className="text-2xl font-bold text-gray-900 mb-2">{selectedTier.name}</h3>
-                      <p className="text-gray-600">{selectedTier.description}</p>
+                      <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">{selectedTier.name}</h3>
+                      <p className="text-gray-600 dark:text-gray-300">{selectedTier.description}</p>
                     </div>
                     <button
                       onClick={() => setSelectedTier(null)}
-                      className="text-gray-400 hover:text-gray-500"
+                      className="text-gray-400 hover:text-gray-500 dark:text-gray-500 dark:hover:text-gray-400"
                     >
                       <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -159,24 +159,24 @@ export function Services({ section }: ServicesProps) {
                     </button>
                   </div>
                   <div className="mb-6">
-                    <span className="text-4xl font-bold text-gray-900">{selectedTier.price}</span>
-                    <span className="text-gray-600">/month</span>
+                    <span className="text-4xl font-bold text-gray-900 dark:text-white">{selectedTier.price}</span>
+                    <span className="text-gray-600 dark:text-gray-300">/month</span>
                   </div>
                   <ul className="space-y-4 mb-8">
                     {selectedTier.features.map((feature) => (
                       <li key={feature} className="flex items-start">
-                        <svg className="h-6 w-6 text-indigo-600 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg className="h-6 w-6 text-indigo-600 dark:text-indigo-400 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                         </svg>
-                        <span className="text-gray-600">{feature}</span>
+                        <span className="text-gray-600 dark:text-gray-300">{feature}</span>
                       </li>
                     ))}
                   </ul>
                   <button
                     className={`w-full py-3 px-6 rounded-lg font-medium transition-colors ${
                       selectedTier.featured
-                        ? 'bg-indigo-600 text-white hover:bg-indigo-700'
-                        : 'bg-gray-100 text-gray-900 hover:bg-gray-200'
+                        ? 'bg-indigo-600 text-white hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600'
+                        : 'bg-gray-100 text-gray-900 hover:bg-gray-200 dark:bg-gray-700 dark:text-white dark:hover:bg-gray-600'
                     }`}
                   >
                     {selectedTier.cta}
@@ -195,61 +195,61 @@ export function Services({ section }: ServicesProps) {
           transition={{ duration: 0.5, delay: 0.6 }}
           className="mt-16"
         >
-          <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
+          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl overflow-hidden">
             <div className="grid md:grid-cols-3">
               {/* Left Content */}
               <div className="md:col-span-2 p-4 md:p-8 lg:p-12">
                 <h3 className="text-2xl font-bold mb-4 bg-gradient-to-r from-indigo-500 to-purple-600 text-transparent bg-clip-text">Need Something Different?</h3>
-                <p className="text-gray-600 mb-6">
+                <p className="text-gray-600 dark:text-gray-300 mb-6">
                   I understand that every business has unique needs and budgets. Here are some flexible options:
                 </p>
                 <div className="grid md:grid-cols-2 gap-8">
-                  <div className="bg-gray-50 rounded-xl p-6">
-                    <h4 className="text-xl font-semibold text-gray-900 mb-3">One-Time Build</h4>
-                    <p className="text-gray-600 mb-4">
+                  <div className="bg-gray-50 dark:bg-gray-700 rounded-xl p-6">
+                    <h4 className="text-xl font-semibold text-gray-900 dark:text-white mb-3">One-Time Build</h4>
+                    <p className="text-gray-600 dark:text-gray-300 mb-4">
                       Perfect if you want to handle maintenance yourself. One-time fee for setup ($300–$800 depending on scope).
                     </p>
-                    <ul className="space-y-2 text-gray-600">
+                    <ul className="space-y-2 text-gray-600 dark:text-gray-300">
                       <li className="flex items-center">
-                        <svg className="h-5 w-5 text-indigo-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg className="h-5 w-5 text-indigo-600 dark:text-indigo-400 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                         </svg>
                         Custom website built to your specs
                       </li>
                       <li className="flex items-center">
-                        <svg className="h-5 w-5 text-indigo-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg className="h-5 w-5 text-indigo-600 dark:text-indigo-400 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                         </svg>
                         Full hosting handoff
                       </li>
                       <li className="flex items-center">
-                        <svg className="h-5 w-5 text-indigo-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg className="h-5 w-5 text-indigo-600 dark:text-indigo-400 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                         </svg>
                         Documentation and training
                       </li>
                     </ul>
                   </div>
-                  <div className="bg-gray-50 rounded-xl p-6">
-                    <h4 className="text-xl font-semibold text-gray-900 mb-3">Basic Hosting</h4>
-                    <p className="text-gray-600 mb-4">
+                  <div className="bg-gray-50 dark:bg-gray-700 rounded-xl p-6">
+                    <h4 className="text-xl font-semibold text-gray-900 dark:text-white mb-3">Basic Hosting</h4>
+                    <p className="text-gray-600 dark:text-gray-300 mb-4">
                       If you just need hosting and basic maintenance after your one-time build.
                     </p>
-                    <ul className="space-y-2 text-gray-600">
+                    <ul className="space-y-2 text-gray-600 dark:text-gray-300">
                       <li className="flex items-center">
-                        <svg className="h-5 w-5 text-indigo-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg className="h-5 w-5 text-indigo-600 dark:text-indigo-400 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                         </svg>
                         $15–$25/month
                       </li>
                       <li className="flex items-center">
-                        <svg className="h-5 w-5 text-indigo-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg className="h-5 w-5 text-indigo-600 dark:text-indigo-400 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                         </svg>
                         Hosting + security updates
                       </li>
                       <li className="flex items-center">
-                        <svg className="h-5 w-5 text-indigo-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg className="h-5 w-5 text-indigo-600 dark:text-indigo-400 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                         </svg>
                         Domain management
@@ -257,7 +257,7 @@ export function Services({ section }: ServicesProps) {
                     </ul>
                   </div>
                 </div>
-                <p className="text-gray-600 mt-8">
+                <p className="text-gray-600 dark:text-gray-300 mt-8">
                   Need a custom plan or have a specific budget in mind? Just reach out — I work with all budgets and will find a solution that works for you.
                 </p>
               </div>
@@ -303,29 +303,29 @@ export function Services({ section }: ServicesProps) {
           transition={{ duration: 0.5, delay: 0.6 }}
           className="mt-32"
         >
-          <h3 className="text-3xl font-bold text-gray-900 text-center mb-12">Frequently Asked Questions</h3>
+          <h3 className="text-3xl font-bold text-gray-900 dark:text-white text-center mb-12">Frequently Asked Questions</h3>
           <div className="grid md:grid-cols-2 gap-8">
-            <div className="bg-white rounded-xl p-6 shadow-lg">
-              <h4 className="text-xl font-semibold text-gray-900 mb-4">How does the live development process work?</h4>
-              <p className="text-gray-600">
+            <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg">
+              <h4 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">How does the live development process work?</h4>
+              <p className="text-gray-600 dark:text-gray-300">
                 We&apos;ll schedule development sessions where you can watch me build your website in real-time. You&apos;ll have direct input on design decisions, and we can make changes immediately based on your feedback.
               </p>
             </div>
-            <div className="bg-white rounded-xl p-6 shadow-lg">
-              <h4 className="text-xl font-semibold text-gray-900 mb-4">What&apos;s included in the monthly fee?</h4>
-              <p className="text-gray-600">
+            <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg">
+              <h4 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">What&apos;s included in the monthly fee?</h4>
+              <p className="text-gray-600 dark:text-gray-300">
                 Your monthly fee covers hosting, maintenance, updates, and support. It&apos;s an all-inclusive package that ensures your website stays up-to-date and running smoothly.
               </p>
             </div>
-            <div className="bg-white rounded-xl p-6 shadow-lg">
-              <h4 className="text-xl font-semibold text-gray-900 mb-4">Can I upgrade or downgrade my plan?</h4>
-              <p className="text-gray-600">
+            <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg">
+              <h4 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">Can I upgrade or downgrade my plan?</h4>
+              <p className="text-gray-600 dark:text-gray-300">
                 Yes, you can change your plan at any time. Upgrades take effect immediately, while downgrades will apply at the start of your next billing cycle.
               </p>
             </div>
-            <div className="bg-white rounded-xl p-6 shadow-lg">
-              <h4 className="text-xl font-semibold text-gray-900 mb-4">What if I need custom features?</h4>
-              <p className="text-gray-600">
+            <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg">
+              <h4 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">What if I need custom features?</h4>
+              <p className="text-gray-600 dark:text-gray-300">
                 Custom features can be added to any plan for an additional fee. We&apos;ll discuss your specific needs and provide a custom quote for the additional development work.
               </p>
             </div>

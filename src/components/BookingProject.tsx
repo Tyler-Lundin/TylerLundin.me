@@ -11,7 +11,7 @@ const BOOKING_IMAGES = [
   '/images/slot-fox-3.png',
 ];
 
-export function SlotFoxProject({ isExpanded = false }: BookingProjectProps) {
+export function FoxLotProject({ isExpanded = false }: BookingProjectProps) {
   const tech_stack = [
     "Next.js 15",
     "React 19",
@@ -23,7 +23,7 @@ export function SlotFoxProject({ isExpanded = false }: BookingProjectProps) {
   ];
 
   return (
-    <div className={`bg-white rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-shadow ${
+    <div className={`bg-white dark:bg-neutral-800 border border-black/25 dark:border-white/25 rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-shadow ${
       isExpanded ? 'w-full max-w-2xl' : 'w-full max-w-md'
     }`}>
       <ImageSlideshow 
@@ -32,10 +32,10 @@ export function SlotFoxProject({ isExpanded = false }: BookingProjectProps) {
         className={isExpanded ? 'aspect-[16/9]' : 'aspect-video object-cover object-top'}
       />
       <div className="p-4 sm:p-6">
-        <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-2">
-          Slot Fox
+        <h3 className="text-lg sm:text-xl font-bold text-gray-900 dark:text-gray-100 mb-2">
+          FoxLot
         </h3>
-        <p className="text-sm sm:text-base text-gray-600 mb-3 sm:mb-4">
+        <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400 mb-3 sm:mb-4">
           A self-hosted booking system built with modern web technologies, featuring timezone-aware scheduling, 
           admin dashboard, and email notifications. The system provides a clean, minimalist interface for clients 
           to book time while giving administrators full control over availability and data management.
@@ -44,14 +44,14 @@ export function SlotFoxProject({ isExpanded = false }: BookingProjectProps) {
           {tech_stack.map((tech) => (
             <span
               key={tech}
-              className="px-2 sm:px-3 py-0.5 sm:py-1 bg-gray-100 text-gray-700 rounded-full text-xs sm:text-sm"
+              className="px-2 sm:px-3 py-0.5 sm:py-1 bg-gray-100 dark:bg-neutral-700 text-gray-700 dark:text-gray-300 rounded-full text-xs sm:text-sm"
             >
               {tech}
             </span>
           ))}
         </div>
         <h3
-          className="inline-block text-sm sm:text-base text-indigo-600 hover:text-indigo-700 font-medium"
+          className="inline-block text-sm sm:text-base text-indigo-600 dark:text-emerald-300 hover:text-indigo-700 dark:hover:text-emerald-400 font-medium"
         >
           View Project →
         </h3>

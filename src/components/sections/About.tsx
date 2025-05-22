@@ -5,7 +5,7 @@ import { motion } from 'framer-motion';
 
 export function About() {
   return (
-    <section id="about" className="py-32 bg-gradient-to-b from-white dark:from-neutral-950 to-gray-50 dark:to-neutral-950">
+    <section id="about" className="py-32 bg-slate-900 dark:bg-black">
       
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid md:grid-cols-2 gap-12 items-center">
@@ -18,20 +18,20 @@ export function About() {
             className="space-y-8"
           >
             <div>
-              <h2 className="text-4xl font-bold text-gray-900 dark:text-gray-100 mb-4">
+              <h2 className="text-5xl font-bold mb-6 text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-pink-500 to-purple-500 dark:from-cyan-300 dark:via-pink-400 dark:to-purple-400 tracking-tight">
                 Tyler Lundin: The Rogue Webdev
               </h2>
-              <p className="text-xl font-bold text-indigo-600 mb-2">
+              <p className="text-2xl font-medium text-pink-500 dark:text-pink-400 mb-4">
               Nomadic by nature, caffeinated by code, and running on a mix of wanderlust and raw determination. 
               </p>
             </div>
             
             <div className="space-y-6">
-              <p className="text-md text-gray-600 leading-relaxed">
+              <p className="text-lg text-neutral-400 dark:text-neutral-300 leading-relaxed opacity-90">
                 I&apos;m a self-taught developer, gearhead, and builder at heart—someone who thrives on creating from scratch and solving problems with clean code and sharper ideas. Whether I&apos;m fine-tuning a landing page or rebuilding an app backend from the ground up, I bring the same energy: focused, fast-moving, and forward-thinking.
               </p>
               
-              <p className="text-md text-gray-600 leading-relaxed">
+              <p className="text-lg text-neutral-400 dark:text-neutral-300 leading-relaxed opacity-90">
               Based in Spokane, I specialize in high-performance sites, custom booking platforms, and local-first SEO strategies that make businesses hard to miss. No fluff, no gimmicks—just handcrafted digital tools that do the job.
               </p>
             </div>
@@ -46,7 +46,7 @@ export function About() {
             className="hidden md:flex justify-center items-center"
           >
             <motion.div 
-              className="w-[400px] h-[400px] relative bg-gradient-to-r from-red-900 via-white/75 to-blue-900 rounded-full overflow-hidden"
+              className="w-[400px] h-[400px] group relative bg-gradient-to-br from-purple-700 via-pink-600 to-rose-500 dark:from-purple-800 dark:via-pink-700 dark:to-rose-600 rounded-full overflow-hidden shadow-xl shadow-pink-500/30 dark:shadow-pink-400/40"
               animate={{ 
                 y: [0, -10, 0],
               }}
@@ -61,7 +61,7 @@ export function About() {
                   alt="Tyler Lundin"
                   width={400}
                   height={400}
-                  className="absolute z-50 -rotate-2"
+                  className="absolute z-10 -rotate-2 scale-95 group-hover:scale-100 rounded-full transition-transform duration-300"
                 />
             </motion.div>
           </motion.div>

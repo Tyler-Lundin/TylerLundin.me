@@ -27,11 +27,11 @@ export function About() {
             </div>
             
             <div className="space-y-6">
-              <p className="text-lg text-neutral-400 dark:text-neutral-300 leading-relaxed opacity-90">
+              <p className="text-lg text-neutral-700 dark:text-neutral-300 leading-relaxed opacity-90">
                 I&apos;m a self-taught developer, gearhead, and builder at heart—someone who thrives on creating from scratch and solving problems with clean code and sharper ideas. Whether I&apos;m fine-tuning a landing page or rebuilding an app backend from the ground up, I bring the same energy: focused, fast-moving, and forward-thinking.
               </p>
               
-              <p className="text-lg text-neutral-400 dark:text-neutral-300 leading-relaxed opacity-90">
+              <p className="text-lg text-neutral-700 dark:text-neutral-300 leading-relaxed opacity-90">
               Based in Spokane, I specialize in high-performance sites, custom booking platforms, and local-first SEO strategies that make businesses hard to miss. No fluff, no gimmicks—just handcrafted digital tools that do the job.
               </p>
             </div>

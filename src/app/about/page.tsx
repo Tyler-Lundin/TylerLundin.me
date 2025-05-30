@@ -11,7 +11,7 @@ export default function AboutPage() {
   }
 
   return (
-    <main className="pt-24  bg-slate-900/50 dark:bg-black/80 backdrop-blur-sm">
+    <main className="pt-24  bg-gray-100/50 dark:bg-black/80 backdrop-blur-sm">
       <About />
     </main>
   );

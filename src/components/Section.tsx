@@ -2,7 +2,7 @@ import type { Section as SectionType } from '@/types/site';
 import { Hero } from './sections/Hero';
 import { About } from './sections/About';
 import { Projects } from './sections/Projects';
-import { Services } from './sections/Services';
+import { Hobbies } from './sections/Hobbies';
 import { Contact } from './sections/Contact';
 
 interface SectionProps {
@@ -17,8 +17,8 @@ export function Section({ section }: SectionProps) {
       return <About />;
     case 'projects':
       return <Projects section={section} />;
-    case 'services':
-      return <Services section={section} />;
+    case 'hobbies':
+      return <Hobbies section={section} />;
     case 'contact':
       return <Contact section={section} />;
     default:

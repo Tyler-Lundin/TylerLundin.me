@@ -52,20 +52,20 @@ const styles: Record<string, React.CSSProperties> = {
   },
   layer1: {
     backgroundImage: "radial-gradient(white 1px, transparent 2px)",
-    opacity: 0.5,
+    opacity: 0.8,
     animation: "rotateSlow 60s linear infinite ",
     backgroundSize: "100px 100px",
   },
   layer2: {
     backgroundImage: "radial-gradient(white 2px, transparent 2px)",
-    opacity: 0.5,
+    opacity: 0.8,
     animation: "rotateMedium 150s linear infinite ",
     backgroundSize: "120px 120px",
   },
   layer3: {
     backgroundImage: "radial-gradient(white 1px, transparent 2px)",
     backgroundSize: "160px 160px",
-    opacity: 0.5,
+    opacity: 0.8,
     animation: "rotateFast 120s linear infinite",
   },
 };

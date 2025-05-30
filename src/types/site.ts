@@ -27,7 +27,7 @@ export type Section =
   | HomeSection
   | AboutSection
   | ProjectsSection
-  | ServicesSection
+  | HobbiesSection
   | ContactSection;
 
 interface BaseSection {
@@ -67,6 +67,12 @@ export interface ProjectsSection extends BaseSection {
 
 export interface ServicesSection extends BaseSection {
   type: 'services';
+  items: string[];
+  subheadline: string;
+}
+
+export interface HobbiesSection extends BaseSection {
+  type: 'hobbies';
   items: string[];
   subheadline: string;
 }

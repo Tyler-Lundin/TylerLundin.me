@@ -69,15 +69,13 @@ export const siteConfig: SiteConfig = {
       ]
     },
     {
-      type: "services",
-      headline: "pricing",
-      subheadline: "Transparent pricing for quality work",
+      type: "hobbies",
+      headline: "hobbies",
+      subheadline: "Web Development, Bodybuilding, and Game Development",
       items: [
-        "Custom Website Design for Spokane Businesses",
-        "Monthly Site Maintenance",
-        "Local SEO Optimization",
-        "E-commerce Solutions",
-        "Performance Optimization"
+        "Web Development",
+        "Bodybuilding",
+        "Game Development"
       ]
     },
     {

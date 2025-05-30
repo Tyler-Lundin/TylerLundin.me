@@ -76,7 +76,7 @@ function DesktopNav({ isScrolled, minimal }: { isScrolled?: boolean; minimal?: b
             key={section.type}
             href={section.type === 'home' ? '/' : `/${section.type}`}
             className={cn(`text-gray-900 dark:text-white font-light text-md hover:blur-[2px] transition-all blur-[0px] duration-200`, {
-              'text-indigo-600': section.type === 'services'
+              'text-indigo-600': section.type === 'hobbies'
             }, isCurrentLink(section.type) && 'blur-[2px] pointer-events-none')}
           >
             {section.headline}

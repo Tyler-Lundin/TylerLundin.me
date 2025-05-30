@@ -1,15 +1,82 @@
 'use client';
 
 import { ProjectsSection } from '@/types/site';
-import { IslandMarketProject } from '../projects/IslandMarketProject';
-import { FastCachePawnProject } from '../projects/FastCachePawnProject';
-import { GhostProject } from '../projects/GhostProject';
-import { FoxLotProject } from '../BookingProject';
-import { LundinVisionProject } from '../projects/LundinVisionProject';
+import { ProjectPreview } from '../projects/ProjectPreview';
 
 interface ProjectsProps {
   section: ProjectsSection;
 }
+
+const PROJECTS = [
+  {
+    title: "Lundin Vision",
+    description: "A sophisticated medical practice website combining modern web technologies with luxury aesthetics. Features include comprehensive service information, team profiles, appointment scheduling, and a responsive design with dark mode support.",
+    techStack: [
+      "Next.js",
+      "TypeScript",
+      "React",
+      "Tailwind CSS",
+      "shadcn/ui",
+      "Heroicons",
+      "App Router"
+    ],
+    projectUrl: "https://lundin-vision.vercel.app",
+    isInternalLink: false
+  },
+  {
+    title: "Island Market",
+    description: "A modern convenience store website featuring real-time store status, weather information, and community highlights. Built with a focus on user experience and responsive design, the site includes dynamic store hours display, Instagram integration, and a clean, intuitive interface.",
+    techStack: [
+      "Next.js 15",
+      "React 19",
+      "TypeScript",
+      "Tailwind CSS 4",
+      "Vercel Deployment",
+      "ESLint",
+      "PostCSS"
+    ],
+    projectUrl: "https://island-market.vercel.app",
+    isInternalLink: false
+  },
+  {
+    title: "Fast Cache Pawn Website",
+    description: "A modern, responsive website for Fast Cache Pawn, a trusted pawn shop in Logan, UT. Features include service listings, Google reviews integration, contact information, and a beautiful UI with animations and parallax effects.",
+    techStack: [
+      "Next.js 15",
+      "React 19",
+      "TypeScript",
+      "Tailwind CSS 4",
+      "Framer Motion",
+      "Google Maps API",
+      "Geist Font"
+    ],
+    projectUrl: "https://fastcachepawn.vercel.app",
+    isInternalLink: false
+  },
+  {
+    title: "Foxlot - Booking Platform [WIP]",
+    description: "A modern booking platform for with the goal of branding around the design of a random animal, which happened to be a fox.",
+    techStack: [
+      "Next.js 15",
+      "React 19",
+      "TypeScript",
+      "Tailwind CSS 4",
+    ],
+    projectUrl: "https://foxlot.app",
+    isInternalLink: false
+  },
+  {
+    title: "Your Project Here",
+    description: "Let's build something amazing together. I've been working with Ghost for years, and I've built a number of custom themes and integrations.",
+    techStack: [
+      "Your Vision",
+      "Modern Tech",
+      "Expert Development"
+    ],
+    projectUrl: "/contact",
+    isInternalLink: true
+  },
+];
 
 export function Projects({ section }: ProjectsProps) {
   return (
@@ -26,44 +93,12 @@ export function Projects({ section }: ProjectsProps) {
         </h2>
         
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
-          <a 
-            href="https://lundin-vision.vercel.app"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="backdrop-blur-sm bg-gradient-to-bl from-white/10 to-white/50 dark:from-black/10 dark:to-black/50 rounded-sm rounded-tl-3xl rounded-br-3xl border border-white/20 dark:border-white/10 shadow-2xl p-6 hover:shadow-pink-500/20 dark:hover:shadow-pink-400/30 transition-all duration-300 ease-in-out transform hover:-translate-y-1"
-          >
-            <LundinVisionProject />
-          </a>
-          <a 
-            href="https://island-market.vercel.app"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="backdrop-blur-sm bg-gradient-to-bl from-white/10 to-white/50 dark:from-black/10 dark:to-black/50 rounded-sm rounded-tl-3xl rounded-br-3xl border border-white/20 dark:border-white/10 shadow-2xl p-6 hover:shadow-pink-500/20 dark:hover:shadow-pink-400/30 transition-all duration-300 ease-in-out transform hover:-translate-y-1"
-          >
-            <IslandMarketProject />
-          </a>
-          <a 
-            href="https://fastcachepawn.vercel.app"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="backdrop-blur-sm bg-gradient-to-bl from-white/10 to-white/50 dark:from-black/10 dark:to-black/50 rounded-sm rounded-tl-3xl rounded-br-3xl border border-white/20 dark:border-white/10 shadow-2xl p-6 hover:shadow-pink-500/20 dark:hover:shadow-pink-400/30 transition-all duration-300 ease-in-out transform hover:-translate-y-1"
-          >
-            <FastCachePawnProject />
-          </a>
-          <a 
-            href="https://foxlot.app"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="backdrop-blur-sm bg-gradient-to-bl from-white/10 to-white/50 dark:from-black/10 dark:to-black/50 rounded-sm rounded-tl-3xl rounded-br-3xl border border-white/20 dark:border-white/10 shadow-2xl p-6 hover:shadow-pink-500/20 dark:hover:shadow-pink-400/30 transition-all duration-300 ease-in-out transform hover:-translate-y-1"
-          >
-            <FoxLotProject />
-          </a>
-          <a 
-            href="/contact"
-            className="backdrop-blur-sm bg-gradient-to-bl from-white/10 to-white/50 dark:from-black/10 dark:to-black/50 rounded-sm rounded-tl-3xl rounded-br-3xl border border-white/20 dark:border-white/10 shadow-2xl p-6 hover:shadow-pink-500/20 dark:hover:shadow-pink-400/30 transition-all duration-300 ease-in-out transform hover:-translate-y-1"
-          >
-            <GhostProject />
-          </a>
+          {PROJECTS.map((project, index) => (
+            <ProjectPreview
+              key={index}
+              {...project}
+            />
+          ))}
         </div>
       </div>
     </section>

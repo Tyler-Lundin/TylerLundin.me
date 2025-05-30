@@ -3,6 +3,7 @@
 import { useEffect, useState, useCallback, useRef } from 'react';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
+import AnimatedBackground from './AnimatedBackground';
 
 export default function ParallaxBackground() {
   const [scrollPosition, setScrollPosition] = useState(0);
@@ -31,22 +32,44 @@ export default function ParallaxBackground() {
 
   return (
     <motion.div 
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 1.5 }}
-      className="fixed inset-0 -z-10 bg-white"
+      className="fixed inset-0 -z-10"
     >
-      <div className="absolute inset-0 bg-gradient-to-b from-white via-transparent to-white z-50 dark:invert" />
+      <motion.span
+      className="absolute inset-0 -z-10 bg-white dark:bg-black"
+      initial={{ opacity: 0.5 }}
+            style={{
+              transform: `translateY(${scrollPosition * 0.1}px)`,
+              willChange: 'transform',
+            }}
+      >
+      <AnimatedBackground />
+      <VerticalGradient />
+      <HorizontalGradient />
       <Image
-        style={{
-          transform: `translateY(${scrollPosition * 0.05}px)`,
-          willChange: 'transform',
-        }}
         src="/images/landing-page/hero-bg.jpg"
         alt="Hero Background"
         fill
-        className="object-cover absolute inset-0 invert grayscale dark:invert-0 opacity-75"
+        className="object-cover absolute inset-0 invert -z-20 grayscale animate-spin-zoom  dark:invert-0 opacity-75"
       />
+      </motion.span>
     </motion.div>
   );
 } 
+
+function VerticalGradient() {
+  return (
+    <>
+    <div className="absolute inset-0 bg-gradient-to-b from-white via-transparent to-transparent z-50 dark:invert" />
+    <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-white z-50 dark:invert" />
+    </>
+  );
+}
+
+function HorizontalGradient() {
+  return (
+    <>
+    <div className="absolute inset-0 bg-gradient-to-r from-white via-transparent to-transparent z-50 dark:invert" />
+    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-transparent to-white z-50 dark:invert" />
+    </>
+  );
+}

@@ -1,46 +1,39 @@
 'use client';
 
-import { useEffect, useState, useCallback, useRef } from 'react';
-import { motion } from 'framer-motion';
+import { useEffect, useCallback, useRef } from 'react';
 import Image from 'next/image';
 import AnimatedBackground from './AnimatedBackground';
 
 export default function ParallaxBackground() {
-  const [scrollPosition, setScrollPosition] = useState(0);
+  const spanRef = useRef<HTMLSpanElement>(null);
   const rafId = useRef<number | undefined>(undefined);
 
   const handleScroll = useCallback(() => {
-    if (rafId.current) {
-      cancelAnimationFrame(rafId.current);
-    }
-    
+    if (rafId.current) cancelAnimationFrame(rafId.current);
     rafId.current = requestAnimationFrame(() => {
-      setScrollPosition(window.scrollY);
+      const offset = window.scrollY * 0.1;
+      if (spanRef.current) {
+        spanRef.current.style.transform = `translateY(${offset}px)`;
+      }
     });
   }, []);
 
   useEffect(() => {
-    handleScroll();
+    handleScroll(); // Initial position
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => {
       window.removeEventListener('scroll', handleScroll);
-      if (rafId.current) {
-        cancelAnimationFrame(rafId.current);
-      }
+      if (rafId.current) cancelAnimationFrame(rafId.current);
     };
   }, [handleScroll]);
 
   return (
-    <motion.div 
+    <div 
       className="fixed inset-0 -z-10"
     >
-      <motion.span
+      <span
       className="absolute inset-0 -z-10 bg-white dark:bg-black"
-      initial={{ opacity: 0.5 }}
-            style={{
-              transform: `translateY(${scrollPosition * 0.1}px)`,
-              willChange: 'transform',
-            }}
+      ref={spanRef}
       >
       <AnimatedBackground />
       <VerticalGradient />
@@ -49,10 +42,13 @@ export default function ParallaxBackground() {
         src="/images/landing-page/hero-bg.jpg"
         alt="Hero Background"
         fill
-        className="object-cover absolute inset-0 invert -z-20 grayscale animate-spin-zoom  dark:invert-0 opacity-75"
+        sizes="(max-width: 768px) 100vw, 33vw"
+        priority
+        quality={70}
+        className="object-cover absolute inset-0 hidden md:block invert -z-20 grayscale animate-spin-zoom  dark:invert-0 opacity-75"
       />
-      </motion.span>
-    </motion.div>
+      </span>
+    </div>
   );
 } 
 

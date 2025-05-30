@@ -54,6 +54,7 @@ export function Hero() {
         <div className="backdrop-blur-sm bg-gradient-to-bl from-white/10 to-white/50 dark:from-black/10 dark:to-black/50 rounded-3xl border border-white/20 dark:border-white/10 shadow-2xl p-8 sm:p-12 max-w-4xl mx-auto">
           <div className="space-y-8">
             {/* Profile and Role Section */}
+            
               {/* Profile Image with Glass Effect */}
               <div className="relative w-32 h-32 sm:w-40 sm:h-40 mx-auto">
                 <div className="absolute inset-0 rounded-full bg-gradient-to-br from-blue-500/20 via-purple-500/20 to-pink-500/20 blur-xl" />

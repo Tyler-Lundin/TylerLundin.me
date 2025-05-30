@@ -2,6 +2,8 @@
 
 import { useEffect, useState, useCallback, useRef } from 'react';
 import { motion } from 'framer-motion';
+import Image from 'next/image';
+
 export default function ParallaxBackground() {
   const [scrollPosition, setScrollPosition] = useState(0);
   const rafId = useRef<number | undefined>(undefined);
@@ -35,16 +37,15 @@ export default function ParallaxBackground() {
       className="fixed inset-0 -z-10 bg-white"
     >
       <div className="absolute inset-0 bg-gradient-to-b from-white via-transparent to-white z-50 dark:invert" />
-      <div 
-        className="absolute inset-0"
+      <Image
         style={{
-          backgroundImage: 'url("/images/background.jpeg")',
-          backgroundPosition: 'center',
-          backgroundRepeat: 'no-repeat',
-          backgroundSize: 'cover',
           transform: `translateY(${scrollPosition * 0.05}px)`,
           willChange: 'transform',
         }}
+        src="/images/landing-page/hero-bg.jpg"
+        alt="Hero Background"
+        fill
+        className="object-cover absolute inset-0 invert grayscale dark:invert-0 opacity-75"
       />
     </motion.div>
   );

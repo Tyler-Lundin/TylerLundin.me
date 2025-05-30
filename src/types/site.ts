@@ -24,7 +24,7 @@ export interface SiteConfig {
 }
 
 export type Section = 
-  | HeroSection
+  | HomeSection
   | AboutSection
   | ProjectsSection
   | ServicesSection
@@ -35,8 +35,8 @@ interface BaseSection {
   headline: string;
 }
 
-export interface HeroSection extends BaseSection {
-  type: 'hero';
+export interface HomeSection extends BaseSection {
+  type: 'home';
   tagline?: string;
   subheadline: string;
   cta: {

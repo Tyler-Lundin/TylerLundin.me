@@ -1,58 +1,70 @@
 'use client';
 
-import { useState } from 'react';
 import { ProjectsSection } from '@/types/site';
 import { IslandMarketProject } from '../projects/IslandMarketProject';
 import { FastCachePawnProject } from '../projects/FastCachePawnProject';
 import { GhostProject } from '../projects/GhostProject';
 import { FoxLotProject } from '../BookingProject';
-import { Modal } from '../Modal';
+import { LundinVisionProject } from '../projects/LundinVisionProject';
 
 interface ProjectsProps {
   section: ProjectsSection;
 }
 
 export function Projects({ section }: ProjectsProps) {
-  const [selectedProject, setSelectedProject] = useState<string | null>(null);
-
   return (
-    <section id="projects" className="min-h-screen py-20 bg-white dark:bg-black">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <h2 className="text-5xl font-bold mb-16 text-center text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-pink-500 to-purple-500 dark:from-cyan-300 dark:via-pink-400 dark:to-purple-400 tracking-tight">
-          {section.headline}
+    <section id="projects" className="min-h-screen py-20 relative overflow-hidden">
+      {/* Animated background gradient */}
+      <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 via-purple-500/10 to-pink-500/10 dark:from-blue-500/5 dark:via-purple-500/5 dark:to-pink-500/5 animate-gradient" />
+      
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        <h2 className="text-5xl font-bold mb-16 text-center">
+          <span className="relative">
+            {section.headline}
+            <span className="absolute inset-0 bg-gradient-to-r from-blue-500/10 via-purple-500/10 to-pink-500/10 blur-xl -z-10" />
+          </span>
         </h2>
+        
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
-          <div 
-            onClick={() => setSelectedProject('https://island-market.vercel.app')}
-            className="rounded-xl p-6 bg-neutral-800/30 dark:bg-neutral-900/50 border border-neutral-700/50 dark:border-neutral-800/70 hover:bg-neutral-700/50 dark:hover:bg-neutral-800/70 transition-all duration-300 ease-in-out cursor-pointer shadow-lg hover:shadow-pink-500/20 dark:hover:shadow-pink-400/30 transform hover:-translate-y-1"
+          <a 
+            href="https://lundin-vision.vercel.app"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="backdrop-blur-sm bg-gradient-to-bl from-white/10 to-white/50 dark:from-black/10 dark:to-black/50 rounded-sm rounded-tl-3xl rounded-br-3xl border border-white/20 dark:border-white/10 shadow-2xl p-6 hover:shadow-pink-500/20 dark:hover:shadow-pink-400/30 transition-all duration-300 ease-in-out transform hover:-translate-y-1"
+          >
+            <LundinVisionProject />
+          </a>
+          <a 
+            href="https://island-market.vercel.app"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="backdrop-blur-sm bg-gradient-to-bl from-white/10 to-white/50 dark:from-black/10 dark:to-black/50 rounded-sm rounded-tl-3xl rounded-br-3xl border border-white/20 dark:border-white/10 shadow-2xl p-6 hover:shadow-pink-500/20 dark:hover:shadow-pink-400/30 transition-all duration-300 ease-in-out transform hover:-translate-y-1"
           >
             <IslandMarketProject />
-          </div>
-          <div 
-            onClick={() => setSelectedProject('https://fastcachepawn.vercel.app')}
-            className="rounded-xl p-6 bg-neutral-800/30 dark:bg-neutral-900/50 border border-neutral-700/50 dark:border-neutral-800/70 hover:bg-neutral-700/50 dark:hover:bg-neutral-800/70 transition-all duration-300 ease-in-out cursor-pointer shadow-lg hover:shadow-pink-500/20 dark:hover:shadow-pink-400/30 transform hover:-translate-y-1"
+          </a>
+          <a 
+            href="https://fastcachepawn.vercel.app"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="backdrop-blur-sm bg-gradient-to-bl from-white/10 to-white/50 dark:from-black/10 dark:to-black/50 rounded-sm rounded-tl-3xl rounded-br-3xl border border-white/20 dark:border-white/10 shadow-2xl p-6 hover:shadow-pink-500/20 dark:hover:shadow-pink-400/30 transition-all duration-300 ease-in-out transform hover:-translate-y-1"
           >
             <FastCachePawnProject />
-          </div>
-          <div 
-            onClick={() => setSelectedProject('https://foxlot.app')}
-            className="rounded-xl p-6 bg-neutral-800/30 dark:bg-neutral-900/50 border border-neutral-700/50 dark:border-neutral-800/70 hover:bg-neutral-700/50 dark:hover:bg-neutral-800/70 transition-all duration-300 ease-in-out cursor-pointer shadow-lg hover:shadow-pink-500/20 dark:hover:shadow-pink-400/30 transform hover:-translate-y-1"
+          </a>
+          <a 
+            href="https://foxlot.app"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="backdrop-blur-sm bg-gradient-to-bl from-white/10 to-white/50 dark:from-black/10 dark:to-black/50 rounded-sm rounded-tl-3xl rounded-br-3xl border border-white/20 dark:border-white/10 shadow-2xl p-6 hover:shadow-pink-500/20 dark:hover:shadow-pink-400/30 transition-all duration-300 ease-in-out transform hover:-translate-y-1"
           >
             <FoxLotProject />
-          </div>
-          <div 
-            onClick={() => setSelectedProject('/contact')}
-            className="rounded-xl p-6 bg-neutral-800/30 dark:bg-neutral-900/50 border border-neutral-700/50 dark:border-neutral-800/70 hover:bg-neutral-700/50 dark:hover:bg-neutral-800/70 transition-all duration-300 ease-in-out cursor-pointer shadow-lg hover:shadow-pink-500/20 dark:hover:shadow-pink-400/30 transform hover:-translate-y-1"
+          </a>
+          <a 
+            href="/contact"
+            className="backdrop-blur-sm bg-gradient-to-bl from-white/10 to-white/50 dark:from-black/10 dark:to-black/50 rounded-sm rounded-tl-3xl rounded-br-3xl border border-white/20 dark:border-white/10 shadow-2xl p-6 hover:shadow-pink-500/20 dark:hover:shadow-pink-400/30 transition-all duration-300 ease-in-out transform hover:-translate-y-1"
           >
             <GhostProject />
-          </div>
+          </a>
         </div>
-
-        <Modal
-          isOpen={!!selectedProject}
-          onClose={() => setSelectedProject(null)}
-          url={selectedProject || ''}
-        />
       </div>
     </section>
   );

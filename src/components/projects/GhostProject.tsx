@@ -30,9 +30,12 @@ export function GhostProject({ isExpanded = false }: GhostProjectProps) {
             Expert Development
           </span>
         </div>
-        <div className="text-sm sm:text-base text-indigo-600 dark:text-emerald-300 font-medium">
+        <a 
+          href="/contact"
+          className="inline-block text-sm sm:text-base text-indigo-600 dark:text-emerald-300 font-medium hover:text-indigo-500 dark:hover:text-emerald-200 transition-colors duration-200"
+        >
           Let&apos;s Build Your Project →
-        </div>
+        </a>
         <p className="text-gray-600 dark:text-gray-400">
           I&apos;ve been working with Ghost for years, and I&apos;ve built a number of custom themes and integrations.
         </p>

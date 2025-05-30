@@ -15,7 +15,7 @@ interface NavProps {
 
 
 function MobileMenuButton({ onClick, minimal }: { onClick: () => void; minimal?: boolean }) {
-  const baseClasses = "lg:hidden text-gray-900 hover:blur-[2px] blur-[0px] transition-all duration-300 cursor-pointer ";
+  const baseClasses = "lg:hidden text-gray-900 dark:text-white hover:blur-[2px] blur-[0px] transition-all duration-300 cursor-pointer ";
   const positionClasses = minimal 
     ? "absolute top-1/2 -translate-y-1/2  z-50 right-4 lg:right-8"
     : "absolute top-4 right-4 lg:right-8 z-50 text-black";
@@ -45,7 +45,7 @@ function MobileMenuButton({ onClick, minimal }: { onClick: () => void; minimal?:
 
 function LogoContainer({ children, isScrolled }: { children: React.ReactNode; isScrolled: boolean }) {
   return (
-    <div className={`flex flex-col items-center justify-center transition-all duration-300 h-full relative ${
+    <div className={`flex flex-col items-center justify-center transition-all duration-300 absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 lg:relative lg:top-0 lg:left-0 lg:translate-x-0 lg:translate-y-0 ${
       isScrolled ? 'opacity-0 -translate-y-20' : 'opacity-100 translate-y-0'
     }`}>
       {children}
@@ -55,12 +55,15 @@ function LogoContainer({ children, isScrolled }: { children: React.ReactNode; is
 
 function DesktopNav({ isScrolled, minimal }: { isScrolled?: boolean; minimal?: boolean }) {
     const pathname = usePathname();
-    const baseClasses = "hidden py-4 lg:flex w-full justify-center lg:space-x-24 md:space-x-8";
-  const fullNavClasses = `${baseClasses} bg-white/75 dark:bg-black/75 backdrop-blur-sm border-y border-gray-200 dark:border-white/25 py-1 transition-all duration-300 ${
+    const baseClasses = "hidden py-4 lg:flex w-min mx-auto justify-center lg:space-x-24 md:space-x-8";
+  const fullNavClasses = `${baseClasses} py-1 transition-all duration-300 ${
     isScrolled ? 'opacity-0 -translate-y-20' : 'opacity-100'
   }`;
 
   function isCurrentLink(sectionType: string) {
+    if (sectionType === 'home') {
+      return pathname === '/';
+    }
     return pathname === `/${sectionType}`;
   }
   
@@ -68,14 +71,13 @@ function DesktopNav({ isScrolled, minimal }: { isScrolled?: boolean; minimal?: b
   return (
     <div className={minimal ? baseClasses : fullNavClasses}>
       {siteConfig.sections
-        .filter(section => section.type !== 'hero')
         .map((section) => (
           <Link
             key={section.type}
-            href={`/${section.type}`}
-            className={cn(`text-gray-900 dark:text-white font-light text-md lg:text-lg hover:blur-[2px] transition-all blur-[0px] duration-200`, {
+            href={section.type === 'home' ? '/' : `/${section.type}`}
+            className={cn(`text-gray-900 dark:text-white font-light text-md hover:blur-[2px] transition-all blur-[0px] duration-200`, {
               'text-indigo-600': section.type === 'services'
-            }, isCurrentLink(section.type) && 'blur-[2px]')}
+            }, isCurrentLink(section.type) && 'blur-[2px] pointer-events-none')}
           >
             {section.headline}
           </Link>
@@ -84,9 +86,9 @@ function DesktopNav({ isScrolled, minimal }: { isScrolled?: boolean; minimal?: b
   );
 }
 
-function MainNav({ isScrolled, setIsMenuOpen }: NavProps) {
+function InitialNav({ isScrolled, setIsMenuOpen }: NavProps) {
   return (
-    <nav className="relative z-50 transition-all duration-500 bg-gradient-to-r from-blue-700/50 dark:from-blue-800/75 via-yellow-700/50 dark:via-green-800/75 to-purple-700/50 dark:to-purple-900/75 backdrop-blur-sm h-24">
+    <nav className="absolute inset-4 h-24 rounded-lg z-50 transition-all duration-500 bg-gradient-to-r from-blue-500/50 dark:from-pink-950/50 via-yellow-400/50 dark:via-blue-800/50 to-purple-500/50 dark:to-purple-900/75 backdrop-blur-[2px] pt-3">
       <div className="h-full">
         <MobileMenuButton onClick={() => setIsMenuOpen(true)} minimal/>
         
@@ -94,19 +96,21 @@ function MainNav({ isScrolled, setIsMenuOpen }: NavProps) {
           <Logo />
         </LogoContainer>
 
+        <hr className="w-auto border-[2px] hidden lg:block translate-y-1 border-white dark:border-black" />
+
         <DesktopNav isScrolled={isScrolled} />
       </div>
     </nav>
   );
 }
 
-function MiniNav({ isScrolled, setIsMenuOpen }: NavProps) {
+function FixedNav({ isScrolled, setIsMenuOpen }: NavProps) {
   return (
-    <div className={`fixed top-0 left-0 right-0 z-50 bg-white/75 dark:bg-black/25 backdrop-blur-md border-b border-gray-200 dark:border-white/25 transition-all duration-300 ${
+    <div className={`fixed top-4 left-4 right-4 z-50 bg-gradient-to-r from-blue-500/50 dark:from-pink-950/50 via-yellow-400/50 dark:via-blue-800/50 to-purple-500/50 dark:to-purple-900/75 backdrop-blur-[2px] rounded-lg backdrop-blur-md border-b border-gray-200 dark:border-white/25 transition-all duration-300 ${
       isScrolled ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-full'
     }`}>
-      <div className="container mx-auto px-4 h-12 flex items-center justify-between">
-        <div className="absolute z-[200] top-1/2 -translate-y-1/2 left-4">
+      <div className="container px-4 h-12 flex items-center justify-between">
+        <div className="relative z-[200] ">
           <Logo />
         </div>
         <DesktopNav minimal />
@@ -131,8 +135,8 @@ export function Navbar() {
 
   return (
     <>
-      <MainNav isScrolled={isScrolled} setIsMenuOpen={setIsMenuOpen} />
-      <MiniNav isScrolled={isScrolled} setIsMenuOpen={setIsMenuOpen} />
+      <InitialNav isScrolled={isScrolled} setIsMenuOpen={setIsMenuOpen} />
+      <FixedNav isScrolled={isScrolled} setIsMenuOpen={setIsMenuOpen} />
       <MobileMenu isOpen={isMenuOpen} onClose={() => setIsMenuOpen(false)} />
     </>
   );

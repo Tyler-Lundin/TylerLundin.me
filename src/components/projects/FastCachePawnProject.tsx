@@ -56,9 +56,14 @@ export function FastCachePawnProject({ isExpanded = false }: FastCachePawnProjec
             </span>
           ))}
         </div>
-        <div className="text-sm sm:text-base text-indigo-600 dark:text-emerald-300 font-medium">
+        <a 
+          href="https://fastcachepawn.vercel.app"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-block text-sm sm:text-base text-indigo-600 dark:text-emerald-300 font-medium hover:text-indigo-500 dark:hover:text-emerald-200 transition-colors duration-200"
+        >
           View Project →
-        </div>
+        </a>
       </div>
     </div>
   );

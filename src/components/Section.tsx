@@ -11,7 +11,7 @@ interface SectionProps {
 
 export function Section({ section }: SectionProps) {
   switch (section.type) {
-    case 'hero':
+    case 'home':
       return <Hero />;
     case 'about':
       return <About />;

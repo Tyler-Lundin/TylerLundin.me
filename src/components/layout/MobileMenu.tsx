@@ -69,7 +69,6 @@ export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
           <nav className="flex-1">
             <ul className="space-y-6">
               {siteConfig.sections
-                .filter(section => section.type !== 'hero')
                 .map((section) => (
                   <li key={section.type}>
                     <Link

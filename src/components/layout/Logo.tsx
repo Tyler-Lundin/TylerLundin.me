@@ -11,13 +11,13 @@ export function Logo() {
   return (
     <Link href="/" className="group inline-block">
       <div className="flex items-baseline space-x-1">
-        <span style={{ fontFamily: roboto.style.fontFamily }} className="text-xl lg:text-3xl font-light tracking-tight text-neutral-900 dark:text-white group-hover:text-white transition-colors duration-300">
+        <span style={{ fontFamily: roboto.style.fontFamily }} className="text-md  font-light tracking-tight text-neutral-900 dark:text-white group-hover:text-indigo-900 transition-colors duration-300">
           Tyler
         </span>
-        <span style={{ fontFamily: roboto.style.fontFamily }} className="text-xl lg:text-3xl font-light tracking-tight text-neutral-900 dark:text-white group-hover:text-indigo-400 transition-colors duration-300">
+        <span style={{ fontFamily: roboto.style.fontFamily }} className="text-md font-light tracking-tight text-neutral-900 dark:text-white group-hover:text-indigo-800 transition-colors duration-300">
           Lundin
         </span>
-        <span style={{ fontFamily: roboto.style.fontFamily }} className="text-sm lg:text-base font-thin text-indigo-700 dark:text-emerald-300 group-hover:text-indigo-300 transition-colors duration-300">
+        <span style={{ fontFamily: roboto.style.fontFamily }} className="text-sm lg:text-base font-thin text-indigo-700 dark:text-emerald-300 group-hover:text-indigo-700 transition-colors duration-300">
           .me
         </span>
       </div>

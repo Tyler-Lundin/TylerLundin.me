@@ -17,8 +17,8 @@ export const siteConfig: SiteConfig = {
   },
   sections: [
     {
-      type: "hero",
-      headline: "Building Bold Websites for Businesses Ready to Stand Out",
+      type: "home",
+      headline: "home",
       subheadline: "I'm Tyler, a freelance web developer based in Spokane, WA. I build sleek, blazing-fast websites that don't just look good—they perform. From custom booking systems to full-blown e-commerce, I help local businesses get seen, get booked, and get paid. Let's make your online presence impossible to ignore.",
       cta: {
         label: "portfolio",

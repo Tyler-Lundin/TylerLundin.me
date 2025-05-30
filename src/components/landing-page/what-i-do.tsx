@@ -2,7 +2,7 @@ import { DevicePhoneMobileIcon, BoltIcon, CodeBracketIcon } from "@heroicons/rea
 
 export default function WhatIDo() {
   return (
-    <section id="what-i-do" className="py-24 bg-neutral-100 dark:bg-neutral-950">
+    <section id="what-i-do" className="py-24 bg-neutral-100 dark:bg-neutral-950/50 backdrop-blur-sm max-w-7xl mx-auto rounded-lg">
       <div className="max-w-6xl mx-auto px-6 space-y-20">
         <h2 className="text-4xl sm:text-5xl font-semibold text-center tracking-tight text-neutral-800 dark:text-neutral-100">
           How I Bring Value

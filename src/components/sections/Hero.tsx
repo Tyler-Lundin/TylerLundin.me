@@ -1,55 +1,98 @@
 "use client";
 
 import Link from 'next/link';
+import { useEffect, useState } from 'react';
+import Image from 'next/image';
+
+const ROLES = [
+  'Web Dev',
+  'Builder',
+  'Creator',
+  'Designer',
+];
 
 export function Hero() {
+  const [currentRoleIndex, setCurrentRoleIndex] = useState(0);
+  const [isTransitioning, setIsTransitioning] = useState(false);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setIsTransitioning(true);
+      setTimeout(() => {
+        setCurrentRoleIndex((prev) => (prev + 1) % ROLES.length);
+        setIsTransitioning(false);
+      }, 500);
+    }, 3666);
+
+    return () => clearInterval(interval);
+  }, []);
+
   return (
     <section
       id="hero"
-      className="min-h-[calc(100vh-4rem)] flex flex-col justify-center items-center bg-gradient-to-b from-neutral-50 via-neutral-100 to-neutral-200 dark:from-neutral-900 dark:via-neutral-800 dark:to-neutral-900 relative overflow-hidden text-center px-4 sm:px-6 lg:px-8"
+      className="min-h-[calc(100vh-4rem)] flex flex-col justify-center relative overflow-hidden"
     >
-      {/* Background Image */}
-      <div
-        className="absolute inset-0 z-0 invert dark:invert-0 grayscale sepia opacity-25"
-        style={{
-          backgroundImage: "url('/images/landing-page/hero-bg.jpg')",
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          backgroundRepeat: 'no-repeat',
-          backgroundBlendMode: 'multiply',
-        }}
-      />
-      {/* Optional subtle background gradient/light grain */}
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(120,120,120,0.03),transparent_70%)] dark:bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.02),transparent_70%)] pointer-events-none z-0" />
-      <div className="absolute inset-0 bg-gradient-to-b from-neutral-50 dark:from-black z-10  via-transparent to-neutral-100 dark:to-neutral-950" />
+      {/* Animated background gradient */}
+      <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 via-purple-500/10 to-pink-500/10 dark:from-blue-500/5 dark:via-purple-500/5 dark:to-pink-500/5 animate-gradient" />
       
-      <div className="max-w-3xl relative z-10 space-y-8">
-        <h1 className="text-5xl sm:text-6xl lg:text-7xl font-light text-neutral-800 dark:text-neutral-100 tracking-tight">
-          Hello, I&apos;m Tyler.
-        </h1>
-        
-        <h2 className="text-3xl sm:text-4xl lg:text-5xl font-light text-neutral-700 dark:text-neutral-200 tracking-tight">
-          A <span className="font-medium text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 dark:from-blue-400 dark:via-purple-400 dark:to-pink-400">Full-Stack Developer</span>
-          <span className="block text-2xl sm:text-3xl lg:text-4xl mt-2 text-neutral-600 dark:text-neutral-300"> & Digital Craftsman.</span>
-        </h2>
+      {/* Glass morphism container */}
+      <div className="relative z-10 mx-auto px-4 sm:px-6 lg:px-16">
+        <div className="backdrop-blur-sm bg-gradient-to-bl from-white/10 to-white/50 dark:from-black/10 dark:to-black/50 rounded-sm rounded-tl-3xl rounded-br-3xl border border-white/20 dark:border-white/10 shadow-2xl p-8 sm:p-12 max-w-4xl mx-auto">
+          <div className="space-y-8">
+            {/* Profile and Role Section */}
+            <div className="flex flex-col sm:flex-row items-center sm:items-start gap-8">
+              {/* Profile Image with Glass Effect */}
+              <div className="relative w-32 h-32 sm:w-40 sm:h-40">
+                <div className="absolute inset-0 rounded-full bg-gradient-to-br from-blue-500/20 via-purple-500/20 to-pink-500/20 blur-xl" />
+                <div className="relative w-full h-full rounded-sm rounded-tl-3xl rounded-br-3xl overflow-hidden border-2 border-white/20 dark:border-white/10 backdrop-blur-sm">
+                  <Image 
+                    src="/images/tyler.png" 
+                    alt="Tyler" 
+                    fill 
+                    className="object-cover"
+                  />
+                </div>
+              </div>
 
-        <p className="text-lg sm:text-xl text-neutral-600 dark:text-neutral-400 max-w-2xl mx-auto">
-          I build high-performance, user-focused web applications that drive results. Turning complex ideas into elegant and effective digital solutions.
-        </p>
+              {/* Role Text with Glass Effect */}
+              <div className="text-center sm:text-left self-center mx-auto">
+                <h2 className="text-3xl sm:text-4xl lg:text-5xl font-light text-neutral-800 dark:text-neutral-200 tracking-tight">
+                  <span className="font-thin lowercase">
+                    <span className={`inline-block transition-all duration-1000 ease-in-out transform ${
+                      isTransitioning ? 'opacity-0 -translate-y-4' : 'opacity-100 translate-y-0'
+                    }`}>
+                      {ROLES[currentRoleIndex]}
+                      <span className="absolute inset-0 bg-gradient-to-r from-blue-500/20 via-purple-500/20 to-pink-500/20 blur-xl -z-10" />
+                    </span>
+                  </span>
+                </h2>
+              </div>
+            </div>
 
-        <div className="flex flex-col sm:flex-row gap-4 justify-center pt-6">
-          <Link
-            href="/projects"
-            className="px-8 py-3.5 rounded-lg bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 text-base font-medium hover:bg-neutral-700 dark:hover:bg-neutral-200 transition-colors duration-300 ease-in-out shadow-md hover:shadow-lg transform hover:-translate-y-0.5"
-          >
-            View My Projects
-          </Link>
-          <Link
-            href="/contact"
-            className="px-8 py-3.5 rounded-lg border border-neutral-700 dark:border-neutral-300 text-neutral-700 dark:text-neutral-300 text-base font-medium hover:bg-neutral-700/10 dark:hover:bg-white/10 transition-colors duration-300 ease-in-out transform hover:-translate-y-0.5"
-          >
-            Get In Touch
-          </Link>
+            {/* Name with Glass Effect */}
+            <h1 className="text-5xl sm:text-6xl lg:text-7xl font-black text-neutral-800 dark:text-neutral-100 tracking-tight text-center">
+              <span className="relative">
+                Tyler Lundin
+                <span className="absolute inset-0 bg-gradient-to-r from-blue-500/10 via-purple-500/10 to-pink-500/10 blur-xl -z-10" />
+              </span>
+            </h1>
+
+            {/* Buttons with Glass Effect */}
+            <div className="flex flex-col sm:flex-row gap-4 pt-6 justify-center">
+              <Link
+                href="/projects"
+                className="px-8 py-3.5 rounded-xl backdrop-blur-sm bg-white/10 dark:bg-black/10 border border-white/20 dark:border-white/10 text-neutral-800 dark:text-neutral-200 text-base font-medium hover:bg-white/20 dark:hover:bg-black/20 transition-all duration-300 ease-in-out shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+              >
+                View My Projects
+              </Link>
+              <Link
+                href="/contact"
+                className="px-8 py-3.5 rounded-xl backdrop-blur-sm bg-white/5 dark:bg-black/5 border border-white/10 dark:border-white/5 text-neutral-800 dark:text-neutral-200 text-base font-medium hover:bg-white/10 dark:hover:bg-black/10 transition-all duration-300 ease-in-out transform hover:-translate-y-0.5"
+              >
+                Get In Touch
+              </Link>
+            </div>
+          </div>
         </div>
       </div>
     </section>

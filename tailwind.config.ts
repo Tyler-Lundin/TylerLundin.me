@@ -28,10 +28,15 @@ const config: Config = {
             'background-position': 'right center'
           },
         },
+        blink: {
+          '0%, 100%': { opacity: '1' },
+          '50%': { opacity: '0' },
+        },
       },
       animation: {
         'wave': 'wave 1.5s ease-in-out infinite',
         'gradient': 'gradient 15s ease infinite',
+        'blink': 'blink 1s step-start infinite',
       }
     },
   },

@@ -36,6 +36,7 @@ export default function ParallaxBackground() {
       ref={spanRef}
       >
       <AnimatedBackground />
+      <VerticalBuffer />
       <VerticalGradient />
       <HorizontalGradient />
       <Image
@@ -66,6 +67,15 @@ function HorizontalGradient() {
     <>
     <div className="absolute inset-0 bg-gradient-to-r from-white via-transparent to-transparent z-50 dark:invert" />
     <div className="absolute inset-0 bg-gradient-to-r from-transparent via-transparent to-white z-50 dark:invert" />
+    </>
+  );
+}
+
+function VerticalBuffer() {
+  return (
+    <>
+    <div className="absolute top-0 left-0 w-screen h-screen -translate-y-full bg-white dark:bg-black" />
+    <div className="absolute bottom-0 left-0 w-screen h-screen translate-y-full bg-white dark:bg-black" />
     </>
   );
 }

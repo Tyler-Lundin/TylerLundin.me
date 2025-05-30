@@ -55,7 +55,7 @@ function LogoContainer({ children, isScrolled }: { children: React.ReactNode; is
 
 function DesktopNav({ isScrolled, minimal }: { isScrolled?: boolean; minimal?: boolean }) {
     const pathname = usePathname();
-    const baseClasses = "hidden py-4 lg:flex w-min mx-auto justify-center lg:space-x-24 md:space-x-8";
+    const baseClasses = "hidden py-4 lg:flex w-min mx-auto justify-center md:space-x-32";
   const fullNavClasses = `${baseClasses} py-1 transition-all duration-300 ${
     isScrolled ? 'opacity-0 -translate-y-20' : 'opacity-100'
   }`;

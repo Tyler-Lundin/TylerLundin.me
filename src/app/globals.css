@@ -175,3 +175,12 @@ body {
   50% { transform: scale(5.0) rotate(180deg); }
   100% { transform: scale(1) rotate(360deg); }
 }
+
+.animate-blink {
+  animation: blink 1s step-start infinite;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}

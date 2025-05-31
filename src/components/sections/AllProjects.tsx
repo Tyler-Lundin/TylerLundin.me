@@ -1,11 +1,10 @@
 'use client';
 
-import { HobbiesSection } from '@/types/site';
-import { motion, AnimatePresence } from 'framer-motion';
-import { useState } from 'react';
+import { ProjectsSection } from '@/types/site';
+import { motion } from 'framer-motion';
 
-interface HobbiesProps {
-  section: HobbiesSection;
+interface projectsProps {
+  section: ProjectsSection;
 }
 
 const expertiseAreas = [
@@ -25,7 +24,7 @@ const expertiseAreas = [
       'Modern Tech Stack'
     ],
     cta: 'View Projects',
-    link: '/projects',
+    link: '/projects/web-dev',
     featured: true
   },
   {
@@ -44,7 +43,7 @@ const expertiseAreas = [
       'Personal Training'
     ],
     cta: 'Watch Videos',
-    link: 'https://youtube.com/@tylerlundin',
+    link: 'https://youtube.com/@MediocreTyler',
     featured: false
   },
   {
@@ -107,8 +106,7 @@ const expertiseAreas = [
   }
 ];
 
-export function Hobbies({ section }: HobbiesProps) {
-  const [selectedArea, setSelectedArea] = useState<typeof expertiseAreas[0] | null>(null);
+export function AllProjects({ section }: projectsProps) {
 
   return (
     <section id="services" className="py-32 bg-gradient-to-b from-gray-200/50 to-white/50 dark:from-black/50 dark:to-gray-900/50 backdrop-blur-lg">
@@ -138,13 +136,15 @@ export function Hobbies({ section }: HobbiesProps) {
         {/* Expertise Cards */}
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-16">
           {expertiseAreas.map((area, index) => (
-            <motion.button
+            <motion.a
+              href={area.link}
+              target="_blank"
+              rel="noopener noreferrer"
               key={area.name}
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: 0.2 * index }}
-              onClick={() => setSelectedArea(area)}
               className={`p-6 rounded-xl transition-all aspect-video duration-300 ease-in-out transform hover:-translate-y-1 group ${
                 area.featured 
                   ? 'bg-gradient-to-br from-pink-600 via-purple-600 to-rose-600 dark:from-pink-500 dark:via-purple-500 dark:to-rose-500 text-white shadow-xl hover:shadow-purple-500/40 dark:hover:shadow-purple-400/50' 
@@ -162,78 +162,9 @@ export function Hobbies({ section }: HobbiesProps) {
                 <h3 className="text-xl font-semibold ml-3 transition-colors">{area.name}</h3>
               </div>
               <p className="text-sm opacity-70 group-hover:opacity-90 transition-opacity text-left">{area.description}</p>
-            </motion.button>
+            </motion.a>
           ))}
         </div>
-
-        {/* Modal for Detailed View */}
-        <AnimatePresence>
-          {selectedArea && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="fixed inset-0 bg-black/70 backdrop-blur-md z-50 flex items-center justify-center p-4"
-              onClick={() => setSelectedArea(null)}
-            >
-              <motion.div
-                initial={{ scale: 0.9, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                exit={{ scale: 0.9, opacity: 0 }}
-                className="bg-white dark:bg-neutral-950 border border-slate-200 dark:border-neutral-800/70 rounded-2xl shadow-2xl shadow-purple-500/20 max-w-2xl w-full max-h-[90vh] overflow-y-auto"
-                onClick={e => e.stopPropagation()}
-              >
-                <div className="p-8">
-                  <div className="flex justify-between items-start mb-6">
-                    <div className="flex items-center">
-                      <div className={`p-3 rounded-lg ${
-                        selectedArea.featured 
-                          ? 'bg-gradient-to-br from-pink-600 via-purple-600 to-rose-600 text-white' 
-                          : 'bg-pink-100 dark:bg-pink-900/30 text-pink-600 dark:text-pink-400'
-                      }`}>
-                        {selectedArea.icon}
-                      </div>
-                      <div className="ml-4">
-                        <h3 className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-600 via-pink-600 to-purple-600 dark:from-cyan-400 dark:via-pink-400 dark:to-purple-400 mb-2">{selectedArea.name}</h3>
-                        <p className="text-slate-600 dark:text-neutral-300">{selectedArea.description}</p>
-                      </div>
-                    </div>
-                    <button
-                      onClick={() => setSelectedArea(null)}
-                      className="text-slate-400 hover:text-pink-500 dark:text-neutral-600 dark:hover:text-pink-400 transition-colors"
-                    >
-                      <svg className="h-7 w-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                      </svg>
-                    </button>
-                  </div>
-                  <ul className="space-y-4 mb-8">
-                    {selectedArea.features.map((feature) => (
-                      <li key={feature} className="flex items-start">
-                        <svg className="h-6 w-6 text-pink-500 dark:text-pink-400 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                        </svg>
-                        <span className="text-slate-700 dark:text-neutral-200">{feature}</span>
-                      </li>
-                    ))}
-                  </ul>
-                  <a
-                    href={selectedArea.link}
-                    target={selectedArea.link.startsWith('http') ? '_blank' : undefined}
-                    rel={selectedArea.link.startsWith('http') ? 'noopener noreferrer' : undefined}
-                    className={`block w-full py-3.5 px-6 rounded-lg font-medium text-center transition-all duration-300 ease-in-out shadow-md hover:shadow-lg transform hover:-translate-y-0.5 ${
-                      selectedArea.featured
-                        ? 'bg-gradient-to-r from-pink-600 via-purple-600 to-rose-600 dark:from-pink-500 dark:via-purple-500 dark:to-rose-500 text-white hover:from-pink-500 hover:to-rose-500'
-                        : 'bg-cyan-500 text-white hover:bg-cyan-400 dark:bg-cyan-600 dark:text-white dark:hover:bg-cyan-500'
-                    }`}
-                  >
-                    {selectedArea.cta}
-                  </a>
-                </div>
-              </motion.div>
-            </motion.div>
-          )}
-        </AnimatePresence>
       </div>
     </section>
   );

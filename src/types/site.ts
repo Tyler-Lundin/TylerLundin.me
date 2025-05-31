@@ -27,7 +27,7 @@ export type Section =
   | HomeSection
   | AboutSection
   | ProjectsSection
-  | HobbiesSection
+  | WebDevSection
   | ContactSection;
 
 interface BaseSection {
@@ -60,19 +60,13 @@ export interface Project {
   link: string;
 }
 
-export interface ProjectsSection extends BaseSection {
-  type: 'projects';
+export interface WebDevSection extends BaseSection {
+  type: 'projects/web-dev';
   projects: Project[];
 }
 
-export interface ServicesSection extends BaseSection {
-  type: 'services';
-  items: string[];
-  subheadline: string;
-}
-
-export interface HobbiesSection extends BaseSection {
-  type: 'hobbies';
+export interface ProjectsSection extends BaseSection {
+  type: 'projects';
   items: string[];
   subheadline: string;
 }

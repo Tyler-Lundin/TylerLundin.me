@@ -33,8 +33,8 @@ export const siteConfig: SiteConfig = {
       image: "/images/tyler.png"
     },
     {
-      type: "projects",
-      headline: "portfolio",
+      type: "projects/web-dev",
+      headline: "websites",
       projects: [
         {
           title: "Island Market",
@@ -69,8 +69,8 @@ export const siteConfig: SiteConfig = {
       ]
     },
     {
-      type: "hobbies",
-      headline: "hobbies",
+      type: "projects",
+      headline: "projects",
       subheadline: "Web Development, Bodybuilding, and Game Development",
       items: [
         "Web Development",

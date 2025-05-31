@@ -3,7 +3,7 @@ import { siteConfig } from '@/config/site';
 
 export function Footer() {
   return (
-    <footer className="fixed bottom-0 left-0 right-0 z-50">
+    <footer className="relative bottom-0 left-0 right-0 z-50">
       {/* Backdrop blur */}
       <div className="absolute inset-0 backdrop-blur-md bg-white/30 dark:bg-black/30" />
       
@@ -25,7 +25,7 @@ export function Footer() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex flex-col items-center space-y-2">
             {/* Status indicators */}
-            <div className="flex items-center space-x-3 mb-1">
+            <div className="flex items-center space-x-3 mb-1 pointer-events-none select-none">
               <div className="flex items-center space-x-1">
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
                 <span className="text-[10px] font-mono text-black/40 dark:text-white/40">SYSTEM ONLINE</span>

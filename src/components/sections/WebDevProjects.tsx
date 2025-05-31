@@ -1,13 +1,14 @@
 'use client';
 
-import { ProjectsSection } from '@/types/site';
+import { WebDevSection } from '@/types/site';
 import { ProjectPreview } from '../projects/ProjectPreview';
+import WebFAQ from '../WebFAQ';
 
-interface ProjectsProps {
-  section: ProjectsSection;
+interface WebDevProjectsProps {
+  section: WebDevSection;
 }
 
-const PROJECTS = [
+const WEB_DEV_PROJECTS = [
   {
     title: "Lundin Vision",
     description: "A sophisticated medical practice website combining modern web technologies with luxury aesthetics. Features include comprehensive service information, team profiles, appointment scheduling, and a responsive design with dark mode support.",
@@ -90,7 +91,7 @@ const PROJECTS = [
   },
 ];
 
-export function Projects({ section }: ProjectsProps) {
+export function WebDevProjects({ section }: WebDevProjectsProps) {
   return (
     <section id="projects" className="min-h-screen py-20 relative overflow-hidden">
       {/* Animated background gradient */}
@@ -105,7 +106,7 @@ export function Projects({ section }: ProjectsProps) {
         </h2>
         
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
-          {PROJECTS.map((project, index) => (
+          {WEB_DEV_PROJECTS.map((project, index) => (
             <ProjectPreview
               key={index}
               {...project}
@@ -113,6 +114,7 @@ export function Projects({ section }: ProjectsProps) {
           ))}
         </div>
       </div>
+      <WebFAQ />
     </section>
   );
 } 

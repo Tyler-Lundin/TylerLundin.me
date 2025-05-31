@@ -222,66 +222,6 @@ export function Contact({ section }: ContactProps) {
           </motion.div>
         </div>
 
-        {/* Web Development Section */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5, delay: 0.4 }}
-          className="mt-24"
-        >
-          <h3 className="text-3xl font-bold text-center mb-12 text-transparent bg-clip-text bg-gradient-to-r from-cyan-600 via-pink-600 to-purple-600 dark:from-cyan-400 dark:via-pink-400 dark:to-purple-400">Web Development FAQ</h3>
-          <div className="grid md:grid-cols-2 gap-8">
-            <motion.div 
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5 }}
-              className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm rounded-xl p-6 shadow-lg border border-slate-200/50 dark:border-slate-700/50 hover:shadow-pink-500/10 dark:hover:shadow-pink-400/20 transition-all duration-300"
-            >
-              <h4 className="text-xl font-semibold text-pink-600 dark:text-pink-400 mb-4">How quickly can we start?</h4>
-              <p className="text-slate-600 dark:text-slate-300">
-                I can typically start new projects within 1-2 weeks. For urgent projects, I can sometimes accommodate a faster start date.
-              </p>
-            </motion.div>
-            <motion.div 
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: 0.1 }}
-              className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm rounded-xl p-6 shadow-lg border border-slate-200/50 dark:border-slate-700/50 hover:shadow-pink-500/10 dark:hover:shadow-pink-400/20 transition-all duration-300"
-            >
-              <h4 className="text-xl font-semibold text-pink-600 dark:text-pink-400 mb-4">What&apos;s the development process?</h4>
-              <p className="text-slate-600 dark:text-slate-300">
-                We&apos;ll start with a discovery call, then move to design and development. You&apos;ll be involved throughout the process with regular updates and feedback sessions.
-              </p>
-            </motion.div>
-            <motion.div 
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: 0.2 }}
-              className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm rounded-xl p-6 shadow-lg border border-slate-200/50 dark:border-slate-700/50 hover:shadow-pink-500/10 dark:hover:shadow-pink-400/20 transition-all duration-300"
-            >
-              <h4 className="text-xl font-semibold text-pink-600 dark:text-pink-400 mb-4">Do you offer ongoing support?</h4>
-              <p className="text-slate-600 dark:text-slate-300">
-                Yes! All plans include monthly maintenance and updates. I&apos;m also available for additional support and feature requests.
-              </p>
-            </motion.div>
-            <motion.div 
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: 0.3 }}
-              className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm rounded-xl p-6 shadow-lg border border-slate-200/50 dark:border-slate-700/50 hover:shadow-pink-500/10 dark:hover:shadow-pink-400/20 transition-all duration-300"
-            >
-              <h4 className="text-xl font-semibold text-pink-600 dark:text-pink-400 mb-4">Can I see examples of your work?</h4>
-              <p className="text-slate-600 dark:text-slate-300">
-                Absolutely! Check out my portfolio section or request specific examples during our initial call.
-              </p>
-            </motion.div>
-          </div>
-        </motion.div>
       </div>
     </section>
   );

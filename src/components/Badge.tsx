@@ -14,7 +14,7 @@ export function Badge({ children }: { children: React.ReactNode }) {
         ease: "easeInOut"
       }}
     >
-      <div className="relative w-[400px] h-[600px] mx-auto">
+      <div className="relative w-[280px] sm:w-[400px] h-[420px] sm:h-[600px] mx-auto">
         {/* SVG background with cutout */}
         <svg
           width="100%"
@@ -44,10 +44,10 @@ export function Badge({ children }: { children: React.ReactNode }) {
         {/* Content inside badge */}
         <div className="absolute inset-0 flex flex-col items-center justify-center px-4">
           {children}
-          <small className="text-md -z-10 absolute left-3 -translate-x-1/2 -rotate-90 whitespace-nowrap font-thin text-black dark:text-white/50">
+          <small className="text-xs sm:text-md -z-10 absolute left-3 -translate-x-1/2 -rotate-90 whitespace-nowrap font-thin text-black dark:text-white/50">
           CLEARANCE LVL: MEDIOCRE • EXPIRES: NEVER
           </small>
-          <small className="text-md -z-10 absolute right-3 translate-x-1/2 rotate-90 whitespace-nowrap font-thin text-black dark:text-white/50">
+          <small className="text-xs sm:text-md -z-10 absolute right-3 translate-x-1/2 rotate-90 whitespace-nowrap font-thin text-black dark:text-white/50">
           AUTHORIZED PERSONNEL ONLY • TYLER&apos;S LAB A12-04
           </small>
         </div>
@@ -60,7 +60,7 @@ export function BadgeContent() {
   return (
     <>
       {/* Profile Image with Glass Effect */}
-      <div className="relative w-32 h-32 mx-auto ">
+      <div className="relative w-24 h-24 sm:w-32 sm:h-32 mx-auto">
         <div className="absolute inset-0 rounded-full bg-gradient-to-br from-blue-500/20 via-purple-500/20 to-pink-500/20 blur-xl" />
         <div className="relative w-full h-full rounded-full overflow-hidden border border-black/25 backdrop-blur-sm">
           <Image
@@ -73,9 +73,9 @@ export function BadgeContent() {
       </div>
 
       {/* Name with Glass Effect */}
-      <h1 className="text-5xl sm:text-6xl lg:text-7xl font-black text-neutral-800 tracking-tight text-center">
+      <h1 className="text-4xl sm:text-5xl lg:text-7xl font-black text-neutral-800 tracking-tight text-center">
         <span className="relative">
-          Tyler Lundin
+          Tyler <br/> Lundin
           <span className="absolute inset-0 bg-gradient-to-r from-blue-500/10 via-purple-500/10 to-pink-500/10 blur-xl -z-10" />
         </span>
       </h1>

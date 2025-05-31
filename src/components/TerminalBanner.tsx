@@ -65,7 +65,7 @@ export default function TerminalBanner() {
     <div className="relative w-full overflow-hidden">
     <motion.div
       style={robotoMono.style}
-      className="text-center bg-white/50 dark:bg-black/50 overflow-hidden rounded-lg px-4 backdrop-blur-sm sm:text-left justify-self-start"
+      className="text-center w-full bg-white/50 dark:bg-black/50 overflow-hidden rounded-lg px-4 backdrop-blur-sm sm:text-left justify-self-start"
     >
       <h2 className="text-2xl font-mono text-neutral-800 dark:text-neutral-200 tracking-tight whitespace-nowrap">
         <span className="text-green-500">λ</span>{' '}
@@ -73,7 +73,7 @@ export default function TerminalBanner() {
         <span className="animate-blink">_</span>
       </h2>
     </motion.div>
-    <small className="absolute text-xs bg-white/50 dark:bg-black/50 backdrop-blur-sm right-0 top-1/2 -translate-y-1/2 text-neutral-800 dark:text-neutral-200">
+    <small className="absolute text-xs bg-white/50 dark:bg-black/50 backdrop-blur-sm right-2 top-[2px] text-neutral-800 dark:text-neutral-200">
         {new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
       </small>
       </div>

@@ -14,7 +14,7 @@ export function Badge({ children }: { children: React.ReactNode }) {
         ease: "easeInOut"
       }}
     >
-      <div className="relative w-[280px] sm:w-[400px] h-[420px] sm:h-[600px] mx-auto">
+      <div className="relative w-[320px] sm:w-[400px] h-[480px] sm:h-[600px] mx-auto">
         {/* SVG background with cutout */}
         <svg
           width="100%"
@@ -73,7 +73,7 @@ export function BadgeContent() {
       </div>
 
       {/* Name with Glass Effect */}
-      <h1 className="text-4xl sm:text-5xl lg:text-7xl font-black text-neutral-800 tracking-tight text-center">
+      <h1 className="text-4xl sm:text-5xl font-black text-neutral-800 tracking-tight text-center">
         <span className="relative">
           Tyler <br/> Lundin
           <span className="absolute inset-0 bg-gradient-to-r from-blue-500/10 via-purple-500/10 to-pink-500/10 blur-xl -z-10" />

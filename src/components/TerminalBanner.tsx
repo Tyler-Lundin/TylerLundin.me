@@ -69,9 +69,9 @@ export default function TerminalBanner() {
       style={robotoMono.style}
       className="text-center w-full bg-black/75 overflow-hidden rounded-lg px-4 backdrop-blur-sm sm:text-left justify-self-start"
     >
-      <h2 className="text-sm font-mono text-neutral-100 tracking-tight whitespace-nowrap">
-        <span className="text-green-500 text-sm">λ</span>{' '}
-        <span>Mediocre {displayedText}</span>
+      <h2 className="text-xs font-mono text-neutral-100 tracking-tight whitespace-nowrap">
+        <span className="text-green-500 hidden sm:inline">λ</span>{' '}
+        <span >Mediocre {displayedText}</span>
         <span className="animate-blink">_</span>
       </h2>
     </motion.div>

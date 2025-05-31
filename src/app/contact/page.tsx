@@ -11,7 +11,7 @@ export default function ContactPage() {
   }
 
   return (
-    <main className="min-h-screen bg-white dark:bg-gray-900 pt-24">
+    <main className="pt-24  bg-gray-100/50 dark:bg-black/80 backdrop-blur-sm">
       <Contact section={contactSection} />
     </main>
   );

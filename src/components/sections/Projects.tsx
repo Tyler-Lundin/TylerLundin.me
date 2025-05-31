@@ -18,6 +18,7 @@ const PROJECTS = [
       "Tailwind CSS",
       "shadcn/ui",
       "Heroicons",
+      "Google Maps API",
       "App Router"
     ],
     projectUrl: "https://lundin-vision.vercel.app",
@@ -62,7 +63,18 @@ const PROJECTS = [
       "TypeScript",
       "Tailwind CSS 4",
     ],
-    projectUrl: "https://foxlot.app",
+    projectUrl: "https://www.foxlot.app",
+    isInternalLink: false
+  },
+  {
+    title: "Willows Yardscapes",
+    description: "A modern, responsive website for Willows Yardscapes, a landscaping company. Features include service listings, Google reviews integration, contact information, and a beautiful UI with animations and parallax effects.",
+    techStack: [
+      "Next.js 15",
+      "React 19",
+      "TypeScript",
+    ],
+    projectUrl: "https://www.willows-yardscapes.com/",
     isInternalLink: false
   },
   {

@@ -11,7 +11,7 @@ export default function ServicesPage() {
   }
 
   return (
-    <main className="min-h-screen pt-24">
+    <main className="pt-24  bg-gray-100/50 dark:bg-black/80 backdrop-blur-sm">
       <Hobbies section={servicesSection} />
     </main>
   );

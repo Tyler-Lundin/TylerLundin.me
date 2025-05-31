@@ -70,7 +70,7 @@ export function Contact({ section }: ContactProps) {
   };
 
   return (
-    <section id="contact" className="py-32 bg-gradient-to-b from-slate-50 to-white dark:from-black dark:to-slate-900">
+    <section id="contact" className="py-32">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Hero Section */}
         <div className="text-center mb-24">

@@ -11,7 +11,7 @@ export default function ProjectsPage() {
   }
 
   return (
-    <main className="min-h-screen bg-white dark:bg-black pt-24">
+    <main className="pt-24  bg-gray-100/50 dark:bg-black/80 backdrop-blur-sm">
       <Projects section={projectsSection} />
     </main>
   );

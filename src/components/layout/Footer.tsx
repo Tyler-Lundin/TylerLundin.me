@@ -3,23 +3,57 @@ import { siteConfig } from '@/config/site';
 
 export function Footer() {
   return (
-    <footer className="bg-gradient-to-b from-gray-50 via-gray-50 to-gray-50/50 dark:from-gray-900 dark:via-neutral-950 dark:to-neutral-950 border-t border-gray-200 dark:border-white/25">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="flex flex-col md:flex-row justify-center md:justify-between items-center space-y-4 md:space-y-0">
-          <p className="text-gray-600 dark:text-gray-400 text-center md:text-left">
-            {siteConfig.footer.text}
-          </p>
-          <div className="flex space-x-6">
-            {siteConfig.footer.links.map((link) => (
-              <Link
-                key={link.url}
-                href={link.url}
-                className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 transition-colors"
-              >
-                {link.label}
-              </Link>
-            ))}
+    <footer className="relative mx-4 rounded-lg border-t border-white/10 dark:border-white/5 bg-white/50 dark:bg-black/50">
+      {/* Decorative elements */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        {/* Grid lines */}
+        <div className="absolute inset-0 bg-grid-white/5 dark:bg-grid-black/5" style={{ 
+          backgroundSize: '20px 20px',
+          maskImage: 'linear-gradient(to bottom, transparent, black)',
+          WebkitMaskImage: 'linear-gradient(to bottom, transparent, black)'
+        }} />
+        
+        {/* Glowing line */}
+        <div className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-blue-500/50 to-transparent" />
+        
+
+
+      </div>
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <div className="flex flex-col items-center space-y-2">
+          {/* Status indicators */}
+          <div className="flex items-center space-x-3 mb-2">
+            <div className="flex items-center space-x-1">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+              <span className="text-[10px] font-mono text-black/40 dark:text-white/40">SYSTEM ONLINE</span>
+            </div>
+            <div className="flex items-center space-x-1">
+              <span className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse" />
+              <span className="text-[10px] font-mono text-black/40 dark:text-white/40">NETWORK ACTIVE</span>
+            </div>
           </div>
+
+          {/* Main content */}
+          <div className="flex flex-col md:flex-row items-center justify-between w-full">
+            <p className="text-[11px] font-mono tracking-wider text-black/50 dark:text-white/50">
+              {siteConfig.footer.text}
+            </p>
+            <div className="flex space-x-6 mt-2 md:mt-0">
+              {siteConfig.footer.links.map((link) => (
+                <Link
+                  key={link.url}
+                  href={link.url}
+                  className="text-[11px] font-mono tracking-wider text-black/50 dark:text-white/50 hover:blur-[2px] transition-colors"
+                >
+                  {link.label}
+                </Link>
+              ))}
+            </div>
+          </div>
+
+          {/* Bottom decorative line */}
+          <div className="w-full h-[1px] bg-gradient-to-r from-transparent via-white/10 to-transparent mt-4" />
         </div>
       </div>
     </footer>

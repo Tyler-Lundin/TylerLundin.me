@@ -1,7 +1,7 @@
 import { Hobbies } from '@/components/sections/Hobbies';
 import { siteConfig } from '@/config/site';
 
-export default function ServicesPage() {
+export default function HobbiesPage() {
   const servicesSection = siteConfig.sections.find(
     (section) => section.type === 'hobbies'
   );

@@ -184,13 +184,13 @@ export function Contact({ section }: ContactProps) {
             }} />
             
             <div className="relative z-10">
-              <h3 className="text-2xl font-bold mb-8 bg-clip-text text-transparent bg-gradient-to-r from-white to-white/80">
+              <h3 className="text-2xl font-bold mb-8 bg-clip-text text-black/75 dark:text-white/75 bg-gradient-to-r from-white to-white/80">
                 Other Ways to Connect
               </h3>
               
               <div className="space-y-8">
                 <div className="backdrop-blur-sm bg-white/5 dark:bg-black/10 rounded-xl p-4 border border-white/10">
-                  <h4 className="text-lg font-semibold mb-4 text-white/90">Social Media</h4>
+                  <h4 className="text-lg font-semibold mb-4 text-black/90 dark:text-white/90">Social Media</h4>
                   <div className="flex flex-col gap-3"> 
                   {SOCIAL_LINKS.map((link) => (
                     <a
@@ -198,9 +198,9 @@ export function Contact({ section }: ContactProps) {
                       href={link.url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-white/80 hover:text-white transition-all duration-300 hover:translate-x-1 flex items-center gap-2"
+                      className="text-black/80 dark:text-white/80 hover:blur-[2px] transition-all duration-300 hover:translate-x-1 flex items-center gap-2"
                     >
-                      <span className="w-1.5 h-1.5 rounded-full bg-white/60" />
+                      <span className="w-1.5 h-1.5 rounded-full bg-blue-500 dark:bg-emerald-500" />
                       {link.name}
                     </a>
                   ))}
@@ -208,12 +208,12 @@ export function Contact({ section }: ContactProps) {
                 </div>
 
                 <div className="backdrop-blur-sm bg-white/5 dark:bg-black/10 rounded-xl p-4 border border-white/10">
-                  <h4 className="text-lg font-semibold mb-4 text-white/90">Email</h4>
+                  <h4 className="text-lg font-semibold mb-4 text-black/90 dark:text-white/90">Email</h4>
                   <a
                     href={`mailto:${section.email}`}
-                    className="text-white/80 hover:text-white transition-all duration-300 hover:translate-x-1 flex items-center gap-2"
+                    className="text-black/80 dark:text-white/80 hover:blur-[2px] transition-all duration-300 hover:translate-x-1 flex items-center gap-2"
                   >
-                    <span className="w-1.5 h-1.5 rounded-full bg-white/60" />
+                    <span className="w-1.5 h-1.5 rounded-full bg-blue-500 dark:bg-emerald-500" />
                     {section.email}
                   </a>
                 </div>

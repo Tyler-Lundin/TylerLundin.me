@@ -1,7 +1,7 @@
 'use client';
 
-import Image from 'next/image';
 import { motion } from 'framer-motion';
+import { Badge, BadgeContent } from '../Badge';
 
 export function About() {
   return (
@@ -45,25 +45,11 @@ export function About() {
             transition={{ duration: 0.5 }}
             className="hidden md:flex justify-center items-center"
           >
-            <motion.div 
-              className="w-[400px] h-[400px] group relative bg-gradient-to-br from-purple-700 via-pink-600 to-rose-500 dark:from-purple-800 dark:via-pink-700 dark:to-rose-600 rounded-full overflow-hidden shadow-xl shadow-pink-500/30 dark:shadow-pink-400/40"
-              animate={{ 
-                y: [0, -10, 0],
-              }}
-              transition={{ 
-                duration: 4,
-                repeat: Infinity,
-                ease: "easeInOut"
-              }}
-            >
-                <Image
-                  src="/images/tyler.png"
-                  alt="Tyler Lundin"
-                  width={400}
-                  height={400}
-                  className="absolute z-10 -rotate-2 scale-95 group-hover:scale-100 rounded-full transition-transform duration-300"
-                />
-            </motion.div>
+
+              <Badge>
+                <BadgeContent />
+              </Badge>
+
           </motion.div>
         </div>
       </div>

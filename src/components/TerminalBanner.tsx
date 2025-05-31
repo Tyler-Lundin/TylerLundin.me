@@ -14,11 +14,13 @@ const GET_DELETE_CHAR_DELAY = () => Math.random() * (60 - 30) + 30;
 
 const PAUSE_AFTER_TYPING = 1200;
 const ROLES = [
-  'Web Dev',
-  'Bodybuilding',
-  'Game Dev',
-  '3D Printing & CAD',
-  'Off-Roading',
+  'Web Developer',
+  'Digital Artist',
+  'Digital Marketer',
+  'Content Creator',
+  'Graphic Designer',
+  'Video Editor',
+  'SEO Specialist',
 ];
 
 type Phase = 'typing' | 'paused' | 'deleting';
@@ -62,20 +64,18 @@ export default function TerminalBanner() {
   }, [phase, displayedText, currentRoleIndex]);
 
   return (
-    <div className="relative w-full overflow-hidden">
+    <div className="relative w-full px-4 overflow-hidden">
     <motion.div
       style={robotoMono.style}
-      className="text-center w-full bg-white/50 dark:bg-black/50 overflow-hidden rounded-lg px-4 backdrop-blur-sm sm:text-left justify-self-start"
+      className="text-center w-full bg-black/75 overflow-hidden rounded-lg px-4 backdrop-blur-sm sm:text-left justify-self-start"
     >
-      <h2 className="text-2xl font-mono text-neutral-800 dark:text-neutral-200 tracking-tight whitespace-nowrap">
-        <span className="text-green-500">λ</span>{' '}
-        <span>{displayedText}</span>
+      <h2 className="text-sm font-mono text-neutral-100 tracking-tight whitespace-nowrap">
+        <span className="text-green-500 text-sm">λ</span>{' '}
+        <span>Mediocre {displayedText}</span>
         <span className="animate-blink">_</span>
       </h2>
     </motion.div>
-    <small className="absolute text-xs bg-white/50 dark:bg-black/50 backdrop-blur-sm right-2 top-[2px] text-neutral-800 dark:text-neutral-200">
-        {new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
-      </small>
+ 
       </div>
   );
 }

@@ -79,12 +79,12 @@ export default function Banner({ isVisible, setIsVisible }: { isVisible: boolean
           >
             <div className="max-w-7xl mx-auto px-3 h-7 flex items-center justify-between">
               {/* Left */}
-              <div className="flex items-center gap-2 overflow-hidden truncate">
+              <div className="flex items-center gap-2 overflow-hidden truncate pr-2">
                 <div className="flex flex-col leading-none">
                   <span className="text-[10px] text-black/60 dark:text-white/50">Tyler</span>
-                  <span className="text-[9px] text-black/50 dark:text-white/40">{formatDate(latestStatus?.created_at)}</span>
+                  <span className="text-[9px] hidden sm:block text-black/50 dark:text-white/40">{formatDate(latestStatus?.created_at)}</span>
                 </div>
-                <ChevronRight className="w-3 h-3 text-black/40 dark:text-white/30 shrink-0" />
+                <ChevronRight className="w-3 h-3 hidden sm:block text-black/40 dark:text-white/30 shrink-0" />
                 <span className="truncate text-black dark:text-white">
                   {latestStatus?.status_text || "No updates"}
                 </span>
@@ -94,7 +94,7 @@ export default function Banner({ isVisible, setIsVisible }: { isVisible: boolean
               <div className="flex items-center gap-2">
                 <Link
                   href="/feed"
-                  className="text-[10px] text-black/50 dark:text-white/40 hover:text-black dark:hover:text-white underline underline-offset-2 transition"
+                  className="text-[10px] whitespace-nowrap text-black/50 dark:text-white/40 hover:text-black dark:hover:text-white underline underline-offset-2 transition"
                 >
                   view all
                 </Link>

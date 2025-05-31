@@ -13,18 +13,25 @@ export function Badge({ children }: { children: React.ReactNode }) {
         repeat: Infinity,
         ease: "easeInOut"
       }}
+      className="will-change-transform"
     >
-      <div className="relative w-[320px] sm:w-[400px] h-[480px] sm:h-[600px] mx-auto">
+      <div className="relative w-[320px] sm:w-[400px] h-[480px] sm:h-[600px] mx-auto transform-gpu">
         {/* SVG background with cutout */}
         <svg
           width="100%"
           height="100%"
           viewBox="0 0 400 600"
           xmlns="http://www.w3.org/2000/svg"
-          className="absolute top-0 left-0 w-full h-full shadow-lg border border-black/25 dark:border-white/25 rounded-2xl"
+          className="absolute top-0 left-0 w-full h-full shadow-lg border border-black/25 dark:border-white/25 rounded-2xl transform-gpu"
+          style={{ 
+            backfaceVisibility: 'hidden',
+            WebkitBackfaceVisibility: 'hidden',
+            WebkitTransform: 'translateZ(0)',
+            transform: 'translateZ(0)'
+          }}
         >
           <defs>
-            <mask className='' id="pillCutout">
+            <mask id="pillCutout">
               {/* Full white = visible */}
               <rect width="400" height="600" fill="white" />
               {/* Black = cutout */}
@@ -42,12 +49,12 @@ export function Badge({ children }: { children: React.ReactNode }) {
         </svg>
 
         {/* Content inside badge */}
-        <div className="absolute inset-0 flex flex-col items-center justify-center px-4">
+        <div className="absolute inset-0 flex flex-col items-center justify-center px-4 transform-gpu">
           {children}
-          <small className="text-xs sm:text-md -z-10 absolute left-3 -translate-x-1/2 -rotate-90 whitespace-nowrap font-thin text-black dark:text-white/50">
+          <small className="text-xs sm:text-md -z-10 absolute left-3 -translate-x-1/2 -rotate-90 whitespace-nowrap font-thin text-black dark:text-white/50 transform-gpu">
           CLEARANCE LVL: MEDIOCRE • EXPIRES: NEVER
           </small>
-          <small className="text-xs sm:text-md -z-10 absolute right-3 translate-x-1/2 rotate-90 whitespace-nowrap font-thin text-black dark:text-white/50">
+          <small className="text-xs sm:text-md -z-10 absolute right-3 translate-x-1/2 rotate-90 whitespace-nowrap font-thin text-black dark:text-white/50 transform-gpu">
           AUTHORIZED PERSONNEL ONLY • TYLER&apos;S LAB A12-04
           </small>
         </div>
@@ -60,7 +67,7 @@ export function BadgeContent() {
   return (
     <>
       {/* Profile Image with Glass Effect */}
-      <div className="relative w-24 h-24 sm:w-32 sm:h-32 mx-auto">
+      <div className="relative w-24 h-24 sm:w-32 sm:h-32 mx-auto transform-gpu">
         <div className="absolute inset-0 rounded-full bg-gradient-to-br from-blue-500/20 via-purple-500/20 to-pink-500/20 blur-xl" />
         <div className="relative w-full h-full rounded-full overflow-hidden border border-black/25 backdrop-blur-sm">
           <Image
@@ -68,12 +75,13 @@ export function BadgeContent() {
             alt="Tyler"
             fill
             className="object-cover"
+            priority
           />
         </div>
       </div>
 
       {/* Name with Glass Effect */}
-      <h1 className="text-4xl sm:text-5xl font-black text-neutral-800 tracking-tight text-center">
+      <h1 className="text-4xl sm:text-5xl font-black text-neutral-800 tracking-tight text-center transform-gpu">
         <span className="relative">
           Tyler <br/> Lundin
           <span className="absolute inset-0 bg-gradient-to-r from-blue-500/10 via-purple-500/10 to-pink-500/10 blur-xl -z-10" />

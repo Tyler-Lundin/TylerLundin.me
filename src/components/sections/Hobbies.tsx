@@ -145,7 +145,7 @@ export function Hobbies({ section }: HobbiesProps) {
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: 0.2 * index }}
               onClick={() => setSelectedArea(area)}
-              className={`p-6 rounded-xl transition-all duration-300 ease-in-out transform hover:-translate-y-1 group ${
+              className={`p-6 rounded-xl transition-all aspect-video duration-300 ease-in-out transform hover:-translate-y-1 group ${
                 area.featured 
                   ? 'bg-gradient-to-br from-pink-600 via-purple-600 to-rose-600 dark:from-pink-500 dark:via-purple-500 dark:to-rose-500 text-white shadow-xl hover:shadow-purple-500/40 dark:hover:shadow-purple-400/50' 
                   : 'bg-white dark:bg-neutral-900/70 border border-slate-200 dark:border-neutral-800/80 text-slate-800 dark:text-neutral-100 hover:bg-slate-50 dark:hover:bg-neutral-800/90 hover:shadow-pink-500/20 dark:hover:shadow-pink-400/30'
@@ -159,7 +159,7 @@ export function Hobbies({ section }: HobbiesProps) {
                 }`}>
                   {area.icon}
                 </div>
-                <h3 className="text-xl font-semibold ml-3 group-hover:text-white transition-colors">{area.name}</h3>
+                <h3 className="text-xl font-semibold ml-3 transition-colors">{area.name}</h3>
               </div>
               <p className="text-sm opacity-70 group-hover:opacity-90 transition-opacity text-left">{area.description}</p>
             </motion.button>

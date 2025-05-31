@@ -28,7 +28,8 @@ export type Section =
   | AboutSection
   | ProjectsSection
   | WebDevSection
-  | ContactSection;
+  | ContactSection
+  | FeedSection;
 
 interface BaseSection {
   type: string;
@@ -81,3 +82,9 @@ export interface ContactSection extends BaseSection {
     twitter: string;
   };
 } 
+
+export interface FeedSection extends BaseSection {
+  type: 'feed';
+  description: string;
+  link: string;
+}

@@ -88,6 +88,12 @@ export const siteConfig: SiteConfig = {
         linkedin: "https://linkedin.com/in/tyler-lundin",
         twitter: "https://twitter.com/tylerlundin"
       }
+    },
+    {
+      type: "feed",
+      headline: "feed",
+      description: "View the latest updates from Tyler Lundin.",
+      link: "/feed"
     }
   ],
   footer: {

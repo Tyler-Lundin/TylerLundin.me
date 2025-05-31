@@ -1,17 +1,22 @@
 'use client'
 
+import { Suspense } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { useState } from 'react'
-import { useRouter } from 'next/navigation'
-import bcrypt from 'bcryptjs'
-import { useSupabaseAuth } from '@/hooks/useSupabaseAuth'
 
-export default function LoginPage() {
-  const [password1, setPassword1] = useState('')
-  const [password2, setPassword2] = useState('')
+function LoginForm() {
+  const [passwords, setPasswords] = useState(['', '', ''])
   const [error, setError] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(false)
   const router = useRouter()
-  const { supabase } = useSupabaseAuth()
+  const searchParams = useSearchParams()
+  const redirectPath = searchParams.get('redirect') || '/dev'
+
+  const handlePasswordChange = (index: number, value: string) => {
+    const newPasswords = [...passwords]
+    newPasswords[index] = value
+    setPasswords(newPasswords)
+  }
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -19,33 +24,27 @@ export default function LoginPage() {
     setError(null)
 
     try {
-      const { data, error: fetchError } = await supabase
-        .from('admin_passwords')
-        .select('*')
-        .single()
-
-      if (fetchError) throw fetchError
-      if (!data) throw new Error('No admin password record found.')
-
-      const valid1 = await bcrypt.compare(password1, data.password1_hash)
-      const valid2 = await bcrypt.compare(password2, data.password2_hash)
-
-      if (!valid1 || !valid2) {
-        throw new Error('Invalid credentials')
-      }
-
-      // Fake email for Supabase auth
-      const email = 'tyler@tylerlundin.me'
-
-      // Sign in using just one password (first one) to Supabase
-      const { error: signInError } = await supabase.auth.signInWithPassword({
-        email,
-        password: password1, // We'll use password1 as the auth password
+      // Call server-side API to verify passwords
+      const response = await fetch('/api/auth/verify', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ passwords }),
       })
 
-      if (signInError) throw signInError
+      const data = await response.json()
 
-      router.push('/dev')
+      if (!response.ok) {
+        throw new Error(data.message || 'Authentication failed')
+      }
+
+      if (!data.success) {
+        throw new Error(data.message || 'Authentication failed')
+      }
+
+      // If verification successful, redirect to the original path or default to /dev
+      router.push(redirectPath)
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Authentication failed')
     } finally {
@@ -54,37 +53,34 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-200 via-white to-indigo-200 animate-gradient-slow p-6">
+    <div className="min-h-screen pt-24 flex items-center justify-center bg-gradient-to-br from-indigo-200 dark:from-indigo-900 via-white dark:via-gray-900 to-indigo-200 dark:to-indigo-900 animate-gradient-slow p-6">
       <div className="w-full max-w-lg text-center space-y-12">
         <div className="space-y-4">
-          <h1 className="text-5xl font-extrabold text-gray-900 drop-shadow-lg">
+          <h1 className="text-5xl font-extrabold text-gray-900 drop-shadow-lg dark:text-white">
             ENTER THE HAVEN
           </h1>
-          <p className="text-gray-600 uppercase tracking-widest text-sm">
+          <p className="text-gray-600 uppercase tracking-widest text-sm dark:text-white">
             Authorized Entry Only
           </p>
         </div>
 
         <form onSubmit={handleLogin} className="space-y-6">
           <div className="space-y-4">
-            <input
-              id="password1"
-              type="password"
-              value={password1}
-              onChange={(e) => setPassword1(e.target.value)}
-              placeholder="First Password"
-              className="w-full px-6 py-4 rounded-2xl text-lg bg-white/80 shadow-inner border border-gray-300 focus:outline-none focus:ring-4 focus:ring-indigo-400 transition"
-              required
-            />
-            <input
-              id="password2"
-              type="password"
-              value={password2}
-              onChange={(e) => setPassword2(e.target.value)}
-              placeholder="Second Password"
-              className="w-full px-6 py-4 rounded-2xl text-lg bg-white/80 shadow-inner border border-gray-300 focus:outline-none focus:ring-4 focus:ring-indigo-400 transition"
-              required
-            />
+            {passwords.map((password, index) => (
+              <div key={index} className="relative">
+                <input
+                  type="password"
+                  value={password}
+                  onChange={(e) => handlePasswordChange(index, e.target.value)}
+                  placeholder={`Password ${index + 1}`}
+                  className="w-full px-6 py-4 rounded-2xl text-lg bg-white/80 dark:bg-black shadow-inner border border-gray-300 focus:outline-none focus:ring-4 focus:ring-indigo-400 transition"
+                  required
+                />
+                <div className="absolute right-4 top-1/2 -translate-y-1/2">
+                  <div className="w-2 h-2 rounded-full bg-gray-300" />
+                </div>
+              </div>
+            ))}
           </div>
 
           {error && (
@@ -113,5 +109,17 @@ export default function LoginPage() {
         </form>
       </div>
     </div>
+  )
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen pt-24 flex items-center justify-center bg-gradient-to-br from-indigo-200 dark:from-indigo-900 via-white dark:via-gray-900 to-indigo-200 dark:to-indigo-900 animate-gradient-slow p-6">
+        <div className="text-gray-600 dark:text-gray-300">Loading...</div>
+      </div>
+    }>
+      <LoginForm />
+    </Suspense>
   )
 }

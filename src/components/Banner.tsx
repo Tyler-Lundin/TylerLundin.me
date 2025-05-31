@@ -15,8 +15,7 @@ const formatDate = (dateString?: string) => {
   return new Date(dateString).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
 };
 
-export default function Banner() {
-  const [isVisible, setIsVisible] = useState(true);
+export default function Banner({ isVisible, setIsVisible }: { isVisible: boolean, setIsVisible: (isVisible: boolean) => void }) {
   const [latestStatus, setLatestStatus] = useState<LatestStatus | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -31,10 +30,9 @@ export default function Banner() {
           .order("created_at", { ascending: false })
           .limit(1)
           .single();
-        
+
         if (error) {
           if (error.code === 'PGRST116') {
-            // This error code indicates no rows were returned
             setLatestStatus(null);
           } else {
             throw error;
@@ -52,10 +50,7 @@ export default function Banner() {
     fetchLatestStatus();
   }, [supabase]);
 
-  // If there are no entries and we're not loading, don't show the banner
-  if (isLoading || !latestStatus) {
-    return null;
-  }
+  if (isLoading || !latestStatus) return null;
 
   return (
     <>
@@ -64,44 +59,42 @@ export default function Banner() {
         {isVisible && (
           <motion.div
             initial={{ height: 0 }}
-            animate={{ height: "2.5rem" }}
+            animate={{ height: "1.75rem" }}
             exit={{ height: 0 }}
-            transition={{ duration: 0.3, ease: "easeInOut" }}
+            transition={{ duration: 0.25, ease: "easeInOut" }}
             className="w-full"
           />
         )}
       </AnimatePresence>
 
-      {/* Fixed banner */}
+      {/* Overlay banner */}
       <AnimatePresence>
         {isVisible ? (
           <motion.div
             initial={{ y: "-100%", opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             exit={{ y: "-100%", opacity: 0 }}
-            transition={{ type: "spring", stiffness: 260, damping: 24 }}
-            className="fixed top-0 left-0 right-0 z-50 backdrop-blur-md bg-black/60 text-white text-xs"
+            transition={{ type: "spring", stiffness: 260, damping: 22 }}
+            className="fixed top-0 left-0 right-0 z-[200] backdrop-blur-md bg-white/70 dark:bg-black/60 text-black dark:text-white text-[11px] font-medium shadow-sm border-b border-black/10 dark:border-white/10"
           >
-            <div className="max-w-7xl mx-auto px-4 h-10 flex items-center justify-between">
-              {/* Left Side */}
+            <div className="max-w-7xl mx-auto px-3 h-7 flex items-center justify-between">
+              {/* Left */}
               <div className="flex items-center gap-2 overflow-hidden truncate">
-                <div className="flex flex-col leading-tight">
-                  <span className="text-gray-200">Tyler</span>
-                  <span className="text-gray-300 text-[10px]">{formatDate(latestStatus?.created_at)}</span>
+                <div className="flex flex-col leading-none">
+                  <span className="text-[10px] text-black/60 dark:text-white/50">Tyler</span>
+                  <span className="text-[9px] text-black/50 dark:text-white/40">{formatDate(latestStatus?.created_at)}</span>
                 </div>
-                <ChevronRight className="w-3 h-3 text-gray-400 shrink-0" />
-                {isLoading ? (
-                  <span className="text-gray-400 italic text-xs truncate">loading...</span>
-                ) : latestStatus ? (
-                  <span className="font-normal truncate">{latestStatus.status_text}</span>
-                ) : null}
+                <ChevronRight className="w-3 h-3 text-black/40 dark:text-white/30 shrink-0" />
+                <span className="truncate text-black dark:text-white">
+                  {latestStatus?.status_text || "No updates"}
+                </span>
               </div>
 
-              {/* Right Side */}
-              <div className="flex items-center gap-2 shrink-0 ml-2">
+              {/* Right */}
+              <div className="flex items-center gap-2">
                 <Link
                   href="/feed"
-                  className="text-gray-400 hover:text-white transition text-[11px] underline underline-offset-2"
+                  className="text-[10px] text-black/50 dark:text-white/40 hover:text-black dark:hover:text-white underline underline-offset-2 transition"
                 >
                   view all
                 </Link>
@@ -109,10 +102,10 @@ export default function Banner() {
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.95 }}
                   onClick={() => setIsVisible(false)}
-                  className="text-gray-400 hover:text-white transition p-1 rounded-full"
                   aria-label="Close banner"
+                  className="text-black/40 dark:text-white/30 hover:text-black dark:hover:text-white transition p-1"
                 >
-                  <X className="w-4 h-4" />
+                  <X className="w-3.5 h-3.5" />
                 </motion.button>
               </div>
             </div>
@@ -122,11 +115,13 @@ export default function Banner() {
             initial={{ y: -20, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             exit={{ y: -20, opacity: 0 }}
-            transition={{ type: "spring", stiffness: 260, damping: 20 }}
             onClick={() => setIsVisible(true)}
-            className="fixed top-0 left-1/2 -translate-x-1/2 z-[100] bg-black/70 text-white px-2 py-1 rounded-b-md text-[11px] font-medium backdrop-blur-md hover:bg-black/90 transition"
+            className="fixed top-0 shadow-lg left-1/2 -translate-x-1/2 z-[100] bg-white/70 dark:bg-black/60 text-black dark:text-white px-2 py-1 rounded-b-lg text-[10px] backdrop-blur-md shadow-sm hover:bg-white/90 dark:hover:bg-black/80 transition"
           >
-            <div className="h-2 w-2 bg-gradient-to-r from-indigo-500 via-pink-500 to-yellow-500 rounded-full animate-pulse" />
+            <div className="flex items-center gap-2">
+              <span>Show Status</span>
+              <div className="h-2 w-2 rounded-full bg-gradient-to-r from-cyan-400 to-purple-500 animate-pulse shadow-sm" />
+            </div>
           </motion.button>
         )}
       </AnimatePresence>

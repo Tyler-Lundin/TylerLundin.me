@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { createBrowserClient } from '@supabase/ssr'
+import { createClient } from '@/lib/supabase/client'
 import { Database } from '@/types/database.types'
 import { MoreVertical, Trash2 } from 'lucide-react'
 import Link from 'next/link'
@@ -13,10 +13,7 @@ export default function MessagesPage() {
   const [loading, setLoading] = useState(true)
   const [showDelete, setShowDelete] = useState(false)
 
-  const supabase = createBrowserClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-  )
+  const supabase = createClient()
 
   useEffect(() => {
     const fetchMessages = async () => {
@@ -79,7 +76,7 @@ export default function MessagesPage() {
             <li key={msg.id} className="py-4 relative group">
               <div className="flex justify-between items-center">
                 <span className="font-semibold text-gray-800">{msg.name}</span>
-                <span className="text-sm text-gray-500">{new Date(msg.created_at).toLocaleString()}</span>
+                <span className="text-sm text-gray-500">{new Date(msg.created_at || '').toLocaleString()}</span>
               </div>
               <p className="text-gray-700 text-sm mt-1">{msg.message}</p>
               <p className="text-xs text-gray-500 italic mt-1">{msg.email}</p>

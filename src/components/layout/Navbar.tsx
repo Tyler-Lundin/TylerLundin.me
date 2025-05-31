@@ -9,6 +9,7 @@ import { Logo } from './Logo';
 import { cn } from '@/lib/utils';
 
 interface NavProps {
+  bannerVisible: boolean;
   isScrolled: boolean;
   setIsMenuOpen: (isOpen: boolean) => void;
 }
@@ -104,9 +105,9 @@ function InitialNav({ isScrolled, setIsMenuOpen }: NavProps) {
   );
 }
 
-function FixedNav({ isScrolled, setIsMenuOpen }: NavProps) {
+function FixedNav({ bannerVisible, isScrolled, setIsMenuOpen }: NavProps) {
   return (
-    <div className={`fixed top-4 left-4 right-4 z-50 bg-gradient-to-r from-blue-500/50 dark:from-pink-950/50 via-yellow-400/50 dark:via-blue-800/50 to-purple-500/50 dark:to-purple-900/75 backdrop-blur-[2px] rounded-lg backdrop-blur-md border-b border-gray-200 dark:border-white/25 transition-all duration-300 ${
+    <div className={`fixed ${bannerVisible ? 'top-8' : 'top-6'} left-4 right-4 z-50 bg-gradient-to-r from-blue-500/50 dark:from-pink-950/50 via-yellow-400/50 dark:via-blue-800/50 to-purple-500/50 dark:to-purple-900/75 backdrop-blur-[2px] rounded-lg backdrop-blur-md border-b border-gray-200 dark:border-white/25 transition-all duration-300 ${
       isScrolled ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-full'
     }`}>
       <div className="container px-4 h-12 flex items-center justify-between">
@@ -120,7 +121,7 @@ function FixedNav({ isScrolled, setIsMenuOpen }: NavProps) {
   );
 }
 
-export function Navbar() {
+export function Navbar({ bannerVisible }: { bannerVisible: boolean }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
 
@@ -135,8 +136,8 @@ export function Navbar() {
 
   return (
     <>
-      <InitialNav isScrolled={isScrolled} setIsMenuOpen={setIsMenuOpen} />
-      <FixedNav isScrolled={isScrolled} setIsMenuOpen={setIsMenuOpen} />
+      <InitialNav bannerVisible={bannerVisible} isScrolled={isScrolled} setIsMenuOpen={setIsMenuOpen} />
+      <FixedNav bannerVisible={bannerVisible} isScrolled={isScrolled} setIsMenuOpen={setIsMenuOpen} />
       <MobileMenu isOpen={isMenuOpen} onClose={() => setIsMenuOpen(false)} />
     </>
   );

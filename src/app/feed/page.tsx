@@ -1,10 +1,10 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { createBrowserClient } from '@supabase/ssr'
 import { ChevronLeft, ChevronRight, Calendar, Clock, Quote } from 'lucide-react'
 import Image from 'next/image'
 import { motion, AnimatePresence } from 'framer-motion'
+import { createClient } from '@/lib/supabase/client'
 
 // Types
 interface JournalEntry {
@@ -19,7 +19,7 @@ const formatDate = (dateString: string) => {
   const date = new Date(dateString)
   return {
     date: date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
-    time: date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })
+    time: date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
   }
 }
 
@@ -49,8 +49,12 @@ function EntryCard({ entry }: { entry: JournalEntry }) {
 
       <div className="flex flex-col gap-4">
         <div className="flex items-center gap-2 bg-black rounded-md px-3 py-1 w-fit">
-          <span className="text-md bg-gradient-to-r from-indigo-300 via-pink-300 to-yellow-300 bg-clip-text text-transparent font-medium">tldr:</span>
-          <p className="text-xs bg-gradient-to-r from-indigo-300 via-pink-300 to-yellow-300 bg-clip-text text-transparent font-light">{entry.status_text}</p>
+          <span className="text-md bg-gradient-to-r from-indigo-300 via-pink-300 to-yellow-300 bg-clip-text text-transparent font-medium">
+            tldr:
+          </span>
+          <p className="text-xs bg-gradient-to-r from-indigo-300 via-pink-300 to-yellow-300 bg-clip-text text-transparent font-light">
+            {entry.status_text}
+          </p>
         </div>
 
         <blockquote className="text-gray-700 text-sm leading-relaxed font-light relative py-12">
@@ -62,13 +66,20 @@ function EntryCard({ entry }: { entry: JournalEntry }) {
             <Quote className="w-12 h-12" />
           </span>
         </blockquote>
-
       </div>
     </motion.div>
   )
 }
 
-function PaginationControls({ page, hasMore, setPage }: { page: number, hasMore: boolean, setPage: (page: number) => void }) {
+function PaginationControls({
+  page,
+  hasMore,
+  setPage,
+}: {
+  page: number
+  hasMore: boolean
+  setPage: (page: number) => void
+}) {
   return (
     <div className="flex justify-center gap-4 mt-12">
       <motion.button
@@ -111,13 +122,10 @@ export default function FeedPage() {
   const [page, setPage] = useState(1)
   const [hasMore, setHasMore] = useState(true)
 
-  const supabase = createBrowserClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-  )
   useEffect(() => {
     const fetchEntries = async () => {
       try {
+        const supabase = createClient()
         const { data, error } = await supabase
           .from('journal_entries')
           .select('id, entry_text, status_text, created_at')
@@ -137,7 +145,7 @@ export default function FeedPage() {
     }
 
     fetchEntries()
-  }, [page, supabase])
+  }, [page])
 
   if (isLoading) return <LoadingState />
 
@@ -153,7 +161,7 @@ export default function FeedPage() {
             transition={{ duration: 0.3 }}
             className="space-y-8"
           >
-            {entries.map(entry => (
+            {entries.map((entry) => (
               <EntryCard key={entry.id} entry={entry} />
             ))}
           </motion.div>

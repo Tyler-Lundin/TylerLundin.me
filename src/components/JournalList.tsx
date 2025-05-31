@@ -24,9 +24,22 @@ const supabase = createBrowserClient(
 export default function JournalList({ refreshTrigger = 0 }: JournalListProps) {
   const [entries, setEntries] = useState<JournalEntry[]>([])
   const [isLoading, setIsLoading] = useState(true)
+  const [isAuthenticated, setIsAuthenticated] = useState(false)
   const [menuOpenId, setMenuOpenId] = useState<string | null>(null)
 
+  const verifyAuth = useCallback(async () => {
+    try {
+      const response = await fetch('/api/auth/verify-token')
+      const data = await response.json()
+      setIsAuthenticated(data.success)
+    } catch (error) {
+      console.error('Error verifying authentication:', error)
+      setIsAuthenticated(false)
+    }
+  }, [])
+
   const fetchEntries = useCallback(async () => {
+    if (!isAuthenticated) return
     try {
       setIsLoading(true)
       const { data, error } = await supabase
@@ -42,11 +55,17 @@ export default function JournalList({ refreshTrigger = 0 }: JournalListProps) {
     } finally {
       setIsLoading(false)
     }
-  }, [])
+  }, [isAuthenticated])
 
   useEffect(() => {
-    fetchEntries()
-  }, [fetchEntries, refreshTrigger])
+    verifyAuth()
+  }, [verifyAuth])
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      fetchEntries()
+    }
+  }, [isAuthenticated, fetchEntries, refreshTrigger])
 
   const handlePublishToggle = async (entryId: string, currentPublished: boolean) => {
     try {
@@ -78,6 +97,10 @@ export default function JournalList({ refreshTrigger = 0 }: JournalListProps) {
     } catch (error) {
       console.error('Error deleting entry:', error)
     }
+  }
+
+  if (!isAuthenticated) {
+    return <div className="text-center py-4 text-red-500">You are not authorized to view this content.</div>
   }
 
   if (isLoading) {

@@ -6,17 +6,22 @@
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "setup-admin": "ts-node scripts/setup-admin-passwords.ts"
   },
   "dependencies": {
     "@heroicons/react": "^2.2.0",
     "@supabase/ssr": "^0.6.1",
-    "@supabase/supabase-js": "^2.49.4",
+    "@supabase/supabase-js": "^2.49.8",
     "@types/bcryptjs": "^2.4.6",
+    "@types/jsonwebtoken": "^9.0.9",
     "@vercel/analytics": "^1.5.0",
     "bcryptjs": "^3.0.2",
     "clsx": "^2.1.1",
+    "dotenv": "^16.5.0",
     "framer-motion": "^12.9.2",
+    "jose": "^6.0.11",
+    "jsonwebtoken": "^9.0.2",
     "link-preview-js": "^3.1.0",
     "lucide-react": "^0.503.0",
     "next": "15.3.1",
@@ -36,6 +41,7 @@
     "eslint-config-next": "15.3.1",
     "supabase": "^2.22.6",
     "tailwindcss": "^4",
+    "ts-node": "^10.9.2",
     "typescript": "^5"
   }
 }

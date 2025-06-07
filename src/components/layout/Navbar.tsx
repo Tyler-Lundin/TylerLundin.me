@@ -58,7 +58,7 @@ function DesktopNav({ isScrolled, minimal }: { isScrolled?: boolean; minimal?: b
     const pathname = usePathname();
     const baseClasses = "hidden py-4 lg:flex w-min mx-auto justify-center md:space-x-32";
   const fullNavClasses = `${baseClasses} py-1 transition-all duration-300 ${
-    isScrolled ? 'opacity-0 -translate-y-20' : 'opacity-100'
+    isScrolled ? 'opacity-0 translate-y-20' : 'opacity-100'
   }`;
 
   function isCurrentLink(sectionType: string) {
@@ -90,7 +90,7 @@ function DesktopNav({ isScrolled, minimal }: { isScrolled?: boolean; minimal?: b
 function InitialNav({ isScrolled, setIsMenuOpen }: NavProps) {
   return (
     <nav className="absolute inset-4 h-24 rounded-lg z-50 transition-all duration-500 bg-gradient-to-r from-blue-500/50 dark:from-pink-950/50 via-yellow-400/50 dark:via-blue-800/50 to-purple-500/50 dark:to-purple-900/75 backdrop-blur-[2px] pt-3">
-      <div className="h-full">
+      <div className="h-full overflow-hidden">
         <MobileMenuButton onClick={() => setIsMenuOpen(true)} minimal/>
         
         <LogoContainer isScrolled={isScrolled}>

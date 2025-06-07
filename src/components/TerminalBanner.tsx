@@ -14,13 +14,13 @@ const GET_DELETE_CHAR_DELAY = () => Math.random() * (60 - 30) + 30;
 
 const PAUSE_AFTER_TYPING = 1200;
 const ROLES = [
-  'Web Developer',
-  'Digital Artist',
-  'Digital Marketer',
-  'Content Creator',
-  'Graphic Designer',
-  'Video Editor',
-  'SEO Specialist',
+  'Web Developer in Spokane',
+  'Freelance Website Designer',
+  'Custom Business Websites',
+  'SEO Specialist – Spokane, WA',
+  'Booking & E‑Commerce Dev',
+  'Responsive UX/UI Builder',
+  'Landing Page Expert',
 ];
 
 type Phase = 'typing' | 'paused' | 'deleting';
@@ -71,7 +71,7 @@ export default function TerminalBanner() {
     >
       <h2 className="text-xs font-mono text-neutral-100 tracking-tight whitespace-nowrap">
         <span className="text-green-500 hidden sm:inline">λ</span>{' '}
-        <span >Mediocre {displayedText}</span>
+        <span >{displayedText}</span>
         <span className="animate-blink">_</span>
       </h2>
     </motion.div>

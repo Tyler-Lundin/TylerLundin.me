@@ -83,10 +83,18 @@ export function BadgeContent() {
       {/* Name with Glass Effect */}
       <h1 className="text-4xl sm:text-5xl font-black text-neutral-800 tracking-tight text-center transform-gpu">
         <span className="relative">
-          Tyler <br/> Lundin
+          Tyler
           <span className="absolute inset-0 bg-gradient-to-r from-blue-500/10 via-purple-500/10 to-pink-500/10 blur-xl -z-10" />
         </span>
       </h1>
+      <div className="mt-4 text-center">
+        <div className="space-y-1 flex  justify-center">
+          <p className="text-lg text-neutral-700 dark:text-neutral-200">Freelance Web Developer</p>
+        </div>
+        <div className="space-y-1  flex justify-center">
+          <p className="text-lg text-neutral-700 dark:text-neutral-200">Spokane, WA</p>
+        </div>
+      </div>
       <TerminalBanner />
     </>
   )

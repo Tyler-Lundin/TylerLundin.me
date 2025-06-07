@@ -32,7 +32,7 @@ export function Hero() {
               </Link>
               <Link
                 href="/contact"
-                className="px-2 text-sm md:text-md w-full  rounded-xl hover:blur-[2px] text-center backdrop-blur-sm bg-blue-500 border border-black/25 text-neutral-100 text-base font-medium transition-all duration-300 ease-in-out transform hover:-translate-y-0.5"
+                className="pxj-2 text-sm md:text-md w-full  rounded-xl hover:blur-[2px] text-center backdrop-blur-sm bg-blue-500 border border-black/25 text-neutral-100 text-base font-medium transition-all duration-300 ease-in-out transform hover:-translate-y-0.5"
               >
                 Msg Me
               </Link>

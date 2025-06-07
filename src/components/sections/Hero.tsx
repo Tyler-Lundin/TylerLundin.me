@@ -25,14 +25,14 @@ export function Hero() {
             {/* Buttons with Glass Effect */}
             <div className="flex flex-col px-4 gap-1 justify-center">
               <Link
-                href="/projects"
-                className="p-2 text-sm md:text-md w-full  rounded-xl hover:blur-[2px] text-center backdrop-blur-sm bg-green-500 border border-black/25 text-neutral-100 text-base font-medium transition-all duration-300 ease-in-out shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+                href="/projects/web-dev"
+                className="px-2 text-sm md:text-md w-full  rounded-xl hover:blur-[2px] text-center backdrop-blur-sm bg-green-500 border border-black/25 text-neutral-100 text-base font-medium transition-all duration-300 ease-in-out shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
               >
                 Projects
               </Link>
               <Link
                 href="/contact"
-                className="p-2 text-sm md:text-md w-full  rounded-xl hover:blur-[2px] text-center backdrop-blur-sm bg-blue-500 border border-black/25 text-neutral-100 text-base font-medium transition-all duration-300 ease-in-out transform hover:-translate-y-0.5"
+                className="px-2 text-sm md:text-md w-full  rounded-xl hover:blur-[2px] text-center backdrop-blur-sm bg-blue-500 border border-black/25 text-neutral-100 text-base font-medium transition-all duration-300 ease-in-out transform hover:-translate-y-0.5"
               >
                 Msg Me
               </Link>

@@ -67,7 +67,7 @@ export function BadgeContent() {
   return (
     <>
       {/* Profile Image with Glass Effect */}
-      <div className="relative w-24 h-24 sm:w-32 sm:h-32 mx-auto transform-gpu">
+      <div className="relative w-32  h-32 mx-auto transform-gpu">
         <div className="absolute inset-0 rounded-full bg-gradient-to-br from-blue-500/20 via-purple-500/20 to-pink-500/20 blur-xl" />
         <div className="relative w-full h-full rounded-full overflow-hidden border border-black/25 backdrop-blur-sm">
           <Image

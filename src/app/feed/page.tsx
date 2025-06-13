@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { ChevronLeft, ChevronRight, Calendar, Clock, Quote } from 'lucide-react'
+import { ChevronLeft, ChevronRight, Calendar, Clock } from 'lucide-react'
 import Image from 'next/image'
 import { motion, AnimatePresence } from 'framer-motion'
 import { createClient } from '@/lib/supabase/client'
@@ -31,41 +31,42 @@ function EntryCard({ entry }: { entry: JournalEntry }) {
     <motion.div
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
-      className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm hover:shadow-md hover:border-gray-300 transition-all"
+      className="group relative bg-white/40 dark:bg-gray-900/40 backdrop-blur-sm border border-gray-200/30 dark:border-gray-800/30 rounded-xl p-4 hover:border-gray-300/50 dark:hover:border-gray-700/50 transition-all duration-300"
     >
-      <div className="flex items-center gap-6 mb-4 text-gray-400 text-xs font-light relative h-10">
-        <div className="flex items-center gap-1">
-          <Calendar className="w-4 h-4" />
-          {date}
-        </div>
-        <div className="flex items-center gap-1">
-          <Clock className="w-4 h-4" />
-          {time}
-        </div>
-        <span className="w-8 h-8 rounded-full bg-gray-200 border border-gray-900 overflow-hidden flex items-center justify-center absolute top-1/2 -translate-y-1/2 right-3">
-          <Image src="/images/tyler.png" alt="Tyler Lundin" width={48} height={48} />
-        </span>
-      </div>
-
-      <div className="flex flex-col gap-4">
-        <div className="flex items-center gap-2 bg-black rounded-md px-3 py-1 w-fit">
-          <span className="text-md bg-gradient-to-r from-indigo-300 via-pink-300 to-yellow-300 bg-clip-text text-transparent font-medium">
-            tldr:
-          </span>
-          <p className="text-xs bg-gradient-to-r from-indigo-300 via-pink-300 to-yellow-300 bg-clip-text text-transparent font-light">
-            {entry.status_text}
-          </p>
+      <div className="flex items-start gap-4">
+        <div className="flex-shrink-0">
+          <div className="w-10 h-10 rounded-full bg-gradient-to-br from-indigo-500/10 to-pink-500/10 dark:from-indigo-400/10 dark:to-pink-400/10 border border-gray-200/50 dark:border-gray-700/50 overflow-hidden">
+            <Image src="/images/tyler.png" alt="Tyler Lundin" width={40} height={40} className="object-cover" />
+          </div>
         </div>
 
-        <blockquote className="text-gray-700 text-sm leading-relaxed font-light relative py-12">
-          <span className="text-gray-200 absolute top-0 left-0">
-            <Quote className="w-12 h-12" />
-          </span>
-          <span className="font-medium text-xl">{entry.entry_text}</span>
-          <span className="text-gray-200 absolute bottom-0 h-fit right-0">
-            <Quote className="w-12 h-12" />
-          </span>
-        </blockquote>
+        <div className="flex-grow min-w-0">
+          <div className="flex items-center gap-3 mb-2">
+            <div className="flex items-center gap-1.5 text-xs text-gray-500 dark:text-gray-400">
+              <Calendar className="w-3.5 h-3.5" />
+              {date}
+            </div>
+            <div className="flex items-center gap-1.5 text-xs text-gray-500 dark:text-gray-400">
+              <Clock className="w-3.5 h-3.5" />
+              {time}
+            </div>
+          </div>
+
+          <div className="space-y-3">
+            <div className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-black/5 dark:bg-white/5 text-xs">
+              <span className="bg-gradient-to-r from-indigo-400 via-pink-400 to-yellow-400 dark:from-indigo-300 dark:via-pink-300 dark:to-yellow-300 bg-clip-text text-transparent font-medium">
+                tldr:
+              </span>
+              <span className="bg-gradient-to-r from-indigo-400 via-pink-400 to-yellow-400 dark:from-indigo-300 dark:via-pink-300 dark:to-yellow-300 bg-clip-text text-transparent font-light">
+                {entry.status_text}
+              </span>
+            </div>
+
+            <p className="text-gray-700 dark:text-gray-300 text-sm leading-relaxed font-light">
+              {entry.entry_text}
+            </p>
+          </div>
+        </div>
       </div>
     </motion.div>
   )
@@ -87,7 +88,7 @@ function PaginationControls({
         whileTap={{ scale: 0.95 }}
         onClick={() => setPage(Math.max(1, page - 1))}
         disabled={page === 1}
-        className="flex items-center gap-2 px-4 py-2 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-600 hover:text-gray-900 text-sm font-medium disabled:opacity-30 disabled:cursor-not-allowed transition-all"
+        className="flex items-center gap-2 px-4 py-2 rounded-full bg-gray-100/80 dark:bg-gray-800/80 backdrop-blur-sm hover:bg-gray-200/80 dark:hover:bg-gray-700/80 text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white text-sm font-medium disabled:opacity-30 disabled:cursor-not-allowed transition-all"
       >
         <ChevronLeft className="w-4 h-4" />
         Previous
@@ -98,7 +99,7 @@ function PaginationControls({
         whileTap={{ scale: 0.95 }}
         onClick={() => setPage(page + 1)}
         disabled={!hasMore}
-        className="flex items-center gap-2 px-4 py-2 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-600 hover:text-gray-900 text-sm font-medium disabled:opacity-30 disabled:cursor-not-allowed transition-all"
+        className="flex items-center gap-2 px-4 py-2 rounded-full bg-gray-100/80 dark:bg-gray-800/80 backdrop-blur-sm hover:bg-gray-200/80 dark:hover:bg-gray-700/80 text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white text-sm font-medium disabled:opacity-30 disabled:cursor-not-allowed transition-all"
       >
         Next
         <ChevronRight className="w-4 h-4" />
@@ -110,7 +111,7 @@ function PaginationControls({
 function LoadingState() {
   return (
     <div className="container mx-auto px-4 py-24 max-w-2xl text-center">
-      <div className="text-gray-400 font-light text-sm animate-pulse">Loading entries...</div>
+      <div className="text-gray-400 dark:text-gray-500 font-light text-sm animate-pulse">Loading entries...</div>
     </div>
   )
 }
@@ -150,8 +151,8 @@ export default function FeedPage() {
   if (isLoading) return <LoadingState />
 
   return (
-    <section id="feed" className="py-32 min-h-screen bg-gradient-to-b from-white to-gray-50">
-      <div className="max-w-2xl mx-auto space-y-8">
+    <section id="feed" className="py-32 min-h-screen bg-gradient-to-b from-white to-gray-50 dark:from-gray-900 dark:to-gray-950">
+      <div className="max-w-2xl mx-auto space-y-8 px-4">
         <AnimatePresence mode="wait">
           <motion.div
             key={page}

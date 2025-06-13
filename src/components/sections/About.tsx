@@ -18,10 +18,13 @@ export function About() {
             className="space-y-8"
           >
             <div>
-              <h2 className="text-5xl font-bold mb-6 text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-pink-500 to-purple-500 dark:from-cyan-300 dark:via-pink-400 dark:to-purple-400 tracking-tight">
-                Tyler Lundin: The Rogue Webdev
+              <h2 className="text-5xl font-bold mb-4 text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-pink-500 to-purple-500 relative w-fit dark:from-cyan-300 dark:via-pink-400 dark:to-purple-400 tracking-tight pb-4 border-b border-black/50 dark:border-white/50">
+                Tyler Lundin 
+                <small className=" absolute top-0 -translate-y-full md:left-0 md:translate-x-0 left-1/2 -translate-x-1/2 text-sm text-neutral-700 dark:text-neutral-300 leading-relaxed opacity-90">
+                The Rogue Webdev
+                </small>
               </h2>
-              <p className="text-2xl font-medium text-pink-500 dark:text-pink-400 mb-4">
+              <p className="text-md italic font-medium text-pink-500 pb-4 dark:text-pink-400 border-b border-black/50 dark:border-white/50">
               Nomadic by nature, caffeinated by code, and running on a mix of wanderlust and raw determination. 
               </p>
             </div>
@@ -46,10 +49,10 @@ export function About() {
             className="hidden md:flex justify-center items-center"
           >
             <div className="relative w-fit h-full overflow-hidden rounded-full">
-              <span className="absolute rounded-full bottom-0 left-0 w-full h-1/2 bg-gradient-to-t from-white via-transparent to-transparent" />
-              <span className="absolute rounded-full top-0 left-0 w-1/2 h-full bg-gradient-to-r from-white via-transparent to-transparent" />
-              <span className="absolute rounded-full bottom-0 right-0 w-1/2 h-full bg-gradient-to-l from-white via-transparent to-transparent" />
-              <span className="absolute rounded-full top-0 right-0 w-full h-1/2 bg-gradient-to-b from-white via-transparent to-transparent" />
+              <span className="absolute rounded-full bottom-0 left-0 w-full h-1/2 bg-gradient-to-t from-white dark:from-black via-transparent to-transparent" />
+              <span className="absolute rounded-full top-0 left-0 w-1/2 h-full bg-gradient-to-r from-white dark:from-black via-transparent to-transparent" />
+              <span className="absolute rounded-full bottom-0 right-0 w-1/2 h-full bg-gradient-to-l from-white dark:from-black via-transparent to-transparent" />
+              <span className="absolute rounded-full top-0 right-0 w-full h-1/2 bg-gradient-to-b from-white dark:from-black via-transparent to-transparent" />
               <Image src="/images/tyler.png" alt="Tyler Lundin" width={500} height={500} className="object-cover" />
             </div>
           </motion.div>

@@ -107,18 +107,20 @@ const expertiseAreas = [
 ];
 
 export function AllProjects({ section }: projectsProps) {
+  const mainFocus = expertiseAreas.find(area => area.name === 'Web Development');
+  const otherInterests = expertiseAreas.filter(area => area.name !== 'Web Development');
 
   return (
-    <section id="services" className="py-32 bg-gradient-to-b from-gray-200/50 to-white/50 dark:from-black/50 dark:to-gray-900/50 backdrop-blur-lg">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section id="services" className="py-40 bg-gradient-to-b from-gray-100/80 to-white/80 dark:from-black/80 dark:to-gray-900/80 backdrop-blur-xl">
+      <div className="max-w-[90rem] mx-auto px-6 sm:px-8 lg:px-12">
         {/* Hero Section */}
-        <div className="text-center mb-24">
+        <div className="text-center mb-32">
           <motion.h2
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.5 }}
-            className="text-5xl font-bold mb-6 text-transparent bg-clip-text bg-gradient-to-r from-cyan-600 via-pink-600 to-purple-600 dark:from-cyan-400 dark:via-pink-400 dark:to-purple-400 tracking-tight leading-tight pb-2"
+            transition={{ duration: 0.7 }}
+            className="text-7xl font-black mb-8 text-transparent bg-clip-text bg-gradient-to-r from-cyan-600 via-pink-600 to-purple-600 dark:from-cyan-400 dark:via-pink-400 dark:to-purple-400 tracking-tight leading-[1.1]"
           >
             {section.headline}
           </motion.h2>
@@ -126,16 +128,89 @@ export function AllProjects({ section }: projectsProps) {
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: 0.2 }}
-            className="text-xl text-slate-600 dark:text-neutral-300 max-w-3xl mx-auto leading-relaxed"
+            transition={{ duration: 0.7, delay: 0.3 }}
+            className="text-2xl text-slate-600 dark:text-neutral-300 max-w-4xl mx-auto leading-relaxed"
           >
             {section.subheadline}
           </motion.p>
         </div>
 
-        {/* Expertise Cards */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-16">
-          {expertiseAreas.map((area, index) => (
+        {/* Main Focus - Web Development */}
+        {mainFocus && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.7 }}
+            className="mb-32"
+          >
+            <a
+              href={mainFocus.link}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="block p-12 rounded-3xl bg-gradient-to-br from-pink-600 via-purple-600 to-rose-600 dark:from-pink-500 dark:via-purple-500 dark:to-rose-500 text-white shadow-2xl hover:shadow-purple-500/50 dark:hover:shadow-purple-400/60 transition-all duration-500 ease-in-out transform hover:-translate-y-2"
+            >
+              <div className="flex items-center mb-8">
+                <div className="p-4 rounded-xl bg-white/20">
+                  {mainFocus.icon}
+                </div>
+                <h3 className="text-4xl font-black ml-6">{mainFocus.name}</h3>
+              </div>
+              <p className="text-2xl opacity-90 mb-8 max-w-3xl">{mainFocus.description}</p>
+              <div className="flex flex-wrap gap-3 mb-8">
+                {mainFocus.features.map((feature, idx) => (
+                  <span key={idx} className="px-4 py-2 rounded-full text-lg font-medium bg-white/20">
+                    {feature}
+                  </span>
+                ))}
+              </div>
+              <div className="flex items-center justify-end">
+                <span className="text-xl font-bold group-hover:translate-x-2 transition-transform duration-300">
+                  View All Projects
+                  <svg 
+                    className="inline-block ml-2 w-6 h-6 group-hover:translate-x-1 transition-transform duration-300" 
+                    fill="none" 
+                    stroke="currentColor" 
+                    viewBox="0 0 24 24"
+                  >
+                    <path 
+                      strokeLinecap="round" 
+                      strokeLinejoin="round" 
+                      strokeWidth={2} 
+                      d="M17 8l4 4m0 0l-4 4m4-4H3"
+                    />
+                  </svg>
+                </span>
+              </div>
+            </a>
+          </motion.div>
+        )}
+
+        {/* Other Interests Section */}
+        <div className="text-center mb-16">
+          <motion.h3
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.7 }}
+            className="text-4xl font-bold text-slate-800 dark:text-neutral-100 mb-4"
+          >
+            Other Interests
+          </motion.h3>
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.7, delay: 0.2 }}
+            className="text-xl text-slate-600 dark:text-neutral-300"
+          >
+            Here&apos;s what else I&apos;m passionate about
+          </motion.p>
+        </div>
+
+        {/* Other Interest Cards */}
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+          {otherInterests.map((area, index) => (
             <motion.a
               href={area.link}
               target="_blank"
@@ -144,24 +219,23 @@ export function AllProjects({ section }: projectsProps) {
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: 0.2 * index }}
-              className={`p-6 rounded-xl transition-all aspect-video duration-300 ease-in-out transform hover:-translate-y-1 group ${
-                area.featured 
-                  ? 'bg-gradient-to-br from-pink-600 via-purple-600 to-rose-600 dark:from-pink-500 dark:via-purple-500 dark:to-rose-500 text-white shadow-xl hover:shadow-purple-500/40 dark:hover:shadow-purple-400/50' 
-                  : 'bg-white dark:bg-neutral-900/70 border border-slate-200 dark:border-neutral-800/80 text-slate-800 dark:text-neutral-100 hover:bg-slate-50 dark:hover:bg-neutral-800/90 hover:shadow-pink-500/20 dark:hover:shadow-pink-400/30'
-              }`}
+              transition={{ duration: 0.7, delay: 0.2 * index }}
+              className="p-6 rounded-xl bg-white dark:bg-neutral-900/80 border-2 border-slate-200 dark:border-neutral-800/80 text-slate-800 dark:text-neutral-100 hover:bg-slate-50 dark:hover:bg-neutral-800/90 hover:shadow-pink-500/30 dark:hover:shadow-pink-400/40 transition-all duration-500 ease-in-out transform hover:-translate-y-2"
             >
               <div className="flex items-center mb-4">
-                <div className={`p-2 rounded-lg ${
-                  area.featured 
-                    ? 'bg-white/20 text-white' 
-                    : 'bg-pink-100 dark:bg-pink-900/30 text-pink-600 dark:text-pink-400'
-                }`}>
+                <div className="p-2 rounded-lg bg-pink-100 dark:bg-pink-900/30 text-pink-600 dark:text-pink-400">
                   {area.icon}
                 </div>
-                <h3 className="text-xl font-semibold ml-3 transition-colors">{area.name}</h3>
+                <h3 className="text-xl font-bold ml-3">{area.name}</h3>
               </div>
-              <p className="text-sm opacity-70 group-hover:opacity-90 transition-opacity text-left">{area.description}</p>
+              <p className="text-base opacity-80 mb-4">{area.description}</p>
+              <div className="flex flex-wrap gap-2">
+                {area.features.map((feature, idx) => (
+                  <span key={idx} className="px-2 py-1 rounded-full text-sm font-medium bg-pink-100 dark:bg-pink-900/30 text-pink-600 dark:text-pink-400">
+                    {feature}
+                  </span>
+                ))}
+              </div>
             </motion.a>
           ))}
         </div>

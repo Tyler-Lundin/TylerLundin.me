@@ -52,7 +52,7 @@ const NavLinks = ({ isScrolled, minimal }: { isScrolled?: boolean; minimal?: boo
   return (
     <div
       className={cn(
-        'hidden lg:flex items-center justify-center space-x-12 py-2 mx-auto transition-all duration-300',
+        'hidden lg:flex items-center justify-center space-x-12 mx-auto transition-all duration-300',
         minimal ? '' : isScrolled ? 'opacity-0 translate-y-20' : 'opacity-100'
       )}
     >
@@ -64,8 +64,9 @@ const NavLinks = ({ isScrolled, minimal }: { isScrolled?: boolean; minimal?: boo
             href={section.type === 'home' ? '/' : `/${section.type}`}
             className={cn(
               'text-gray-900 dark:text-white font-light text-md transition-all duration-200',
+              'hover:blur-[2px]',
               section.type === 'projects' && 'text-indigo-600 dark:text-emerald-500',
-              isActive && 'blur-sm pointer-events-none'
+              isActive && 'blur-[2px] pointer-events-none'
             )}
           >
             {section.headline}
@@ -77,13 +78,12 @@ const NavLinks = ({ isScrolled, minimal }: { isScrolled?: boolean; minimal?: boo
 };
 
 const PrimaryNav = ({ isScrolled, setIsMenuOpen }: NavProps) => (
-  <nav className="absolute inset-4 h-24 rounded-lg z-50 bg-gradient-to-r from-blue-500/50 dark:from-pink-950/50 via-yellow-400/50 dark:via-blue-800/50 to-purple-500/50 dark:to-purple-900/75 backdrop-blur-sm transition-all duration-500">
-    <div className="h-full relative">
+  <nav className="absolute inset-4 h-24 rounded-lg z-50 bg-gradient-to-r from-blue-500/50 dark:from-pink-950/50 via-yellow-400/50 dark:via-blue-800/50 to-purple-500/50 dark:to-purple-900/75 backdrop-blur-sm transition-all duration-500 grid items-center">
+    <div className="h-full items-center grid relative">
       <MenuButton onClick={() => setIsMenuOpen(true)} minimal />
       <LogoWrapper isScrolled={isScrolled}>
         <Logo />
       </LogoWrapper>
-      <hr className="hidden lg:block border-2 translate-y-1 border-white dark:border-black" />
       <NavLinks isScrolled={isScrolled} />
     </div>
   </nav>

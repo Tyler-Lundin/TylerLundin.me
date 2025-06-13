@@ -26,6 +26,7 @@ const formatDate = (dateString: string) => {
 // Components
 function EntryCard({ entry }: { entry: JournalEntry }) {
   const { date, time } = formatDate(entry.created_at)
+  const [showTLDR, setShowTLDR] = useState(false)
 
   return (
     <motion.div
@@ -33,40 +34,74 @@ function EntryCard({ entry }: { entry: JournalEntry }) {
       animate={{ opacity: 1, y: 0 }}
       className="group relative bg-white/40 dark:bg-gray-900/40 backdrop-blur-sm border border-gray-200/30 dark:border-gray-800/30 rounded-xl p-4 hover:border-gray-300/50 dark:hover:border-gray-700/50 transition-all duration-300"
     >
-      <div className="flex items-start gap-4">
-        <div className="flex-shrink-0">
-          <div className="w-10 h-10 rounded-full bg-gradient-to-br from-indigo-500/10 to-pink-500/10 dark:from-indigo-400/10 dark:to-pink-400/10 border border-gray-200/50 dark:border-gray-700/50 overflow-hidden">
-            <Image src="/images/tyler.png" alt="Tyler Lundin" width={40} height={40} className="object-cover" />
+      <div className="flex flex-col gap-4">
+        {/* Header Section */}
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-indigo-500/10 to-pink-500/10 dark:from-indigo-400/10 dark:to-pink-400/10 border border-gray-200/50 dark:border-gray-700/50 overflow-hidden">
+              <Image 
+                src="/images/tyler.png" 
+                alt="Tyler Lundin" 
+                width={40} 
+                height={40} 
+                className="w-full h-full object-cover"
+              />
+            </div>
+            <div className="flex items-center gap-3">
+              <div className="flex items-center gap-1.5 text-xs text-gray-500 dark:text-gray-400">
+                <Calendar className="w-3.5 h-3.5" />
+                {date}
+              </div>
+              <div className="flex items-center gap-1.5 text-xs text-gray-500 dark:text-gray-400">
+                <Clock className="w-3.5 h-3.5" />
+                {time}
+              </div>
+            </div>
           </div>
+          
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={() => setShowTLDR(!showTLDR)}
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-all duration-300 ${
+              showTLDR 
+                ? 'bg-white/80 dark:bg-gray-800/80 shadow-lg border border-gray-200/50 dark:border-gray-700/50' 
+                : 'bg-gradient-to-r from-indigo-500/10 via-pink-500/10 to-yellow-500/10 dark:from-indigo-400/10 dark:via-pink-400/10 dark:to-yellow-400/10 hover:from-indigo-500/20 hover:via-pink-500/20 hover:to-yellow-500/20 dark:hover:from-indigo-400/20 dark:hover:via-pink-400/20 dark:hover:to-yellow-400/20'
+            }`}
+          >
+            <span className="bg-gradient-to-r from-indigo-400 via-pink-400 to-yellow-400 dark:from-indigo-300 dark:via-pink-300 dark:to-yellow-300 bg-clip-text text-transparent">
+              {showTLDR ? 'Original' : 'Summary'}
+            </span>
+          </motion.button>
         </div>
 
-        <div className="flex-grow min-w-0">
-          <div className="flex items-center gap-3 mb-2">
-            <div className="flex items-center gap-1.5 text-xs text-gray-500 dark:text-gray-400">
-              <Calendar className="w-3.5 h-3.5" />
-              {date}
-            </div>
-            <div className="flex items-center gap-1.5 text-xs text-gray-500 dark:text-gray-400">
-              <Clock className="w-3.5 h-3.5" />
-              {time}
-            </div>
-          </div>
-
-          <div className="space-y-3">
-            <div className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-black/5 dark:bg-white/5 text-xs">
-              <span className="bg-gradient-to-r from-indigo-400 via-pink-400 to-yellow-400 dark:from-indigo-300 dark:via-pink-300 dark:to-yellow-300 bg-clip-text text-transparent font-medium">
-                tldr:
-              </span>
-              <span className="bg-gradient-to-r from-indigo-400 via-pink-400 to-yellow-400 dark:from-indigo-300 dark:via-pink-300 dark:to-yellow-300 bg-clip-text text-transparent font-light">
-                {entry.status_text}
-              </span>
-            </div>
-
-            <p className="text-gray-700 dark:text-gray-300 text-sm leading-relaxed font-light">
-              {entry.entry_text}
-            </p>
-          </div>
-        </div>
+        {/* Content Section */}
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={showTLDR ? 'tldr' : 'full'}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.2 }}
+            className="relative"
+          >
+            {showTLDR ? (
+              <div className="bg-gradient-to-br from-indigo-500/5 to-pink-500/5 dark:from-indigo-400/5 dark:to-pink-400/5 rounded-lg p-4 border border-indigo-200/30 dark:border-indigo-800/30">
+                <small className=" text-gray-500 dark:text-gray-400 text-xs border-b border-black/50 dark:border-white/50">Summary</small>
+                <div className="text-gray-700 dark:text-gray-300 text-sm leading-relaxed font-light">
+                  {entry.status_text}
+                </div>
+              </div>
+            ) : (
+              <div className="bg-gradient-to-br from-indigo-500/5 to-pink-500/5 dark:from-indigo-400/5 dark:to-pink-400/5 rounded-lg p-4 border border-indigo-200/30 dark:border-indigo-800/30">
+                <small className="text-gray-500 dark:text-gray-400 text-xs border-b border-black/50 dark:border-white/50">Original</small>
+                <p className="text-gray-700 dark:text-gray-300 text-sm leading-relaxed font-light">
+                  {entry.entry_text}
+                </p>
+              </div>
+            )}
+          </motion.div>
+        </AnimatePresence>
       </div>
     </motion.div>
   )

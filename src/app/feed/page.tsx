@@ -47,7 +47,7 @@ function EntryCard({ entry }: { entry: JournalEntry }) {
                 className="w-full h-full object-cover"
               />
             </div>
-            <div className="flex items-center gap-3">
+            <div className="grid sm:flex items-center gap-3">
               <div className="flex items-center gap-1.5 text-xs text-gray-500 dark:text-gray-400">
                 <Calendar className="w-3.5 h-3.5" />
                 {date}
@@ -70,7 +70,7 @@ function EntryCard({ entry }: { entry: JournalEntry }) {
             }`}
           >
             <span className="bg-gradient-to-r from-indigo-400 via-pink-400 to-yellow-400 dark:from-indigo-300 dark:via-pink-300 dark:to-yellow-300 bg-clip-text text-transparent">
-              {showTLDR ? 'Original' : 'Summary'}
+              {showTLDR ? 'Tyler\'s Journal' : 'AI Summary'}
             </span>
           </motion.button>
         </div>
@@ -87,14 +87,14 @@ function EntryCard({ entry }: { entry: JournalEntry }) {
           >
             {showTLDR ? (
               <div className="bg-gradient-to-br from-indigo-500/5 to-pink-500/5 dark:from-indigo-400/5 dark:to-pink-400/5 rounded-lg p-4 border border-indigo-200/30 dark:border-indigo-800/30">
-                <small className=" text-gray-500 dark:text-gray-400 text-xs border-b border-black/50 dark:border-white/50">Summary</small>
+                <small className=" text-gray-500 dark:text-gray-400 text-xs border-b border-black/50 dark:border-white/50">AI</small>
                 <div className="text-gray-700 dark:text-gray-300 text-sm leading-relaxed font-light">
                   {entry.status_text}
                 </div>
               </div>
             ) : (
               <div className="bg-gradient-to-br from-indigo-500/5 to-pink-500/5 dark:from-indigo-400/5 dark:to-pink-400/5 rounded-lg p-4 border border-indigo-200/30 dark:border-indigo-800/30">
-                <small className="text-gray-500 dark:text-gray-400 text-xs border-b border-black/50 dark:border-white/50">Original</small>
+                <small className="text-gray-500 dark:text-gray-400 text-xs border-b border-black/50 dark:border-white/50">Tyler</small>
                 <p className="text-gray-700 dark:text-gray-300 text-sm leading-relaxed font-light">
                   {entry.entry_text}
                 </p>

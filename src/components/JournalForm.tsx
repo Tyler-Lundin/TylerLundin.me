@@ -52,50 +52,41 @@ export default function JournalForm({ onEntrySubmitted }: JournalFormProps) {
 
   if (!isAuthenticated) {
     return (
-      <div className="relative backdrop-blur-md bg-white/5 dark:bg-black/10 rounded-2xl border border-white/10 dark:border-white/5 shadow-[0_0_20px_rgba(255,255,255,0.05)] p-6">
-        <div className="absolute inset-0 bg-gradient-to-tr from-cyan-400/20 via-fuchsia-500/20 to-indigo-500/20 pointer-events-none rounded-2xl" />
-        <div className="relative">
-          <h2 className="text-xl font-light tracking-wider mb-4 text-gray-800 dark:text-white/90">New Journal Entry</h2>
-          <div className="text-center text-gray-500 dark:text-white/70">
-            Please log in to submit journal entries.
-          </div>
-        </div>
+      <div className="bg-white/40 dark:bg-gray-900/40 backdrop-blur-sm border border-gray-200/30 dark:border-gray-800/30 rounded-xl p-6">
+        <h2 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-2">New Journal Entry</h2>
+        <p className="text-sm text-gray-500 dark:text-gray-400">
+          Please log in to submit journal entries.
+        </p>
       </div>
     )
   }
 
   return (
-    <div className="relative backdrop-blur-md bg-white/5 dark:bg-black/10 rounded-2xl border border-white/10 dark:border-white/5 shadow-[0_0_20px_rgba(255,255,255,0.05)] p-6">
-      <div className="absolute inset-0 bg-gradient-to-tr from-cyan-400/20 via-fuchsia-500/20 to-indigo-500/20 pointer-events-none rounded-2xl" />
-      <div className="relative">
-        <h2 className="text-xl font-light tracking-wider mb-4 text-gray-800 dark:text-white/90">New Journal Entry</h2>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <textarea
-              value={entryText}
-              onChange={(e) => setEntryText(e.target.value)}
-              placeholder="Write your journal entry here..."
-              className="w-full h-48 p-4 bg-white/5 dark:bg-black/20 border border-white/10 dark:border-white/5 rounded-xl focus:ring-2 focus:ring-cyan-500/50 focus:border-transparent text-gray-800 dark:text-white/90 placeholder-gray-500 dark:placeholder-white/30 backdrop-blur-sm transition-all duration-300"
-              required
-            />
+    <div className="bg-white/40 dark:bg-gray-900/40 backdrop-blur-sm border border-gray-200/30 dark:border-gray-800/30 rounded-xl p-4">
+      <h2 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-4">New Journal Entry</h2>
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <div>
+          <textarea
+            value={entryText}
+            onChange={(e) => setEntryText(e.target.value)}
+            placeholder="Write your journal entry here..."
+            className="w-full h-48 p-4 bg-white/50 dark:bg-gray-800/50 border border-gray-200/50 dark:border-gray-700/50 rounded-lg focus:ring-2 focus:ring-indigo-500/50 focus:border-transparent text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 backdrop-blur-sm transition-all duration-300 resize-none"
+            required
+          />
+        </div>
+        {error && (
+          <div className="text-sm text-red-500 dark:text-red-400 bg-red-50/50 dark:bg-red-900/20 border border-red-200/50 dark:border-red-800/50 rounded-lg p-3">
+            {error}
           </div>
-          {error && (
-            <div className="text-red-400 text-sm bg-red-500/10 border border-red-500/20 rounded-lg p-3">
-              {error}
-            </div>
-          )}
-          <button
-            type="submit"
-            disabled={isSubmitting}
-            className="w-full group relative flex items-center justify-center gap-2 px-4 py-2 text-sm font-medium text-white/90 bg-cyan-500/20 dark:bg-cyan-500/10 rounded-xl border border-cyan-500/20 dark:border-cyan-500/10 hover:bg-cyan-500/30 dark:hover:bg-cyan-500/20 transition-all duration-300 backdrop-blur-sm disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            <span className="relative z-10">
-              {isSubmitting ? 'Submitting...' : 'Submit Entry'}
-            </span>
-            <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/0 via-cyan-500/20 to-cyan-500/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-xl" />
-          </button>
-        </form>
-      </div>
+        )}
+        <button
+          type="submit"
+          disabled={isSubmitting}
+          className="w-full flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-medium text-white bg-gradient-to-r from-indigo-500 to-pink-500 hover:from-indigo-600 hover:to-pink-600 rounded-lg transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:from-indigo-500 disabled:hover:to-pink-500"
+        >
+          {isSubmitting ? 'Submitting...' : 'Submit Entry'}
+        </button>
+      </form>
     </div>
   )
 }

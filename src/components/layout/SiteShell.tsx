@@ -19,10 +19,10 @@ export function SiteShell({ children }: { children: React.ReactNode }) {
       {!isDevRoute && (
         <div className={`${bannerVisible ? 'mt-0' : 'mt-2'} relative`}>
           <Navbar bannerVisible={bannerVisible} />
-          <ParallaxBackground />
         </div>
       )}
       {children}
+      <ParallaxBackground />
       {!isDevRoute && (
         <Footer />
       )}

@@ -1,45 +1,69 @@
 "use client";
 
+import Image from 'next/image';
 import Link from 'next/link';
-import { Badge, BadgeContent } from '../Badge';
+import { motion } from 'framer-motion';
+
 export function Hero() {
-
-
   return (
     <section
       id="hero"
-      className="min-h-[calc(100vh-4rem)] flex flex-col justify-center relative overflow-hidden"
+      className="min-h-screen flex flex-col justify-center items-center relative overflow-hidden"
     >
       {/* Animated background gradient */}
+      <div className="absolute inset-0 bg-gradient-to-br from-blue-50/50 via-purple-50/50 to-pink-50/50 dark:from-blue-950/50 dark:via-purple-950/50 dark:to-pink-950/50" />
 
-      {/* Glass morphism container */}
-      <Badge>
-        <div className="w-full h-full pt-8 sm:pt-14">
-
-
-          <div className="space-y-4 sm:space-y-6">
-            {/* Profile and Role Section */}
-
-            <BadgeContent />
-
-            {/* Buttons with Glass Effect */}
-            <div className="flex flex-col px-4 gap-1 justify-center">
-              <Link
-                href="/projects/web-dev"
-                className="px-2 text-sm md:text-md w-full  rounded-xl hover:blur-[2px] text-center backdrop-blur-sm bg-green-500 border border-black/25 text-neutral-100 text-base font-medium transition-all duration-300 ease-in-out shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
-              >
-                Projects
-              </Link>
-              <Link
-                href="/contact"
-                className="pxj-2 text-sm md:text-md w-full  rounded-xl hover:blur-[2px] text-center backdrop-blur-sm bg-blue-500 border border-black/25 text-neutral-100 text-base font-medium transition-all duration-300 ease-in-out transform hover:-translate-y-0.5"
-              >
-                Msg Me
-              </Link>
-            </div>
+      {/* Content container */}
+      <div className="relative z-10 max-w-4xl mx-auto px-4 text-center">
+        {/* Profile Image */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="relative w-32 h-32 mx-auto mb-8"
+        >
+          <div className="absolute inset-0 rounded-full bg-gradient-to-br from-blue-500/20 via-purple-500/20 to-pink-500/20 blur-xl" />
+          <div className="relative w-full h-full rounded-full overflow-hidden border border-black/25 dark:border-white/25 backdrop-blur-sm">
+            <Image
+              src="/images/tyler.png"
+              alt="Tyler"
+              fill
+              className="object-cover"
+              priority
+            />
           </div>
-        </div>
-      </Badge>
+        </motion.div>
+
+        {/* Name and Title */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.2 }}
+          className="space-y-4"
+        >
+          <h1 className="text-4xl sm:text-5xl font-black text-neutral-800 dark:text-neutral-100 tracking-tight">
+            Tyler Lundin
+          </h1>
+          <p className="text-xl sm:text-2xl text-neutral-600 dark:text-neutral-300 font-medium">
+            Freelance Web Developer
+          </p>
+        </motion.div>
+
+        {/* CTA Button */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.4 }}
+          className="mt-8"
+        >
+          <Link
+            href="/contact"
+            className="inline-block px-8 py-3 text-lg font-medium text-white bg-gradient-to-r from-blue-500 to-purple-500 rounded-xl hover:from-blue-600 hover:to-purple-600 transform hover:-translate-y-0.5 transition-all duration-300 shadow-lg hover:shadow-xl"
+          >
+            Let&apos;s Build Something
+          </Link>
+        </motion.div>
+      </div>
     </section>
   );
 }

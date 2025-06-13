@@ -1,14 +1,13 @@
 import Link from 'next/link';
 import { siteConfig } from '@/config/site';
+import { StatusIndicator } from '../StatusIndicator';
 
 export function Footer() {
   return (
     <footer className="relative bottom-0 left-0 right-0 z-50">
-      {/* Backdrop blur */}
-      <div className="absolute inset-0 backdrop-blur-md bg-white/30 dark:bg-black/30" />
-      
+      {/* Backdrop blur */}      
       {/* Main footer content */}
-      <div className="relative mx-4 mb-4 rounded-lg border border-white/10 dark:border-white/5 bg-white/50 dark:bg-black/50 shadow-2xl">
+      <div className="relative mx-4 rounded-lg border border-white/10 dark:border-white/5 bg-white/50 dark:bg-black/50">
         {/* Decorative elements */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
           {/* Grid lines */}
@@ -25,16 +24,7 @@ export function Footer() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex flex-col items-center space-y-2">
             {/* Status indicators */}
-            <div className="flex items-center space-x-3 mb-1 pointer-events-none select-none">
-              <div className="flex items-center space-x-1">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                <span className="text-[10px] font-mono text-black/40 dark:text-white/40">SYSTEM ONLINE</span>
-              </div>
-              <div className="flex items-center space-x-1">
-                <span className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse" />
-                <span className="text-[10px] font-mono text-black/40 dark:text-white/40">NETWORK ACTIVE</span>
-              </div>
-            </div>
+            <StatusIndicator />
 
             {/* Main content */}
             <div className="flex flex-col md:flex-row items-center justify-between w-full">

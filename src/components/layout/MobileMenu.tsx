@@ -26,7 +26,7 @@ export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
     <>
       {/* Backdrop */}
       <div
-        className={`fixed inset-0 bg-black/50 backdrop-blur-sm transition-opacity duration-300 z-50 ${
+        className={`fixed inset-0 bg-black/50 backdrop-blur-sm transition-opacity duration-300 z-[499] ${
           isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'
         }`}
         onClick={onClose}
@@ -34,7 +34,7 @@ export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
 
       {/* Slide-out Menu */}
       <div
-        className={`fixed top-0 right-0 h-full w-64 bg-white/95 dark:invert backdrop-blur-sm shadow-lg z-50 transition-transform duration-300 ${
+        className={`fixed top-0 right-0 h-full w-64 bg-white/95 dark:invert backdrop-blur-sm shadow-lg z-[500] transition-transform duration-300 ${
           isOpen ? 'translate-x-0' : 'translate-x-full'
         }`}
       >

@@ -93,7 +93,7 @@ const WEB_DEV_PROJECTS = [
 
 export function WebDevProjects({ section }: WebDevProjectsProps) {
   return (
-    <section id="projects" className="min-h-screen py-20 relative overflow-hidden">
+    <section id="projects" className="min-h-screen py-20 relative overflow-hidden pt-44">
       {/* Animated background gradient */}
       <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 via-purple-500/10 to-pink-500/10 dark:from-blue-500/5 dark:via-purple-500/5 dark:to-pink-500/5 animate-gradient" />
       

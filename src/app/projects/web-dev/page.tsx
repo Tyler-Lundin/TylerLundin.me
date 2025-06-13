@@ -11,7 +11,7 @@ export default function ProjectsPage() {
   }
 
   return (
-    <main className="pt-24  bg-gray-100/50 dark:bg-black/80 backdrop-blur-sm">
+    <main className="bg-gray-100/50 dark:bg-black/80 backdrop-blur-sm">
       <WebDevProjects section={projectsSection} />
     </main>
   );

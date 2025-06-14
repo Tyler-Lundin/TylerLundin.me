@@ -90,10 +90,10 @@ export const siteConfig: SiteConfig = {
       }
     },
     {
-      type: "feed",
-      headline: "feed",
+      type: "posts",
+      headline: "posts",
       description: "View the latest updates from Tyler Lundin.",
-      link: "/feed"
+      link: "/posts"
     }
   ],
   footer: {

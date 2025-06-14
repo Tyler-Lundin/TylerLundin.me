@@ -152,7 +152,7 @@ function LoadingState() {
 }
 
 // Main Page
-export default function FeedPage() {
+export default function PostsPage() {
   const [entries, setEntries] = useState<JournalEntry[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [page, setPage] = useState(1)
@@ -186,7 +186,7 @@ export default function FeedPage() {
   if (isLoading) return <LoadingState />
 
   return (
-    <section id="feed" className="py-32 min-h-screen bg-gradient-to-b from-white to-gray-50 dark:from-gray-900 dark:to-gray-950">
+    <section id="posts" className="py-32 min-h-screen bg-gradient-to-b from-white/50 to-gray-50/50 dark:from-gray-900/50 dark:to-gray-950/50">
       <div className="max-w-2xl mx-auto space-y-8 px-4">
         <AnimatePresence mode="wait">
           <motion.div

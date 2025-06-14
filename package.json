@@ -13,8 +13,12 @@
     "@heroicons/react": "^2.2.0",
     "@supabase/ssr": "^0.6.1",
     "@supabase/supabase-js": "^2.49.8",
+    "@tsparticles/engine": "^3.8.1",
+    "@tsparticles/react": "^3.0.0",
+    "@tsparticles/slim": "^3.8.1",
     "@types/bcryptjs": "^2.4.6",
     "@types/jsonwebtoken": "^9.0.9",
+    "@types/stats": "^0.16.30",
     "@vercel/analytics": "^1.5.0",
     "bcryptjs": "^3.0.2",
     "clsx": "^2.1.1",
@@ -29,6 +33,7 @@
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "resend": "^4.3.0",
+    "stats.js": "^0.17.0",
     "tailwind-merge": "^3.2.0"
   },
   "devDependencies": {

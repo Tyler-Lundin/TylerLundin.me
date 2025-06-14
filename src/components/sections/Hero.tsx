@@ -25,7 +25,7 @@ export function Hero() {
               src="/images/tyler.png"
               alt="Tyler"
               fill
-              className="object-cover"
+              className="object-cover select-none pointer-events-none"
               priority
             />
           </div>

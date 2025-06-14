@@ -10,6 +10,17 @@ interface WebDevProjectsProps {
 
 const WEB_DEV_PROJECTS = [
   {
+    title: "Your Project Here",
+    description: "Let's build something amazing together. I've been working with Ghost for years, and I've built a number of custom themes and integrations.",
+    techStack: [
+      "Your Vision",
+      "Modern Tech",
+      "Expert Development"
+    ],
+    projectUrl: "/contact",
+    isInternalLink: true
+  },
+  {
     title: "Lundin Vision",
     description: "A sophisticated medical practice website combining modern web technologies with luxury aesthetics. Features include comprehensive service information, team profiles, appointment scheduling, and a responsive design with dark mode support.",
     techStack: [
@@ -78,17 +89,7 @@ const WEB_DEV_PROJECTS = [
     projectUrl: "https://www.willows-yardscapes.com/",
     isInternalLink: false
   },
-  {
-    title: "Your Project Here",
-    description: "Let's build something amazing together. I've been working with Ghost for years, and I've built a number of custom themes and integrations.",
-    techStack: [
-      "Your Vision",
-      "Modern Tech",
-      "Expert Development"
-    ],
-    projectUrl: "/contact",
-    isInternalLink: true
-  },
+
 ];
 
 export function WebDevProjects({ section }: WebDevProjectsProps) {
@@ -105,13 +106,26 @@ export function WebDevProjects({ section }: WebDevProjectsProps) {
           </span>
         </h2>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
-          {WEB_DEV_PROJECTS.map((project, index) => (
-            <ProjectPreview
-              key={index}
-              {...project}
-            />
-          ))}
+        <div className="flex flex-col md:flex-row gap-4 md:gap-8 mb-20">
+          {/* Left column - Odd items */}
+          <div className="grid  w-full gap-8">
+            {WEB_DEV_PROJECTS.filter((_, i) => i % 2 === 0).map((project ) => (
+              <ProjectPreview
+                key={project.title}
+                {...project}
+              />
+            ))}
+          </div>
+          
+          {/* Right column - Even items */}
+          <div className="grid  w-full gap-8 md:translate-y-20">
+            {WEB_DEV_PROJECTS.filter((_, i) => i % 2 === 1).map((project) => (
+              <ProjectPreview
+                key={project.title}
+                {...project}
+              />
+            ))}
+          </div>
         </div>
       </div>
       <WebFAQ />

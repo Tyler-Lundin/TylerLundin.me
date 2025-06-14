@@ -3,7 +3,7 @@
 import { usePathname } from 'next/navigation'
 import { Navbar } from '@/components/layout/Navbar'
 import { Footer } from '@/components/layout/Footer'
-import ParallaxBackground from '@/components/ParallaxBackground'
+import ReactiveBackground from '@/components/ReactiveBackground'
 import Banner from '../Banner'
 import { useState } from 'react'
 
@@ -22,7 +22,7 @@ export function SiteShell({ children }: { children: React.ReactNode }) {
         </div>
       )}
       {children}
-      <ParallaxBackground />
+      <ReactiveBackground />
       {!isDevRoute && (
         <Footer />
       )}

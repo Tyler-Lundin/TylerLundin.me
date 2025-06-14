@@ -7,6 +7,7 @@ import { siteConfig } from '@/config/site';
 import MobileMenu from './MobileMenu';
 import { Logo } from './Logo';
 import { cn } from '@/lib/utils';
+import { BrainSticker } from '../ui/BrainSticker';
 
 interface NavProps {
   bannerVisible: boolean;
@@ -58,6 +59,7 @@ const NavLinks = ({ isScrolled, minimal }: { isScrolled?: boolean; minimal?: boo
     >
       {siteConfig.sections.map((section) => {
         const isActive = section.type === 'home' ? pathname === '/' : pathname === `/${section.type}`;
+        const isPosts = section.type === 'posts';
         return (
           <Link
             key={section.type}
@@ -66,10 +68,10 @@ const NavLinks = ({ isScrolled, minimal }: { isScrolled?: boolean; minimal?: boo
               'text-gray-900 dark:text-white font-light text-md transition-opacity duration-200',
               'hover:opacity-75',
               section.type === 'projects' && 'text-indigo-600 dark:text-emerald-500',
-              isActive && 'opacity-50 pointer-events-none'
+              isActive && 'opacity-25 pointer-events-none'
             )}
           >
-            {section.headline}
+            { isPosts ? <BrainSticker /> : section.headline}
           </Link>
         );
       })}
@@ -86,7 +88,7 @@ const PrimaryNav = ({ isScrolled, setIsMenuOpen }: NavProps) => (
       </LogoWrapper>
       <NavLinks isScrolled={isScrolled} />
     </div>
-    <span className="absolute top-1/2 left-0 right-0 h-[2px] bg-white dark:bg-black" />
+    <span className="absolute top-1/2 left-0 right-0 h-[2px] bg-white dark:bg-black hidden lg:block" />
   </nav>
 );
 

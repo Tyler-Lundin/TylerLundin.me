@@ -93,7 +93,7 @@ export default function Banner({ isVisible, setIsVisible }: { isVisible: boolean
               {/* Right */}
               <div className="flex items-center gap-2">
                 <Link
-                  href="/feed"
+                  href="/posts"
                   className="text-[10px] whitespace-nowrap text-black/50 dark:text-white/40 hover:text-black dark:hover:text-white underline underline-offset-2 transition"
                 >
                   view all

@@ -65,7 +65,7 @@ export function MainFocusBanner({ title, description, features, link }: MainFocu
           </div>
 
           {/* Features */}
-          <div className="flex flex-wrap gap-2 md:gap-3 mb-8 md:mb-12">
+          <div className="hidden md:flex flex-wrap gap-2 md:gap-3 mb-8 md:mb-12">
             {features.map((feature, idx) => (
               <div
                 key={idx}

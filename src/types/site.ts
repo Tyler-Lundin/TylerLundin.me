@@ -29,7 +29,7 @@ export type Section =
   | ProjectsSection
   | WebDevSection
   | ContactSection
-  | FeedSection;
+  | postsSection;
 
 interface BaseSection {
   type: string;
@@ -83,8 +83,8 @@ export interface ContactSection extends BaseSection {
   };
 } 
 
-export interface FeedSection extends BaseSection {
-  type: 'feed';
+export interface postsSection extends BaseSection {
+  type: 'posts';
   description: string;
   link: string;
 }

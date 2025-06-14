@@ -97,6 +97,8 @@ const StickyNav = ({ bannerVisible, isScrolled, setIsMenuOpen }: NavProps) => (
       isScrolled ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-full'
     )}
   >
+    <span className="absolute bottom-0 left-1 right-1 rounded-lg h-[40px] bg-gradient-to-t from-white/25 dark:from-black via-transparent to-transparent" />
+    <span className="absolute top-0 left-1 right-1 rounded-lg h-[40px] bg-gradient-to-b from-white/25 dark:from-black via-transparent to-transparent" />
     <div className="container px-4 h-12 flex items-center justify-between">
       <Logo />
       <NavLinks minimal />

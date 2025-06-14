@@ -83,7 +83,7 @@ function EntryCard({ entry }: { entry: JournalEntry }) {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.2 }}
-            className="relative"
+            className="relative max-h-[200px] overflow-y-auto"
           >
             {showTLDR ? (
               <div className="bg-gradient-to-br from-indigo-500/5 to-pink-500/5 dark:from-indigo-400/5 dark:to-pink-400/5 rounded-lg p-4 border border-indigo-200/30 dark:border-indigo-800/30">

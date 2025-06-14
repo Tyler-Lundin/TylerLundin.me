@@ -2,6 +2,7 @@
 
 import { ProjectsSection } from '@/types/site';
 import { motion } from 'framer-motion';
+import { MainFocusBanner } from './MainFocusBanner';
 
 interface projectsProps {
   section: ProjectsSection;
@@ -21,7 +22,7 @@ const expertiseAreas = [
       'E-commerce Solutions',
       'Web Applications',
       'Performance Optimization',
-      'Modern Tech Stack'
+      'Modern Technologies'
     ],
     cta: 'View Projects',
     link: '/projects/web-dev',
@@ -137,53 +138,12 @@ export function AllProjects({ section }: projectsProps) {
 
         {/* Main Focus - Web Development */}
         {mainFocus && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.7 }}
-            className="mb-32"
-          >
-            <a
-              href={mainFocus.link}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="block p-12 rounded-3xl bg-gradient-to-br from-pink-600 via-purple-600 to-rose-600 dark:from-pink-500 dark:via-purple-500 dark:to-rose-500 text-white shadow-2xl hover:shadow-purple-500/50 dark:hover:shadow-purple-400/60 transition-all duration-500 ease-in-out transform hover:-translate-y-2"
-            >
-              <div className="flex items-center mb-8">
-                <div className="p-4 rounded-xl bg-white/20">
-                  {mainFocus.icon}
-                </div>
-                <h3 className="text-4xl font-black ml-6">{mainFocus.name}</h3>
-              </div>
-              <p className="text-2xl opacity-90 mb-8 max-w-3xl">{mainFocus.description}</p>
-              <div className="flex flex-wrap gap-3 mb-8">
-                {mainFocus.features.map((feature, idx) => (
-                  <span key={idx} className="px-4 py-2 rounded-full text-lg font-medium bg-white/20">
-                    {feature}
-                  </span>
-                ))}
-              </div>
-              <div className="flex items-center justify-end">
-                <span className="text-xl font-bold group-hover:translate-x-2 transition-transform duration-300">
-                  View All Projects
-                  <svg 
-                    className="inline-block ml-2 w-6 h-6 group-hover:translate-x-1 transition-transform duration-300" 
-                    fill="none" 
-                    stroke="currentColor" 
-                    viewBox="0 0 24 24"
-                  >
-                    <path 
-                      strokeLinecap="round" 
-                      strokeLinejoin="round" 
-                      strokeWidth={2} 
-                      d="M17 8l4 4m0 0l-4 4m4-4H3"
-                    />
-                  </svg>
-                </span>
-              </div>
-            </a>
-          </motion.div>
+          <MainFocusBanner
+            title={mainFocus.name}
+            description={mainFocus.description}
+            features={mainFocus.features}
+            link={mainFocus.link}
+          />
         )}
 
         {/* Other Interests Section */}

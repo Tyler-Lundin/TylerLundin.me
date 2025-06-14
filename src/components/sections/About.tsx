@@ -48,11 +48,7 @@ export function About() {
             transition={{ duration: 0.5 }}
             className="hidden md:flex justify-center items-center"
           >
-            <div className="relative w-fit h-full overflow-hidden rounded-full">
-              <span className="absolute rounded-full bottom-0 left-0 w-full h-1/2 bg-gradient-to-t from-white dark:from-black via-transparent to-transparent" />
-              <span className="absolute rounded-full top-0 left-0 w-1/2 h-full bg-gradient-to-r from-white dark:from-black via-transparent to-transparent" />
-              <span className="absolute rounded-full bottom-0 right-0 w-1/2 h-full bg-gradient-to-l from-white dark:from-black via-transparent to-transparent" />
-              <span className="absolute rounded-full top-0 right-0 w-full h-1/2 bg-gradient-to-b from-white dark:from-black via-transparent to-transparent" />
+            <div className="relative w-fit h-full overflow-hidden rounded-full border-2 border-black/50 dark:border-white/50">
               <Image src="/images/tyler.png" alt="Tyler Lundin" width={500} height={500} className="object-cover" />
             </div>
           </motion.div>

@@ -29,7 +29,7 @@ export function MainFocusBanner({ title, description, features, link }: MainFocu
             src="/images/web-dev-light.png"
             alt="Web Development"
             fill
-            className="object-cover object-center dark:hidden"
+            className="object-cover object-center dark:hidden blur-md"
             priority
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
           />
@@ -53,7 +53,7 @@ export function MainFocusBanner({ title, description, features, link }: MainFocu
         {/* Content */}
         <div className="relative p-6 md:p-12">
           {/* Header Section */}
-          <div className="flex flex-col items-center text-center md:text-left md:flex-row md:items-start gap-6 md:gap-8 mb-8 md:mb-12">
+          <div className="flex flex-col items-center text-center md:text-left md:flex-row md:items-start gap-6 md:gap-8 mb-8 md:mb-12 text-black dark:text-white">
             <div className="flex-grow">
               <h3 className="text-2xl md:text-5xl font-black mb-3 md:mb-4 tracking-tight">
                 {title}
@@ -71,9 +71,9 @@ export function MainFocusBanner({ title, description, features, link }: MainFocu
                 key={idx}
                 className="transform group-hover:scale-[1.02] transition-transform duration-300"
               >
-                <span className="text-sm font-medium text-white/90">
+                <span className="text-sm font-medium text-black/90 dark:text-white/90">
                   {feature}
-                  {idx < features.length - 1 && <span className="mx-2 text-white/30">•</span>}
+                  {idx < features.length - 1 && <span className="mx-2 text-black/75 dark:text-white/75">•</span>}
                 </span>
               </div>
             ))}
@@ -82,9 +82,9 @@ export function MainFocusBanner({ title, description, features, link }: MainFocu
           {/* CTA Button */}
           <div className="flex items-center justify-center md:justify-end">
             <div className="inline-flex items-center gap-2 md:gap-3 px-4 md:px-6 py-2 md:py-3 rounded-full transition-all duration-300">
-              <span className="text-base md:text-xl font-bold text-white/90">View All Projects</span>
+              <span className="md:text-xl font-bold text-black/90 dark:text-white/90">View All Projects</span>
               <svg
-                className="w-5 h-5 md:w-6 md:h-6 transform group-hover:translate-x-1 transition-transform duration-300"
+                className="w-5 h-5 md:w-6 md:h-6 text-black/90 dark:text-white/90 transform group-hover:translate-x-1 transition-transform duration-300"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"

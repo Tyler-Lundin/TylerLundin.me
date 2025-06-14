@@ -9,7 +9,7 @@ const roboto = Roboto({
 
 export function Logo() {
   return (
-    <Link href="/" className="group inline-block">
+    <Link href="/" className="group inline-block pt-1">
       <div className="flex items-baseline space-x-1">
         <span style={{ fontFamily: roboto.style.fontFamily }} className="text-md font-light tracking-tight text-neutral-900 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors duration-300">
           tyler

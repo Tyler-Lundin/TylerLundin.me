@@ -1,48 +1,70 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import Particles, { initParticlesEngine } from '@tsparticles/react';
 import { loadSlim } from '@tsparticles/slim';
 import type { ISourceOptions } from '@tsparticles/engine';
-
-const options: ISourceOptions = {
-  fullScreen: { enable: true, zIndex: -1 },
-  particles: {
-    number: { value: 80, density: { enable: true } },
-    color: { value: '#ffffff' },
-    shape: { type: 'circle' },
-    opacity: { value: 0.5 },
-    size: { value: 2 },
-    links: { enable: true, distance: 150, color: '#ffffff', opacity: 0.1, width: 1 },
-    move: { enable: true, speed: 0.5, outModes: { default: 'out' } },
-  },
-  interactivity: {
-    events: {
-      onHover: { enable: true, mode: 'repulse' },
-      onClick: { enable: true, mode: 'push' },
-      resize: { enable: true },
-    },
-    modes: {
-      grab: { distance: 400, links: { opacity: 1 } },
-      bubble: { distance: 400, size: 40, duration: 2, opacity: 8, speed: 3 },
-      repulse: { distance: 200, duration: 0.4 },
-      push: { quantity: 4 },
-      remove: { quantity: 2 },
-    },
-  },
-  detectRetina: true,
-};
+import { useSystemTheme } from '@/hooks/useSystemTheme';
 
 export default function ReactiveBackground() {
+  const [isMounted, setIsMounted] = useState(false);
+  const systemTheme = useSystemTheme(); // Our new custom hook
+
   useEffect(() => {
-    initParticlesEngine(async engine => {
+    // This effect runs once to initialize the particles engine
+    initParticlesEngine(async (engine) => {
       await loadSlim(engine);
+    }).then(() => {
+      setIsMounted(true);
     });
   }, []);
 
+  // useMemo will re-calculate the options only when the theme changes
+  const particleOptions: ISourceOptions = useMemo(() => {
+    const particleColor = systemTheme === 'dark' ? '#ffffff' : '#000000';
+    return {
+      fullScreen: { enable: true, zIndex: -1 },
+      particles: {
+        number: { value: 80, density: { enable: true } },
+        color: { value: particleColor }, // Use the dynamic color
+        shape: { type: 'circle' },
+        size: { value: 2, random: { enable: true, minimumValue: 0.5 } },
+        links: {
+          enable: true,
+          distance: 100,
+          color: particleColor, // Use the dynamic color
+          opacity: 0.4,
+          width: 3,
+        },
+        move: {
+          enable: true,
+          speed: 0.5,
+          outModes: { default: 'out' },
+        },
+      },
+      interactivity: {
+        events: {
+          onHover: { enable: true, mode: 'repulse' },
+          onClick: { enable: true, mode: 'push' },
+          resize: { enable: true },
+        },
+        modes: {
+          repulse: { distance: 150, duration: 0.4 },
+          push: { quantity: 2 },
+        },
+      },
+      detectRetina: true,
+    };
+  }, [systemTheme]); // Dependency array ensures this runs when the system theme changes
+
+  // Only render after the component has mounted to avoid hydration issues
+  if (!isMounted) {
+    return null;
+  }
+
   return (
     <>
-      <Particles id="tsparticles" options={options} />
+      <Particles id="tsparticles" options={particleOptions} />
     </>
   );
 }

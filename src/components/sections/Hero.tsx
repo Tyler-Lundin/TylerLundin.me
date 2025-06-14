@@ -55,10 +55,10 @@ export function Hero() {
         >
           <Link
             href="/contact"
-            className="w-fit px-8 py-2 border-[1px] bg-gradient-to-r from-blue-500/50 via-purple-500/50 to-pink-500/50 dark:from-blue-950/50 dark:via-purple-950/50 dark:to-pink-950/50 border-black/50 dark:border-white/50 rounded-[8px] flex items-center gap-2"
+            className="group w-full justify-center px-8 py-2 border-[1px] bg-gradient-to-r from-emerald-500/50 via-cyan-500/50 to-blue-500/50 dark:from-emerald-900/50 dark:via-cyan-900/50 dark:to-blue-900/50 border-black/50 dark:border-white/50 rounded-[8px] flex items-center gap-2 transition-all duration-300 hover:scale-[1.02] hover:shadow-lg hover:shadow-emerald-500/20 dark:hover:shadow-emerald-400/20 active:scale-[0.98] hover:bg-gradient-to-r hover:from-emerald-600/50 hover:via-cyan-600/50 hover:to-blue-600/50 dark:hover:from-emerald-800/50 dark:hover:via-cyan-800/50 dark:hover:to-blue-800/50"
           >
-            Let&apos;s Build Something
-            <ArrowRightIcon className="w-4 h-4 mt-[2px]" />
+            <span className="transition-all duration-300 group-hover:-translate-x-2 group-hover:text-emerald-600 dark:group-hover:text-emerald-300">Let&apos;s Build Something</span>
+            <ArrowRightIcon className="w-4 h-4 mt-[2px] transition-all duration-300 group-hover:translate-x-2 group-hover:text-emerald-600 dark:group-hover:text-emerald-300" />
           </Link>
         </motion.div>
       </div>

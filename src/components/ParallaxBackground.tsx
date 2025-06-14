@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useCallback, useRef } from 'react';
-import Image from 'next/image';
 import AnimatedBackground from './AnimatedBackground';
 
 export default function ParallaxBackground() {
@@ -39,15 +38,6 @@ export default function ParallaxBackground() {
       <VerticalBuffer />
       <VerticalGradient />
       <HorizontalGradient />
-      <Image
-        src="/images/landing-page/hero-bg.jpg"
-        alt="Hero Background"
-        fill
-        sizes="(max-width: 768px) 100vw, 33vw"
-        priority
-        quality={70}
-        className="object-cover absolute inset-0 hidden md:block invert -z-20 grayscale animate-spin-zoom  dark:invert-0 opacity-75"
-      />
       </span>
     </div>
   );

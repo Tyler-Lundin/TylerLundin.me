@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { siteConfig } from '@/config/site';
@@ -23,7 +23,7 @@ const MenuButton = ({ onClick, minimal }: { onClick: () => void; minimal?: boole
     <button
       onClick={onClick}
       className={cn(
-        'lg:hidden text-gray-900 dark:text-white hover:blur-sm transition-all duration-300 cursor-pointer z-50 absolute',
+        'lg:hidden text-gray-900 dark:text-white hover:opacity-75 transition-opacity duration-200 cursor-pointer z-50 absolute',
         position
       )}
       aria-label="Open menu"
@@ -38,8 +38,8 @@ const MenuButton = ({ onClick, minimal }: { onClick: () => void; minimal?: boole
 const LogoWrapper = ({ children, isScrolled }: { children: React.ReactNode; isScrolled: boolean }) => (
   <div
     className={cn(
-      'flex flex-col items-center justify-center transition-all duration-300 absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 lg:relative lg:top-0 lg:left-0 lg:translate-x-0 lg:translate-y-0',
-      isScrolled ? 'opacity-0 -translate-y-20' : 'opacity-100 translate-y-0'
+      'flex flex-col items-center justify-center transition-transform duration-300 absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 lg:relative lg:top-0 lg:left-0 lg:translate-x-0 lg:translate-y-0',
+      isScrolled ? '-translate-y-20 opacity-0' : 'translate-y-0 opacity-100'
     )}
   >
     {children}
@@ -52,8 +52,8 @@ const NavLinks = ({ isScrolled, minimal }: { isScrolled?: boolean; minimal?: boo
   return (
     <div
       className={cn(
-        'hidden lg:flex items-center justify-center space-x-12 mx-auto transition-all duration-300',
-        minimal ? '' : isScrolled ? 'opacity-0 translate-y-20' : 'opacity-100'
+        'hidden lg:flex items-center justify-center space-x-12 mx-auto transition-transform duration-300',
+        minimal ? '' : isScrolled ? 'translate-y-20 opacity-0' : 'translate-y-0 opacity-100'
       )}
     >
       {siteConfig.sections.map((section) => {
@@ -63,10 +63,10 @@ const NavLinks = ({ isScrolled, minimal }: { isScrolled?: boolean; minimal?: boo
             key={section.type}
             href={section.type === 'home' ? '/' : `/${section.type}`}
             className={cn(
-              'text-gray-900 dark:text-white font-light text-md transition-all duration-200',
-              'hover:blur-[2px]',
+              'text-gray-900 dark:text-white font-light text-md transition-opacity duration-200',
+              'hover:opacity-75',
               section.type === 'projects' && 'text-indigo-600 dark:text-emerald-500',
-              isActive && 'blur-[2px] pointer-events-none'
+              isActive && 'opacity-50 pointer-events-none'
             )}
           >
             {section.headline}
@@ -78,7 +78,7 @@ const NavLinks = ({ isScrolled, minimal }: { isScrolled?: boolean; minimal?: boo
 };
 
 const PrimaryNav = ({ isScrolled, setIsMenuOpen }: NavProps) => (
-  <nav className="absolute inset-4 h-24 rounded-lg z-50 bg-gradient-to-r from-blue-500/50 dark:from-pink-950/50 via-yellow-400/50 dark:via-blue-800/50 to-purple-500/50 dark:to-purple-900/75 backdrop-blur-sm transition-all duration-500 grid items-center">
+  <nav className="absolute inset-4 h-24 rounded-lg z-50 bg-gradient-to-r from-emerald-500/50 dark:from-emerald-900/50 via-cyan-500/50 dark:via-cyan-900/50 to-blue-500/50 dark:to-blue-900/75 backdrop-blur-sm transition-opacity duration-300 grid items-center">
     <div className="h-full items-center grid relative">
       <MenuButton onClick={() => setIsMenuOpen(true)} minimal />
       <LogoWrapper isScrolled={isScrolled}>
@@ -86,19 +86,19 @@ const PrimaryNav = ({ isScrolled, setIsMenuOpen }: NavProps) => (
       </LogoWrapper>
       <NavLinks isScrolled={isScrolled} />
     </div>
+    <span className="absolute top-1/2 left-0 right-0 h-[2px] bg-white dark:bg-black" />
   </nav>
 );
 
 const StickyNav = ({ bannerVisible, isScrolled, setIsMenuOpen }: NavProps) => (
   <div
     className={cn(
-      'fixed left-4 right-4 z-50 bg-gradient-to-r from-blue-500/50 dark:from-pink-950/50 via-yellow-400/50 dark:via-blue-800/50 to-purple-500/50 dark:to-purple-900/75 backdrop-blur-md rounded-lg border-b border-gray-200 dark:border-white/25 transition-all duration-300',
+      'fixed left-4 right-4 z-50 bg-gradient-to-r from-emerald-500/50 dark:from-emerald-900/50 via-cyan-500/50 dark:via-cyan-900/50 to-blue-500/50 dark:to-blue-900/75 backdrop-blur-sm rounded-lg border-b border-gray-200 dark:border-white/25 transition-transform duration-300',
       bannerVisible ? 'top-8' : 'top-6',
-      isScrolled ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-full'
+      isScrolled ? 'translate-y-0 opacity-100' : '-translate-y-full opacity-0'
     )}
   >
-    <span className="absolute bottom-0 left-1 right-1 rounded-lg h-[40px] bg-gradient-to-t from-white/25 dark:from-black via-transparent to-transparent" />
-    <span className="absolute top-0 left-1 right-1 rounded-lg h-[40px] bg-gradient-to-b from-white/25 dark:from-black via-transparent to-transparent" />
+    <span className="absolute bottom-0 left-0 right-0 rounded-lg h-[40px] bg-gradient-to-t from-white/25 dark:from-black/25 via-transparent to-transparent" />
     <div className="container px-4 h-12 flex items-center justify-between">
       <Logo />
       <NavLinks minimal />
@@ -111,11 +111,31 @@ export function Navbar({ bannerVisible }: { bannerVisible: boolean }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
 
+  const handleScroll = useCallback(() => {
+    const scrollPosition = window.scrollY;
+    if (scrollPosition > 150 && !isScrolled) {
+      setIsScrolled(true);
+    } else if (scrollPosition <= 150 && isScrolled) {
+      setIsScrolled(false);
+    }
+  }, [isScrolled]);
+
   useEffect(() => {
-    const onScroll = () => setIsScrolled(window.scrollY > 150);
-    window.addEventListener('scroll', onScroll);
+    let ticking = false;
+    
+    const onScroll = () => {
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          handleScroll();
+          ticking = false;
+        });
+        ticking = true;
+      }
+    };
+
+    window.addEventListener('scroll', onScroll, { passive: true });
     return () => window.removeEventListener('scroll', onScroll);
-  }, []);
+  }, [handleScroll]);
 
   return (
     <>

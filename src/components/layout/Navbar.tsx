@@ -8,6 +8,8 @@ import MobileMenu from './MobileMenu';
 import { Logo } from './Logo';
 import { cn } from '@/lib/utils';
 import { BrainSticker } from '../ui/BrainSticker';
+import { MailSticker } from '../ui/MailSticker';
+import { Section } from '@/types/site';
 
 interface NavProps {
   bannerVisible: boolean;
@@ -50,16 +52,25 @@ const LogoWrapper = ({ children, isScrolled }: { children: React.ReactNode; isSc
 const NavLinks = ({ isScrolled, minimal }: { isScrolled?: boolean; minimal?: boolean }) => {
   const pathname = usePathname();
 
+  const RenderContent = (section: Section) => {
+    if (section.type === 'contact') {
+      return <MailSticker />;
+    }
+    if (section.type === 'posts') {
+      return <BrainSticker />;
+    }
+    return section.headline;
+  };
+
   return (
     <div
       className={cn(
-        'hidden lg:flex items-center justify-center space-x-12 mx-auto transition-transform duration-300',
-        minimal ? '' : isScrolled ? 'translate-y-20 opacity-0' : 'translate-y-0 opacity-100'
+        'hidden lg:flex items-center justify-center space-x-12 mx-auto transition-all duration-150',
+        minimal ? '' : isScrolled ? 'opacity-0' : 'opacity-100'
       )}
     >
       {siteConfig.sections.map((section) => {
         const isActive = section.type === 'home' ? pathname === '/' : pathname === `/${section.type}`;
-        const isPosts = section.type === 'posts';
         return (
           <Link
             key={section.type}
@@ -71,7 +82,7 @@ const NavLinks = ({ isScrolled, minimal }: { isScrolled?: boolean; minimal?: boo
               isActive && 'opacity-25 pointer-events-none'
             )}
           >
-            { isPosts ? <BrainSticker /> : section.headline}
+            {RenderContent(section)}
           </Link>
         );
       })}

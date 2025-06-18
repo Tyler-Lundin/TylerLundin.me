@@ -25,14 +25,14 @@ export default function ReactiveBackground() {
     return {
       fullScreen: { enable: true, zIndex: -1 },
       particles: {
-        number: { value: 80, density: { enable: true } },
+        number: { value: 66, density: { enable: true } },
         color: { value: particleColor }, // Use the dynamic color
         shape: { type: 'circle' },
-        size: { value: 2, random: { enable: true, minimumValue: 0.5 } },
+        size: { value: 2 },
         links: {
           enable: true,
           distance: 100,
-          color: particleColor, // Use the dynamic color
+          color: particleColor,
           opacity: 0.4,
           width: 3,
         },

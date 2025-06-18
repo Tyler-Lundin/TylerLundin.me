@@ -1,3 +1,4 @@
+'use client';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
 
@@ -24,12 +25,18 @@ export function MainFocusBanner({ title, description, features, link }: MainFocu
         className="group block relative overflow-hidden rounded-2xl md:rounded-3xl bg-gradient-to-br from-pink-600 via-purple-600 to-rose-600 dark:from-pink-500 dark:via-purple-500 dark:to-rose-500 text-white shadow-2xl hover:shadow-purple-500/50 dark:hover:shadow-purple-400/60 transition-all duration-500 ease-in-out transform hover:-translate-y-2"
       >
         {/* Background Image */}
-        <div className="absolute inset-0">
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.7, delay: 1 }}
+          className="absolute inset-0"
+        >
           <Image
             src="/images/web-dev-light.png"
             alt="Web Development"
             fill
-            className="object-cover object-center dark:hidden blur-md"
+            className="object-cover object-center dark:hidden blur-[3px]"
             priority
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
           />
@@ -37,12 +44,12 @@ export function MainFocusBanner({ title, description, features, link }: MainFocu
             src="/images/web-dev-dark.png"
             alt="Web Development"
             fill
-            className="hidden dark:block object-cover object-center blur-md"
+            className="hidden dark:block object-cover object-center blur-[3px]"
             priority
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
           />
-          <div className="absolute inset-0 bg-white/50 dark:bg-black/50" />
-        </div>
+        </motion.div>
+        <div className="absolute inset-0 bg-white/70 dark:bg-black/70" />
 
         {/* Background Pattern */}
         <div className="absolute inset-0 opacity-10">

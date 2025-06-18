@@ -48,26 +48,6 @@ const expertiseAreas = [
     featured: false
   },
   {
-    name: 'Game Development',
-    description: 'Creating immersive gaming experiences',
-    icon: (
-      <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-      </svg>
-    ),
-    features: [
-      'Unity Development',
-      'Game Design',
-      '3D Modeling',
-      'WIP Projects',
-      'Game Mechanics'
-    ],
-    cta: 'View Projects',
-    link: '/game-dev',
-    featured: false
-  },
-  {
     name: '3D Printing',
     description: 'Bringing digital designs to life',
     icon: (
@@ -83,7 +63,7 @@ const expertiseAreas = [
       'Print Services'
     ],
     cta: 'View Gallery',
-    link: '/3d-printing',
+    link: '/projects/3d-printing',
     featured: false
   },
   {
@@ -102,7 +82,7 @@ const expertiseAreas = [
       'Maintenance Tips'
     ],
     cta: 'View Vehicles',
-    link: '/vehicles',
+    link: '/projects/vehicles',
     featured: false
   }
 ];
@@ -112,7 +92,7 @@ export function AllProjects({ section }: projectsProps) {
   const otherInterests = expertiseAreas.filter(area => area.name !== 'Web Development');
 
   return (
-    <section id="services" className="py-40 bg-gradient-to-b from-gray-100/80 to-white/80 dark:from-black/80 dark:to-gray-900/80 backdrop-blur-xl">
+    <section id="services" className="py-40 bg-gradient-to-b from-gray-100/50 to-white/50 dark:from-black/50 dark:to-gray-900/50 ">
       <div className="max-w-[90rem] mx-auto px-6 sm:px-8 lg:px-12">
         {/* Hero Section */}
         <div className="text-center mb-32">
@@ -169,7 +149,7 @@ export function AllProjects({ section }: projectsProps) {
         </div>
 
         {/* Other Interest Cards */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid lg:grid-cols-3 gap-6">
           {otherInterests.map((area, index) => (
             <motion.a
               href={area.link}
@@ -180,18 +160,21 @@ export function AllProjects({ section }: projectsProps) {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.7, delay: 0.2 * index }}
-              className="p-6 rounded-xl bg-white dark:bg-neutral-900/80 border-2 border-slate-200 dark:border-neutral-800/80 text-slate-800 dark:text-neutral-100 hover:bg-slate-50 dark:hover:bg-neutral-800/90 hover:shadow-pink-500/30 dark:hover:shadow-pink-400/40 transition-all duration-500 ease-in-out transform hover:-translate-y-2"
+              className="group relative p-8 shadow rounded-2xl bg-white/40 dark:bg-neutral-900/40 backdrop-blur-lg border border-white/20 dark:border-neutral-800/50 text-slate-800 dark:text-neutral-100 hover:bg-white/50 dark:hover:bg-neutral-900/50 transition-all duration-500 ease-in-out transform hover:-translate-y-1 hover:shadow-[0_8px_30px_rgb(0,0,0,0.12)] dark:hover:shadow-[0_8px_30px_rgb(0,0,0,0.3)]"
             >
-              <div className="flex items-center mb-4">
-                <div className="p-2 rounded-lg bg-pink-100 dark:bg-pink-900/30 text-pink-600 dark:text-pink-400">
+              <div className="flex items-center mb-6">
+                <div className="p-2.5 rounded-xl bg-gradient-to-br from-pink-500/10 to-purple-500/10 dark:from-pink-500/20 dark:to-purple-500/20 text-pink-600 dark:text-pink-400 group-hover:scale-110 transition-transform duration-300">
                   {area.icon}
                 </div>
-                <h3 className="text-xl font-bold ml-3">{area.name}</h3>
+                <h3 className="text-xl font-semibold ml-4 bg-gradient-to-r from-slate-900 to-slate-700 dark:from-white dark:to-slate-300 bg-clip-text text-transparent">{area.name}</h3>
               </div>
-              <p className="text-base opacity-80 mb-4">{area.description}</p>
+              <p className="text-base text-slate-600 dark:text-slate-300 mb-6 leading-relaxed">{area.description}</p>
               <div className="flex flex-wrap gap-2">
                 {area.features.map((feature, idx) => (
-                  <span key={idx} className="px-2 py-1 rounded-full text-sm font-medium bg-pink-100 dark:bg-pink-900/30 text-pink-600 dark:text-pink-400">
+                  <span 
+                    key={idx} 
+                    className="px-3 py-1.5 rounded-full text-sm font-medium bg-gradient-to-r from-pink-500/10 to-purple-500/10 dark:from-pink-500/20 dark:to-purple-500/20 text-pink-600 dark:text-pink-400 border border-pink-200/20 dark:border-pink-500/20 backdrop-blur-sm"
+                  >
                     {feature}
                   </span>
                 ))}

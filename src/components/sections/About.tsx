@@ -15,10 +15,10 @@ export function About() {
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5 }}
-            className="space-y-8"
+            className="space-y-8 text-center md:text-left"
           >
             <div>
-              <h2 className="text-5xl font-bold mb-4 text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-pink-500 to-purple-500 relative w-fit dark:from-cyan-300 dark:via-pink-400 dark:to-purple-400 tracking-tight pb-4 border-b border-black/50 dark:border-white/50">
+              <h2 className="text-5xl w-full font-bold mb-4 text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-pink-500 to-purple-500 relative w-fit dark:from-cyan-300 dark:via-pink-400 dark:to-purple-400 tracking-tight pb-4 border-b border-black/50 dark:border-white/50">
                 Tyler Lundin 
                 <small className=" absolute top-0 -translate-y-full md:left-0 md:translate-x-0 left-1/2 -translate-x-1/2 text-sm text-neutral-700 dark:text-neutral-300 leading-relaxed opacity-90">
                 The Rogue Webdev

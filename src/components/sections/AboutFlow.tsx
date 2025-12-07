@@ -28,10 +28,22 @@ export default function AboutFlow({ projects }: Props) {
         <div className="mx-auto max-w-7xl px-4 py-12 sm:py-16">
           <div className="grid md:grid-cols-2 gap-8 md:gap-12 items-center">
             <motion.div {...fadeUp(0)}>
-              <div className="inline-flex items-center gap-2 text-xs text-neutral-600 dark:text-neutral-300 mb-3">
-                {a.role && <span className="px-2 py-0.5 rounded-full border border-black/10 dark:border-white/10">{a.role}</span>}
-                {a.location && <span className="px-2 py-0.5 rounded-full border border-black/10 dark:border-white/10">{a.location}</span>}
-                {a.availability && <span className="px-2 py-0.5 rounded-full border border-black/10 dark:border-white/10">Availability: {a.availability}</span>}
+              <div className="flex flex-wrap items-center justify-center md:justify-start gap-x-2 gap-y-2 text-[11px] sm:text-xs text-neutral-600 dark:text-neutral-300 mb-3">
+                {a.role && (
+                  <span className="px-2 py-0.5 rounded-full border border-black/10 dark:border-white/10 whitespace-nowrap">
+                    {a.role}
+                  </span>
+                )}
+                {a.location && (
+                  <span className="px-2 py-0.5 rounded-full border border-black/10 dark:border-white/10 whitespace-nowrap">
+                    {a.location}
+                  </span>
+                )}
+                {a.availability && (
+                  <span className="px-2 py-0.5 rounded-full border border-black/10 dark:border-white/10 whitespace-nowrap">
+                    Availability: {a.availability}
+                  </span>
+                )}
               </div>
               <h1 className="text-4xl sm:text-5xl font-black tracking-tight text-neutral-900 dark:text-neutral-100">{a.title}</h1>
               {a.subtitle && (

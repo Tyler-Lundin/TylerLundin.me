@@ -1,16 +1,14 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { siteConfig } from '@/config/site';
 import MobileMenu from './MobileMenu';
 import { Logo } from './Logo';
 import { cn } from '@/lib/utils';
-import { BrainSticker } from '../ui/BrainSticker';
-import { MailSticker } from '../ui/MailSticker';
 import { Section } from '@/types/site';
+import { services } from '@/data/services';
 
 interface NavProps {
   bannerVisible: boolean;
@@ -90,6 +88,49 @@ const NavLinks = ({ isScrolled, minimal }: { isScrolled?: boolean; minimal?: boo
           </Link>
         );
       })}
+
+{/* Services Dropdown */}
+<div className="relative">
+  {/* Hover wrapper with generous capture zone */}
+  <div className="group relative inline-block">
+
+    {/* Trigger */}
+    <Link
+      href="/services"
+      className={cn(
+        'text-gray-900 group-hover:underline pb-0 transition-all p-2 rounded-t-md dark:text-white font-light text-md transition-opacity duration-200 hover:opacity-75'
+      )}
+    >
+      services
+    </Link>
+
+    {/* Invisible hover buffer (10% larger hit area) */}
+    <div className="absolute inset-x-[-10%] top-full h-[40px] group-hover:block hidden"></div>
+
+    {/* Dropdown */}
+    <div
+      className="absolute left-1/2 -translate-x-1/2 top-full
+      mt-4 min-w-[260px] rounded-md border border-t-0 border-black/10 dark:border-white/10
+      bg-white dark:bg-neutral-900 backdrop-blur-md shadow-lg py-2 z-[70]
+
+      opacity-0 invisible translate-y-1
+      group-hover:opacity-100 group-hover:visible group-hover:translate-y-0
+      transition-all duration-150
+      "
+    >
+      {services.map((s) => (
+        <Link
+          key={s.slug}
+          href={`/services/${s.slug}`}
+          className="block px-4 py-2 text-sm text-gray-900 dark:text-white hover:bg-neutral-100/70 dark:hover:bg-neutral-800/70"
+        >
+          {s.title}
+        </Link>
+      ))}
+    </div>
+
+  </div>
+</div>
     </div>
   );
 };

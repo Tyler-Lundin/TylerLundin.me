@@ -4,6 +4,7 @@ import { useEffect } from 'react';
 import Link from 'next/link';
 import { siteConfig } from '@/config/site';
 import { Logo } from './Logo';
+import { services } from '@/data/services';
 
 interface MobileMenuProps {
   isOpen: boolean;
@@ -68,18 +69,44 @@ export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
           {/* Navigation Links */}
           <nav className="flex-1">
             <ul className="space-y-6">
-              {siteConfig.sections
-                .map((section) => (
-                  <li key={section.type}>
+              {siteConfig.sections.map((section) => (
+                <li key={section.type}>
+                  <Link
+                    href={`/${section.type}`}
+                    className="block text-lg text-black hover:text-gray-600 transition-colors duration-200"
+                    onClick={onClose}
+                  >
+                    {section.headline}
+                  </Link>
+                </li>
+              ))}
+
+              {/* Services Group */}
+              <li className="pt-2">
+                <div className="text-xs uppercase tracking-wide text-neutral-500 mb-2">services</div>
+                <ul className="space-y-2">
+                  <li>
                     <Link
-                      href={`/${section.type}`}
-                      className="block text-lg text-black hover:text-gray-600 transition-colors duration-200"
+                      href="/services"
+                      className="block text-base text-black hover:text-gray-600 transition-colors duration-200"
                       onClick={onClose}
                     >
-                      {section.headline}
+                      Overview
                     </Link>
                   </li>
-                ))}
+                  {services.map((s) => (
+                    <li key={s.slug}>
+                      <Link
+                        href={`/services/${s.slug}`}
+                        className="block pl-2 text-base text-black/90 hover:text-gray-600 transition-colors duration-200"
+                        onClick={onClose}
+                      >
+                        {s.title}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </li>
             </ul>
           </nav>
         </div>

@@ -200,12 +200,12 @@ body {
 
 .pan-vert {
   /* 15% slower default (from 16000ms to 18400ms) */
-  animation: pan-vert var(--pan-duration, 18400ms) ease-in-out infinite;
+  animation: pan-vert var(--pan-duration, 28400ms) ease-in-out infinite;
   will-change: transform;
 }
 
 .pan-horz {
   /* 15% slower default (from 16000ms to 18400ms) */
-  animation: pan-horz var(--pan-duration, 18400ms) ease-in-out infinite;
+  animation: pan-horz var(--pan-duration, 28400ms) ease-in-out infinite;
   will-change: transform;
 }

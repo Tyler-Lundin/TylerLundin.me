@@ -64,10 +64,10 @@ export const aboutConfig: AboutConfig = {
   ],
 
   philosophy: [
-    'Ship small, ship often — even when it’s not “perfect”.',
-    'Pick a stack you can maintain on low-motivation days.',
-    'Be honest about where you’re at, but don’t use it as an excuse not to build.',
-    'Make things that actually help the person using them, not just things that look good on Dribbble.',
+    "It's not what I do, it's how I do it",
+    "The only thing I can control is myself",
+    "Gently lower the weight, don't let gravity or momentum do it for you!",
+    "Try to be happy"
   ],
 
   socials: [

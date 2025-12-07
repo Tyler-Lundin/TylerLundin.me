@@ -6,6 +6,7 @@ import Image from 'next/image';
 import type { Project, ProjectMedia } from '@/types/projects';
 import { projects as defaultProjects } from '@/data/projects';
 import { usePrefersDark } from '@/hooks/usePrefersDark';
+// stats overlay moved to a floating drawer; no overlay here
 
 type SpotlightShowcaseProps = {
   projects?: Project[];
@@ -192,7 +193,7 @@ export default function SpotlightShowcase({
 
           {/* Controls */}
           {count > 1 && (
-            <div className="pointer-events-none absolute inset-0 flex items-center justify-between px-2">
+            <div className="pointer-events-none absolute inset-0 flex items-center justify-between px-2 z-40">
               <button
                 aria-label="Previous project"
                 className="pointer-events-auto rounded-full bg-black/50 hover:bg-black/70 text-white p-2 backdrop-blur border border-white/20"
@@ -213,16 +214,22 @@ export default function SpotlightShowcase({
           {/* Progress dots with titles on hover */}
           {count > 1 && (
             <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-2">
-              {items.map((p, i) => (
-                <button
-                  key={p.id}
-                  aria-label={`Go to ${p.title}`}
-                  className={`h-1.5 rounded-full transition-all ${i === index ? 'w-6 bg-white' : 'w-2 bg-white/50 hover:bg-white/70'}`}
-                  onClick={() => setIndex(i)}
-                />
-              ))}
+              {items.map((p, i) => {
+                const activeDot = isDark ? 'bg-white' : 'bg-black';
+                const inactiveDot = isDark ? 'bg-white/50 hover:bg-white/70' : 'bg-black/50 hover:bg-black/70';
+                return (
+                  <button
+                    key={p.id}
+                    aria-label={`Go to ${p.title}`}
+                    className={`h-1.5 rounded-full transition-all ${i === index ? `w-6 ${activeDot}` : `w-2 ${inactiveDot}`}`}
+                    onClick={() => setIndex(i)}
+                  />
+                );
+              })}
             </div>
           )}
+
+          
         </div>
       </div>
     </section>

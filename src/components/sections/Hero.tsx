@@ -15,7 +15,7 @@ export function Hero({ projects }: HeroProps) {
       id="hero"
       className="relative overflow-visible"
     >
-      <div className="relative z-10 mx-auto max-w-7xl px-4 pt-8 sm:pt-12 md:pt-16">
+      <div className="relative z-10 mx-auto max-w-7xl px-4 pt-12 sm:pt-12 md:pt-16">
         {/* Compact intro above the showcase */}
         <div className="mx-auto max-w-3xl text-center">
           <motion.div
@@ -51,7 +51,7 @@ export function Hero({ projects }: HeroProps) {
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.45, delay: 0.1 }}
-            className="mt-2 text-base sm:text-lg text-neutral-700 dark:text-neutral-300"
+            className="mt-3 text-base sm:text-lg text-neutral-700 dark:text-neutral-300"
           >
             Building fast, clean, modern websites. Take a look.
           </motion.p>
@@ -62,7 +62,7 @@ export function Hero({ projects }: HeroProps) {
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.12 }}
-          className="mt-6 sm:mt-8 md:mt-10"
+          className="mt-8 sm:mt-10 md:mt-12"
         >
           <SpotlightShowcase projects={projects} className="pt-0 pb-2" />
         </motion.div>

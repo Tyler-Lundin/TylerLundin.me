@@ -81,7 +81,7 @@ const Arrow = () => {
         alt="Down arrow"
         width={88}
         height={88}
-        className="absolute -right-16 invisible md:visible -bottom-12 rotate-12 opacity-90 select-none pointer-events-none"
+        className="absolute dark:invert -right-16 invisible md:visible -bottom-12 rotate-12 opacity-90 select-none pointer-events-none"
         aria-hidden
         priority
       />

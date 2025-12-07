@@ -30,11 +30,11 @@ function firstFeaturedMedia(media: ProjectMedia[], isDark: boolean): ProjectMedi
 export default function SpotlightShowcase({
   projects,
   className,
-  intervalMs = 5500,
+  intervalMs = 10500,
   initialDelayMs = 1800,
 }: SpotlightShowcaseProps) {
   const isDark = usePrefersDark();
-  const slowRate = 0.25; // 75% slower on hover/hold
+  const slowRate = 0.20; // 75% slower on hover/hold
   const items = useMemo(() => {
     const source = projects ?? defaultProjects;
     return source

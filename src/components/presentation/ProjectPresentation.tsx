@@ -3,53 +3,27 @@
 import { useMemo, useState } from 'react';
 import Image from 'next/image';
 import type { Project, ProjectMedia } from '@/types/projects';
-import { MacbookFrame, IPhoneFrame, DeviceKind } from './DeviceFrames';
+// Device frames removed to show full images without cropping
 
 type Props = {
   project: Project;
 };
 
-function pickDevice(_media: ProjectMedia): DeviceKind {
-  // Featured area should keep a standard rectangular aspect; use MacBook frame
-  return 'macbook';
-}
-
-function MediaInFrame({ media, project }: { media: ProjectMedia; project: Project }) {
-  const device = pickDevice(media);
-  const isTallAuto = media.type === 'image' && (media.autoScroll ?? media.src.startsWith('/projects/')) && (media.scrollDirection ?? 'vertical') === 'vertical';
-  const content = media.type === 'image' ? (
-    isTallAuto ? (
+function MediaFull({ media, project }: { media: ProjectMedia; project: Project }) {
+  if (media.type === 'image') {
+    return (
       <img
         src={media.src}
         alt={media.alt ?? project.title}
-        className="absolute left-0 top-0 w-full h-auto pan-vert"
-        style={{
-          ...(media.scrollDurationMs ? ({ ['--pan-duration' as any]: `${media.scrollDurationMs}ms` } as any) : {}),
-          ...(isTallAuto ? ({ ['--pan-amount' as any]: '-60%' } as any) : {}),
-        }}
+        className="max-w-full h-auto"
+        loading="eager"
       />
-    ) : (
-      <Image
-        src={media.src}
-        alt={media.alt ?? project.title}
-        fill
-        sizes="(min-width: 1280px) 900px, (min-width: 1024px) 800px, 100vw"
-        className={[
-          'object-cover',
-          (media.autoScroll ?? media.src.startsWith('/projects/'))
-            ? [media.scrollDirection === 'horizontal' ? 'pan-horz' : 'pan-vert', media.scrollDirection === 'horizontal' ? 'object-center' : 'object-top'].join(' ')
-            : '',
-        ].join(' ')}
-        priority
-        style={{
-          ...(media.scrollDurationMs ? ({ ['--pan-duration' as any]: `${media.scrollDurationMs}ms` } as any) : {}),
-        }}
-      />
-    )
-  ) : (
+    );
+  }
+  return (
     <video
-      className="h-full w-full object-cover"
-      autoPlay={media.autoplay ?? true}
+      className="max-w-full h-auto"
+      autoPlay={media.autoplay ?? false}
       loop={media.loop ?? true}
       muted={media.muted ?? true}
       playsInline={media.playsInline ?? true}
@@ -59,11 +33,6 @@ function MediaInFrame({ media, project }: { media: ProjectMedia; project: Projec
       <source src={media.src} />
     </video>
   );
-
-  if (device === 'iphone') {
-    return <IPhoneFrame fluid>{content}</IPhoneFrame>;
-  }
-  return <MacbookFrame fluid>{content}</MacbookFrame>;
 }
 
 export default function ProjectPresentation({ project }: Props) {
@@ -76,8 +45,8 @@ export default function ProjectPresentation({ project }: Props) {
       {/* Left: Featured device showcase with thumbnails */}
       <div className="lg:col-span-7 xl:col-span-8">
         <div className="rounded-2xl border border-black/10 dark:border-white/10 bg-white/40 dark:bg-white/5 p-3 sm:p-4 shadow-sm">
-          <div className="relative w-full aspect-[16/10] sm:aspect-[16/9]">
-            <MediaInFrame media={active} project={project} />
+          <div className="w-full flex justify-center">
+            <MediaFull media={active} project={project} />
           </div>
         </div>
 

@@ -18,7 +18,7 @@ export default async function ProjectPage({ params }: PageProps) {
     .slice(0, 6);
 
   return (
-    <main className="min-h-screen bg-gradient-to-b pt-24 from-neutral-50 dark:from-black via-transparent to-neutral-100 dark:to-neutral-950 text-black dark:text-white">
+    <main className="min-h-screen bg-gradient-to-b py-32 from-neutral-50 dark:from-black via-transparent to-neutral-100 dark:to-neutral-950 text-black dark:text-white">
       <div className="mx-auto max-w-6xl px-4 pt-20 pb-16">
         <header className="mb-10">
           <h1 className="text-3xl sm:text-4xl font-black tracking-tight">{project.title}</h1>

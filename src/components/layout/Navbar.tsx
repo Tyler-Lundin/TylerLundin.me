@@ -158,13 +158,10 @@ export function Navbar({ bannerVisible }: { bannerVisible: boolean }) {
   }, [handleScroll]);
 
   return (
-    <motion.span 
-      transition={{ duration: 1.8, delay: 0.5, ease: [0, 0.75, 0.2, 1]}}
-      initial={{ opacity: 0 }} animate={{opacity:100}}
-    >
+    <span>
       <PrimaryNav bannerVisible={bannerVisible} isScrolled={isScrolled} setIsMenuOpen={setIsMenuOpen} />
       <StickyNav bannerVisible={bannerVisible} isScrolled={isScrolled} setIsMenuOpen={setIsMenuOpen} />
       <MobileMenu isOpen={isMenuOpen} onClose={() => setIsMenuOpen(false)} />
-    </motion.span>
+    </span>
   );
 }

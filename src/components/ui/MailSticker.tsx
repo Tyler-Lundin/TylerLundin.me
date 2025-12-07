@@ -4,7 +4,7 @@ export function MailSticker() {
 
   return (
     <div 
-      className="w-10 h-10"
+      className="w-6 h-6"
     >
       <div className="relative w-full h-full">
         <Image

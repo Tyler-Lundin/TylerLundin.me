@@ -1,18 +1,18 @@
-import { AllProjects } from '@/components/sections/AllProjects';
 import { siteConfig } from '@/config/site';
+import { loadAllProjects } from '@/lib/projects.server';
+import ProjectsIndex from '@/components/sections/ProjectsIndex';
 
-export default function projectsPage() {
-  const servicesSection = siteConfig.sections.find(
-    (section) => section.type === 'projects'
-  );
-
-  if (!servicesSection || servicesSection.type !== 'projects') {
-    return null;
-  }
+export default async function ProjectsPage() {
+  const projectsSection = siteConfig.sections.find((s) => s.type === 'projects');
+  const projects = await loadAllProjects();
 
   return (
-    <main className="pt-24  bg-gray-100/50 dark:bg-black/50">
-      <AllProjects section={servicesSection} />
+    <main className="pt-24 bg-gray-100/50 dark:bg-black/80 backdrop-blur-sm">
+      <ProjectsIndex
+        title={projectsSection?.headline ?? 'Projects'}
+        subtitle={projectsSection && 'subheadline' in projectsSection ? (projectsSection as any).subheadline : undefined}
+        projects={projects}
+      />
     </main>
   );
-} 
+}

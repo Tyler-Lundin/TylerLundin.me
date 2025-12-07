@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
+import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { siteConfig } from '@/config/site';
@@ -53,12 +54,15 @@ const NavLinks = ({ isScrolled, minimal }: { isScrolled?: boolean; minimal?: boo
   const pathname = usePathname();
 
   const RenderContent = (section: Section) => {
-    if (section.type === 'contact') {
-      return <MailSticker />;
-    }
-    if (section.type === 'posts') {
-      return <BrainSticker />;
-    }
+    // if (section.type === 'contact') {
+    //   return (<div className="flex gap-2 group">
+    //           <h6 className="group-hover group-hover:max-width-full max-width-0">{section.headline}</h6>
+    //           <MailSticker />
+    //           </div>)
+    // }
+    // if (section.type === 'posts') {
+    //   return <BrainSticker />;
+    // }
     return section.headline;
   };
 
@@ -91,7 +95,7 @@ const NavLinks = ({ isScrolled, minimal }: { isScrolled?: boolean; minimal?: boo
 };
 
 const PrimaryNav = ({ isScrolled, setIsMenuOpen }: NavProps) => (
-  <nav className="absolute inset-4 h-24 rounded-lg z-50 bg-gradient-to-r from-emerald-500/50 dark:from-emerald-900/50 via-cyan-500/50 dark:via-cyan-900/50 to-blue-500/50 dark:to-blue-900/75 backdrop-blur-sm transition-opacity duration-300 grid items-center">
+  <nav style={{opacity: isScrolled?0:100}} className="absolute inset-4 h-24 rounded-lg z-50 bg-gradient-to-r from-neutral-50/70 via-neutral-100/30 to-neutral-200/20 dark:from-neutral-900/60 dark:via-neutral-800/40 dark:to-neutral-700/30 border border-black/10 dark:border-white/10 backdrop-blur-sm transition-opacity duration-300 grid items-center">
     <div className="h-full items-center grid relative">
       <MenuButton onClick={() => setIsMenuOpen(true)} minimal />
       <LogoWrapper isScrolled={isScrolled}>
@@ -99,19 +103,19 @@ const PrimaryNav = ({ isScrolled, setIsMenuOpen }: NavProps) => (
       </LogoWrapper>
       <NavLinks isScrolled={isScrolled} />
     </div>
-    <span className="absolute top-1/2 left-0 right-0 h-[2px] bg-white dark:bg-black hidden lg:block" />
+    <span className="absolute top-1/2 left-0 right-0 h-[1px] bg-neutral-300/40 dark:bg-neutral-700/40 hidden lg:block" />
   </nav>
 );
 
 const StickyNav = ({ bannerVisible, isScrolled, setIsMenuOpen }: NavProps) => (
   <div
     className={cn(
-      'fixed left-4 right-4 z-50 bg-gradient-to-r from-emerald-500/50 dark:from-emerald-900/50 via-cyan-500/50 dark:via-cyan-900/50 to-blue-500/50 dark:to-blue-900/75 backdrop-blur-sm rounded-lg border-b border-gray-200 dark:border-white/25 transition-transform duration-300',
-      bannerVisible ? 'top-8' : 'top-6',
+      'fixed left-4 right-4 z-50 bg-gradient-to-r from-neutral-50/70 via-neutral-100/30 to-neutral-200/20 dark:from-neutral-900/60 dark:via-neutral-800/40 dark:to-neutral-700/30 backdrop-blur-sm rounded-lg border border-black/10 dark:border-white/10 transition-transform duration-300',
+      bannerVisible ? 'top-8' : 'top-4',
       isScrolled ? 'translate-y-0 opacity-100' : '-translate-y-full opacity-0'
     )}
   >
-    <span className="absolute bottom-0 left-0 right-0 pointer-events-none rounded-lg h-[40px] bg-gradient-to-t from-white/25 dark:from-black/25 via-transparent to-transparent" />
+    <span className="absolute bottom-0 left-0 right-0 pointer-events-none rounded-lg h-[40px] bg-gradient-to-t from-neutral-200/25 dark:from-neutral-900/25 via-transparent to-transparent" />
     <div className="container px-4 h-12 flex items-center justify-between">
       <Logo />
       <NavLinks minimal />
@@ -126,13 +130,16 @@ export function Navbar({ bannerVisible }: { bannerVisible: boolean }) {
 
   const handleScroll = useCallback(() => {
     const scrollPosition = window.scrollY;
-    if (scrollPosition > 150 && !isScrolled) {
+    if (scrollPosition > 4 && !isScrolled) {
       setIsScrolled(true);
-    } else if (scrollPosition <= 150 && isScrolled) {
+    } else if (scrollPosition <= 4 && isScrolled) {
       setIsScrolled(false);
     }
   }, [isScrolled]);
 
+
+
+  
   useEffect(() => {
     let ticking = false;
     
@@ -151,10 +158,13 @@ export function Navbar({ bannerVisible }: { bannerVisible: boolean }) {
   }, [handleScroll]);
 
   return (
-    <>
+    <motion.span 
+      transition={{ duration: 1.8, delay: 0.5, ease: [0, 0.75, 0.2, 1]}}
+      initial={{ opacity: 0 }} animate={{opacity:100}}
+    >
       <PrimaryNav bannerVisible={bannerVisible} isScrolled={isScrolled} setIsMenuOpen={setIsMenuOpen} />
       <StickyNav bannerVisible={bannerVisible} isScrolled={isScrolled} setIsMenuOpen={setIsMenuOpen} />
       <MobileMenu isOpen={isMenuOpen} onClose={() => setIsMenuOpen(false)} />
-    </>
+    </motion.span>
   );
 }

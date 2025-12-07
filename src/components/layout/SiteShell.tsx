@@ -8,17 +8,15 @@ import Banner from '../Banner'
 import { useState } from 'react'
 
 export function SiteShell({ children }: { children: React.ReactNode }) {
-  const [bannerVisible, setBannerVisible] = useState(true);
 
   const pathname = usePathname()
   const isDevRoute = pathname.includes('/dev')
 
   return (
     <>
-      <Banner isVisible={bannerVisible} setIsVisible={setBannerVisible} />
       {!isDevRoute && (
-        <div className={`${bannerVisible ? 'mt-0' : 'mt-2'} relative`}>
-          <Navbar bannerVisible={bannerVisible} />
+        <div className={`$relative`}>
+          <Navbar bannerVisible={false} />
         </div>
       )}
       {children}

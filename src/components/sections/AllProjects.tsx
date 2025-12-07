@@ -25,7 +25,7 @@ const expertiseAreas = [
       'Modern Technologies'
     ],
     cta: 'View Projects',
-    link: '/projects/web-dev',
+    link: '/projects',
     featured: true
   },
   {

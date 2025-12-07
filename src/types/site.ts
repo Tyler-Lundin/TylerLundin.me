@@ -28,8 +28,7 @@ export type Section =
   | AboutSection
   | ProjectsSection
   | WebDevSection
-  | ContactSection
-  | postsSection;
+  | ContactSection;
 
 interface BaseSection {
   type: string;
@@ -83,8 +82,4 @@ export interface ContactSection extends BaseSection {
   };
 } 
 
-export interface postsSection extends BaseSection {
-  type: 'posts';
-  description: string;
-  link: string;
-}
+// posts section removed; database-backed posts are no longer used.

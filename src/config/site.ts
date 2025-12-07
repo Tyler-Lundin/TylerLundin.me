@@ -33,42 +33,6 @@ export const siteConfig: SiteConfig = {
       image: "/images/tyler.png"
     },
     {
-      type: "projects/web-dev",
-      headline: "websites",
-      projects: [
-        {
-          title: "Island Market",
-          description: "A modern convenience store website for a local Cache Valley business, featuring real-time store status, weather information, and community highlights. Built with a focus on user experience and responsive design.",
-          tech_stack: [
-            "Next.js 15",
-            "React 19",
-            "TypeScript",
-            "Tailwind CSS 4",
-            "Vercel Deployment",
-            "ESLint",
-            "PostCSS"
-          ],
-          image: "/images/island-market-preview.png",
-          link: "https://island-market.vercel.app/"
-        },
-        {
-          title: "Fast Cache Pawn",
-          description: "A modern, responsive website for Fast Cache Pawn, a trusted pawn shop in Logan, UT. Features include service listings, Google reviews integration, and local business optimization.",
-          tech_stack: [
-            "Next.js 15",
-            "React 19",
-            "TypeScript",
-            "Tailwind CSS 4",
-            "Framer Motion",
-            "Google Maps API",
-            "Geist Font"
-          ],
-          image: "/images/fast-cache-pawn-0.png",
-          link: "https://fastcachepawn.com"
-        },
-      ]
-    },
-    {
       type: "projects",
       headline: "projects",
       subheadline: "Web Development, Bodybuilding, and Game Development",
@@ -89,12 +53,7 @@ export const siteConfig: SiteConfig = {
         twitter: "https://twitter.com/tylerlundin"
       }
     },
-    {
-      type: "posts",
-      headline: "posts",
-      description: "View the latest updates from Tyler Lundin.",
-      link: "/posts"
-    }
+    
   ],
   footer: {
     text: "© 2025 Tyler Lundin. Serving Spokane and the Inland Northwest.",

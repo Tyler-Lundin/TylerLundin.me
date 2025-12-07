@@ -29,13 +29,13 @@ export default function ReactiveBackground() {
         color: { value: particleColor }, // Use the dynamic color
         shape: { type: 'circle' },
         size: { value: 2 },
-        links: {
-          enable: true,
-          distance: 100,
-          color: particleColor,
-          opacity: 0.4,
-          width: 3,
-        },
+        // links: {
+        //   enable: true,
+        //   distance: 100,
+        //   color: particleColor,
+        //   opacity: 0.4,
+        //   width: 3,
+        // },
         move: {
           enable: true,
           speed: 0.5,

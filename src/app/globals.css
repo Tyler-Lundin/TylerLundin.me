@@ -184,3 +184,32 @@ body {
   0%, 100% { opacity: 1; }
   50% { opacity: 0; }
 }
+
+/* Gentle vertical/horizontal pan for tall screenshots */
+@keyframes pan-vert {
+  0% { transform: translateY(0) scale(1.02); }
+  50% { transform: translateY(var(--pan-amount, -35%)) scale(1.02); }
+  100% { transform: translateY(0) scale(1.02); }
+}
+
+@keyframes pan-horz {
+  0% { transform: translateX(0) scale(1.02); }
+  50% { transform: translateX(var(--pan-amount-x, -12%)) scale(1.02); }
+  100% { transform: translateX(0) scale(1.02); }
+}
+
+.pan-vert {
+  animation: pan-vert var(--pan-duration, 16000ms) ease-in-out infinite;
+  will-change: transform;
+}
+
+.pan-horz {
+  animation: pan-horz var(--pan-duration, 16000ms) ease-in-out infinite;
+  will-change: transform;
+}
+
+/* Pause pan on hover for readability */
+.group:hover .pan-vert,
+.group:hover .pan-horz {
+  animation-play-state: paused;
+}

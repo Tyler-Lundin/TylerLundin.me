@@ -7,12 +7,15 @@ import ReactiveBackground from '@/components/ReactiveBackground'
 import Banner from '../Banner'
 import { useState } from 'react'
 import StatsDrawer from '@/components/sections/StatsDrawer'
+import ContactFAB from '@/components/ContactFAB'
 
 export function SiteShell({ children }: { children: React.ReactNode }) {
 
   const pathname = usePathname()
   const isDevRoute = pathname.includes('/dev')
   const isHome = pathname === '/'
+  const isAbout = pathname === '/about' || pathname === '/about/'
+  const isProjectSlug = /^\/project\/[^/]+\/?$/.test(pathname) || /^\/projects\/[^/]+\/?$/.test(pathname)
 
   return (
     <>
@@ -23,6 +26,7 @@ export function SiteShell({ children }: { children: React.ReactNode }) {
       )}
       {/* Global UI elements that should break the page frame */}
       {!isDevRoute && isHome && <StatsDrawer />}
+      {!isDevRoute && (isAbout || isProjectSlug) && <ContactFAB />}
       {children}
       <ReactiveBackground />
       {!isDevRoute && (

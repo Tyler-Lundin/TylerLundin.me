@@ -69,7 +69,22 @@ export default function AboutFlow({ projects }: Props) {
 
               <div className="relative z-10 w-full h-full rounded-full overflow-hidden border border-black/10 dark:border-white/10 bg-white/40 dark:bg-white/5 backdrop-blur">
                 <Image src={a.images?.[0]?.src ?? '/images/tyler.png'} alt={a.images?.[0]?.alt ?? 'Tyler'} fill className="object-cover" priority />
-                <div className="absolute inset-0 rounded-full ring-1 ring-white/30 dark:ring-white/10" />
+                {/* Edge fade to background (light/dark) */}
+                <div
+                  className="pointer-events-none absolute inset-0 rounded-full z-10 dark:hidden"
+                  style={{
+                    background:
+                      'radial-gradient(circle at center, rgba(255,255,255,0) 55%, rgba(255,255,255,0.6) 80%, rgba(255,255,255,0.95) 100%)',
+                  }}
+                />
+                <div
+                  className="pointer-events-none absolute inset-0 rounded-full z-10 hidden dark:block"
+                  style={{
+                    background:
+                      'radial-gradient(circle at center, rgba(0,0,0,0) 55%, rgba(0,0,0,0.6) 80%, rgba(0,0,0,0.95) 100%)',
+                  }}
+                />
+                <div className="absolute inset-0 rounded-full ring-1 ring-white/30 dark:ring-white/10 z-20" />
               </div>
             </motion.div>
           </div>

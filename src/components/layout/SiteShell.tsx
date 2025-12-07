@@ -27,7 +27,7 @@ export function SiteShell({ children }: { children: React.ReactNode }) {
       {/* Global UI elements that should break the page frame */}
       {!isDevRoute && isHome && <StatsDrawer />}
       {!isDevRoute && (isAbout || isProjectSlug) && <ContactFAB />}
-      <div className="relative min-h-screen pb-4">
+      <div className="relative min-h-screen pb-8 w-screen overflow-x-hidden">
       {children}
       <ReactiveBackground />
       {!isDevRoute && (

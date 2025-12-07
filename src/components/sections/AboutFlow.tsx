@@ -45,16 +45,16 @@ export default function AboutFlow({ projects }: Props) {
                   </span>
                 )}
               </div>
-              <h1 className="text-4xl sm:text-5xl font-black tracking-tight text-neutral-900 dark:text-neutral-100">{a.title}</h1>
+              <h1 className="text-4xl sm:text-5xl font-black tracking-tight text-neutral-900 dark:text-neutral-100 text-center md:text-left">{a.title}</h1>
               {a.subtitle && (
-                <p className="mt-1 text-sm uppercase tracking-wider text-neutral-500 dark:text-neutral-400">{a.subtitle}</p>
+                <p className="mt-1 text-sm uppercase tracking-wider text-neutral-500 dark:text-neutral-400 text-center md:text-left">{a.subtitle}</p>
               )}
               {a.tagline && (
-                <p className="mt-4 text-lg text-neutral-700 dark:text-neutral-300 leading-relaxed max-w-prose">{a.tagline}</p>
+                <p className="mt-4 text-lg text-neutral-700 dark:text-neutral-300 leading-relaxed max-w-prose mx-auto md:mx-0 text-center md:text-left">{a.tagline}</p>
               )}
 
               {a.stats?.length ? (
-                <div className="mt-5 flex flex-wrap items-center gap-2 text-xs text-neutral-600 dark:text-neutral-400">
+                <div className="mt-5 flex flex-wrap items-center justify-center md:justify-start gap-2 text-xs text-neutral-600 dark:text-neutral-400">
                   {a.stats.map((s) => (
                     <span key={s.label} className="inline-flex items-center gap-1 rounded-full border border-black/10 dark:border-white/10 px-2 py-1 bg-white/70 dark:bg-white/5 backdrop-blur">
                       <span className="font-semibold text-neutral-900 dark:text-neutral-100">{s.value}</span>

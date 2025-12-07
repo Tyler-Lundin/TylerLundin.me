@@ -33,7 +33,7 @@ export default function StatsDrawer() {
           className="pointer-events-auto"
           aria-hidden={!isOpen}
         >
-          <div className="rounded-l-xl border border-black/10 dark:border-white/15 bg-white/80 dark:bg-black/40 backdrop-blur px-3 py-2 shadow-lg min-w-[12rem]">
+          <div className="rounded-l-xl border border-black/10 dark:border-white/15 bg-white/80 dark:bg-black  px-3 py-2 shadow-lg min-w-[12rem]">
             <ul className="space-y-1">
               {stats.map((s) => (
                 <li key={s.label} className="text-xs text-neutral-700 dark:text-neutral-300">

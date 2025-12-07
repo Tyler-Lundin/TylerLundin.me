@@ -66,8 +66,7 @@ export const aboutConfig: AboutConfig = {
   philosophy: [
     "It's not what I do, it's how I do it",
     "The only thing I can control is myself",
-    "Gently lower the weight, don't let gravity or momentum do it for you!",
-    "Try to be happy"
+    "Be happy(ish)",
   ],
 
   socials: [

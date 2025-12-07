@@ -28,11 +28,15 @@ export function SiteShell({ children }: { children: React.ReactNode }) {
       {!isDevRoute && isHome && <StatsDrawer />}
       {!isDevRoute && (isAbout || isProjectSlug) && <ContactFAB />}
       <div className="relative min-h-screen pb-8 w-screen overflow-x-hidden">
-      {children}
-      <ReactiveBackground />
-      {!isDevRoute && (
-        <Footer />
-      )}
+        {/* Dimmed particles background */}
+        <div className="fixed inset-0 -z-10 pointer-events-none opacity-50">
+          <ReactiveBackground />
+        </div>
+
+        {children}
+        {!isDevRoute && (
+          <Footer />
+        )}
       </div>
     </>
   )

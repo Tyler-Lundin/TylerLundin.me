@@ -10,6 +10,7 @@ import { randomHexColor } from '@/lib/utils';
 export default function ReactiveBackground() {
   const [isMounted, setIsMounted] = useState(false);
   const systemTheme = useSystemTheme(); // Our new custom hook
+  const [hoverMode, setHoverMode] = useState<'attract' | 'repulse'>('attract');
 
   useEffect(() => {
     // This effect runs once to initialize the particles engine
@@ -20,13 +21,22 @@ export default function ReactiveBackground() {
     });
   }, []);
 
+  // Swap between pulling (attract) and pushing (repulse) every ~10s
+  useEffect(() => {
+    const id = setInterval(() => {
+      setHoverMode((m) => (m === 'attract' ? 'repulse' : 'attract'));
+    }, 10000);
+    return () => clearInterval(id);
+  }, []);
+
 const particleOptions: ISourceOptions = useMemo(() => {
   // const color = systemTheme === 'dark' ? '#ffffff' : '#000000';
   //
   const color = randomHexColor(systemTheme as "light" | "dark")
 
   return {
-    fullScreen: { enable: true, zIndex: -1 },
+    // Render within parent container so parent can control opacity/stacking
+    fullScreen: { enable: false },
     background: { color: 'transparent' },
     particles: {
       number: { value: 52, density: { enable: true, area: 900 } }, // slightly sparse, elegant
@@ -69,11 +79,13 @@ const particleOptions: ISourceOptions = useMemo(() => {
 
     interactivity: {
       events: {
-        onHover: { enable: true, mode: 'attract' }, // gravity-like pull effect
-        onClick: { enable: true, mode: 'emitter' }, // click spawns new shapes
+        onHover: { enable: true, mode: hoverMode }, // swap between pull/push
+        onClick: { enable: true, mode: 'emitter' },
       },
       modes: {
         attract: { distance: 300, duration: 0.4, factor: 1.8 },
+        // Softer push effect
+        repulse: { distance: 160, duration: 0.28 },
         emitter: {
           rate: { delay: 0.15, quantity: 3 },
           size: { width: 0, height: 0 },
@@ -83,7 +95,7 @@ const particleOptions: ISourceOptions = useMemo(() => {
 
     detectRetina: true,
   };
-}, [systemTheme]);
+}, [systemTheme, hoverMode]);
 
 
   // Only render after the component has mounted to avoid hydration issues
@@ -93,9 +105,7 @@ const particleOptions: ISourceOptions = useMemo(() => {
 
   return (
     <>
-      <Particles  id="tsparticles" options={particleOptions} />
+      <Particles id="tsparticles" options={particleOptions} />
     </>
   );
 }
-
-

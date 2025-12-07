@@ -162,59 +162,61 @@ export default function AboutFlow({ projects }: Props) {
                 return (
                   <motion.a
                     {...fadeUp(0.03 + i * 0.04)}
-                    key={p.name}
+                    key={proj?.slug || p.id || p.name}
                     href={href}
                     target={isExternal ? '_blank' : undefined}
                     rel={isExternal ? 'noreferrer noopener' : undefined}
                     className="group block rounded-xl overflow-hidden border border-black/10 dark:border-white/10 bg-white/60 dark:bg-white/5 hover:border-black/20 dark:hover:border-white/20 transition-colors"
                   >
-                    <div className="relative w-full aspect-[16/10]">
-                      {media ? (
-                        media.type === 'image' ? (
-                          <Image
-                            src={media.src}
-                            alt={media.alt ?? (proj?.title || p.name)}
-                            fill
-                            sizes="(min-width: 1024px) 33vw, 50vw"
-                            className="object-cover object-top transition-transform duration-500 group-hover:scale-[1.02]"
-                          />
+                    <div className="contents">
+                      <div className="relative w-full aspect-[16/10]">
+                        {media ? (
+                          media.type === 'image' ? (
+                            <Image
+                              src={media.src}
+                              alt={media.alt ?? (proj?.title || p.name)}
+                              fill
+                              sizes="(min-width: 1024px) 33vw, 50vw"
+                              className="object-cover object-top transition-transform duration-500 group-hover:scale-[1.02]"
+                            />
+                          ) : (
+                            <video className="h-full w-full object-cover" autoPlay muted loop playsInline>
+                              <source src={media.src} />
+                            </video>
+                          )
                         ) : (
-                          <video className="h-full w-full object-cover" autoPlay muted loop playsInline>
-                            <source src={media.src} />
-                          </video>
-                        )
-                      ) : (
-                        <div className="absolute inset-0 bg-gradient-to-br from-neutral-200 to-neutral-300 dark:from-neutral-800 dark:to-neutral-900" />
-                      )}
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent opacity-80 group-hover:opacity-60 transition-opacity" />
-                    </div>
-                    <div className="p-4">
-                      <div className="flex items-center justify-between gap-3">
-                        <div className="min-w-0">
-                          <h3 className="text-base font-semibold text-neutral-900 dark:text-neutral-100 group-hover:underline">
-                            {p.name || proj?.title}
-                          </h3>
-                          {(p.tagline || proj?.tagline) && (
-                            <p className="mt-1 text-sm text-neutral-600 dark:text-neutral-300 line-clamp-2">
-                              {p.tagline || proj?.tagline}
-                            </p>
+                          <div className="absolute inset-0 bg-gradient-to-br from-neutral-200 to-neutral-300 dark:from-neutral-800 dark:to-neutral-900" />
+                        )}
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent opacity-80 group-hover:opacity-60 transition-opacity" />
+                      </div>
+                      <div className="p-4">
+                        <div className="flex items-center justify-between gap-3">
+                          <div className="min-w-0">
+                            <h3 className="text-base font-semibold text-neutral-900 dark:text-neutral-100 group-hover:underline">
+                              {p.name || proj?.title}
+                            </h3>
+                            {(p.tagline || proj?.tagline) && (
+                              <p className="mt-1 text-sm text-neutral-600 dark:text-neutral-300 line-clamp-2">
+                                {p.tagline || proj?.tagline}
+                              </p>
+                            )}
+                          </div>
+                          {p.role && (
+                            <span className="shrink-0 max-w-[45%] sm:max-w-[35%] px-2 py-0.5 rounded-full border border-black/10 dark:border-white/10 text-xs overflow-hidden text-ellipsis whitespace-nowrap text-neutral-800 dark:text-neutral-200">
+                              {p.role}
+                            </span>
                           )}
                         </div>
-                        {p.role && (
-                          <span className="shrink-0 max-w-[45%] sm:max-w-[35%] px-2 py-0.5 rounded-full border border-black/10 dark:border-white/10 text-xs overflow-hidden text-ellipsis whitespace-nowrap text-neutral-800 dark:text-neutral-200">
-                            {p.role}
-                          </span>
-                        )}
+                        {proj?.tech?.length ? (
+                          <div className="mt-3 flex flex-wrap gap-1.5">
+                            {proj.tech.slice(0, 4).map((t) => (
+                              <span key={`${proj.slug}-${t}`} className="px-2 py-0.5 rounded-full border border-black/10 dark:border-white/10 text-[11px] text-neutral-700 dark:text-neutral-300">
+                                {t}
+                              </span>
+                            ))}
+                          </div>
+                        ) : null}
                       </div>
-                      {proj?.tech?.length ? (
-                        <div className="mt-3 flex flex-wrap gap-1.5">
-                          {proj.tech.slice(0, 4).map((t) => (
-                            <span key={`${proj.slug}-${t}`} className="px-2 py-0.5 rounded-full border border-black/10 dark:border-white/10 text-[11px] text-neutral-700 dark:text-neutral-300">
-                              {t}
-                            </span>
-                          ))}
-                        </div>
-                      ) : null}
                     </div>
                   </motion.a>
                 );
@@ -242,9 +244,7 @@ export default function AboutFlow({ projects }: Props) {
         </div>
       ) : null}
 
-      <div className="mx-auto max-w-7xl px-4 pb-16">
         <ContactCTA />
-      </div>
     </section>
   );
 }

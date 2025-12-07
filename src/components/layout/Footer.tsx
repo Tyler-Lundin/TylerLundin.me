@@ -4,10 +4,10 @@ import { StatusIndicator } from '../StatusIndicator';
 
 export function Footer() {
   return (
-    <footer className="relative bottom-0 left-0 right-0 z-50">
+    <footer className="absolute bottom-0 left-0 right-0 z-50">
       {/* Backdrop blur */}      
       {/* Main footer content */}
-      <div className="relative mx-4 rounded-lg border border-white/10 dark:border-white/5 bg-white/50 dark:bg-black/50">
+      <div className="relative mx-4 mb-4 rounded-lg bg-gradient-to-r from-neutral-50/70 via-neutral-100/30 to-neutral-200/20 dark:from-neutral-900/60 dark:via-neutral-800/40 dark:to-neutral-700/30 border border-black/10 dark:border-white/10 backdrop-blur-sm">
         {/* Decorative elements */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
           {/* Grid lines */}
@@ -17,8 +17,8 @@ export function Footer() {
             WebkitMaskImage: 'linear-gradient(to bottom, transparent, black)'
           }} />
           
-          {/* Glowing line */}
-          <div className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-blue-500/50 to-transparent" />
+          {/* Subtle top glow to match navbar vibe */}
+          <div className="absolute top-0 left-0 right-0 h-[40px] rounded-lg bg-gradient-to-b from-neutral-200/25 dark:from-neutral-900/25 via-transparent to-transparent" />
         </div>
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">

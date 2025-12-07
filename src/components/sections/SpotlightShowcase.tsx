@@ -34,6 +34,7 @@ export default function SpotlightShowcase({
   initialDelayMs = 1800,
 }: SpotlightShowcaseProps) {
   const isDark = usePrefersDark();
+  const slowRate = 0.25; // 75% slower on hover/hold
   const items = useMemo(() => {
     const source = projects ?? defaultProjects;
     return source
@@ -83,7 +84,7 @@ export default function SpotlightShowcase({
     const media = firstFeaturedMedia(project.media, isDark);
     if (!media) return null;
 
-    const baseCls = 'absolute top-1/2 -translate-y-1/2 rounded-xl overflow-hidden border border-black/10 dark:border-white/10 bg-white/60 dark:bg-white/5 backdrop-blur';
+    const baseCls = 'group absolute top-1/2 -translate-y-1/2 rounded-xl overflow-hidden border border-black/10 dark:border-white/10 bg-white/60 dark:bg-white/5 backdrop-blur';
 
     const layout: Record<typeof state, string> = {
       prev: 'left-[2%] w-[40%] sm:left-[4%] sm:w-[42%] md:left-[2%] md:w-[38%] lg:left-[2%] lg:w-[36%]',
@@ -106,6 +107,27 @@ export default function SpotlightShowcase({
     const markLoaded = () =>
       setLoadedMap((prev) => (prev[key] ? prev : { ...prev, [key]: true }));
 
+    const isTallAuto =
+      media.type === 'image' &&
+      (media.autoScroll ?? media.src.startsWith('/projects/')) &&
+      (media.scrollDirection ?? 'vertical') === 'vertical';
+
+    const setPlaybackRate = (el: HTMLElement, rate: number) => {
+      const targets = el.querySelectorAll('.pan-vert, .pan-horz');
+      targets.forEach((t) => {
+        const anims = (t as HTMLElement).getAnimations?.() ?? [];
+        anims.forEach((a) => {
+          try {
+            // Some browsers support updatePlaybackRate; fallback to setting playbackRate
+            // @ts-ignore
+            if (typeof a.updatePlaybackRate === 'function') a.updatePlaybackRate(rate);
+            // @ts-ignore
+            if ('playbackRate' in a) (a as any).playbackRate = rate;
+          } catch {}
+        });
+      });
+    };
+
     return (
       <motion.div
         key={`${project.id}-${state}`}
@@ -119,35 +141,55 @@ export default function SpotlightShowcase({
         }}
         role="link"
         tabIndex={0}
+        onMouseEnter={(e) => setPlaybackRate(e.currentTarget as HTMLElement, slowRate)}
+        onMouseLeave={(e) => setPlaybackRate(e.currentTarget as HTMLElement, 1)}
+        onTouchStart={(e) => setPlaybackRate(e.currentTarget as HTMLElement, slowRate)}
+        onTouchEnd={(e) => setPlaybackRate(e.currentTarget as HTMLElement, 1)}
       >
         <div className="absolute inset-0">
           {media.type === 'image' ? (
-            <Image
-              src={media.src}
-              alt={media.alt ?? project.title}
-              fill
-              sizes="(min-width: 1536px) 60vw, (min-width: 1280px) 64vw, (min-width: 1024px) 70vw, (min-width: 768px) 74vw, (min-width: 640px) 78vw, 86vw"
-              className={[
-                'object-cover',
-                (media.autoScroll ?? media.src.startsWith('/projects/'))
-                  ? [media.scrollDirection === 'horizontal' ? 'pan-horz' : 'pan-vert', media.scrollDirection === 'horizontal' ? 'object-center' : 'object-top'].join(' ')
-                  : '',
-                blur,
-                state !== 'current' && !isLoaded ? 'blur-md' : '',
-              ].join(' ')}
-              priority={state === 'current'}
-              loading={state === 'current' ? 'eager' : 'lazy'}
-              fetchPriority={state === 'current' ? 'high' : 'low'}
-              decoding={state === 'current' ? 'auto' : 'async'}
-              quality={state === 'current' ? 75 : 40}
-              placeholder="empty"
-              onLoadingComplete={markLoaded}
-              style={
-                media.scrollDurationMs
-                  ? ({ ['--pan-duration' as any]: `${media.scrollDurationMs}ms` } as any)
-                  : undefined
-              }
-            />
+            isTallAuto ? (
+              <img
+                src={media.src}
+                alt={media.alt ?? project.title}
+                className={`absolute left-0 top-0 w-full h-auto pan-vert ${blur} ${state !== 'current' && !isLoaded ? 'blur-md' : ''}`}
+                style={{
+                  ...(media.scrollDurationMs
+                    ? ({ ['--pan-duration' as any]: `${media.scrollDurationMs}ms` } as any)
+                    : {}),
+                  // Increase travel to reveal near-full height
+                  ['--pan-amount' as any]: '-60%'
+                }}
+                onLoad={markLoaded}
+              />
+            ) : (
+              <Image
+                src={media.src}
+                alt={media.alt ?? project.title}
+                fill
+                sizes="(min-width: 1536px) 60vw, (min-width: 1280px) 64vw, (min-width: 1024px) 70vw, (min-width: 768px) 74vw, (min-width: 640px) 78vw, 86vw"
+                className={[
+                  'object-cover',
+                  (media.autoScroll ?? media.src.startsWith('/projects/'))
+                    ? [media.scrollDirection === 'horizontal' ? 'pan-horz' : 'pan-vert', media.scrollDirection === 'horizontal' ? 'object-center' : 'object-top'].join(' ')
+                    : '',
+                  blur,
+                  state !== 'current' && !isLoaded ? 'blur-md' : '',
+                ].join(' ')}
+                priority={state === 'current'}
+                loading={state === 'current' ? 'eager' : 'lazy'}
+                fetchPriority={state === 'current' ? 'high' : 'low'}
+                decoding={state === 'current' ? 'auto' : 'async'}
+                quality={state === 'current' ? 75 : 40}
+                placeholder="empty"
+                onLoadingComplete={markLoaded}
+                style={
+                  media.scrollDurationMs
+                    ? ({ ['--pan-duration' as any]: `${media.scrollDurationMs}ms` } as any)
+                    : undefined
+                }
+              />
+            )
           ) : (
             <video
               className={`h-full w-full object-cover ${blur} ${state !== 'current' && !isLoaded ? 'blur-md' : ''}`}

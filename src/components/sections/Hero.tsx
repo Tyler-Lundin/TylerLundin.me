@@ -17,7 +17,7 @@ export function Hero({ projects }: HeroProps) {
     >
       <div className="relative z-10 mx-auto max-w-7xl px-4 pt-12 sm:pt-12 md:pt-16">
         {/* Compact intro above the showcase */}
-        <div className="mx-auto max-w-3xl text-center">
+        <div className="mx-auto w-fit text-center relative ">
           <motion.div
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
@@ -55,6 +55,7 @@ export function Hero({ projects }: HeroProps) {
           >
             Building fast, clean, modern websites. Take a look.
           </motion.p>
+          <Arrow />
         </div>
 
         {/* Showcase: spotlight format */}
@@ -67,6 +68,22 @@ export function Hero({ projects }: HeroProps) {
           <SpotlightShowcase projects={projects} className="pt-0 pb-2" />
         </motion.div>
       </div>
+
     </section>
   );
+}
+
+
+const Arrow = () => {
+  return (
+      <Image
+        src="/images/arrow.png"
+        alt="Down arrow"
+        width={88}
+        height={88}
+        className="absolute -right-16 invisible md:visible -bottom-12 rotate-12 opacity-90 select-none pointer-events-none"
+        aria-hidden
+        priority
+      />
+  )
 }

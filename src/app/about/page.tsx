@@ -14,7 +14,7 @@ export default async function AboutPage() {
   const projects = await loadAllProjects();
 
   return (
-    <main className="pt-24 bg-gradient-to-b from-neutral-50 dark:from-black via-transparent to-neutral-100 dark:to-neutral-950">
+    <main className="py-32 bg-gradient-to-b from-neutral-50 dark:from-black via-transparent to-neutral-100 dark:to-neutral-950">
       <AboutFlow projects={projects} />
     </main>
   );

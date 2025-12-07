@@ -1,16 +1,17 @@
 import type { AboutConfig } from '@/types/about';
 export const aboutConfig: AboutConfig = {
   title: 'Tyler Lundin',
-  subtitle: 'The Rogue Webdev',
+  subtitle: 'Web dev in progress',
   tagline:
-    'Nomadic by nature, caffeinated by code — building fast, clean, modern web experiences.',
+    "Self-taught, no degree, still figuring it out — but I ship real things for real people.",
   location: 'Spokane, WA',
   role: 'Self-taught web developer & builder',
   availability: 'open',
 
   intro: [
-    "I'm a self-taught developer, gearhead, and builder at heart—someone who thrives on creating from scratch and solving problems with clean code and sharper ideas.",
-    'I specialize in high-performance sites, custom e-commerce builds, and local-first SEO that helps small businesses punch above their weight.',
+    "I'm a self-taught developer, gym rat, and gearhead who fell into web dev by breaking my own projects until they finally worked. No bootcamp, no CS degree — just a lot of hours in the editor and trial-and-error.",
+    "I'm not a 10-year senior engineer, but I do build fast, clean sites that actually load, work on phones, and make it easier for small businesses to sell things and be found online.",
+    "I’m still stacking experience and tightening up my craft, so I care a lot more about long-term fit and honest collaboration than pretending I run a 20-person agency.",
   ],
 
   images: [
@@ -18,9 +19,9 @@ export const aboutConfig: AboutConfig = {
   ],
 
   highlights: [
-    'Performance-first builds',
-    'Accessible, responsive UI',
-    'Local-first SEO mindset',
+    'Performance-focused builds (no bloated theme stacks)',
+    'Responsive layouts that don’t fall apart on mobile',
+    'Practical SEO and content structure for small brands',
   ],
 
   skills: [
@@ -30,33 +31,43 @@ export const aboutConfig: AboutConfig = {
     'Supabase',
     'Tailwind',
     'Stripe',
-    'Framer Motion',
   ],
 
   stats: [
-    { label: 'Hours in the editor', value: '1000+', helperText: 'Self-taught and project-driven' },
-    { label: 'Real-world projects', value: '5+', helperText: 'From convenience stores to e-commerce' },
+    {
+      label: 'Hours in the editor',
+      value: '1000+',
+      helperText: 'Learned by building, not just tutorials',
+    },
+    {
+      label: 'Real-world projects',
+      value: '3–5',
+      helperText: 'Family business, personal brands, and experiments',
+    },
   ],
 
   projectHighlights: [
     {
+      id: 'zevlin-bike',
       name: 'ZevlinBike',
       role: 'Solo dev',
-      tagline: 'Custom Next.js + Supabase e-commerce rebuild',
+      tagline: 'Custom Next.js + Supabase e-commerce rebuild for a cycling skincare brand',
       href: 'https://zevlinbike.com',
     },
     {
+      id: 'iron-ankr',
       name: 'IronAnkr',
       role: 'Founder & dev',
-      tagline: 'Fitness strap brand and storefront built from scratch',
+      tagline: 'Lifting strap brand and storefront, built from scratch and still evolving',
       href: 'https://ironankr.com', // when live
     },
   ],
 
   philosophy: [
-    'Ship small, ship often.',
-    'Keep the stack simple enough to maintain when motivation dips.',
-    'Build for real people, not just for the portfolio screenshot.',
+    'Ship small, ship often — even when it’s not “perfect”.',
+    'Pick a stack you can maintain on low-motivation days.',
+    'Be honest about where you’re at, but don’t use it as an excuse not to build.',
+    'Make things that actually help the person using them, not just things that look good on Dribbble.',
   ],
 
   socials: [
@@ -68,4 +79,3 @@ export const aboutConfig: AboutConfig = {
     { label: 'Work with me', href: '/contact' },
   ],
 };
-

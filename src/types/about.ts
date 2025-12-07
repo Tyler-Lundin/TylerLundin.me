@@ -26,6 +26,7 @@ export interface AboutStat {
 }
 
 export interface AboutProjectHighlight {
+  id?: string;          // project id or slug to render a nested card
   name: string;         // "ZevlinBike"
   role?: string;        // "Solo dev", "Lead builder"
   tagline?: string;     // "Custom Next.js + Supabase e-commerce rebuild"
@@ -58,4 +59,3 @@ export interface AboutConfig {
   socials?: AboutSocialLink[];
   ctas?: AboutCTA[];
 }
-

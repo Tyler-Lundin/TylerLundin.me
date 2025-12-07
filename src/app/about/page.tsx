@@ -1,7 +1,8 @@
-import { About } from '@/components/sections/About';
+import AboutFlow from '@/components/sections/AboutFlow';
 import { siteConfig } from '@/config/site';
+import { loadAllProjects } from '@/lib/projects.server';
 
-export default function AboutPage() {
+export default async function AboutPage() {
   const aboutSection = siteConfig.sections.find(
     (section) => section.type === 'about'
   );
@@ -10,9 +11,11 @@ export default function AboutPage() {
     return null;
   }
 
+  const projects = await loadAllProjects();
+
   return (
-    <main className="pt-24  bg-gray-100/50 dark:bg-black/80 backdrop-blur-sm">
-      <About />
+    <main className="pt-24 bg-gradient-to-b from-neutral-50 dark:from-black via-transparent to-neutral-100 dark:to-neutral-950">
+      <AboutFlow projects={projects} />
     </main>
   );
 } 

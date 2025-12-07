@@ -55,11 +55,11 @@ export const aboutConfig: AboutConfig = {
       href: 'https://zevlinbike.com',
     },
     {
-      id: 'iron-ankr',
-      name: 'IronAnkr',
-      role: 'Founder & dev',
-      tagline: 'Lifting strap brand and storefront, built from scratch and still evolving',
-      href: 'https://ironankr.com', // when live
+      id: 'suncrest-fitness-center',
+      name: 'Suncrest Fitness Center',
+      role: 'Redesign Demo',
+      tagline: "Steven Counties premiere physical fitness and therapy center",
+      href: 'https://sfc-topaz.vercel.app', // when live
     },
   ],
 

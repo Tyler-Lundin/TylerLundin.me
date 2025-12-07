@@ -50,7 +50,7 @@ export const projects: Project[] = [
     services: ['Design', 'Frontend'],
     features: ['Hero motion', 'Responsive grids'],
     links: [
-      { type: 'live', url: 'https://example.com/iron-ankr', label: 'Live' },
+      { type: 'live', url: 'https://ironankr.com', label: 'Live' },
     ],
     media: [
       {
@@ -132,13 +132,11 @@ export const projects: Project[] = [
       { type: 'live', url: 'https://sfc-topaz.vercel.app/', label: 'Live' },
     ],
     media: [
-      {
-        id: 'sfc-hero',
-        type: 'image',
-        src: '/projects/suncrest-fitness-center/home-light.png', // TODO: replace with real screenshot
-        alt: 'Suncrest Fitness Center preview',
-        featured: true,
-      },
+      { id: 'sfc-hero-light', type: 'image', src: '/projects/suncrest-fitness-center/home-light.png', alt: 'Suncrest Fitness Center preview', featured: true, }, 
+      { id: 'sfc-hero-dark', type: 'image', src: '/projects/suncrest-fitness-center/home-dark.png', alt: 'Suncrest Fitness Center home dark preview', featured: true, }, 
+      { id: 'sfc-about-light', type: 'image', src: '/projects/suncrest-fitness-center/about-light.png', alt: 'Suncrest Fitness Center about light preview', featured: true, }, 
+      { id: 'sfc-memberships-light', type: 'image', src: '/projects/suncrest-fitness-center/memberships-light.png', alt: 'Suncrest Fitness Center memberships light preview', featured: true, }, 
+      { id: 'sfc-schedule-light', type: 'image', src: '/projects/suncrest-fitness-center/schedule-light.png', alt: 'Suncrest Fitness Center schedule light preview', featured: true, }, 
     ],
     weight: 30,
     heroShowcase: false,

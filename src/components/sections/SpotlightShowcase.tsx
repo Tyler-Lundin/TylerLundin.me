@@ -12,6 +12,7 @@ type SpotlightShowcaseProps = {
   projects?: Project[];
   className?: string;
   intervalMs?: number;
+  initialDelayMs?: number;
 };
 
 function firstFeaturedMedia(media: ProjectMedia[], isDark: boolean): ProjectMedia | undefined {
@@ -30,6 +31,7 @@ export default function SpotlightShowcase({
   projects,
   className,
   intervalMs = 5500,
+  initialDelayMs = 1800,
 }: SpotlightShowcaseProps) {
   const isDark = usePrefersDark();
   const items = useMemo(() => {
@@ -43,18 +45,24 @@ export default function SpotlightShowcase({
   const [paused, setPaused] = useState(false);
   const count = items.length;
   const timerRef = useRef<NodeJS.Timeout | null>(null);
+  const startRef = useRef<NodeJS.Timeout | null>(null);
+  const [loadedMap, setLoadedMap] = useState<Record<string, boolean>>({});
 
   const next = useCallback(() => setIndex((i) => (i + 1) % Math.max(count, 1)), [count]);
   const prev = useCallback(() => setIndex((i) => (i - 1 + Math.max(count, 1)) % Math.max(count, 1)), [count]);
 
   useEffect(() => {
     if (count <= 1 || paused) return;
-    timerRef.current && clearInterval(timerRef.current);
-    timerRef.current = setInterval(next, intervalMs);
+    if (startRef.current) clearTimeout(startRef.current);
+    if (timerRef.current) clearInterval(timerRef.current);
+    startRef.current = setTimeout(() => {
+      timerRef.current = setInterval(next, intervalMs);
+    }, Math.max(0, initialDelayMs));
     return () => {
+      if (startRef.current) clearTimeout(startRef.current);
       if (timerRef.current) clearInterval(timerRef.current);
     };
-  }, [count, paused, next, intervalMs]);
+  }, [count, paused, next, intervalMs, initialDelayMs]);
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -93,6 +101,11 @@ export default function SpotlightShowcase({
       if (live) window.open(live, '_blank', 'noopener,noreferrer');
     };
 
+    const key = media.src;
+    const isLoaded = !!loadedMap[key];
+    const markLoaded = () =>
+      setLoadedMap((prev) => (prev[key] ? prev : { ...prev, [key]: true }));
+
     return (
       <motion.div
         key={`${project.id}-${state}`}
@@ -120,8 +133,15 @@ export default function SpotlightShowcase({
                   ? [media.scrollDirection === 'horizontal' ? 'pan-horz' : 'pan-vert', media.scrollDirection === 'horizontal' ? 'object-center' : 'object-top'].join(' ')
                   : '',
                 blur,
+                state !== 'current' && !isLoaded ? 'blur-md' : '',
               ].join(' ')}
               priority={state === 'current'}
+              loading={state === 'current' ? 'eager' : 'lazy'}
+              fetchPriority={state === 'current' ? 'high' : 'low'}
+              decoding={state === 'current' ? 'auto' : 'async'}
+              quality={state === 'current' ? 75 : 40}
+              placeholder="empty"
+              onLoadingComplete={markLoaded}
               style={
                 media.scrollDurationMs
                   ? ({ ['--pan-duration' as any]: `${media.scrollDurationMs}ms` } as any)
@@ -130,15 +150,20 @@ export default function SpotlightShowcase({
             />
           ) : (
             <video
-              className={`h-full w-full object-cover ${blur}`}
-              autoPlay={media.autoplay ?? true}
+              className={`h-full w-full object-cover ${blur} ${state !== 'current' && !isLoaded ? 'blur-md' : ''}`}
+              autoPlay={state === 'current' ? (media.autoplay ?? true) : false}
               loop={media.loop ?? true}
               muted={media.muted ?? true}
               playsInline={media.playsInline ?? true}
+              preload={state === 'current' ? 'metadata' : 'none'}
               poster={media.poster}
+              onLoadedData={markLoaded}
             >
               <source src={media.src} />
             </video>
+          )}
+          {!isLoaded && (
+            <div className="absolute inset-0 bg-neutral-200/40 dark:bg-neutral-800/30 animate-pulse" />
           )}
           <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
         </div>

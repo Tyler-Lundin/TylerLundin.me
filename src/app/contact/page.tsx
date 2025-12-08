@@ -11,10 +11,10 @@ export default function ContactPage() {
   }
 
   return (
-    <main className="py-32 bg-gradient-to-b from-neutral-50 dark:from-black via-transparent to-neutral-100 dark:to-neutral-950">
+    <main className="py-32 bg-gradient-to-b from-neutral-50 dark:from-black via-neutral-50/50 dark:via-neutral-900/50 to-neutral-100 dark:to-neutral-950">
       <section className="py-10">
         <div className="max-w-4xl mx-auto px-4 text-center">
-          <h1 className="text-4xl sm:text-5xl font-black tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-cyan-600 via-pink-600 to-purple-600 dark:from-cyan-400 dark:via-pink-400 dark:to-purple-400">
+              <h1 className="text-4xl sm:text-5xl font-black tracking-tight text-neutral-900 dark:text-neutral-100">
             {contactSection.headline}
           </h1>
           <p className="mt-3 text-lg text-slate-600 dark:text-neutral-300">

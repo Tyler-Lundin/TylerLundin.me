@@ -40,7 +40,7 @@ const MenuButton = ({ onClick, minimal }: { onClick: () => void; minimal?: boole
 const LogoWrapper = ({ children, isScrolled }: { children: React.ReactNode; isScrolled: boolean }) => (
   <div
     className={cn(
-      'flex flex-col items-center justify-center transition-transform duration-300 absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 lg:relative lg:top-0 lg:left-0 lg:translate-x-0 lg:translate-y-0',
+      'flex flex-col items-center justify-center transition-transform duration-300 absolute  left-1/2 -translate-x-1/2 -translate-y-1/2 lg:relative lg:top-0 lg:left-0 lg:translate-x-0 lg:translate-y-0',
       isScrolled ? '-translate-y-20 opacity-0' : 'translate-y-0 opacity-100'
     )}
   >
@@ -110,7 +110,7 @@ const NavLinks = ({ isScrolled, minimal }: { isScrolled?: boolean; minimal?: boo
     {/* Dropdown */}
     <div
       className="absolute left-1/2 -translate-x-1/2 top-full
-      mt-4 min-w-[260px] rounded-md border border-t-0 border-black/10 dark:border-white/10
+      mt-4 min-w-[260px] rounded-md border  border-black/10 dark:border-white/10
       bg-white dark:bg-neutral-900 backdrop-blur-md shadow-lg py-2 z-[70]
 
       opacity-0 invisible translate-y-1
@@ -136,7 +136,7 @@ const NavLinks = ({ isScrolled, minimal }: { isScrolled?: boolean; minimal?: boo
 };
 
 const PrimaryNav = ({ isScrolled, setIsMenuOpen }: NavProps) => (
-  <nav style={{opacity: isScrolled?0:100}} className="absolute inset-4 h-24 rounded-lg z-50 bg-gradient-to-r from-neutral-50/70 via-neutral-100/30 to-neutral-200/20 dark:from-neutral-900/60 dark:via-neutral-800/40 dark:to-neutral-700/30 border border-black/10 dark:border-white/10 backdrop-blur-sm transition-opacity duration-300 grid items-center">
+  <nav style={{opacity: isScrolled?0:100}} className="absolute inset-4 h-20 rounded-lg z-50 bg-gradient-to-r from-neutral-50/70 via-neutral-100/30 to-neutral-200/20 dark:from-neutral-900/70 dark:via-neutral-800/50 dark:to-neutral-700/60 border border-black/10 dark:border-white/10 backdrop-blur-md transition-opacity duration-300 grid items-center">
     <div className="h-full items-center grid relative">
       <MenuButton onClick={() => setIsMenuOpen(true)} minimal />
       <LogoWrapper isScrolled={isScrolled}>
@@ -144,7 +144,7 @@ const PrimaryNav = ({ isScrolled, setIsMenuOpen }: NavProps) => (
       </LogoWrapper>
       <NavLinks isScrolled={isScrolled} />
     </div>
-    <span className="absolute top-1/2 left-0 right-0 h-[1px] bg-neutral-300/40 dark:bg-neutral-700/40 hidden lg:block" />
+    <span className="absolute top-1/2 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-black/30 to-transparent dark:invert hidden lg:block" />
   </nav>
 );
 
@@ -157,9 +157,9 @@ const StickyNav = ({ bannerVisible, isScrolled, setIsMenuOpen }: NavProps) => (
     )}
   >
     <span className="absolute bottom-0 left-0 right-0 pointer-events-none rounded-lg h-[40px] bg-gradient-to-t from-neutral-200/25 dark:from-neutral-900/25 via-transparent to-transparent" />
-    <div className="container px-4 h-12 flex items-center justify-between">
+    <div className="container px-4 h-6 flex items-center justify-between">
       <Logo />
-      <NavLinks minimal />
+      { isScrolled && (<NavLinks minimal />)}
       <MenuButton onClick={() => setIsMenuOpen(true)} minimal />
     </div>
   </div>

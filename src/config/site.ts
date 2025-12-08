@@ -35,11 +35,14 @@ export const siteConfig: SiteConfig = {
     {
       type: "projects",
       headline: "projects",
-      subheadline: "Web Development, Bodybuilding, and Game Development",
+      subheadline: "Web development and related services only: Web Hosting, Web Design, Logo Design, Custom Dashboards & Data, Authentication Systems.",
       items: [
         "Web Development",
-        "Bodybuilding",
-        "Game Development"
+        "Web Hosting",
+        "Web Design",
+        "Logo Design",
+        "Custom Dashboards & Data",
+        "Authentication Systems"
       ]
     },
     {

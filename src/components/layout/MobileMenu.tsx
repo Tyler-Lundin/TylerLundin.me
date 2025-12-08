@@ -70,7 +70,7 @@ export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
               <nav className="flex-1 overflow-y-auto">
                 <ul className="space-y-6">
                   <li>
-                    <div className="text-xs uppercase tracking-wide text-neutral-500 dark:text-neutral-400 mb-2">Browse</div>
+                    <div className="text-xs uppercase tracking-wide text-center text-neutral-500 dark:text-neutral-400 mb-2">Browse</div>
                     <ul className="space-y-2">
                       {siteConfig.sections.map((section, i) => (
                         <motion.li key={section.type} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.18, delay: 0.02 * i }}>
@@ -89,18 +89,8 @@ export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
 
                   {/* Services Group */}
                   <li className="pt-2">
-                    <div className="text-xs uppercase tracking-wide text-neutral-500 dark:text-neutral-400 mb-2">Services</div>
+                    <div className="text-xs uppercase text-center tracking-wide text-neutral-500 dark:text-neutral-400 mb-2">Services</div>
                     <ul className="space-y-2">
-                      <li>
-                        <Link
-                          href="/services"
-                          className="group flex items-center justify-between rounded-md border border-transparent px-3 py-3.5 hover:bg-neutral-100/60 dark:hover:bg-neutral-800/60 hover:border-black/10 dark:hover:border-white/10 transition-colors"
-                          onClick={onClose}
-                        >
-                          <span className="text-base font-medium text-neutral-900 dark:text-neutral-100">Overview</span>
-                          <svg width="16" height="16" viewBox="0 0 24 24" className="opacity-50 group-hover:opacity-80 text-neutral-700 dark:text-neutral-300"><path d="M9 5l7 7-7 7" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round"/></svg>
-                        </Link>
-                      </li>
                       {services.map((s, i) => (
                         <motion.li key={s.slug} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.18, delay: 0.04 + 0.02 * i }}>
                           <Link

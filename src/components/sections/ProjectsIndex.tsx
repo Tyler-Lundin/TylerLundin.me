@@ -29,7 +29,7 @@ export default function ProjectsIndex({ title, subtitle, projects }: Props) {
         {(title || subtitle) && (
           <header className="text-center mb-10">
             {title && (
-              <h1 className="text-4xl sm:text-5xl font-black tracking-tight text-neutral-900 dark:text-neutral-100">
+          <h1 className="text-4xl sm:text-5xl font-black tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-cyan-600 via-pink-600 dark:invert to-purple-600 dark:from-cyan-400 dark:via-pink-400 dark:to-purple-400">
                 {title}
               </h1>
             )}

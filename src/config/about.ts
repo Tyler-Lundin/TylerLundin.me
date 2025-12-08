@@ -1,4 +1,17 @@
 import type { AboutConfig } from '@/types/about';
+
+function YEARS_SINCE_BIRTH(): string {
+  const birth = new Date("1999-03-29");
+  const now = new Date();
+
+  const diff = now.getTime() - birth.getTime();
+  const years = Math.floor(diff / (1000 * 60 * 60 * 24 * 365.25)); // accounts for leap years
+
+  return String(years);
+}
+
+
+
 export const aboutConfig: AboutConfig = {
   title: 'Tyler Lundin',
   subtitle: 'Web dev in progress',
@@ -9,7 +22,7 @@ export const aboutConfig: AboutConfig = {
   availability: 'open',
 
   intro: [
-    "I'm a self-taught developer, gym rat, and gearhead who fell into web dev by breaking my own projects until they finally worked. No bootcamp, no CS degree — just a lot of hours in the editor and trial-and-error.",
+    `I'm a ${YEARS_SINCE_BIRTH()} year old self-taught developer, gym rat, and gearhead who fell into web dev by breaking my own projects until they finally worked. No bootcamp, no CS degree — just a lot of hours in the editor and trial-and-error.`,
     "I'm not a 10-year senior engineer, but I do build fast, clean sites that actually load, work on phones, and make it easier for small businesses to sell things and be found online.",
     "I’m still stacking experience and tightening up my craft, so I care a lot more about long-term fit and honest collaboration than pretending I run a 20-person agency.",
   ],

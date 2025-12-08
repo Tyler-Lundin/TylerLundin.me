@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { aboutConfig } from '@/config/about';
 import ContactCTA from '@/components/sections/ContactCTA';
 import type { Project, ProjectMedia } from '@/types/projects';
+import StickerTyler from '../StickerTyler';
 
 const fadeUp = (d = 0) => ({
   initial: { opacity: 0, y: 16 },
@@ -227,7 +228,8 @@ export default function AboutFlow({ projects }: Props) {
       ) : null}
 
       {a.philosophy?.length ? (
-        <div className="mx-auto max-w-7xl px-4 py-10 sm:py-14">
+        <div className="mx-auto max-w-7xl px-4 py-10 sm:py-14 relative">
+          <StickerTyler className="absolute right-0 -top-3 scale-x-[-1]" sticker="thinking" size={3}/>
           <motion.h2 {...fadeUp(0)} className="text-xl font-semibold mb-4">Philosophy</motion.h2>
           <div className="grid md:grid-cols-3 gap-4">
             {a.philosophy.map((line, i) => (

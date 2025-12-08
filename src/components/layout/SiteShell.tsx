@@ -8,6 +8,7 @@ import Banner from '../Banner'
 import { useState } from 'react'
 import StatsDrawer from '@/components/sections/StatsDrawer'
 import ContactFAB from '@/components/ContactFAB'
+import Greeting from '../Greeting'
 
 export function SiteShell({ children }: { children: React.ReactNode }) {
 
@@ -34,6 +35,7 @@ export function SiteShell({ children }: { children: React.ReactNode }) {
         </div>
 
         {children}
+        <Greeting />
         {!isDevRoute && (
           <Footer />
         )}

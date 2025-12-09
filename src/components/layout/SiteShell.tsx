@@ -4,10 +4,7 @@ import { usePathname } from 'next/navigation'
 import { Navbar } from '@/components/layout/Navbar'
 import { Footer } from '@/components/layout/Footer'
 import ReactiveBackground from '@/components/ReactiveBackground'
-import Banner from '../Banner'
-import { useState } from 'react'
 import StatsDrawer from '@/components/sections/StatsDrawer'
-import ContactFAB from '@/components/ContactFAB'
 import Greeting from '../Greeting'
 
 export function SiteShell({ children }: { children: React.ReactNode }) {
@@ -27,7 +24,6 @@ export function SiteShell({ children }: { children: React.ReactNode }) {
       )}
       {/* Global UI elements that should break the page frame */}
       {!isDevRoute && isHome && <StatsDrawer />}
-      {!isDevRoute && (isAbout || isProjectSlug) && <ContactFAB />}
       <div className="relative min-h-screen pb-8 w-screen overflow-x-hidden">
         {/* Dimmed particles background */}
         <div className="fixed inset-0 -z-10 pointer-events-none opacity-50">

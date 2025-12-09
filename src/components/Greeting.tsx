@@ -1,93 +1,111 @@
 "use client";
-import { useState, useEffect, useRef } from "react";
+
+import { useState, useEffect } from "react";
 import StickerTyler from "./StickerTyler";
+import Link from "next/link";
 
 export default function Greeting() {
-  // show: controls entrance/exit animations
-  const [show, setShow] = useState(false);
-  // active: controls whether the overlay is mounted at all
-  const [active, setActive] = useState(true);
-  const hideTimerRef = useRef<number | null>(null);
+  const [mounted, setMounted] = useState(false);
+  const [visible, setVisible] = useState(false);
+  const [dismissed, setDismissed] = useState(false);
 
-  // On mount: respect prior dismissal; otherwise kick off entrance animation
   useEffect(() => {
-    const dismissed = typeof window !== "undefined" && localStorage.getItem("greetingDismissed") === "1";
-    if (dismissed) {
-      setActive(false);
-      return;
-    }
-    const timer = window.setTimeout(() => setShow(true), 400);
-    return () => window.clearTimeout(timer);
+    setMounted(true);
   }, []);
 
-  // Close handler: trigger fade-out, then unmount after transition
+  useEffect(() => {
+    if (!mounted) return;
+
+    const wasDismissed =
+      typeof window !== "undefined" &&
+      window.localStorage.getItem("greetingDismissed") === "1";
+
+    if (wasDismissed) {
+      setDismissed(true);
+      return;
+    }
+
+    // Slide up after a short delay
+    const timer = window.setTimeout(() => setVisible(true), 1800);
+
+    return () => window.clearTimeout(timer);
+  }, [mounted]);
+
   const close = () => {
-    if (!active) return;
-    setShow(false);
+    setVisible(false);
     try {
-      localStorage.setItem("greetingDismissed", "1");
+      window.localStorage.setItem("greetingDismissed", "1");
     } catch {}
-    if (hideTimerRef.current) window.clearTimeout(hideTimerRef.current);
-    // Match longest transition (container: 1400ms)
-    hideTimerRef.current = window.setTimeout(() => {
-      setActive(false);
-    }, 1450);
+    window.setTimeout(() => setDismissed(true), 220);
   };
 
-  // Key listener: Enter closes overlay
-  useEffect(() => {
-    const onKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Enter") {
-        e.preventDefault();
-        close();
-      }
-    };
-    window.addEventListener("keydown", onKeyDown);
-    return () => window.removeEventListener("keydown", onKeyDown);
-  }, [active]);
-
-  // If closed, render nothing
-  if (!active) return null;
+  if (!mounted || dismissed) return null;
 
   return (
     <div
-      aria-hidden
-      onClick={close}
-      className={`fixed inset-0 ${show ? "pointer-events-auto" : "pointer-events-none"} cursor-pointer flex items-center justify-center 
-      bg-black/80 backdrop-blur-sm transition-opacity duration-[1400ms] ease-out z-[1000]
-      ${show ? "opacity-100" : "opacity-0"}`}
+      aria-label="Intro greeting"
+      aria-live="polite"
+      className={`
+        fixed bottom-3 left-0 right-0 z-[1000]
+        flex justify-center
+        sm:bottom-6 sm:right-6 sm:left-auto sm:justify-end
+        pointer-events-none
+      `}
     >
-      {/* CENTER CONTENT */}
-      <div className="relative flex flex-col items-center gap-8 select-none">
-        {/* Character entrance */}
-        <div
-          className={`w-56 transition-all duration-[1400ms] ease-out 
-          transform ${show ? "translate-x-0 opacity-100" : "-translate-x-24 opacity-0"}`}
-        >
-          <StickerTyler size={9} />
+      <div
+        className={`
+          pointer-events-auto w-full max-w-sm sm:w-[340px]
+          overflow-hidden rounded-2xl border border-neutral-200/80 dark:border-neutral-700/80
+          bg-white/95 dark:bg-neutral-900/95 shadow-lg backdrop-blur-md
+          transform transition-all duration-250
+          ${visible ? "opacity-100 translate-y-0 scale-100" : "opacity-0 translate-y-2 scale-95"}
+        `}
+      >
+        <div className="flex items-start gap-3 p-3.5">
+          {/* Sticker avatar */}
+          <div className="shrink-0 h-10 w-10 sm:h-11 sm:w-11 rounded-full bg-neutral-900/5 dark:bg-white/5 flex items-center justify-center">
+            <StickerTyler size={5} />
+          </div>
+
+          {/* Copy + CTA */}
+          <div className="min-w-0 flex-1">
+            <p className="text-xs font-semibold text-neutral-900 dark:text-white">
+              Need a developer who actually ships?
+            </p>
+            <p className="mt-1 text-[11px] sm:text-xs leading-snug text-neutral-600 dark:text-neutral-300">
+              I build fast, clean sites for small teams that want to look sharp
+              without babysitting their stack.
+            </p>
+
+            <div className="mt-2.5 flex items-center gap-2">
+              <Link
+                href="/projects"
+                onClick={close}
+                className={`
+                  inline-flex items-center justify-center rounded-full
+                  px-3.5 py-1.5 text-[11px] sm:text-xs font-medium
+                  bg-neutral-900 text-white hover:bg-neutral-800
+                  dark:bg-white dark:text-neutral-900 dark:hover:bg-neutral-200
+                  transition-transform duration-150 active:scale-95
+                `}
+              >
+                View projects
+              </Link>
+            </div>
+          </div>
+
+          {/* Close */}
+          <button
+            type="button"
+            onClick={close}
+            aria-label="Dismiss greeting"
+            className="ml-1 inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full border border-black/10 bg-white/95 text-[11px] text-neutral-600 shadow-sm hover:bg-neutral-100 dark:bg-neutral-900 dark:text-neutral-300 dark:border-neutral-700"
+          >
+            ×
+          </button>
         </div>
-
-        {/* Title */}
-        <h1
-          className={`text-center font-extrabold 
-          text-white drop-shadow-[0_0_20px_rgba(255,255,255,0.35)] 
-          text-6xl tracking-wide transition-all duration-[1600ms] delay-200
-          ${show ? "opacity-100 scale-100" : "opacity-0 scale-110"}`}
-        >
-          WELCOME
-          <br />
-          <span className="text-4xl opacity-80">TO MY WORLD</span>
-        </h1>
-
-        {/* Prompt like a video game "Press Enter to Start" */}
-        <p
-          className={`mt-4 text-neutral-200 text-xl tracking-[0.2em] animate-pulse
-          transition-opacity duration-[2000ms] delay-1000
-          ${show ? "opacity-80" : "opacity-0"}`}
-        >
-          PRESS ENTER TO BEGIN
-        </p>
       </div>
     </div>
   );
 }
+

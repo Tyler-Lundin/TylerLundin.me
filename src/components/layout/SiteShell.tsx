@@ -1,5 +1,4 @@
 'use client'
-
 import { usePathname } from 'next/navigation'
 import { Navbar } from '@/components/layout/Navbar'
 import { Footer } from '@/components/layout/Footer'
@@ -31,9 +30,11 @@ export function SiteShell({ children }: { children: React.ReactNode }) {
         </div>
 
         {children}
-        <Greeting />
         {!isDevRoute && (
+          <>
+          <Greeting />
           <Footer />
+          </>
         )}
       </div>
     </>

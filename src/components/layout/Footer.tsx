@@ -7,7 +7,7 @@ export function Footer() {
     <footer className="absolute bottom-0 left-0 right-0 z-50">
       {/* Backdrop blur */}      
       {/* Main footer content */}
-      <div className="relative mx-4 mb-4 rounded-lg bg-gradient-to-r from-neutral-50/70 via-neutral-100/30 to-neutral-200/20 dark:from-neutral-900/60 dark:via-neutral-800/40 dark:to-neutral-700/30 border border-black/10 dark:border-white/10 backdrop-blur-sm">
+      <div className="relative mx-4 mb-4   border border-black/10 dark:border-white/10 backdrop-blur-sm">
         {/* Decorative elements */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
           {/* Grid lines */}

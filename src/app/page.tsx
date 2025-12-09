@@ -17,7 +17,7 @@ export default async function LandingPage() {
     .sort((a, b) => (a.weight ?? 0) - (b.weight ?? 0));
 
   return (
-    <main className=" py-32 min-h-screen overflow-visible bg-gradient-to-b from-neutral-50 dark:from-black z-10 via-transparent to-neutral-100 dark:to-neutral-950 text-black dark:text-white grid ">
+    <main className="max-w-screen py-32 min-h-screen overflow-visible bg-gradient-to-b from-neutral-50 dark:from-black z-10 via-transparent to-neutral-100 dark:to-neutral-950 text-black dark:text-white grid ">
       <Hero projects={combined} />
       <ContactCTA />
     </main>

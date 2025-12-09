@@ -66,7 +66,7 @@ export default function ServicesIndexPage() {
   }
 
   return (
-    <main className="min-h-screen py-32 bg-gradient-to-b from-neutral-50 dark:from-black via-transparent to-neutral-100 dark:to-neutral-950">
+    <main className="min-h-screen max-w-screen py-32 bg-gradient-to-b from-neutral-50 dark:from-black via-transparent to-neutral-100 dark:to-neutral-950">
       <div className="container mx-auto px-6 max-w-5xl py-4">
         <div className="mb-6 h-[2px] w-20 bg-gradient-to-r from-neutral-300/70 via-neutral-400/40 to-transparent dark:from-neutral-600/70 dark:via-neutral-600/40" />
 

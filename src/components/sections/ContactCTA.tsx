@@ -6,7 +6,7 @@ export default function ContactCTA() {
   return (
     <section
       aria-label="Availability"
-      className="relative z-10 mx-4 mt-4"
+      className="relative z-10 "
     >
       <motion.div
         initial={{ opacity: 0, y: 10 }}

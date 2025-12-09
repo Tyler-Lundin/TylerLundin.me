@@ -13,7 +13,7 @@ export function ServicePageScaffold({
   currentSlug: string
 }) {
   return (
-    <main className="min-h-screen py-28 text-black dark:text-white">
+    <main className="min-h-screen max-w-screen py-28 text-black dark:text-white">
       <div className="container mx-auto px-6 max-w-3xl">
         <div className="mb-6 h-[2px] w-20 bg-gradient-to-r from-neutral-300/70 via-neutral-400/40 to-transparent dark:from-neutral-600/70 dark:via-neutral-600/40" />
 

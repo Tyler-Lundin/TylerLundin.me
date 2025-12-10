@@ -32,6 +32,8 @@
     "openai": "^4.96.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
+    "react-markdown": "^10.1.0",
+    "remark-gfm": "^4.0.1",
     "resend": "^4.3.0",
     "stats.js": "^0.17.0",
     "tailwind-merge": "^3.2.0"

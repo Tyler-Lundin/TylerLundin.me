@@ -45,6 +45,7 @@ export const siteConfig: SiteConfig = {
         "Authentication Systems"
       ]
     },
+    { type: "blog", headline: "blog" },
     {
       type: "contact",
       headline: "contact",

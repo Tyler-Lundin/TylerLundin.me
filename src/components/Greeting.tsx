@@ -125,13 +125,13 @@ function GreetingBody({ onClose }: { onClose: () => void }) {
 
         <span className="block pt-1.5 space-y-0.5">
           <span className="block font-extrabold text-[12px] sm:text-sm">
-            $499 down
+            $999 down
           </span>
           <span className="block font-semibold uppercase tracking-[0.14em]">
             First month free
           </span>
           <span className="block font-semibold text-[11px] sm:text-xs">
-            $49.99 / month after your 1-month trial — cancel anytime.
+            $99.99 / month after your 1-month trial — cancel anytime.
           </span>
         </span>
       </p>

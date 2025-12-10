@@ -1,0 +1,106 @@
+import { NextResponse } from 'next/server'
+import { requireAdmin } from '@/lib/auth'
+import { createServiceClient } from '@/lib/supabase/server'
+
+function slugify(input: string): string {
+  return input
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9\s-]/g, '')
+    .replace(/\s+/g, '-')
+    .replace(/-+/g, '-')
+}
+
+export async function GET() {
+  try {
+    await requireAdmin()
+    const supabase: any = await createServiceClient()
+
+    const { data, error } = await supabase
+      .from('blog_posts')
+      .select('*')
+      .order('updated_at', { ascending: false })
+
+    if (error) throw error
+    return NextResponse.json({ ok: true, posts: data })
+  } catch (err) {
+    console.error('Posts GET error:', err)
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  }
+}
+
+export async function POST(req: Request) {
+  try {
+    await requireAdmin()
+  } catch {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  }
+
+  const supabase: any = await createServiceClient()
+  try {
+    const body = await req.json()
+    const {
+      id,
+      title,
+      slug,
+      excerpt,
+      content_md,
+      content_json,
+      cover_image_url,
+      status = 'draft',
+      tags = [] as string[],
+      published_at,
+      reading_time_minutes,
+      meta,
+    } = body
+
+    const finalSlug = slug ? slugify(slug) : slugify(title || '')
+    if (!title) return NextResponse.json({ error: 'Title required' }, { status: 400 })
+
+    const upsertPayload: any = {
+      title,
+      slug: finalSlug,
+      excerpt,
+      content_md,
+      content_json,
+      cover_image_url,
+      status,
+      published_at,
+      reading_time_minutes,
+      meta,
+    }
+    if (id) upsertPayload.id = id
+
+    const { data: post, error } = await supabase
+      .from('blog_posts')
+      .upsert(upsertPayload)
+      .select('*')
+      .single()
+
+    if (error) throw error
+
+    // Handle tags: ensure exist, then join
+    if (Array.isArray(tags) && tags.length > 0) {
+      const tagRows = tags.map((name: string) => ({ slug: slugify(name), name }))
+      // Upsert tags
+      const { data: insertedTags, error: tagErr } = await supabase
+        .from('blog_tags')
+        .upsert(tagRows, { onConflict: 'slug' })
+        .select('id, slug')
+      if (tagErr) throw tagErr
+
+      // Map to ids
+      const tagIds = insertedTags.map((t: any) => t.id)
+
+      // Clear existing joins then insert new
+      await supabase.from('blog_post_tags').delete().eq('post_id', post.id)
+      const joinRows = tagIds.map((tid: any) => ({ post_id: post.id, tag_id: tid }))
+      if (joinRows.length) await supabase.from('blog_post_tags').insert(joinRows)
+    }
+
+    return NextResponse.json({ ok: true, post })
+  } catch (err) {
+    console.error('Posts POST error:', err)
+    return NextResponse.json({ error: 'Failed to save' }, { status: 500 })
+  }
+}

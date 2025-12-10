@@ -6,6 +6,11 @@ export type Service = {
 
 export const services: Service[] = [
   {
+    slug: "faq",
+    title: "FAQ & Pricing",
+    summary: "Clear answers and typical website cost breakdowns."
+  },
+  {
     slug: "web-hosting",
     title: "Web Hosting",
     summary: "Fast, secure hosting with SSL, backups, and monitoring.",
@@ -31,4 +36,3 @@ export const services: Service[] = [
     summary: "Secure auth, roles, and protected areas users can trust.",
   },
 ];
-

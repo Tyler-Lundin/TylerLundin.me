@@ -17,8 +17,7 @@ export const aboutConfig: AboutConfig = {
   subtitle: 'Web dev in progress',
   tagline:
     "Self-taught, no degree, still figuring it out — but I ship real things for real people.",
-  location: 'Spokane, WA',
-  role: 'Self-taught web developer & builder',
+  location: 'Spokane, WA', role: 'Self-taught web developer & builder',
   availability: 'open',
 
   intro: [
@@ -77,9 +76,9 @@ export const aboutConfig: AboutConfig = {
   ],
 
   philosophy: [
-    "It's not what I do, it's how I do it",
-    "The only thing I can control is myself",
-    "Be happy(ish)",
+    "Be tolerant with others and strict with yourself.",
+    `“And your profession?” “Goodness.”`,
+    `When you arise in the morning, think of what a precious privilege it is to be alive-to breathe, to think, to enjoy, to love.`,
   ],
 
   socials: [

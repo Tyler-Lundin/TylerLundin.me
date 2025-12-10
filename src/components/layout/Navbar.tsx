@@ -136,7 +136,7 @@ const NavLinks = ({ isScrolled, minimal }: { isScrolled?: boolean; minimal?: boo
 };
 
 const PrimaryNav = ({ isScrolled, setIsMenuOpen }: NavProps) => (
-  <nav style={{opacity: isScrolled?0:100}} className="absolute inset-4 h-20 z-50 bg-gradient-to-r   border border-black/10 dark:border-white/10 transition-opacity duration-300 grid items-center">
+  <nav style={{opacity: isScrolled?0:100}} className="absolute inset-4 h-20 z-50 bg-gradient-to-r   border border-black/10 dark:border-white/10 transition-opacity duration-300 grid items-center rounded-lg">
     <div className="h-full items-center grid relative">
       <MenuButton onClick={() => setIsMenuOpen(true)} minimal />
       <LogoWrapper isScrolled={isScrolled}>
@@ -151,7 +151,7 @@ const PrimaryNav = ({ isScrolled, setIsMenuOpen }: NavProps) => (
 const StickyNav = ({ bannerVisible, isScrolled, setIsMenuOpen }: NavProps) => (
   <div
     className={cn(
-      'fixed left-4 right-4 z-50 backdrop-blur-lg bg-white/50 dark:bg-black/50  border border-black/10 dark:border-white/10 transition-transform duration-300',
+      'fixed left-4 right-4 z-50 backdrop-blur-lg bg-white/80 dark:bg-black/80  border border-black/10 dark:border-white/10 transition-transform duration-300 rounded-lg py-2',
       bannerVisible ? 'top-8' : 'top-4',
       isScrolled ? 'translate-y-0 opacity-100' : '-translate-y-full opacity-0'
     )}

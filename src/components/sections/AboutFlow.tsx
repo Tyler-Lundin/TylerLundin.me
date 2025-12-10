@@ -272,13 +272,10 @@ function PhilosophySection({ items }: { items?: string[] }) {
   const romanNumerals = ["I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X"];
 
   return (
-    <div className="mx-auto max-w-7xl px-4 relative">
+    <div className="mx-auto max-w-7xl px-4 relative py-8">
 
       {/* Heading */}
       <motion.div {...fadeUp(0)} className="mb-6 sm:mb-8 relative">
-        <p className="text-[11px] tracking-[0.25em] uppercase text-neutral-500 dark:text-neutral-400">
-          Inner Framework
-        </p>
         <h2 className="mt-1 text-xl sm:text-2xl font-semibold font-serif flex items-center gap-2">
           Philosophy
           <span className="text-xs text-neutral-400 dark:text-neutral-500">
@@ -326,9 +323,15 @@ function PhilosophySection({ items }: { items?: string[] }) {
         })}
         {/* Thinking sticker */}
         <StickerTyler
-          className="absolute bottom-0 right-0  scale-x-[-1] "
+          className="absolute bottom-0 right-0  scale-x-[-1] hidden md:block opacity-50"
           sticker="thinking"
-          size={5}
+          size={3}
+        />
+
+        <StickerTyler
+          className="absolute bottom-0 right-0  scale-x-[-1] md:hidden block opacity-50"
+          sticker="thinking"
+          size={2}
         />
       </div>
     </div>

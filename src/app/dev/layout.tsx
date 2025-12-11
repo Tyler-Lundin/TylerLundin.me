@@ -1,5 +1,8 @@
 import { requireAdmin } from '@/lib/auth'
 import { redirect } from 'next/navigation'
+import DevDock from '@/components/dev/DevDock'
+import DevTopNav from '@/components/dev/DevTopNav'
+import Ankr from '@/components/ankr/Ankr'
 
 export default async function DevLayout({
   children,
@@ -13,8 +16,11 @@ export default async function DevLayout({
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 max-w-screen overflow-x-hidden">
-      {children}
+    <div className="min-h-screen bg-neutral-100 dark:bg-neutral-900">
+      <DevTopNav />
+      <main className="pt-16 pb-[6rem]">{children}</main>
+      <DevDock />
+      <Ankr />
     </div>
   )
-} 
+}

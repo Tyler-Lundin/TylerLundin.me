@@ -1,33 +1,32 @@
-'use client'
-
-import { useState } from 'react'
-import DashboardHeader from '@/components/DashboardHeader'
-import DevDock from '@/components/dev/DevDock'
-import JournalModule from '@/components/dev/modules/JournalModule'
-import InboxModule from '@/components/dev/modules/InboxModule'
-import BlogToolsModule from '@/components/dev/modules/BlogToolsModule'
-import ProjectsModule from '@/components/dev/modules/ProjectsModule'
-import SettingsModule from '@/components/dev/modules/SettingsModule'
+import Link from 'next/link'
 
 export default function DevDashboard() {
-  const [active, setActive] = useState<'blog' | 'journal' | 'inbox' | 'projects' | 'settings'>('journal')
-  
-
   return (
-    <div className="min-h-screen bg-neutral-100 dark:bg-neutral-900 py-24">
-      <DashboardHeader title="Dev Dashboard" />
-      <div className="max-w-5xl mx-auto space-y-6">
-
-        <div className="bg-white/40 dark:bg-gray-900/40 backdrop-blur-sm border border-gray-200/30 dark:border-gray-800/30 rounded-xl overflow-hidden p-4 sm:p-6">
-          {active === 'blog' && <BlogToolsModule />}
-          {active === 'journal' && <JournalModule />}
-          {active === 'inbox' && <InboxModule />}
-          {active === 'projects' && <ProjectsModule />}
-          {active === 'settings' && <SettingsModule />}
+    <div className="min-h-[70vh]">
+      <div className="max-w-5xl mx-auto px-4">
+        <div className="rounded-xl border border-black/10 dark:border-white/10 bg-white/70 dark:bg-neutral-900/70 p-6 mt-6">
+          <h1 className="text-xl font-semibold">Dev Home</h1>
+          <p className="text-sm opacity-70 mt-1">Quick links</p>
+          <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <Link href="/dev/blog" className="rounded-md border border-black/10 dark:border-white/10 p-3 hover:bg-black/5 dark:hover:bg-white/10">
+              <div className="font-medium">Blog Manager</div>
+              <div className="text-xs opacity-70">View posts, filter, create new</div>
+            </Link>
+            <Link href="/dev/blog/wizard" className="rounded-md border border-black/10 dark:border-white/10 p-3 hover:bg-black/5 dark:hover:bg-white/10">
+              <div className="font-medium">Create New Post</div>
+              <div className="text-xs opacity-70">Open the blog wizard</div>
+            </Link>
+            <Link href="/dev/msgs" className="rounded-md border border-black/10 dark:border-white/10 p-3 hover:bg-black/5 dark:hover:bg-white/10">
+              <div className="font-medium">Inbox</div>
+              <div className="text-xs opacity-70">Messages and notifications</div>
+            </Link>
+            <Link href="/dev/blog/moderation" className="rounded-md border border-black/10 dark:border-white/10 p-3 hover:bg-black/5 dark:hover:bg-white/10">
+              <div className="font-medium">Comment Moderation</div>
+              <div className="text-xs opacity-70">Approve or delete comments</div>
+            </Link>
+          </div>
         </div>
       </div>
-
-      <DevDock active={active} onChange={setActive} />
     </div>
   )
 }

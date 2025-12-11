@@ -3,6 +3,7 @@
 import { useRef, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import type { WizardState } from './types'
+import { useActivity } from './activity/ActivityContext'
 
 function uid() {
   return Math.random().toString(36).slice(2)
@@ -12,10 +13,12 @@ export default function Step4CoverUpload({ state, setState }: { state: WizardSta
   const [uploading, setUploading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const inputRef = useRef<HTMLInputElement | null>(null)
+  const { start, complete, fail } = useActivity()
 
   const onUpload = async (file: File) => {
     setUploading(true)
     setError(null)
+    const actId = start('Uploading cover image…')
     try {
       const supabase = createClient()
       const path = `blog-covers/${Date.now()}-${uid()}-${file.name}`
@@ -23,7 +26,9 @@ export default function Step4CoverUpload({ state, setState }: { state: WizardSta
       if (upErr) throw upErr
       const { data } = supabase.storage.from('public').getPublicUrl(path)
       setState({ cover_image_url: data.publicUrl })
+      complete(actId, 'Cover uploaded')
     } catch (e: any) {
+      fail(actId, e?.message || 'Upload failed')
       setError(e?.message || 'Upload failed')
     } finally {
       setUploading(false)
@@ -33,14 +38,14 @@ export default function Step4CoverUpload({ state, setState }: { state: WizardSta
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
       <div className="lg:col-span-2">
-        <div className="rounded-md border border-dashed border-black/20 dark:border-white/20 p-6 text-center bg-white/60 dark:bg-neutral-900/60">
+        <div className="rounded-lg border border-dashed border-black/20 dark:border-white/20 p-6 text-center bg-white/60 dark:bg-neutral-900/60">
           <input ref={inputRef} type="file" accept="image/*" hidden onChange={(e) => {
             const f = e.target.files?.[0]
             if (f) onUpload(f)
           }} />
           <button
             onClick={() => inputRef.current?.click()}
-            className="px-4 py-2 rounded bg-black text-white dark:bg-white dark:text-black"
+            className="w-full sm:w-auto px-4 py-3 rounded bg-black text-white dark:bg-white dark:text-black"
             disabled={uploading}
           >
             {uploading ? 'Uploading…' : 'Choose Cover Image'}
@@ -49,10 +54,10 @@ export default function Step4CoverUpload({ state, setState }: { state: WizardSta
         </div>
       </div>
       <div className="lg:col-span-1">
-        <div className="rounded-md border border-black/10 dark:border-white/10 p-3 bg-white/60 dark:bg-neutral-900/60">
+        <div className="rounded-lg border border-black/10 dark:border-white/10 p-4 bg-white/60 dark:bg-neutral-900/60">
           <div className="text-xs uppercase opacity-70 mb-2">Preview</div>
           {state.cover_image_url ? (
-            <img src={state.cover_image_url} alt="cover" className="rounded-md w-full object-cover" />
+            <img src={state.cover_image_url} alt="cover" className="rounded-md w-full object-cover aspect-[16/9]" />
           ) : (
             <div className="text-sm opacity-60">No image selected.</div>
           )}
@@ -61,4 +66,3 @@ export default function Step4CoverUpload({ state, setState }: { state: WizardSta
     </div>
   )
 }
-

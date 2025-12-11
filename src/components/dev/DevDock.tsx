@@ -2,48 +2,45 @@
 
 import { cn } from '@/lib/utils'
 import { BookOpenText, NotebookPen, Inbox, Briefcase } from 'lucide-react'
+import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 
-type DockKey = 'blog' | 'journal' | 'inbox' | 'projects' | 'settings'
+type DockItem = { key: 'blog' | 'journal' | 'inbox' | 'projects' | 'settings'; label: string; Icon: any; href: string }
 
-export interface DevDockProps {
-  active: DockKey
-  onChange: (key: DockKey) => void
-}
-
-const ITEMS: { key: DockKey; label: string; Icon: any }[] = [
-  { key: 'blog', label: 'Blog', Icon: BookOpenText },
-  { key: 'journal', label: 'Journal', Icon: NotebookPen },
-  { key: 'inbox', label: 'Inbox', Icon: Inbox },
-  { key: 'projects', label: 'Projects', Icon: Briefcase },
-  { key: 'settings', label: 'Settings', Icon: NotebookPen },
+const ITEMS: DockItem[] = [
+  { key: 'blog', label: 'Blog', Icon: BookOpenText, href: '/dev/blog' },
+  { key: 'journal', label: 'Journal', Icon: NotebookPen, href: '/dev' },
+  { key: 'inbox', label: 'Inbox', Icon: Inbox, href: '/dev/msgs' },
+  { key: 'projects', label: 'Projects', Icon: Briefcase, href: '/dev' },
+  { key: 'settings', label: 'Settings', Icon: NotebookPen, href: '/dev' },
 ]
 
-export function DevDock({ active, onChange }: DevDockProps) {
+export default function DevDock() {
+  const pathname = usePathname() || '/dev'
   return (
-    <div className="fixed bottom-4 left-1/2 -translate-x-1/2 z-40">
-      <div className="flex items-center gap-3 rounded-2xl bg-white/70 dark:bg-neutral-900/70 backdrop-blur-xl shadow-2xl border border-black/5 dark:border-white/10 px-3 py-2">
-        {ITEMS.map(({ key, label, Icon }) => {
-          const isActive = key === active
+    <div className="fixed bottom-[env(safe-area-inset-bottom,16px)] left-1/2 -translate-x-1/2 z-40">
+      <div className="flex items-center gap-2 rounded-2xl bg-white/80 dark:bg-neutral-900/80 backdrop-blur-xl shadow-lg ring-1 ring-black/10 dark:ring-white/10 px-2.5 py-2">
+        {ITEMS.map(({ key, label, Icon, href }) => {
+          const isRoot = href === '/dev'
+          const isActive = isRoot ? pathname === '/dev' : pathname.startsWith(href)
           return (
-            <button
+            <Link
               key={key}
-              onClick={() => onChange(key)}
+              href={href}
               className={cn(
-                'group relative flex flex-col items-center justify-center rounded-xl px-4 py-2 transition-all',
+                'group relative flex flex-col items-center justify-center rounded-xl px-3 py-2 transition-all',
                 isActive
-                  ? 'bg-black/5 dark:bg-white/10 text-black dark:text-white'
-                  : 'text-neutral-600 dark:text-neutral-300 hover:bg-black/5 dark:hover:bg-white/10'
+                  ? 'bg-black text-white dark:bg-white dark:text-black shadow-sm'
+                  : 'text-neutral-700 dark:text-neutral-300 hover:bg-black/10 dark:hover:bg-white/10'
               )}
               title={label}
             >
-              <Icon className={cn('h-5 w-5 transition-transform', isActive ? 'scale-110' : 'group-hover:scale-105')} />
+              <Icon className={cn('h-5 w-5 transition-transform', isActive ? 'scale-105' : 'group-hover:scale-105')} />
               <span className="text-[11px] leading-tight mt-1">{label}</span>
-            </button>
+            </Link>
           )
         })}
       </div>
     </div>
   )
 }
-
-export default DevDock

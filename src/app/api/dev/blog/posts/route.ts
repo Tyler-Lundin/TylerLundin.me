@@ -18,11 +18,20 @@ export async function GET() {
 
     const { data, error } = await supabase
       .from('blog_posts')
-      .select('*')
+      .select('id, title, slug, excerpt, cover_image_url, status, updated_at, published_at, reading_time_minutes')
       .order('updated_at', { ascending: false })
 
     if (error) throw error
-    return NextResponse.json({ ok: true, posts: data })
+    const posts = Array.isArray(data) ? data : []
+    const withCounts = [] as any[]
+    for (const p of posts) {
+      const { count } = await supabase
+        .from('blog_post_views')
+        .select('*', { count: 'exact', head: true })
+        .eq('post_id', p.id)
+      withCounts.push({ ...p, views_count: count || 0 })
+    }
+    return NextResponse.json({ ok: true, posts: withCounts })
   } catch (err) {
     console.error('Posts GET error:', err)
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })

@@ -13,11 +13,29 @@ export async function POST(req: Request) {
 
   try {
     const body = await req.json()
-    const { topic, goals, audience, keywords } = body
+    const { goals, keywords } = body || {}
+
+    const cleanGoal = (input: any) => (String(input || '')).replace(/\s+/g, ' ').trim().slice(0, 300)
+    const cleanKeywords = (arr: any): string[] => {
+      const src = Array.isArray(arr) ? arr : []
+      const out: string[] = []
+      for (const raw of src) {
+        const k = String(raw || '')
+          .toLowerCase()
+          .replace(/[#]+/g, '')
+          .trim()
+          .replace(/[^a-z0-9\-\s]/g, '')
+          .replace(/\s+/g, ' ')
+        if (k && !out.includes(k)) out.push(k)
+      }
+      return out.slice(0, 8)
+    }
+    const cleanedGoals = cleanGoal(goals)
+    const cleanedKeywords = cleanKeywords(keywords)
     const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY })
 
-    const system = `You help a dev write opinionated blog topics. Return compact JSON ideas.`
-    const user = `Topic: ${topic}\nGoals: ${goals}\nAudience: ${audience}\nKeywords: ${(keywords || []).join(', ')}\nReturn JSON: { ideas: [{ title, angle, key_points: string[] }] } with 5 options.`
+    const system = `You help a dev generate opinionated blog ideas. Keep it flexible and creative, but return a compact JSON payload.`
+    const user = `Goal: ${cleanedGoals || '(unspecified)'}\nAnchors (optional): ${(cleanedKeywords || []).join(', ') || '(none)'}\nReturn JSON: { ideas: [{ title, angle?, key_points?: string[] }] } with ~5 options. Keep titles punchy, angles concise, and points actionable.`
 
     const completion = await client.chat.completions.create({
       model: MODEL,
@@ -37,4 +55,3 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: 'Failed to suggest ideas' }, { status: 500 })
   }
 }
-

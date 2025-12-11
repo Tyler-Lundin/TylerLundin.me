@@ -2,12 +2,14 @@ export type ChatMessage = { role: 'user' | 'assistant' | 'system'; content: stri
 
 export interface WizardState {
   step: number
+  mode?: 'express' | 'advanced'
   topic: string
   goals: string
   audience: string
   keywords: string[]
   suggestions: { title: string; angle?: string; key_points?: string[] }[]
   messages: ChatMessage[]
+  edit_messages?: ChatMessage[]
   draft: {
     title?: string
     excerpt?: string
@@ -17,4 +19,3 @@ export interface WizardState {
   }
   cover_image_url?: string
 }
-

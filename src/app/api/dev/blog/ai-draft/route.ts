@@ -12,15 +12,16 @@ export async function POST(req: Request) {
   }
 
   try {
-    const { title, brief, tone, points } = await req.json()
+    const { title, brief, tone, points, anchors } = await req.json()
     const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY })
 
-    const system = `You are an opinionated web-dev blogger. Write in a concise, confident, first-person style. Use markdown. Include a strong intro, clear sections, and a short conclusion with a call-to-thought.`
+    const system = `You are an opinionated web-dev blogger. Write in a concise, confident, first-person style. Use markdown. Include a strong intro, clear sections, and a short conclusion with a call-to-thought. Use the optional anchor keywords as themes to weave through the post where appropriate.`
 
     const user = `
 Title: ${title || '(generate a strong title)'}
-Brief: ${brief || '(no brief)'}
+Goal: ${brief || '(no explicit goal)'}
 Tone: ${tone || 'direct, practical, experienced'}
+Anchors: ${(Array.isArray(anchors) ? anchors : []).join(', ') || '(none)'}
 Key points:
 ${Array.isArray(points) ? points.map((p: string, i: number) => `${i + 1}. ${p}`).join('\n') : '(none)'}
 
@@ -46,4 +47,3 @@ Tags should be 3-6 lowercase tags. excerpt <= 220 chars. content_md in markdown.
     return NextResponse.json({ error: 'Failed to generate draft' }, { status: 500 })
   }
 }
-

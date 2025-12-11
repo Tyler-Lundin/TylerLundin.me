@@ -15,11 +15,11 @@ export async function POST(req: Request) {
     const { messages, context } = await req.json()
     const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY })
 
-    const system = `You are a concise ideation partner for a dev blogger. Ask sharp questions, propose angles, and converge on a strong thesis. Keep responses short and actionable.`
+    const system = `You are a concise ideation partner for a dev blogger. Use the provided goal and optional anchor keywords to explore angles, ask clarifying questions, and converge on a strong thesis. Keep responses short and actionable. Use markdown for emphasis and lists when helpful.`
 
     const openaiMessages = [
       { role: 'system', content: system },
-      { role: 'system', content: `Context: ${JSON.stringify(context || {})}` },
+      { role: 'system', content: `Context: ${JSON.stringify({ goal: context?.goals, anchors: context?.keywords })}` },
       ...(Array.isArray(messages) ? messages : []),
     ]
 
@@ -36,4 +36,3 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: 'Chat failed' }, { status: 500 })
   }
 }
-

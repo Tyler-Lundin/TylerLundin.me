@@ -117,7 +117,7 @@ export default async function DevBlogIndex({ searchParams }: { searchParams?: Pr
   })
 
   return (
-    <main className="min-h-screen bg-neutral-100 dark:bg-neutral-900 py-24">
+    <main className="min-h-screen bg-neutral-100 dark:bg-neutral-900 py-20">
       <div className="mx-auto max-w-6xl px-4 space-y-4">
         <Toolbar />
         <form action="" className="rounded-lg border border-black/10 dark:border-white/10 bg-white/60 dark:bg-neutral-900/60 p-3">

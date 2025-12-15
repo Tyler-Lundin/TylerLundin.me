@@ -12,7 +12,7 @@ export default function ContactPage() {
   }
 
   return (
-    <main className="py-32 bg-gradient-to-b from-neutral-50 dark:from-black via-neutral-50/50 dark:via-neutral-900/50 to-neutral-100 dark:to-neutral-950">
+    <main className="max-w-screen mx-2 md:mx-4 border border-black/10 dark:border-white/10 rounded-lg py-4 my-4 min-h-screen overflow-visible bg-gradient-to-b from-neutral-50 dark:from-black z-10 via-transparent to-white dark:to-black text-black dark:text-white ">
       <StickerTyler className="absolute top-40 right-0 scale-x-[-1] translate-x-1/2 -rotate-20 -z-10" size={8} sticker={"polite"} />
       <section className="py-10">
         <div className="max-w-4xl mx-auto px-4 text-center">

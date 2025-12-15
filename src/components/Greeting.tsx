@@ -109,47 +109,23 @@ function GreetingCard({
 
 function GreetingBody({ onClose }: { onClose: () => void }) {
   return (
-    <div className="relative z-10 min-w-0 flex-1">
+    <div className="relative z-10 min-w-0 grid ">
       <p className="text-[11px] sm:text-xs leading-snug text-neutral-700 dark:text-neutral-200 space-y-2.5">
-        <span className="block font-semibold tracking-[0.08em] uppercase">
-          I build what you actually need for a realistic price.
-        </span>
-
-        <span className="block italic tracking-[0.2em] uppercase text-neutral-500 dark:text-neutral-400">
+        <span className="block text-xl font-semibold tracking-[0.08em] uppercase">
           Agencies quoting you $3,000+?
         </span>
 
-        <span className="inline-block font-black italic tracking-[0.18em] uppercase bg-red-700 text-white text-[10px] sm:text-[11px] text-center px-3 py-1 rounded-sm">
+        <span className="inline-block font-black italic tracking-[0.18em] uppercase bg-red-700 text-white text-lg  text-center px-3 py-1 rounded-sm">
           F*ck That!
         </span>
 
-        <span className="block pt-1.5 space-y-0.5">
-          <span className="block font-extrabold text-[12px] sm:text-sm">
-            $999 down
-          </span>
-          <span className="block font-semibold uppercase tracking-[0.14em]">
-            First month free
-          </span>
-          <span className="block font-semibold text-[11px] sm:text-xs">
-            $99.99 / month after your 1-month trial — cancel anytime.
-          </span>
+        <span className="block text-sm font-semibold tracking-[0.08em] uppercase max-w-2/3">
+          I build what you need for a realistic price.
         </span>
+
       </p>
 
-      <div className="mt-3.5 grid gap-2 justify-start">
-        <Link
-          href="/projects"
-          onClick={onClose}
-          className={`
-            inline-flex items-center justify-center rounded-full
-            px-3.5 py-1.75 text-[11px] sm:text-xs font-medium
-            bg-neutral-900 text-white hover:bg-neutral-800
-            dark:bg-white dark:text-neutral-900 dark:hover:bg-neutral-200
-            transition-transform duration-150 active:scale-95
-          `}
-        >
-          View projects
-        </Link>
+      <div className="mt-8 grid gap-2 justify-start ">
         <Link
           href="/contact"
           onClick={onClose}
@@ -161,7 +137,7 @@ function GreetingBody({ onClose }: { onClose: () => void }) {
             transition-transform duration-150 active:scale-95
           `}
         >
-          Message Me
+          Get a Quote
         </Link>
       </div>
     </div>

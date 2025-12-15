@@ -34,7 +34,7 @@ export default function SpotlightShowcase({
   initialDelayMs = 1800,
 }: SpotlightShowcaseProps) {
   const isDark = usePrefersDark();
-  const slowRate = 0.20; // 75% slower on hover/hold
+  const slowRate = 0.10; // 75% slower on hover/hold
   const items = useMemo(() => {
     const source = projects ?? defaultProjects;
     return source
@@ -87,14 +87,14 @@ export default function SpotlightShowcase({
     const baseCls = 'group absolute top-1/2 -translate-y-1/2 rounded-xl overflow-hidden border border-black/10 dark:border-white/10 bg-white/60 dark:bg-white/5 backdrop-blur';
 
     const layout: Record<typeof state, string> = {
-      prev: 'left-[2%] w-[40%] sm:left-[4%] sm:w-[42%] md:left-[2%] md:w-[38%] lg:left-[2%] lg:w-[36%]',
+      prev: 'left-[0%] w-[40%] sm:left-[4%] sm:w-[42%] md:left-[2%] md:w-[38%] lg:left-[2%] lg:w-[36%]',
       current: 'left-1/2 -translate-x-1/2 w-[86%] sm:w-[78%] md:w-[74%] lg:w-[70%] xl:w-[64%] 2xl:w-[60%]',
-      next: 'right-[2%] w-[40%] sm:right-[4%] sm:w-[42%] md:right-[2%] md:w-[38%] lg:right-[2%] lg:w-[36%]',
+      next: 'right-[0%] w-[40%] sm:right-[4%] sm:w-[42%] md:right-[2%] md:w-[38%] lg:right-[2%] lg:w-[36%]',
     };
 
     const scale = state === 'current' ? 1 : 0.94;
-    const opacity = state === 'current' ? 1 : 0.55;
-    const blur = state === 'current' ? 'none' : 'blur-[1px]';
+    const opacity = state === 'current' ? 1 : 1;
+    const blur = state === 'current' ? 'none' : 'blur-[1px] opacity-50';
 
     const onVisitClick = (e: React.MouseEvent<HTMLButtonElement>) => {
       e.stopPropagation();
@@ -142,9 +142,9 @@ export default function SpotlightShowcase({
         role="link"
         tabIndex={0}
         onMouseEnter={(e) => setPlaybackRate(e.currentTarget as HTMLElement, slowRate)}
-        onMouseLeave={(e) => setPlaybackRate(e.currentTarget as HTMLElement, 1)}
+        onMouseLeave={(e) => setPlaybackRate(e.currentTarget as HTMLElement, .5)}
         onTouchStart={(e) => setPlaybackRate(e.currentTarget as HTMLElement, slowRate)}
-        onTouchEnd={(e) => setPlaybackRate(e.currentTarget as HTMLElement, 1)}
+        onTouchEnd={(e) => setPlaybackRate(e.currentTarget as HTMLElement, .5)}
       >
         <div className="absolute inset-0">
           {media.type === 'image' ? (
@@ -211,28 +211,21 @@ export default function SpotlightShowcase({
         </div>
 
         {/* Meta overlay */}
-        <div className="absolute inset-x-0 bottom-0 p-4 sm:p-5 text-white">
-          <div className="flex items-end justify-between gap-3">
+        <div className="absolute inset-x-0 bottom-0 h-full grid items-center px-4 text-black dark:text-white bg-gradient-to-b from-white/50 via-white/80 to-white dark:from-black/50 dark:via-black/80 dark:to-black group-hover:opacity-0 opacity-100 transition-all">
+          <div className="flex text-center justify-center gap-3">
             <div className="min-w-0">
-              <h3 className="text-lg sm:text-xl font-semibold truncate drop-shadow">
+              <h3 className={[
+                state === 'current' ? "text-2xl md:text-3xl lg:text-5xl" : "",
+                "font-black truncate drop-shadow"
+              ].join(" ")}>
                 {project.title}
               </h3>
               {project.tagline && (
-                <p className="mt-0.5 text-xs sm:text-sm text-white/85 line-clamp-1">
+                <p className="mt-0.5 text-xs sm:text-sm text-black/85 dark:text-white/85 line-clamp-1">
                   {project.tagline}
                 </p>
               )}
             </div>
-            {project.links?.find((l) => l.type === 'live')?.url && (
-              <button
-                aria-label="Open live site"
-                onClick={onVisitClick}
-                className="shrink-0 inline-flex items-center gap-2 rounded-md bg-white/90 text-neutral-900 px-3 py-1.5 text-xs sm:text-sm font-medium hover:bg-white transition-colors"
-              >
-                Visit
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
-              </button>
-            )}
           </div>
         </div>
       </motion.div>
@@ -243,7 +236,7 @@ export default function SpotlightShowcase({
     <section
       aria-label="Spotlight project showcase"
       className={[
-        'w-full relative z-10 select-none',
+        'w-full relative z-10 select-none h-min ',
         className,
       ].filter(Boolean).join(' ')}
       onMouseEnter={() => setPaused(true)}
@@ -251,7 +244,7 @@ export default function SpotlightShowcase({
     >
       <div className="mx-auto max-w-7xl px-4">
         {/* Stage with side peeks */}
-        <div className="relative aspect-[16/9] sm:aspect-[16/9] md:aspect-[16/9] lg:aspect-[16/9] mt-4">
+        <div className="relative aspect-[16/9] sm:aspect-[16/9] md:aspect-[16/9] lg:aspect-[16/9] ">
           <AnimatePresence initial={false}>
             {buildCard(items[prevIdx], 'prev')}
             {buildCard(current, 'current')}
@@ -260,7 +253,7 @@ export default function SpotlightShowcase({
 
           {/* Controls */}
           {count > 1 && (
-            <div className="pointer-events-none absolute inset-0 flex items-center justify-between px-2 z-40">
+            <div className="pointer-events-none absolute inset-0 flex items-center justify-between opacity-40 group-hover:opacity-100 z-40">
               <button
                 aria-label="Previous project"
                 className="pointer-events-auto rounded-full bg-black/50 hover:bg-black/70 text-white p-2 backdrop-blur border border-white/20"
@@ -280,7 +273,7 @@ export default function SpotlightShowcase({
 
           {/* Progress dots with titles on hover */}
           {count > 1 && (
-            <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-2">
+            <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex gap-2">
               {items.map((p, i) => {
                 const activeDot = isDark ? 'bg-white' : 'bg-black';
                 const inactiveDot = isDark ? 'bg-white/50 hover:bg-white/70' : 'bg-black/50 hover:bg-black/70';

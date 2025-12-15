@@ -4,10 +4,10 @@ import { StatusIndicator } from '../StatusIndicator';
 
 export function Footer() {
   return (
-    <footer className="absolute bottom-0 left-0 right-0 z-50">
+    <footer className="z-50 mx-2 md:mx-4 my-4">
       {/* Backdrop blur */}      
       {/* Main footer content */}
-      <div className="relative mx-4 mb-4   border border-black/10 dark:border-white/10 backdrop-blur-sm bg-white/80 dark:bg-black/80 rounded-lg">
+      <div className="relative border border-black/10 dark:border-white/10 backdrop-blur-sm bg-white/80 dark:bg-black/80 rounded-lg">
         {/* Decorative elements */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
           {/* Grid lines */}

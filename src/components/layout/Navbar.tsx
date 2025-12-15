@@ -136,7 +136,7 @@ const NavLinks = ({ isScrolled, minimal }: { isScrolled?: boolean; minimal?: boo
 };
 
 const PrimaryNav = ({ isScrolled, setIsMenuOpen }: NavProps) => (
-  <nav style={{opacity: isScrolled?0:100}} className="absolute inset-4 h-20 z-50 bg-gradient-to-r   border border-black/10 dark:border-white/10 transition-opacity duration-300 grid items-center rounded-lg">
+  <nav style={{opacity: isScrolled?0:100}} className="absolute top-4 left-2 md:left-4 right-2 md:right-4 h-20 z-50 bg-gradient-to-r  from-white/70 dark:from-black/70 via-white/80 dark:via-black/80 to-white/60 dark:to-black/60 border border-black/10 dark:border-white/10 transition-opacity duration-300 grid items-center rounded-lg">
     <div className="h-full items-center grid relative">
       <MenuButton onClick={() => setIsMenuOpen(true)} minimal />
       <LogoWrapper isScrolled={isScrolled}>
@@ -151,8 +151,8 @@ const PrimaryNav = ({ isScrolled, setIsMenuOpen }: NavProps) => (
 const StickyNav = ({ bannerVisible, isScrolled, setIsMenuOpen }: NavProps) => (
   <div
     className={cn(
-      'fixed left-4 right-4 z-50 backdrop-blur-lg bg-white/80 dark:bg-black/80  border border-black/10 dark:border-white/10 transition-transform duration-300 rounded-lg py-2',
-      bannerVisible ? 'top-8' : 'top-4',
+      'fixed left-2 md:left-4 right-2 md:right-4 z-50 backdrop-blur-lg bg-white/80 dark:bg-black/80  border border-black/10 dark:border-white/10 transition-transform duration-300  py-2',
+      bannerVisible ? 'top-0' : 'top-0',
       isScrolled ? 'translate-y-0 opacity-100' : '-translate-y-full opacity-0'
     )}
   >
@@ -171,9 +171,9 @@ export function Navbar({ bannerVisible }: { bannerVisible: boolean }) {
 
   const handleScroll = useCallback(() => {
     const scrollPosition = window.scrollY;
-    if (scrollPosition > 4 && !isScrolled) {
+    if (scrollPosition > 60 && !isScrolled) {
       setIsScrolled(true);
-    } else if (scrollPosition <= 4 && isScrolled) {
+    } else if (scrollPosition <= 60 && isScrolled) {
       setIsScrolled(false);
     }
   }, [isScrolled]);

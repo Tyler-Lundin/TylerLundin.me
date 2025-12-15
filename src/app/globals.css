@@ -16,6 +16,13 @@
   :root {
     --background: #0a0a0a;
     --foreground: #ededed;
+    /* Ankr dark tokens (solid) */
+    --ankr-surface: #000000; /* pure black */
+    --ankr-border: #27272a; /* zinc-800 */
+    --ankr-muted: #d4d4d8; /* zinc-300 */
+    --ankr-chip-bg: #18181b; /* zinc-900 */
+    --ankr-chip-fg: #e4e4e7; /* zinc-200 */
+    --ankr-popover-bg: #000000; /* pure black */
   }
 }
 
@@ -24,6 +31,31 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+/* Ankr light tokens (solid) */
+:root {
+  --ankr-surface: #ffffff;
+  --ankr-border: #e5e7eb; /* zinc-200 */
+  --ankr-muted: #4b5563; /* zinc-600 */
+  --ankr-chip-bg: #f9fafb; /* zinc-50 */
+  --ankr-chip-fg: #111827; /* zinc-900 */
+  --ankr-popover-bg: #ffffff;
+}
+
+/* Ankr utility classes for themeable surfaces */
+.ankr-panel {
+  background: var(--ankr-surface);
+  border-color: var(--ankr-border);
+}
+.ankr-section-border { border-color: var(--ankr-border); }
+.ankr-muted { color: var(--ankr-muted); }
+.ankr-chip { background: var(--ankr-chip-bg); border-color: var(--ankr-border); color: var(--ankr-chip-fg); }
+.ankr-popover { background: var(--ankr-popover-bg); border-color: var(--ankr-border); }
+.ankr-bubble-assistant { background: var(--ankr-chip-bg); border-color: var(--ankr-border); color: var(--foreground); }
+.ankr-bubble-user { background: rgba(16,185,129,0.15); border-color: rgba(5,150,105,0.5); color: var(--foreground); }
+.ankr-bubble-system { background: rgba(245,158,11,0.10); border-color: rgba(217,119,6,0.5); color: inherit; }
+
+/* (intentionally no input-specific globals; use Tailwind utilities) */
 
 /* Simple prose styles for markdown rendering (since typography plugin isn't enabled) */
 .prose {
@@ -255,12 +287,31 @@ body {
 
 .pan-vert {
   /* 15% slower default (from 16000ms to 18400ms) */
-  animation: pan-vert var(--pan-duration, 28400ms) ease-in-out infinite;
+  animation: pan-vert var(--pan-duration, 40000ms) ease-in-out infinite;
   will-change: transform;
 }
 
 .pan-horz {
   /* 15% slower default (from 16000ms to 18400ms) */
-  animation: pan-horz var(--pan-duration, 28400ms) ease-in-out infinite;
+  animation: pan-horz var(--pan-duration, 40000ms) ease-in-out infinite;
   will-change: transform;
+}
+
+/* Ankr avatar subtle floating + aura */
+@keyframes ankr-float {
+  0%, 100% { transform: translateY(0) translateZ(0); }
+  50% { transform: translateY(-6px) translateZ(0); }
+}
+.ankr-float {
+  animation: ankr-float 3.8s ease-in-out infinite;
+  will-change: transform;
+}
+
+@keyframes ankr-breathe {
+  0%, 100% { transform: scale(1); opacity: 0.55; }
+  50% { transform: scale(1.06); opacity: 0.78; }
+}
+.ankr-breathe {
+  animation: ankr-breathe 4.2s ease-in-out infinite;
+  will-change: transform, opacity;
 }

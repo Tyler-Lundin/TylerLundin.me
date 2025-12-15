@@ -10,6 +10,7 @@ Tables are designed for clean topic-centric context management. RLS defaults res
 - slug text unique
 - title text
 - description text
+- tags text[] default {}  (keywords for matching)
 - created_at timestamptz default now()
 - updated_at timestamptz
 
@@ -68,4 +69,3 @@ PRIMARY KEY (message_id, snippet_id)
 ## Notes
 - Start with keyword + topic filters; add embeddings later if needed.
 - Prefer immutability for snippets; edits create a new snippet with supersedes pointer (optional future field) to preserve provenance.
-

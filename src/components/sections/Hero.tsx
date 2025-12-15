@@ -13,9 +13,9 @@ export function Hero({ projects }: HeroProps) {
   return (
     <section
       id="hero"
-      className="relative overflow-visible"
+      className="relative overflow-visible "
     >
-      <div className="relative z-10 mx-auto max-w-7xl px-4 pt-12 sm:pt-12 md:pt-16">
+      <div className="relative z-10 mx-auto max-w-7xl px-4 ">
         {/* Compact intro above the showcase */}
         <Heading />
 
@@ -24,7 +24,7 @@ export function Hero({ projects }: HeroProps) {
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.12 }}
-          className="my-8 sm:my-10 md:my-12"
+          className="pt-8"
         >
           <SpotlightShowcase projects={projects} className="pt-0 pb-2" />
         </motion.div>

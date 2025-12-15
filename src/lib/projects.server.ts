@@ -50,7 +50,7 @@ export async function listMediaInFolder(folderName: string): Promise<ProjectMedi
         baseKey: baseId,
         autoScroll: true,
         scrollDirection: 'vertical',
-        scrollDurationMs: 16000,
+        scrollDurationMs: 42069,
       });
     } else if (VIDEO_EXT.has(ext)) {
       media.push({

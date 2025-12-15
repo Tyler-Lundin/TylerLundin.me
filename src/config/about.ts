@@ -3,37 +3,36 @@ import type { AboutConfig } from '@/types/about';
 function YEARS_SINCE_BIRTH(): string {
   const birth = new Date("1999-03-29");
   const now = new Date();
-
   const diff = now.getTime() - birth.getTime();
-  const years = Math.floor(diff / (1000 * 60 * 60 * 24 * 365.25)); // accounts for leap years
-
+  const years = Math.floor(diff / (1000 * 60 * 60 * 24 * 365.25));
   return String(years);
 }
 
-
-
 export const aboutConfig: AboutConfig = {
   title: 'Tyler Lundin',
-  subtitle: 'Web dev in progress',
+  subtitle: 'Independent Web Developer',
   tagline:
-    "Self-taught, no degree, still figuring it out — but I ship real things for real people.",
-  location: 'Spokane, WA', role: 'Self-taught web developer & builder',
+    "Fast, modern websites for real businesses — built to get you more calls.",
+  location: 'Spokane, WA',
+  role: 'Web Developer & Builder',
   availability: 'open',
 
   intro: [
-    `I'm a ${YEARS_SINCE_BIRTH()} year old self-taught developer, gym rat, and gearhead who fell into web dev by breaking my own projects until they finally worked. No bootcamp, no CS degree — just a lot of hours in the editor and trial-and-error.`,
-    "I'm not a 10-year senior engineer, but I do build fast, clean sites that actually load, work on phones, and make it easier for small businesses to sell things and be found online.",
-    "I’m still stacking experience and tightening up my craft, so I care a lot more about long-term fit and honest collaboration than pretending I run a 20-person agency.",
+    `I’m a ${YEARS_SINCE_BIRTH()} year old Spokane-based developer, gym rat, and gearhead. I learned by building real projects — break it, fix it, rebuild it — until the work got clean, fast, and reliable.`,
+    "Today I build modern small-business websites that load quickly, work smoothly on phones, and make it easy for customers to contact you.",
+    "If we work together, you’ll get clear communication, practical recommendations, and a site that’s built to convert — not impress other developers.",
   ],
 
   images: [
+    // Note from your screenshot: swap this to a real photo when ready
     { src: '/images/tyler.png', alt: 'Tyler', rounded: true, width: 800, height: 800 },
   ],
 
   highlights: [
-    'Performance-focused builds (no bloated theme stacks)',
-    'Responsive layouts that don’t fall apart on mobile',
-    'Practical SEO and content structure for small brands',
+    'Performance-first builds that load fast',
+    'Layouts that feel solid on mobile and desktop',
+    'Practical SEO + content structure for local search',
+    'Conversion-focused pages: services, reviews, and clear CTAs',
   ],
 
   skills: [
@@ -46,39 +45,34 @@ export const aboutConfig: AboutConfig = {
   ],
 
   stats: [
-    {
-      label: 'Hours in the editor',
-      value: '1000+',
-      helperText: 'Learned by building, not just tutorials',
-    },
-    {
-      label: 'Real-world projects',
-      value: '3–5',
-      helperText: 'Family business, personal brands, and experiments',
-    },
+    { label: 'Focus', value: 'More calls', helperText: 'Clear CTA + contact-first structure' },
+    { label: 'Build style', value: 'Mobile-first', helperText: 'Designed for phone users first' },
+    { label: 'Performance', value: 'Fast load', helperText: 'Optimized images + lean pages' },
+    { label: 'Communication', value: 'Straightforward', helperText: 'No jargon, no runaround' },
+    { label: 'Availability', value: 'Accepting clients', helperText: 'Limited slots to stay responsive' },
   ],
 
   projectHighlights: [
     {
       id: 'zevlin-bike',
       name: 'ZevlinBike',
-      role: 'Solo dev',
-      tagline: 'Custom Next.js + Supabase e-commerce rebuild for a cycling skincare brand',
+      role: 'Solo Dev',
+      tagline: 'E-commerce storefront rebuild for a cycling chamois-cream brand',
       href: 'https://zevlinbike.com',
     },
     {
       id: 'suncrest-fitness-center',
       name: 'Suncrest Fitness Center',
-      role: 'Redesign Demo',
-      tagline: "Steven Counties premiere physical fitness and therapy center",
-      href: 'https://sfc-topaz.vercel.app', // when live
+      role: 'Redesign Concept',
+      tagline: "Concept redesign for a local fitness & therapy gym",
+      href: 'https://sfc-topaz.vercel.app',
     },
   ],
 
   philosophy: [
     "Be tolerant with others and strict with yourself.",
     `“And your profession?” “Goodness.”`,
-    `When you arise in the morning, think of what a precious privilege it is to be alive-to breathe, to think, to enjoy, to love.`,
+    `When you arise in the morning, think of what a precious privilege it is to be alive—to breathe, to think, to enjoy, to love.`,
   ],
 
   socials: [

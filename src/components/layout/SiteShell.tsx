@@ -17,7 +17,7 @@ export function SiteShell({ children }: { children: React.ReactNode }) {
   return (
     <>
       {!isDevRoute && (
-        <div className={`$relative`}>
+        <div className={`relative max-w-7xl mx-auto`}>
           <Navbar bannerVisible={false} />
         </div>
       )}
@@ -28,7 +28,7 @@ export function SiteShell({ children }: { children: React.ReactNode }) {
           <ReactiveBackground />
         </div>
 
-        <div className="pt-24">
+        <div className="pt-24 max-w-7xl mx-auto">
         {children}
         {!isDevRoute && (
           <>

@@ -5,10 +5,21 @@ import {
   SupabaseIcon,
   VercelIcon
 } from '@/components/icons/BrandIcons'
-import { LayoutDashboard, Shield, Database, PenTool } from 'lucide-react'
+import {
+  LayoutDashboard,
+  Shield,
+  Database,
+  PenTool,
+  Check,
+  Gauge,
+  ShieldCheck,
+  Wrench,
+  Sparkles
+} from 'lucide-react'
 import type { Metadata } from 'next'
-import { services } from '@/data/services'
-import StickerTyler from '@/components/StickerTyler'
+import { services, bundles } from '@/services'
+import StickerParallax from '@/components/services/StickerParallax'
+import SpotlightBundles from '@/components/services/SpotlightBundles'
 
 export const metadata: Metadata = {
   title: 'Services | Tyler Lundin',
@@ -17,6 +28,8 @@ export const metadata: Metadata = {
 }
 
 export default function ServicesIndexPage() {
+  const contactHref = (slug?: string) =>
+    slug ? `/contact?service=${encodeURIComponent(slug)}` : '/contact'
   const iconSet = (slug: string) => {
     switch (slug) {
       case 'web-hosting':
@@ -66,7 +79,7 @@ export default function ServicesIndexPage() {
   }
 
   return (
-    <main className="max-w-full overflow-x-hidden mx-2 md:mx-4 border border-black/10 dark:border-white/10 rounded-lg my-4 min-h-fit overflow-visible bg-gradient-to-b from-neutral-50 dark:from-black z-10 via-transparent to-white dark:to-black text-black dark:text-white "> <div className="container mx-auto px-6 max-w-5xl py-4">
+    <main className="max-w-full overflow-x-hidden mx-2 md:mx-4 border border-black/10 dark:border-white/10 rounded-lg my-4 min-h-fit overflow-visible bg-gradient-to-b from-neutral-50 dark:from-black z-10 via-transparent to-white dark:to-black text-black dark:text-white "> <div className="mx-auto max-w-7xl px-4 py-4">
         <div className="mb-6 h-[2px] w-20 bg-gradient-to-r from-neutral-300/70 via-neutral-400/40 to-transparent dark:from-neutral-600/70 dark:via-neutral-600/40" />
 
         {/* HERO CARD */}
@@ -74,20 +87,18 @@ export default function ServicesIndexPage() {
           className="
             relative mb-10 overflow-hidden
             rounded-xl border border-black/10 dark:border-white/10
-            bg-white/70 dark:bg-neutral-900/70 backdrop-blur
+            bg-white/70 dark:bg-black/50
             p-6 sm:p-8 md:pr-40
           "
         >
-          {/* Sticker – lives behind content, tucked into corner */}
+          {/* Sticker with subtle parallax + 3D tilt */}
           <div
             className="
-              pointer-events-none select-none
-              absolute -right-4 -bottom-16
+              absolute -right-4 top-1/4
               opacity-40 sm:opacity-60 md:opacity-80
             "
-            aria-hidden
           >
-            <StickerTyler sticker="prepared" size={6} className="scale-x-[-1]" />
+            <StickerParallax sticker="prepared" size={6} />
           </div>
 
           {/* Copy */}
@@ -96,7 +107,7 @@ export default function ServicesIndexPage() {
               Services
             </span>
 
-            <h1 className="text-2xl sm:text-3xl font-semibold leading-tight">
+            <h1 className="text-2xl sm:text-3xl lg:text-5xl font-semibold leading-tight">
               Services
             </h1>
 
@@ -107,18 +118,50 @@ export default function ServicesIndexPage() {
             </p>
 
             <p className="text-xs sm:text-sm text-neutral-500 dark:text-neutral-400">
-              Pick a single service or bundle a few. I handle the messy wiring
-              so you can focus on running the business.
+              Pick one or bundle a few. I handle the wiring so you can focus on the business.
             </p>
+
+            <div className="pt-1">
+              <Link
+                href={contactHref()}
+                className="inline-flex items-center gap-2 rounded-md border border-black/10 dark:border-white/10 bg-black text-white dark:bg-white dark:text-black px-3 py-1.5 text-sm font-medium hover:opacity-90 transition"
+              >
+                Contact me
+                <span aria-hidden>→</span>
+              </Link>
+            </div>
           </div>
         </section>
+        </div>
+
+        {/* FULL-WIDTH BUNDLES SHOWCASE */}
+        <section className="my-6">
+          <SpotlightBundles bundles={bundles} />
+        </section>
+
+        {/* FULL-WIDTH WHY IT WORKS */}
+        <section className="mt-6">
+          <div className="mx-auto max-w-7xl px-4">
+            <div className="rounded-xl border border-black/10 dark:border-white/10 bg-white/70 dark:bg-neutral-900/60 p-5">
+              <h2 className="mb-2 text-base font-semibold">Why it works</h2>
+              <ul className="space-y-2 text-sm text-neutral-700 dark:text-neutral-300">
+                <li className="flex gap-2"><Gauge className="h-4 w-4 mt-0.5 text-emerald-600 dark:text-emerald-400"/><span>Performance-first builds — fast pages, good Core Web Vitals, fewer headaches.</span></li>
+                <li className="flex gap-2"><ShieldCheck className="h-4 w-4 mt-0.5 text-emerald-600 dark:text-emerald-400"/><span>Secure hosting and auth — SSL, backups, monitoring, and sane defaults.</span></li>
+                <li className="flex gap-2"><Sparkles className="h-4 w-4 mt-0.5 text-emerald-600 dark:text-emerald-400"/><span>Thoughtful design — clean, accessible interfaces optimized for action.</span></li>
+                <li className="flex gap-2"><Wrench className="h-4 w-4 mt-0.5 text-emerald-600 dark:text-emerald-400"/><span>Practical integrations — dashboards and data that actually help you run things.</span></li>
+              </ul>
+            </div>
+          </div>
+        </section>
+
+        <div className="mx-auto max-w-7xl px-4 py-4">
 
         {/* SERVICE GRID */}
         <ul className="grid gap-4 sm:grid-cols-2">
           {services.map((s) => (
             <li
               key={s.slug}
-              className="rounded-lg border border-black/10 dark:border-white/10 bg-white/70 dark:bg-neutral-900/60 p-4 backdrop-blur"
+              className="rounded-lg border border-black/10 dark:border-white/10 bg-white/70 dark:bg-neutral-900/60 p-4"
             >
               <div className="flex items-start justify-between gap-3">
                 <h2 className="text-lg sm:text-xl font-medium">
@@ -140,10 +183,31 @@ export default function ServicesIndexPage() {
                   ))}
                 </div>
               </div>
+              <div className="mt-1 flex flex-wrap items-center gap-2">
+                {s.category ? (
+                  <span className="inline-flex items-center rounded-full border border-black/10 dark:border-white/10 bg-neutral-100/70 dark:bg-neutral-800/60 px-2 py-0.5 text-[11px] text-neutral-700 dark:text-neutral-300">
+                    {s.category}
+                  </span>
+                ) : null}
+                {s.priceRange ? (
+                  <span className="inline-flex items-center rounded-full border border-emerald-600/20 text-emerald-700 dark:text-emerald-300 bg-emerald-50/80 dark:bg-emerald-900/20 px-2 py-0.5 text-[11px]">
+                    {s.priceRange}
+                  </span>
+                ) : null}
+              </div>
               <p className="mt-2 text-sm text-neutral-700 dark:text-neutral-300">
                 {s.summary}
               </p>
-              <div className="mt-3">
+              {Array.isArray(s.tags) && s.tags?.length ? (
+                <div className="mt-2 flex flex-wrap gap-1.5">
+                  {s.tags.slice(0, 4).map((t) => (
+                    <span key={t} className="text-[10px] px-1.5 py-0.5 rounded border border-black/10 dark:border-white/10 bg-neutral-50/80 dark:bg-neutral-800/50 text-neutral-600 dark:text-neutral-400">
+                      #{t}
+                    </span>
+                  ))}
+                </div>
+              ) : null}
+              <div className="mt-3 flex items-center gap-3">
                 <Link
                   href={`/services/${s.slug}`}
                   className="text-sm text-indigo-600 hover:underline dark:text-emerald-400"
@@ -154,8 +218,51 @@ export default function ServicesIndexPage() {
             </li>
           ))}
         </ul>
+
+        {/* FIT SECTION */}
+        <section className="mt-10 grid gap-4 sm:grid-cols-2">
+          <div className="rounded-xl border border-black/10 dark:border-white/10 bg-white/70 dark:bg-neutral-900/60 p-5">
+            <h2 className="mb-2 text-base font-semibold">Good fit if…</h2>
+            <ul className="space-y-2 text-sm text-neutral-700 dark:text-neutral-300">
+              <li className="flex gap-2"><Check className="h-4 w-4 mt-0.5 text-emerald-600"/><span>You want a reliable website that loads fast and stays online.</span></li>
+              <li className="flex gap-2"><Check className="h-4 w-4 mt-0.5 text-emerald-600"/><span>You prefer clear scopes, practical decisions, and honest tradeoffs.</span></li>
+              <li className="flex gap-2"><Check className="h-4 w-4 mt-0.5 text-emerald-600"/><span>You value maintainability over novelty; you want fewer moving parts.</span></li>
+            </ul>
+          </div>
+          <div className="rounded-xl border border-black/10 dark:border-white/10 bg-white/70 dark:bg-neutral-900/60 p-5">
+            <h2 className="mb-2 text-base font-semibold">Not a fit if…</h2>
+            <ul className="space-y-2 text-sm text-neutral-700 dark:text-neutral-300">
+              <li className="flex gap-2"><Shield className="h-4 w-4 mt-0.5 text-neutral-500"/><span>You need bleeding-edge experiments or frequent redesigns just to experiment.</span></li>
+              <li className="flex gap-2"><Shield className="h-4 w-4 mt-0.5 text-neutral-500"/><span>You want to micro-manage every technical choice instead of outcomes.</span></li>
+              <li className="flex gap-2"><Shield className="h-4 w-4 mt-0.5 text-neutral-500"/><span>You expect results without content, feedback, or timely decisions.</span></li>
+            </ul>
+          </div>
+        </section>
+
+        {/* SIMPLE PROCESS */}
+        <section className="mt-10 rounded-xl border border-black/10 dark:border-white/10 bg-white/70 dark:bg-neutral-900/60 p-5">
+          <h2 className="mb-3 text-base font-semibold">How we work together</h2>
+          <ol className="grid sm:grid-cols-5 gap-3 text-sm text-neutral-700 dark:text-neutral-300">
+            <li className="rounded-md border border-black/10 dark:border-white/10 p-3"><span className="font-medium">1. Plan</span><br/>Goals, scope, and constraints.</li>
+            <li className="rounded-md border border-black/10 dark:border-white/10 p-3"><span className="font-medium">2. Design</span><br/>Structure, content, and look.</li>
+            <li className="rounded-md border border-black/10 dark:border-white/10 p-3"><span className="font-medium">3. Build</span><br/>Implement fast, secure features.</li>
+            <li className="rounded-md border border-black/10 dark:border-white/10 p-3"><span className="font-medium">4. Launch</span><br/>Deploy, monitor, and iterate.</li>
+            <li className="rounded-md border border-black/10 dark:border-white/10 p-3"><span className="font-medium">5. Care</span><br/>Updates, backups, and support.</li>
+          </ol>
+        </section>
+
+        {/* FINAL CTA */}
+        <section className="mt-10 mb-2 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 rounded-xl border border-black/10 dark:border-white/10 bg-white/70 dark:bg-neutral-900/60 p-5">
+          <div>
+            <h2 className="text-base font-semibold">Have a project in mind?</h2>
+            <p className="text-sm text-neutral-700 dark:text-neutral-300">Tell me what you’re trying to achieve — I’ll suggest a lean plan.</p>
+          </div>
+          <div className="flex items-center gap-2">
+            <Link href={contactHref()} className="inline-flex items-center gap-2 rounded-md border border-black/10 dark:border-white/10 bg-neutral-900 text-white dark:bg-white dark:text-black px-3 py-1.5 text-sm font-medium hover:opacity-90 transition">Contact me</Link>
+            <Link href="/services/faq" className="inline-flex items-center gap-2 rounded-md border border-black/10 dark:border-white/10 px-3 py-1.5 text-sm hover:bg-neutral-100/60 dark:hover:bg-neutral-800/40 transition">FAQ & Pricing</Link>
+          </div>
+        </section>
       </div>
     </main>
   )
 }
-

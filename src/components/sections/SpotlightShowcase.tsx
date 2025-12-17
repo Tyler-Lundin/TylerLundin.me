@@ -259,7 +259,7 @@ export default function SpotlightShowcase({
 
           {/* Controls */}
           {count > 1 && <Controls {... {prev, next}}/>}
-        <div className="relative aspect-[16/11] sm:aspect-[16/10] md:aspect-[16/9] lg:aspect-[16/8] ">
+        <div className="relative aspect-[16/9] sm:aspect-[16/8] md:aspect-[16/7] mt-4">
           <AnimatePresence initial={false}>
             {buildCard(items[prevIdx], 'prev')}
             {buildCard(current, 'current')}

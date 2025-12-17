@@ -1,27 +1,62 @@
-import Link from 'next/link';
-import { Roboto } from 'next/font/google';
+import Link from "next/link";
+import { Sora } from "next/font/google";
 
-const roboto = Roboto({
-  weight: ['200', '300', '400', '500', '700'],
-  subsets: ['latin'],
-  display: 'swap',
-})
+const sora = Sora({ subsets: ["latin"], display: "swap" });
+
+function OrbitDotMark() {
+  return (
+    <span className="relative inline-flex h-6 w-6 items-center justify-center">
+      {/* core dot */}
+      <span className="h-2 w-2 rounded-full bg-indigo-500/90 group-hover:bg-indigo-500 transition-colors duration-300" />
+
+      {/* orbit ring */}
+      <span className="absolute inset-0 rounded-full border border-neutral-950/20 dark:border-white/20 opacity-80" />
+
+      {/* rotating satellite */}
+      <span className="orbit absolute inset-0">
+        <span className="satellite absolute left-0 translate-x-1/2 top-0 h-1.5 w-1.5  rounded-full bg-neutral-950/70 dark:bg-white/70 group-hover:bg-indigo-500/70 dark:group-hover:bg-indigo-300/70 transition-colors duration-300" />
+      </span>
+
+      <style jsx>{`
+        .orbit {
+          animation: tyler-orbit 10s linear infinite;
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .orbit {
+            animation: none;
+          }
+        }
+        @keyframes tyler-orbit {
+          from {
+            transform: rotate(0deg);
+          }
+          to {
+            transform: rotate(360deg);
+          }
+        }
+      `}</style>
+    </span>
+  );
+}
 
 export function Logo() {
   return (
-    <Link href="/" className="group inline-block pt-1">
-      <div className="flex items-baseline space-x-1">
-        <span style={{ fontFamily: roboto.style.fontFamily }} className="text-md font-light tracking-tight text-neutral-900 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors duration-300">
-          tyler
+    <Link
+      href="/"
+      className={`group inline-flex items-center gap-2 pt-1 select-none ${sora.className}`}
+      aria-label="tylerweb.dev"
+    >
+      <OrbitDotMark />
+
+      <div className="flex items-baseline gap-1">
+        <span className="text-[15px] lg:text-base font-semibold tracking-[-0.02em] text-neutral-950 dark:text-white">
+          tylerweb
         </span>
-        <span style={{ fontFamily: roboto.style.fontFamily }} className="text-md font-light tracking-tight text-neutral-900 dark:text-white group-hover:text-indigo-500 dark:group-hover:text-indigo-300 transition-colors duration-300">
-          web
-        </span>
-        <span style={{ fontFamily: roboto.style.fontFamily }} className="text-sm lg:text-base font-thin text-indigo-700 dark:text-emerald-400 group-hover:text-indigo-600 dark:group-hover:text-emerald-300 transition-colors duration-300">
+        <span className="text-[13px] lg:text-sm font-semibold tracking-[0.08em] text-neutral-900/55 dark:text-white/55 group-hover:text-indigo-500 dark:group-hover:text-indigo-300 transition-colors duration-300">
           .dev
         </span>
       </div>
-      <div className="mt-0.5 h-0.5 w-full bg-indigo-500/40 dark:bg-indigo-400/40 scale-x-0 group-hover:scale-x-100 origin-left transition-transform duration-300" />
     </Link>
   );
 }
+

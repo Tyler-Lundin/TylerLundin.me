@@ -151,8 +151,8 @@ const PrimaryNav = ({ isScrolled, setIsMenuOpen }: NavProps) => (
 const StickyNav = ({ bannerVisible, isScrolled, setIsMenuOpen }: NavProps) => (
   <div
     className={cn(
-      'fixed left-2 md:left-4 right-2 md:right-4 z-50 backdrop-blur-lg bg-white/80 dark:bg-black/80  border border-black/10 dark:border-white/10 transition-transform duration-300  py-2',
-      bannerVisible ? 'top-0' : 'top-0',
+      'fixed left-1/2 -translate-x-1/2 max-w-6xl w-full rounded-lg z-50 backdrop-blur-lg bg-white/80 dark:bg-black/80  border border-black/10 dark:border-white/10 transition-transform duration-300  py-2',
+      bannerVisible ? 'top-2' : 'top-2',
       isScrolled ? 'translate-y-0 opacity-100' : '-translate-y-full opacity-0'
     )}
   >
@@ -199,10 +199,10 @@ export function Navbar({ bannerVisible }: { bannerVisible: boolean }) {
   }, [handleScroll]);
 
   return (
-    <span>
+    <>
       <PrimaryNav bannerVisible={bannerVisible} isScrolled={isScrolled} setIsMenuOpen={setIsMenuOpen} />
       <StickyNav bannerVisible={bannerVisible} isScrolled={isScrolled} setIsMenuOpen={setIsMenuOpen} />
       <MobileMenu isOpen={isMenuOpen} onClose={() => setIsMenuOpen(false)} />
-    </span>
+    </>
   );
 }

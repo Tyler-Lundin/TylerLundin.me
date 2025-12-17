@@ -26,7 +26,7 @@ export default function Greeting() {
       return;
     }
 
-    const timer = window.setTimeout(() => setVisible(true), 1800);
+    const timer = window.setTimeout(() => setVisible(true), 400);
     return () => window.clearTimeout(timer);
   }, [mounted]);
 
@@ -37,7 +37,7 @@ export default function Greeting() {
     } catch {
       // ignore
     }
-    window.setTimeout(() => setDismissed(true), 220);
+    window.setTimeout(() => setDismissed(true), 150);
   };
 
   if (!mounted || dismissed) return null;
@@ -93,7 +93,7 @@ function GreetingCard({
         border-8 border-neutral-200/80 dark:border-neutral-700/80
         bg-white/95 dark:bg-neutral-900/95
         shadow-lg backdrop-blur-md
-        transform transition-all duration-300
+        transform transition-all duration-150 ease-out
         ${visible ? "opacity-100 translate-y-0 scale-100" : "opacity-0 translate-y-3 scale-95"}
       `}
     >
@@ -177,4 +177,3 @@ function StickerAccent() {
     </div>
   );
 }
-

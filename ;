@@ -10,11 +10,12 @@ function OrbitDotMark() {
       <span className="h-2 w-2 rounded-full bg-indigo-500/90 group-hover:bg-indigo-500 transition-colors duration-300" />
 
       {/* orbit ring */}
-      <span className="absolute inset-0 rounded-full  border border-neutral-950/20 dark:border-white/20 opacity-80" />
+      <span className="absolute inset-0 rounded-full border border-neutral-950/20 dark:border-white/20 opacity-80" />
 
       {/* rotating satellite */}
       <span className="orbit absolute inset-0">
-        <span className="scaling satellite absolute left-0 top-1/2 -translate-x-1/2 -translate-y-1/2 h-1.5 w-1.5  rounded-full bg-black/75 dark:bg-white/75 group-hover:bg-indigo-500/70 dark:group-hover:bg-indigo-300/70 transition-colors duration-300" />
+        <span className="satellite absolute left-0 top-1/2 -translate-x-1/2 -translate-y-1/2 h-1.5 w-1.5  rounded-full bg-neutral-950/70 dark:bg-white/70 group-hover:bg-indigo-500/70 dark:group-hover:bg-indigo-300/70 transition-colors duration-300" />
+        <span className="scaling satellite absolute left-0 top-1/2 h-1.5 w-1.5 -translate-x-3/4 -translate-y-1/2 rounded-full bg-neutral-100/70 z-10 dark:bg-black/50 group-hover:bg-indigo-500/70 dark:group-hover:bg-indigo-300/70 transition-colors duration-300" />
       </span>
 
       <style jsx>{`
@@ -47,13 +48,13 @@ function OrbitDotMark() {
 
 @keyframes orbit-scaling {
   from {
-    transform: scale(.8);
+    transform: scale(1);
   }
   50% {
-    transform: scale(1.5)
+    transform: scale(0.5)
   }
   to {
-    transform: scale(.8);
+    transform: scale(1);
   }
 }
 

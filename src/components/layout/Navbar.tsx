@@ -157,7 +157,7 @@ const StickyNav = ({ bannerVisible, isScrolled, setIsMenuOpen }: NavProps) => (
     )}
   >
     <span className="absolute bottom-0 left-0 right-0 pointer-events-none rounded-lg h-[40px] bg-gradient-to-t from-neutral-200/25 dark:from-neutral-900/25 via-transparent to-transparent" />
-    <div className="container px-4 h-6 flex items-center justify-between">
+    <div className="px-4 h-6 flex items-center justify-between">
       <Logo />
       { isScrolled && (<NavLinks minimal />)}
       <MenuButton onClick={() => setIsMenuOpen(true)} minimal />

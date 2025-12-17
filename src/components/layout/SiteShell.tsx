@@ -22,13 +22,13 @@ export function SiteShell({ children }: { children: React.ReactNode }) {
         </div>
       )}
       {/* Global UI elements that should break the page frame */}
-      <div className="relative max-w-screen min-h-screen w-screen overflow-x-hidden">
+      <div className="relative max-w-screen min-h-screen overflow-x-hidden">
         {/* Dimmed particles background */}
         <div className="fixed inset-0 -z-10 pointer-events-none opacity-50">
           <ReactiveBackground />
         </div>
 
-        <main className="pt-24">
+        <div className="pt-24">
         {children}
         {!isDevRoute && (
           <>
@@ -36,7 +36,7 @@ export function SiteShell({ children }: { children: React.ReactNode }) {
           <Greeting />
           </>
         )}
-        </main>
+        </div>
       </div>
     </>
   )

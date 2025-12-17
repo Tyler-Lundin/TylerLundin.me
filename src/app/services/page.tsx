@@ -66,8 +66,7 @@ export default function ServicesIndexPage() {
   }
 
   return (
-    <main className="max-w-screen mx-2 md:mx-4 border border-black/10 dark:border-white/10 rounded-lg py-4 my-4 min-h-screen overflow-visible bg-gradient-to-b from-neutral-50 dark:from-black z-10 via-transparent to-white dark:to-black text-black dark:text-white ">
-      <div className="container mx-auto px-6 max-w-5xl py-4">
+    <main className="max-w-full overflow-x-hidden mx-2 md:mx-4 border border-black/10 dark:border-white/10 rounded-lg my-4 min-h-fit overflow-visible bg-gradient-to-b from-neutral-50 dark:from-black z-10 via-transparent to-white dark:to-black text-black dark:text-white "> <div className="container mx-auto px-6 max-w-5xl py-4">
         <div className="mb-6 h-[2px] w-20 bg-gradient-to-r from-neutral-300/70 via-neutral-400/40 to-transparent dark:from-neutral-600/70 dark:via-neutral-600/40" />
 
         {/* HERO CARD */}

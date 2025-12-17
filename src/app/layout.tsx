@@ -39,7 +39,7 @@ export default async function RootLayout({
         <link rel="icon" href="/favicon-light.ico" media="(prefers-color-scheme: light)" />
         <link rel="icon" href="/favicon-dark.ico" media="(prefers-color-scheme: dark)" />
       </head>
-      <body className={inter.className}>
+      <body className={[inter.className, "max-w-screen overflow-x-hidden"].join(" ")}>
         <SiteShell>
           {children}
         </SiteShell>

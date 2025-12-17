@@ -9,13 +9,26 @@ type HeroProps = {
   projects?: Project[];
 };
 
+
+
+const [on, off ] = [true, false]
+const DE = (i:number) => (off ? i : 0)
+const BUG = {
+  root: DE(1),
+  content: DE(1),
+}
+
 export function Hero({ projects }: HeroProps) {
   return (
     <section
       id="hero"
-      className="relative overflow-visible "
+      className={["relative overflow-visible py-8 overflow-hidden",
+        BUG.root && "border border-red-400"
+      ].join(" ")}
     >
-      <div className="relative z-10 mx-auto max-w-7xl px-4 ">
+      <div className={["relative z-10 mx-auto max-w-7xl px-4 grid gap-16",
+        BUG.content && "border border-green-400"
+      ].join(" ")}>
         {/* Compact intro above the showcase */}
         <Heading />
 
@@ -24,9 +37,9 @@ export function Hero({ projects }: HeroProps) {
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.12 }}
-          className="pt-8"
+          className=""
         >
-          <SpotlightShowcase projects={projects} className="pt-0 pb-2" />
+          <SpotlightShowcase projects={projects}  />
         </motion.div>
       </div>
 
@@ -37,15 +50,15 @@ export function Hero({ projects }: HeroProps) {
 
 const Arrow = () => {
   return (
-      <Image
-        src="/images/arrow.png"
-        alt="Down arrow"
-        width={88}
-        height={88}
-        className="absolute dark:invert -right-16 invisible md:visible -bottom-12 rotate-12 opacity-90 select-none pointer-events-none"
-        aria-hidden
-        priority
-      />
+    <Image
+      src="/images/arrow.png"
+      alt="Down arrow"
+      width={88}
+      height={88}
+      className="absolute dark:invert -right-16 invisible md:visible -bottom-12 rotate-12 opacity-90 select-none pointer-events-none"
+      aria-hidden
+      priority
+    />
   )
 }
 

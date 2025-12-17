@@ -46,6 +46,7 @@ export const siteConfig: SiteConfig = {
       ]
     },
     { type: "blog", headline: "blog" },
+    { type: "quote", headline: "quote", description: "Ready to start? Share a few details and get a scoped quote." },
     {
       type: "contact",
       headline: "contact",

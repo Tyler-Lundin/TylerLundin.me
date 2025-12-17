@@ -2,17 +2,27 @@
 
 import { motion } from "framer-motion";
 
+
+const [on, off] = [true, false]
+const DE = (i:number) => (off ? i : 0)
+const BUG = {
+  root: DE(1),
+  card: DE(1),
+}
+
 export default function ContactCTA() {
   return (
-    <section aria-label="Availability" className="relative z-10 mx-5">
+    <section aria-label="Availability" className={["relative z-10 h-fit p-8",
+      BUG.root && "border border-red-400"
+    ].join(" ")}>
       <motion.div
         initial={{ opacity: 0, y: 10 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, amount: 0.4 }}
         transition={{ duration: 0.35 }}
       >
-        <a href="/contact" className="group block">
-          <div className="mx-auto max-w-3xl">
+        <a href="/contact" className={["group block", BUG.card && "border-green-300 border "].join(" ")}>
+          <div className="mx-auto ">
             <div
               className="relative overflow-hidden rounded-2xl border border-neutral-200/80 dark:border-neutral-800/60
                          bg-white/90 dark:bg-neutral-900/60 backdrop-blur px-4 py-4 shadow-[0_10px_30px_rgba(0,0,0,0.25)]
@@ -33,7 +43,7 @@ export default function ContactCTA() {
 
                   {/* removed “1–2” promise */}
                   <h2 className="text-base font-semibold text-neutral-900 dark:text-neutral-100 sm:text-lg">
-                    Now booking new web projects
+                    Now booking new web projects!
                   </h2>
 
                   {/* ensure true em dash */}
@@ -46,15 +56,13 @@ export default function ContactCTA() {
                 {/* Right Side */}
                 <div className="flex flex-col items-center gap-2 sm:items-end sm:gap-3">
                   {/* Status Pills */}
-                  <div className="flex flex-wrap items-center justify-center gap-1.5 sm:justify-end">
+                  <div className="hidden sm:block flex flex-wrap items-center justify-center gap-1.5 sm:justify-end">
                     <span className="inline-flex items-center gap-2 rounded-full border px-3 py-1 text-[11px] font-medium
                                     border-emerald-600/30 bg-emerald-50 text-emerald-700
                                     dark:border-emerald-400/35 dark:bg-emerald-950/45 dark:text-emerald-200">
                       <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 dark:bg-emerald-400 animate-pulse" />
                       Accepting clients
                     </span>
-
-                    {/* removed Kickoff + duplicate Spokane pill */}
                   </div>
 
                   {/* CTA "button" */}

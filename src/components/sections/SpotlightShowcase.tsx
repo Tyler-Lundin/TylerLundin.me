@@ -7,6 +7,18 @@ import type { Project, ProjectMedia } from '@/types/projects';
 import { projects as defaultProjects } from '@/data/projects';
 import { usePrefersDark } from '@/hooks/usePrefersDark';
 // stats overlay moved to a floating drawer; no overlay here
+//
+//
+//
+
+
+const [on,off] = [true,false]
+const DE = (i:number) => (off ? i : 0)
+const BUG = {
+  root: DE(1),
+  controls: DE(1)
+}
+
 
 type SpotlightShowcaseProps = {
   projects?: Project[];
@@ -123,7 +135,7 @@ export default function SpotlightShowcase({
             if (typeof a.updatePlaybackRate === 'function') a.updatePlaybackRate(rate);
             // @ts-ignore
             if ('playbackRate' in a) (a as any).playbackRate = rate;
-          } catch {}
+          } catch { }
         });
       });
     };
@@ -131,7 +143,7 @@ export default function SpotlightShowcase({
     return (
       <motion.div
         key={`${project.id}-${state}`}
-        className={`${baseCls} ${layout[state]} aspect-[16/10] shadow-lg`}
+        className={`${baseCls} ${layout[state]} aspect-[16/14] sm:aspect-[16/11] md:aspect-[16/10] lg:aspect-[16/9] shadow-lg`}
         style={{ zIndex: state === 'current' ? 3 : state === 'prev' ? 2 : 1 }}
         initial={{ opacity: 0, scale: 0.98 }}
         animate={{ opacity, scale }}
@@ -139,8 +151,7 @@ export default function SpotlightShowcase({
         onClick={() => {
           window.location.href = `/project/${project.slug}`;
         }}
-        role="link"
-        tabIndex={0}
+        role="link" tabIndex={0}
         onMouseEnter={(e) => setPlaybackRate(e.currentTarget as HTMLElement, slowRate)}
         onMouseLeave={(e) => setPlaybackRate(e.currentTarget as HTMLElement, .5)}
         onTouchStart={(e) => setPlaybackRate(e.currentTarget as HTMLElement, slowRate)}
@@ -237,6 +248,7 @@ export default function SpotlightShowcase({
       aria-label="Spotlight project showcase"
       className={[
         'w-full relative z-10 select-none h-min ',
+        BUG.root && "border border-red-400",
         className,
       ].filter(Boolean).join(' ')}
       onMouseEnter={() => setPaused(true)}
@@ -244,36 +256,20 @@ export default function SpotlightShowcase({
     >
       <div className="mx-auto max-w-7xl px-4">
         {/* Stage with side peeks */}
-        <div className="relative aspect-[16/9] sm:aspect-[16/9] md:aspect-[16/9] lg:aspect-[16/9] ">
+
+          {/* Controls */}
+          {count > 1 && <Controls {... {prev, next}}/>}
+        <div className="relative aspect-[16/11] sm:aspect-[16/10] md:aspect-[16/9] lg:aspect-[16/8] ">
           <AnimatePresence initial={false}>
             {buildCard(items[prevIdx], 'prev')}
             {buildCard(current, 'current')}
             {buildCard(items[nextIdx], 'next')}
           </AnimatePresence>
 
-          {/* Controls */}
-          {count > 1 && (
-            <div className="pointer-events-none absolute inset-0 flex items-center justify-between opacity-40 group-hover:opacity-100 z-40">
-              <button
-                aria-label="Previous project"
-                className="pointer-events-auto rounded-full bg-black/50 hover:bg-black/70 text-white p-2 backdrop-blur border border-white/20"
-                onClick={prev}
-              >
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
-              </button>
-              <button
-                aria-label="Next project"
-                className="pointer-events-auto rounded-full bg-black/50 hover:bg-black/70 text-white p-2 backdrop-blur border border-white/20"
-                onClick={next}
-              >
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
-              </button>
-            </div>
-          )}
 
           {/* Progress dots with titles on hover */}
           {count > 1 && (
-            <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex gap-2">
+            <div className="absolute bottom-0  left-1/2 -translate-x-1/2 flex gap-2">
               {items.map((p, i) => {
                 const activeDot = isDark ? 'bg-white' : 'bg-black';
                 const inactiveDot = isDark ? 'bg-white/50 hover:bg-white/70' : 'bg-black/50 hover:bg-black/70';
@@ -289,9 +285,85 @@ export default function SpotlightShowcase({
             </div>
           )}
 
-          
+
         </div>
       </div>
     </section>
+  );
+}
+
+
+function Controls({ prev, next }: { prev: () => void; next: () => void }) {
+  return (
+    <div className="pointer-events-none absolute inset-0 z-40">
+      <div className="absolute inset-x-2 bottom-2 flex items-end justify-between sm:inset-x-0 sm:bottom-auto sm:top-1/2 sm:-translate-y-1/2 sm:px-2">
+        <NavButton dir="left" label="Previous project" onClick={prev} />
+        <NavButton dir="right" label="Next project" onClick={next} />
+      </div>
+    </div>
+  );
+}
+
+function NavButton({
+  dir,
+  label,
+  onClick,
+}: {
+  dir: "left" | "right";
+  label: string;
+  onClick: () => void;
+}) {
+  const isLeft = dir === "left";
+
+  return (
+    <button
+      type="button"
+      aria-label={label}
+      onClick={onClick}
+      className={[
+        "pointer-events-auto select-none",
+        // big tap target (mobile) + slightly slimmer (desktop)
+        "h-12 w-14 sm:h-12 sm:w-12",
+        // “handle” shape that hugs the edge
+        isLeft ? "rounded-2xl rounded-l-3xl" : "rounded-2xl rounded-r-3xl",
+        // visible by default on desktop (no hover dependency)
+        "opacity-100 sm:opacity-80 hover:sm:opacity-100",
+        // glassy + clean
+        "backdrop-blur-xl",
+        "bg-white/10 hover:bg-white/14",
+        "border border-white/15",
+        "shadow-[0_10px_30px_rgba(0,0,0,0.25)]",
+        "transition duration-200 active:scale-[0.96]",
+        "focus:outline-none focus-visible:ring-2 focus-visible:ring-white/70 focus-visible:ring-offset-2 focus-visible:ring-offset-black/30",
+        // micro “edge pull” so it feels like it’s attached to the carousel wall
+        isLeft ? "sm:-translate-x-1" : "sm:translate-x-1",
+        "grid place-items-center",
+      ].join(" ")}
+    >
+      <Chevron dir={dir} />
+    </button>
+  );
+}
+
+function Chevron({ dir }: { dir: "left" | "right" }) {
+  const isLeft = dir === "left";
+  return (
+    <svg
+      width="18"
+      height="18"
+      viewBox="0 0 24 24"
+      fill="none"
+      className="dark:text-white/90 text-black/90"
+      stroke="currentColor"
+      strokeWidth="2.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      {isLeft ? (
+        <polyline points="15 18 9 12 15 6" />
+      ) : (
+        <polyline points="9 18 15 12 9 6" />
+      )}
+    </svg>
   );
 }

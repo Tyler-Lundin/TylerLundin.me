@@ -4,6 +4,7 @@ import { Suspense } from 'react'
 import StickerTyler from '@/components/StickerTyler'
 import { themeConfig, billboardThemes } from '@/config/theme'
 import type { BillboardThemeKey as BillboardThemeKeyFromConfig } from '@/config/themes/billboard'
+import StickerParallax from '@/components/services/StickerParallax'
 
 type BillboardThemeKey =
   | 'neon_arcade'
@@ -209,15 +210,26 @@ function ContactBillboardHeader({
             </div>
           </div>
 
-          {/* sticker = mascot stamp */}
-          <div className="shrink-0 flex justify-center sm:justify-end">
+
+
+          <div className="shrink-0 flex justify-start sm:justify-end gap-2">
             <div className="relative">
               <div className={t.stickerGlow} />
               <div className={['relative px-3 py-2', t.stickerPlate].join(' ')}>
-                <StickerTyler className="opacity-95" size={3} sticker="waving" />
+                <StickerParallax sticker="thinking" size={7} />
+              </div>
+            </div>
+
+            <div className="relative sm:hidden">
+              <div className={t.stickerGlow} />
+              <div className={['relative px-3 py-2 ', t.stickerPlate].join(' ')}>
+                <h1> Send me a message, a hateful love letter, or a loving hate letter and I will get back to you! </h1>
               </div>
             </div>
           </div>
+
+
+
         </div>
       </div>
     </header>

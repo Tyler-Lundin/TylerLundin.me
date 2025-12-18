@@ -21,7 +21,19 @@ export default async function ProjectPage({ params }: PageProps) {
     <main className="max-w-full overflow-x-hidden mx-2 md:mx-4 border border-black/10 dark:border-white/10 rounded-lg my-4 min-h-fit overflow-visible bg-gradient-to-b from-neutral-50 dark:from-black z-10 via-transparent to-white dark:to-black text-black dark:text-white ">
       <div className="mx-auto max-w-6xl px-4 py-10">
         <header className="mb-10">
-          <h1 className="text-3xl sm:text-4xl font-black tracking-tight">{project.title}</h1>
+          <div className="flex items-center gap-3 flex-wrap">
+            <h1 className="text-3xl sm:text-4xl font-black tracking-tight">{project.title}</h1>
+            <span
+              className={[
+                'inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wide',
+                (project.status ?? (project.links?.some((l) => l.type === 'live') ? 'live' : 'demo')) === 'live'
+                  ? 'bg-emerald-400 text-black'
+                  : 'bg-amber-300 text-black',
+              ].join(' ')}
+            >
+              {(project.status ?? (project.links?.some((l) => l.type === 'live') ? 'live' : 'demo')) === 'live' ? 'Live' : 'Demo'}
+            </span>
+          </div>
           {project.tagline && (
             <p className="mt-2 text-neutral-600 dark:text-neutral-300">{project.tagline}</p>
           )}
@@ -51,6 +63,7 @@ export default async function ProjectPage({ params }: PageProps) {
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
               {others.map((p) => {
                 const img = p.media.find((m) => m.type === 'image');
+                const status: 'live' | 'demo' = p.status ?? (p.links?.some((l) => l.type === 'live') ? 'live' : 'demo');
                 return (
                   <Link key={p.slug} href={`/project/${p.slug}`} className="group relative rounded-xl overflow-hidden border border-black/10 dark:border-white/10 bg-white/40 dark:bg-white/5">
                     <div className="relative w-full aspect-[16/10]">
@@ -60,6 +73,18 @@ export default async function ProjectPage({ params }: PageProps) {
                         <div className="absolute inset-0 bg-gradient-to-br from-neutral-200 to-neutral-300 dark:from-neutral-800 dark:to-neutral-900" />
                       )}
                       <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent opacity-80 group-hover:opacity-60 transition-opacity" />
+                      <div className="absolute left-3 top-3">
+                        <span
+                          className={[
+                            'inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wide',
+                            status === 'live'
+                              ? 'bg-emerald-400 text-black'
+                              : 'bg-amber-300 text-black',
+                          ].join(' ')}
+                        >
+                          {status === 'live' ? 'Live' : 'Demo'}
+                        </span>
+                      </div>
                     </div>
                     <div className="p-4">
                       <h3 className="text-base font-semibold">{p.title}</h3>

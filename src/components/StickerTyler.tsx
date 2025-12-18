@@ -1,7 +1,7 @@
 import Image from "next/image";
 
 
-type StickerTypes = "waving" | "thinking" | "prepared" | "polite"
+type StickerTypes = "waving" | "thinking" | "prepared" | "polite" | "typing"
 
 export default function StickerTyler({ className = "", size = 0, sticker = "waving" }:{ className?:string, size?: number, sticker?:StickerTypes}){
 

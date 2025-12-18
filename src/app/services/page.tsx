@@ -20,6 +20,8 @@ import type { Metadata } from 'next'
 import { services, bundles } from '@/services'
 import StickerParallax from '@/components/services/StickerParallax'
 import SpotlightBundles from '@/components/services/SpotlightBundles'
+import { themeConfig, billboardThemes } from '@/config/theme'
+import type { BillboardThemeKey as BillboardThemeKeyFromConfig } from '@/config/themes/billboard'
 
 export const metadata: Metadata = {
   title: 'Services | Tyler Lundin',
@@ -78,83 +80,99 @@ export default function ServicesIndexPage() {
     }
   }
 
+  const themeKey: BillboardThemeKeyFromConfig = themeConfig.billboard.themeKey
+
+  const t = billboardThemes[themeKey]
+
   return (
-    <main className="max-w-full overflow-x-hidden mx-2 md:mx-4 border border-black/10 dark:border-white/10 rounded-lg my-4 min-h-fit overflow-visible bg-gradient-to-b from-neutral-50 dark:from-black z-10 via-transparent to-white dark:to-black text-black dark:text-white "> <div className="mx-auto max-w-7xl px-4 py-4">
-        <div className="mb-6 h-[2px] w-20 bg-gradient-to-r from-neutral-300/70 via-neutral-400/40 to-transparent dark:from-neutral-600/70 dark:via-neutral-600/40" />
+    <main
+      className={[
+        'max-w-7xl overflow-x-hidden mx-2 md:mx-4 my-4 rounded-2xl',
+        'border border-black/10 dark:border-white/10',
+        t.wrap,
+        'text-black dark:text-white',
+      ].join(' ')}
+    >
+      <section className="relative py-10 sm:py-14">
+        <div className="mx-auto max-w-5xl px-4 sm:px-6">
+          <header className={['relative', t.panel].join(' ')}>
+            <div className={t.overlay} />
+            <div className="relative p-5 sm:p-7">
+              <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between sm:gap-8">
+                <div className="min-w-0">
+                  <div className={t.label}>
+                    SERVICES
+                    <span className="h-1 w-1 rounded-full bg-white/70" />
+                    BILLBOARD
+                  </div>
+                  <h1 className={['mt-3 font-black tracking-tight leading-[1.02]', 'text-3xl sm:text-5xl', t.title].join(' ')}>
+                    Services
+                  </h1>
+                  <p className={['mt-3 text-base sm:text-lg max-w-prose', t.desc].join(' ')}>
+                    Hosting, design, logos, dashboards, and auth—wired together so your site runs fast,
+                    looks sharp, and stays online.
+                  </p>
+                  <div className="mt-4 flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
+                    <Link
+                      href={contactHref()}
+                      className={['inline-flex items-center rounded-full px-4 py-2 text-sm font-semibold', 'bg-neutral-950 text-white dark:bg-white dark:text-black'].join(' ')}
+                    >
+                      Contact me
+                      <span aria-hidden className="ml-1">→</span>
+                    </Link>
+                    <Link
+                      href="/services/faq"
+                      className="inline-flex items-center rounded-full px-4 py-2 text-sm font-semibold border border-black/10 dark:border-white/10"
+                    >
+                      FAQ & Pricing
+                    </Link>
+                  </div>
+                </div>
+                <div className="shrink-0 flex justify-start sm:justify-end">
+                  <div className="relative">
+                    <div className={t.stickerGlow} />
+                    <div className={['relative px-3 py-2', t.stickerPlate].join(' ')}>
+                      <StickerParallax sticker="prepared" size={4} />
+                    </div>
+                  </div>
 
-        {/* HERO CARD */}
-        <section
-          className="
-            relative mb-10 overflow-hidden
-            rounded-xl border border-black/10 dark:border-white/10
-            bg-white/70 dark:bg-black/50
-            p-6 sm:p-8 md:pr-40
-          "
-        >
-          {/* Sticker with subtle parallax + 3D tilt */}
-          <div
-            className="
-              absolute -right-4 top-1/4
-              opacity-40 sm:opacity-60 md:opacity-80
-            "
-          >
-            <StickerParallax sticker="prepared" size={6} />
-          </div>
-
-          {/* Copy */}
-          <div className="relative z-10 max-w-xl space-y-3">
-            <span className="inline-block rounded border border-black/10 dark:border-white/10 bg-neutral-100/70 px-2 py-0.5 text-[11px] uppercase tracking-wide text-neutral-600 dark:bg-neutral-800/60 dark:text-neutral-400">
-              Services
-            </span>
-
-            <h1 className="text-2xl sm:text-3xl lg:text-5xl font-semibold leading-tight">
-              Services
-            </h1>
-
-            <p className="text-sm sm:text-base text-neutral-700 dark:text-neutral-300">
-              Hosting, design, logos, dashboards, auth — everything wired
-              together so your site actually runs fast, looks sharp, and stays
-              online.
-            </p>
-
-            <p className="text-xs sm:text-sm text-neutral-500 dark:text-neutral-400">
-              Pick one or bundle a few. I handle the wiring so you can focus on the business.
-            </p>
-
-            <div className="pt-1">
-              <Link
-                href={contactHref()}
-                className="inline-flex items-center gap-2 rounded-md border border-black/10 dark:border-white/10 bg-black text-white dark:bg-white dark:text-black px-3 py-1.5 text-sm font-medium transition-none"
-              >
-                Contact me
-                <span aria-hidden>→</span>
-              </Link>
+                  <div className="relative sm:hidden">
+                    <div className={t.stickerGlow} />
+                    <div className={['relative px-3 py-2 ', t.stickerPlate].join(' ')}>
+                      <h1> Hello World, I am Tyler </h1>
+                    </div>
+                    <div className={['relative px-3 py-2 mt-2', t.stickerPlate].join(' ')}>
+                      <h1> Below are just a few of my recent projects. </h1>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
-          </div>
-        </section>
+          </header>
         </div>
+      </section>
 
-        {/* FULL-WIDTH BUNDLES SHOWCASE */}
-        <section className="my-6">
-          <SpotlightBundles bundles={bundles} />
-        </section>
+      {/* FULL-WIDTH BUNDLES SHOWCASE */}
+      <section className="my-6">
+        <SpotlightBundles bundles={bundles} />
+      </section>
 
-        {/* FULL-WIDTH WHY IT WORKS */}
-        <section className="mt-6">
-          <div className="mx-auto max-w-7xl px-4">
-            <div className="rounded-xl border border-black/10 dark:border-white/10 bg-white/70 dark:bg-neutral-900/60 p-5">
-              <h2 className="mb-2 text-base font-semibold">Why it works</h2>
-              <ul className="space-y-2 text-sm text-neutral-700 dark:text-neutral-300">
-                <li className="flex gap-2"><Gauge className="h-4 w-4 mt-0.5 text-emerald-600 dark:text-emerald-400"/><span>Performance-first builds — fast pages, good Core Web Vitals, fewer headaches.</span></li>
-                <li className="flex gap-2"><ShieldCheck className="h-4 w-4 mt-0.5 text-emerald-600 dark:text-emerald-400"/><span>Secure hosting and auth — SSL, backups, monitoring, and sane defaults.</span></li>
-                <li className="flex gap-2"><Sparkles className="h-4 w-4 mt-0.5 text-emerald-600 dark:text-emerald-400"/><span>Thoughtful design — clean, accessible interfaces optimized for action.</span></li>
-                <li className="flex gap-2"><Wrench className="h-4 w-4 mt-0.5 text-emerald-600 dark:text-emerald-400"/><span>Practical integrations — dashboards and data that actually help you run things.</span></li>
-              </ul>
-            </div>
+      {/* FULL-WIDTH WHY IT WORKS */}
+      <section className="mt-6">
+        <div className="mx-auto max-w-7xl px-4">
+          <div className="rounded-xl border border-black/10 dark:border-white/10 bg-white/70 dark:bg-neutral-900/60 p-5">
+            <h2 className="mb-2 text-base font-semibold">Why it works</h2>
+            <ul className="space-y-2 text-sm text-neutral-700 dark:text-neutral-300">
+              <li className="flex gap-2"><Gauge className="h-4 w-4 mt-0.5 text-emerald-600 dark:text-emerald-400" /><span>Performance-first builds — fast pages, good Core Web Vitals, fewer headaches.</span></li>
+              <li className="flex gap-2"><ShieldCheck className="h-4 w-4 mt-0.5 text-emerald-600 dark:text-emerald-400" /><span>Secure hosting and auth — SSL, backups, monitoring, and sane defaults.</span></li>
+              <li className="flex gap-2"><Sparkles className="h-4 w-4 mt-0.5 text-emerald-600 dark:text-emerald-400" /><span>Thoughtful design — clean, accessible interfaces optimized for action.</span></li>
+              <li className="flex gap-2"><Wrench className="h-4 w-4 mt-0.5 text-emerald-600 dark:text-emerald-400" /><span>Practical integrations — dashboards and data that actually help you run things.</span></li>
+            </ul>
           </div>
-        </section>
+        </div>
+      </section>
 
-        <div className="mx-auto max-w-7xl px-4 py-4">
+      <div className="mx-auto max-w-7xl px-4 py-4">
 
         {/* SERVICE GRID */}
         <ul className="grid gap-4 sm:grid-cols-2">
@@ -223,17 +241,17 @@ export default function ServicesIndexPage() {
           <div className="rounded-xl border border-black/10 dark:border-white/10 bg-white/70 dark:bg-neutral-900/60 p-5">
             <h2 className="mb-2 text-base font-semibold">Good fit if…</h2>
             <ul className="space-y-2 text-sm text-neutral-700 dark:text-neutral-300">
-              <li className="flex gap-2"><Check className="h-4 w-4 mt-0.5 text-emerald-600"/><span>You want a reliable website that loads fast and stays online.</span></li>
-              <li className="flex gap-2"><Check className="h-4 w-4 mt-0.5 text-emerald-600"/><span>You prefer clear scopes, practical decisions, and honest tradeoffs.</span></li>
-              <li className="flex gap-2"><Check className="h-4 w-4 mt-0.5 text-emerald-600"/><span>You value maintainability over novelty; you want fewer moving parts.</span></li>
+              <li className="flex gap-2"><Check className="h-4 w-4 mt-0.5 text-emerald-600" /><span>You want a reliable website that loads fast and stays online.</span></li>
+              <li className="flex gap-2"><Check className="h-4 w-4 mt-0.5 text-emerald-600" /><span>You prefer clear scopes, practical decisions, and honest tradeoffs.</span></li>
+              <li className="flex gap-2"><Check className="h-4 w-4 mt-0.5 text-emerald-600" /><span>You value maintainability over novelty; you want fewer moving parts.</span></li>
             </ul>
           </div>
           <div className="rounded-xl border border-black/10 dark:border-white/10 bg-white/70 dark:bg-neutral-900/60 p-5">
             <h2 className="mb-2 text-base font-semibold">Not a fit if…</h2>
             <ul className="space-y-2 text-sm text-neutral-700 dark:text-neutral-300">
-              <li className="flex gap-2"><Shield className="h-4 w-4 mt-0.5 text-neutral-500"/><span>You need bleeding-edge experiments or frequent redesigns just to experiment.</span></li>
-              <li className="flex gap-2"><Shield className="h-4 w-4 mt-0.5 text-neutral-500"/><span>You want to micro-manage every technical choice instead of outcomes.</span></li>
-              <li className="flex gap-2"><Shield className="h-4 w-4 mt-0.5 text-neutral-500"/><span>You expect results without content, feedback, or timely decisions.</span></li>
+              <li className="flex gap-2"><Shield className="h-4 w-4 mt-0.5 text-neutral-500" /><span>You need bleeding-edge experiments or frequent redesigns just to experiment.</span></li>
+              <li className="flex gap-2"><Shield className="h-4 w-4 mt-0.5 text-neutral-500" /><span>You want to micro-manage every technical choice instead of outcomes.</span></li>
+              <li className="flex gap-2"><Shield className="h-4 w-4 mt-0.5 text-neutral-500" /><span>You expect results without content, feedback, or timely decisions.</span></li>
             </ul>
           </div>
         </section>
@@ -242,11 +260,11 @@ export default function ServicesIndexPage() {
         <section className="mt-10 rounded-xl border border-black/10 dark:border-white/10 bg-white/70 dark:bg-neutral-900/60 p-5">
           <h2 className="mb-3 text-base font-semibold">How we work together</h2>
           <ol className="grid sm:grid-cols-5 gap-3 text-sm text-neutral-700 dark:text-neutral-300">
-            <li className="rounded-md border border-black/10 dark:border-white/10 p-3"><span className="font-medium">1. Plan</span><br/>Goals, scope, and constraints.</li>
-            <li className="rounded-md border border-black/10 dark:border-white/10 p-3"><span className="font-medium">2. Design</span><br/>Structure, content, and look.</li>
-            <li className="rounded-md border border-black/10 dark:border-white/10 p-3"><span className="font-medium">3. Build</span><br/>Implement fast, secure features.</li>
-            <li className="rounded-md border border-black/10 dark:border-white/10 p-3"><span className="font-medium">4. Launch</span><br/>Deploy, monitor, and iterate.</li>
-            <li className="rounded-md border border-black/10 dark:border-white/10 p-3"><span className="font-medium">5. Care</span><br/>Updates, backups, and support.</li>
+            <li className="rounded-md border border-black/10 dark:border-white/10 p-3"><span className="font-medium">1. Plan</span><br />Goals, scope, and constraints.</li>
+            <li className="rounded-md border border-black/10 dark:border-white/10 p-3"><span className="font-medium">2. Design</span><br />Structure, content, and look.</li>
+            <li className="rounded-md border border-black/10 dark:border-white/10 p-3"><span className="font-medium">3. Build</span><br />Implement fast, secure features.</li>
+            <li className="rounded-md border border-black/10 dark:border-white/10 p-3"><span className="font-medium">4. Launch</span><br />Deploy, monitor, and iterate.</li>
+            <li className="rounded-md border border-black/10 dark:border-white/10 p-3"><span className="font-medium">5. Care</span><br />Updates, backups, and support.</li>
           </ol>
         </section>
 

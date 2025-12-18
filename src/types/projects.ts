@@ -248,6 +248,8 @@ export interface Project {
   client?: string;
   role?: string;
   location?: string;
+  /** Display status for transparency on showcases */
+  status?: 'live' | 'demo';
   /** e.g., ['Next.js', 'TypeScript', 'Tailwind'] */
   tech: string[];
   tags?: string[];

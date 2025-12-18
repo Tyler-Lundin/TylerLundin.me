@@ -14,7 +14,7 @@ function OrbitDotMark() {
 
       {/* rotating satellite */}
       <span className="orbit absolute inset-0">
-        <span className="scaling satellite absolute left-0 top-1/2 -translate-x-1/2 -translate-y-1/2 h-1.5 w-1.5  rounded-full bg-black/75 dark:bg-white/75 group-hover:bg-indigo-500/70 dark:group-hover:bg-indigo-300/70 transition-colors duration-300" />
+        <span className="scaling satellite absolute left-0 top-1/2 -translate-x-1/2 -translate-y-1/2 h-1.5 w-1.5  rounded-full bg-emerald-400 dark:bg-emerald-400 group-hover:bg-indigo-500/70 dark:group-hover:bg-indigo-300/70 transition-colors duration-300" />
       </span>
 
       <style jsx>{`

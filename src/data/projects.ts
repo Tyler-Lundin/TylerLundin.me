@@ -6,6 +6,7 @@ export const projects: Project[] = [
     id: 'zevlin-bike',
     slug: 'zevlin-bike',
     title: 'Zevlin Bike',
+    status: 'live',
     tagline: 'Ride longer. Chafe less.',
     description:
       'E-commerce experience for performance cycling gear with clean product presentation and fast checkout.',
@@ -43,6 +44,7 @@ export const projects: Project[] = [
     id: 'iron-ankr',
     slug: 'iron-ankr',
     title: 'Iron Ankr',
+    status: 'demo',
     tagline: 'Precision lifting gear for serious pulling days.',
     description:
       'Marketing site with bold visual identity and responsive layouts across devices.',
@@ -79,6 +81,7 @@ export const projects: Project[] = [
     id: 'island-market',
     slug: 'island-market',
     title: 'Island Market',
+    status: 'demo',
     tagline: 'A century of community, tradition, and quality',
     description:
       'A modern convenience store website featuring real-time store status, weather information, and community highlights.',
@@ -102,6 +105,7 @@ export const projects: Project[] = [
     id: 'fast-cache-pawn',
     slug: 'fast-cache-pawn',
     title: 'Fast Cache Pawn',
+    status: 'demo',
     tagline: 'Fast Cache Pawn — a modern landing page for a local pawn shop.',
     description:
       'Responsive website with service listings, Google reviews integration, and local business optimization.',
@@ -125,6 +129,7 @@ export const projects: Project[] = [
     id: 'suncrest-fitness-center',
     slug: 'suncrest-fitness-center',
     title: 'Suncrest Fitness Center',
+    status: 'demo',
     tagline: 'Join a community of achievers. Train for life.',
     description:
       'Fitness center website with membership information, class schedules, and facility details.',

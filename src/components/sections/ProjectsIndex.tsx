@@ -4,6 +4,9 @@ import Link from 'next/link';
 import Image from 'next/image';
 import type { Project, ProjectMedia } from '@/types/projects';
 import { usePrefersDark } from '@/hooks/usePrefersDark';
+import { Sora } from "next/font/google";
+
+const sora = Sora({ subsets: ["latin"], display: "swap" });
 
 type Props = {
   title?: string;
@@ -29,14 +32,9 @@ export default function ProjectsIndex({ title, subtitle, projects }: Props) {
         {(title || subtitle) && (
           <header className="text-center mb-10">
             {title && (
-          <h1 className="text-4xl sm:text-5xl font-black tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-cyan-600 via-pink-600 dark:invert to-purple-600 dark:from-cyan-400 dark:via-pink-400 dark:to-purple-400">
+          <h1 style={{...sora.style, }} className="text-4xl sm:text-5xl font-black tracking-tight ">
                 {title}
               </h1>
-            )}
-            {subtitle && (
-              <p className="mt-3 text-lg text-neutral-600 dark:text-neutral-300 max-w-3xl mx-auto">
-                {subtitle}
-              </p>
             )}
           </header>
         )}
@@ -44,6 +42,7 @@ export default function ProjectsIndex({ title, subtitle, projects }: Props) {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {sorted.map((p) => {
             const media = pickFeaturedMedia(p.media, isDark);
+            const status: 'live' | 'demo' = p.status ?? (p.links?.some((l) => l.type === 'live') ? 'live' : 'demo');
             return (
               <Link
                 key={p.slug}
@@ -73,6 +72,18 @@ export default function ProjectsIndex({ title, subtitle, projects }: Props) {
                     <div className="absolute inset-0 bg-gradient-to-br from-neutral-200 to-neutral-300 dark:from-neutral-800 dark:to-neutral-900" />
                   )}
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent opacity-80 group-hover:opacity-60 transition-opacity" />
+                  <div className="absolute left-3 top-3">
+                    <span
+                      className={[
+                        'inline-flex group-hover:opacity-20 transition-opacity items-center gap-1 rounded-full px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wide',
+                        status === 'live'
+                          ? 'bg-emerald-400 text-black'
+                          : 'bg-amber-300 text-black',
+                      ].join(' ')}
+                    >
+                      {status === 'live' ? 'Live' : 'Demo'}
+                    </span>
+                  </div>
                 </div>
                 <div className="p-4">
                   <h3 className="text-base font-semibold text-neutral-900 dark:text-neutral-100">
@@ -101,4 +112,3 @@ export default function ProjectsIndex({ title, subtitle, projects }: Props) {
     </section>
   );
 }
-

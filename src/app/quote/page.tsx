@@ -3,6 +3,10 @@ import StickerTyler from '@/components/StickerTyler'
 import QuoteWizard from '@/components/sections/QuoteWizard'
 import { themeConfig, billboardThemes } from '@/config/theme'
 import type { BillboardThemeKey as BillboardThemeKeyFromConfig } from '@/config/themes/billboard'
+import { Sora } from "next/font/google";
+import StickerParallax from '@/components/services/StickerParallax'
+
+const sora = Sora({ subsets: ["latin"], display: "swap" });
 
 function QuoteBillboardHeader({
   headline,
@@ -29,6 +33,7 @@ function QuoteBillboardHeader({
             </div>
 
             <h1
+              style={{...sora.style,}}
               className={[
                 'mt-3 font-black tracking-tight leading-[1.02]',
                 'text-3xl sm:text-5xl',
@@ -52,13 +57,21 @@ function QuoteBillboardHeader({
             </div>
           </div>
 
-          <div className="shrink-0 flex justify-center sm:justify-end">
+          <div className="shrink-0 flex justify-start sm:justify-end gap-2">
             <div className="relative">
               <div className={t.stickerGlow} />
               <div className={['relative px-3 py-2', t.stickerPlate].join(' ')}>
-                <StickerTyler className="opacity-95" size={3} sticker="waving" />
+                <StickerParallax className="opacity-95" size={5} sticker="polite" />
               </div>
             </div>
+
+            <div className="relative sm:hidden">
+              <div className={t.stickerGlow} />
+              <div className={['relative px-3 py-2 ', t.stickerPlate].join(' ')}>
+                <h1> Send me a quote and I will build a free Demo within 48 hours. </h1> 
+              </div>
+            </div>
+
           </div>
         </div>
       </div>

@@ -21,11 +21,14 @@ export default function ProjectsCard({ project, state }: { project: Project; sta
   const [isLoaded, setIsLoaded] = useState(false)
   if (!media) return null
 
+  const status: 'live' | 'demo' = project.status ?? (project.links?.some((l) => l.type === 'live') ? 'live' : 'demo')
+
   const baseCls = 'group absolute top-1/2 -translate-y-1/2 rounded-2xl overflow-hidden border border-black/10 dark:border-white/10 bg-white/60 dark:bg-white/5 backdrop-blur shadow-2xl cursor-pointer select-none'
   const layout: Record<typeof state, string> = {
-    prev: 'left-[2%] w-[40%] sm:left-[4%] sm:w-[42%] md:left-[2%] md:w-[38%] lg:left-[2%] lg:w-[36%]',
-    current: 'left-1/2 -translate-x-1/2 w-[86%] sm:w-[78%] md:w-[74%] lg:w-[70%] xl:w-[64%] 2xl:w-[60%]',
-    next: 'right-[2%] w-[40%] sm:right-[4%] sm:w-[42%] md:right-[2%] md:w-[38%] lg:right-[2%] lg:w-[36%]',
+    prev: 'left-[0%] w-[40%] sm:left-[4%] sm:w-[42%] md:left-[2%] md:w-[38%] lg:left-[2%] lg:w-[36%]',
+    current:
+      'left-1/2 -translate-x-1/2 w-[86%] sm:w-[78%] md:w-[74%] lg:w-[70%] xl:w-[64%] 2xl:w-[60%]',
+    next: 'right-[0%] w-[40%] sm:right-[4%] sm:w-[42%] md:right-[2%] md:w-[38%] lg:right-[2%] lg:w-[36%]',
   }
   const isCurrent = state === 'current'
   const scale = isCurrent ? 1 : 0.94
@@ -126,6 +129,18 @@ export default function ProjectsCard({ project, state }: { project: Project; sta
         <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/55 to-black/20 sm:from-black/80 sm:via-black/45 sm:to-black/10" />
         <div className="absolute inset-0 bg-[radial-gradient(1200px_circle_at_20%_10%,rgba(255,255,255,0.10),transparent_60%)]" />
         <div className="absolute inset-0 ring-1 ring-white/5" />
+      </div>
+
+      {/* Status badge */}
+      <div className="absolute left-3 top-3 z-10">
+        <span
+          className={[
+            'inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wide shadow-sm',
+            status === 'live' ? 'bg-emerald-400 text-black' : 'bg-amber-300 text-black',
+          ].join(' ')}
+        >
+          {status === 'live' ? 'Live' : 'Demo'}
+        </span>
       </div>
 
       {/* Meta overlay */}

@@ -2,8 +2,10 @@
 
 import Image from 'next/image';
 import { motion } from 'framer-motion';
-import SpotlightShowcase from './SpotlightShowcase';
+import SpotlightProjects from '../projects/SpotlightProjects';
 import type { Project } from '@/types/projects';
+import SpotlightBundles from '../services/SpotlightBundles';
+import { bundles } from '@/services';
 
 type HeroProps = {
   projects?: Project[];
@@ -39,7 +41,9 @@ export function Hero({ projects }: HeroProps) {
           transition={{ duration: 0.5, delay: 0.12 }}
           className=""
         >
-          <SpotlightShowcase projects={projects}  />
+          <SpotlightBundles bundles={bundles}/>
+          <SpotlightProjects projects={projects}  />
+
         </motion.div>
       </div>
 
@@ -111,4 +115,3 @@ const Heading = () => {
     </div>
   );
 };
-

@@ -18,8 +18,8 @@ export default async function ProjectPage({ params }: PageProps) {
     .slice(0, 6);
 
   return (
-    <main className="min-h-screen max-w-screen bg-gradient-to-b py-32 from-neutral-50 dark:from-black via-transparent to-neutral-100 dark:to-neutral-950 text-black dark:text-white">
-      <div className="mx-auto max-w-6xl px-4 pt-20 pb-16">
+    <main className="max-w-full overflow-x-hidden mx-2 md:mx-4 border border-black/10 dark:border-white/10 rounded-lg my-4 min-h-fit overflow-visible bg-gradient-to-b from-neutral-50 dark:from-black z-10 via-transparent to-white dark:to-black text-black dark:text-white ">
+      <div className="mx-auto max-w-6xl px-4 py-10">
         <header className="mb-10">
           <h1 className="text-3xl sm:text-4xl font-black tracking-tight">{project.title}</h1>
           {project.tagline && (

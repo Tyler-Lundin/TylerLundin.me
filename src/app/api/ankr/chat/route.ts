@@ -22,14 +22,20 @@ export async function POST(req: NextRequest) {
   // Step 1: run extracted analyzer
   const step1: AnkrStep1Response = await runStep1({ message: body.message, threadId: body.threadId || undefined })
 
-  // Step 2 (foundation): log inputs cleanly for now
-  await runStep2(step1)
+  // Step 2: generate an assistant response via OpenAI (if enabled)
+  const step2 = await runStep2({ step1, originalMessage: body.message, mode: body.mode || 'action' })
 
-  // Return step 1 output unchanged for API compatibility
-  return json(step1, 200)
+  // Return assistant content along with step 1 analysis for transparency
+  return json({
+    threadId: step1.threadId,
+    assistantContent: step2.assistantContent,
+    plan: step2.plan,
+    intent: step1.intent,
+    messageAnalysis: step1.messageAnalysis,
+    telemetry: step1.telemetry,
+  }, 200)
 }
 
 function json(data: any, status = 200, headers: Record<string, string> = {}) {
   return new Response(JSON.stringify(data), { status, headers: { 'content-type': 'application/json', ...headers } })
 }
-

@@ -128,7 +128,8 @@ export const ACTION_SPECS: Record<string, ActionSpec> = {
         const changes = ctx.businessChanges.map((c) => ({ field: c.field, ...(c.desired ? { desired: c.desired } : {}), ...(c.current ? { current: c.current } : {}), ...(c.value ? { value: c.value } : {}), ...(c.polarity ? { polarity: c.polarity } : {}) }))
         return { summary, changes }
       }
-      return { summary, field: ctx.businessField || 'Business Hours' }
+      // Neutral default when no specific field was parsed
+      return { summary, field: ctx.businessField || 'Content' }
     },
   },
 }

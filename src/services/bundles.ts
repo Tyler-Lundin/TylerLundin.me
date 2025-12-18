@@ -15,7 +15,9 @@ const raw: Bundle[] = [
       'Fast hosting with SSL & backups',
       'Basic analytics and uptime checks'
     ],
-    tags: ['launch', 'marketing-site']
+    tags: ['launch', 'marketing-site'],
+    bgImg: '/images/bundles/launch.png',
+    className: 'object-top'
   },
   {
     slug: 'operate',
@@ -26,7 +28,9 @@ const raw: Bundle[] = [
     billing: 'monthly',
     serviceSlugs: ['dashboards-data', 'authentication', 'web-hosting'],
     features: ['Role-based access', 'Custom dashboards', 'Secure hosting'],
-    tags: ['internal-tools', 'portal']
+    tags: ['internal-tools', 'portal'],
+    bgImg: '/images/bundles/operate.png',
+    className: ''
   }
 ]
 

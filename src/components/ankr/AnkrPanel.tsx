@@ -26,7 +26,7 @@ export default function AnkrPanel({ onClose }: { onClose: () => void }) {
     },
   ])
   const [draft, setDraft] = useState("")
-  const [mode, setMode] = useState<'idea' | 'action'>('idea')
+  const [mode, setMode] = useState<'idea' | 'action'>('action')
   const [sending, setSending] = useState(false)
   const [threadId, setThreadId] = useState<string | null>(null)
   const [turnInfo, setTurnInfo] = useState<TransparencyInfo | null>(null)
@@ -150,7 +150,7 @@ export default function AnkrPanel({ onClose }: { onClose: () => void }) {
     // DEV: log request
     if (DEV_VIEW) setDevLog((log) => [...log, { ts: Date.now(), type: 'chat_request', body: { threadId, message: text } }])
 
-    // Call chat API (STEP 1 only)
+    // Call chat API (Step 1 + Step 2)
     try {
       const res = await fetch("/api/ankr/chat", {
         method: "POST",
@@ -162,13 +162,13 @@ export default function AnkrPanel({ onClose }: { onClose: () => void }) {
       setThreadId(payload.threadId || threadId)
       setTurnInfo({
         analysis: null as any,
-        recommendedActions: [],
-        citations: [],
+        recommendedActions: Array.isArray(payload?.plan?.recommendedActions) ? payload.plan.recommendedActions : [],
+        citations: Array.isArray(payload?.plan?.citations) ? payload.plan.citations : [],
         retrievalPreview: [],
         telemetry: payload.telemetry,
         threadId: payload.threadId,
         sourceMessageId: undefined as any,
-        decision: null,
+        decision: typeof payload?.plan?.decision === 'string' ? payload.plan.decision : null,
         retrievalDebug: undefined as any,
         // @ts-ignore dev-only debug fields
         contextDebug: payload.contextDebug,
@@ -188,10 +188,14 @@ export default function AnkrPanel({ onClose }: { onClose: () => void }) {
           setDevLog((log) => [...log, { ts: ts+1, type: 'actions_params', actions: preview }])
         }
       }
-      // STEP 1 only: no assistant response. Reset status to OFF.
+      // Append assistant message from Step 2
+      if (typeof payload?.assistantContent === 'string' && payload.assistantContent.trim().length > 0) {
+        const a: Message = { id: `a-${Date.now()}`, role: 'assistant', content: personalityWrap(payload.assistantContent), createdAt: Date.now() }
+        setMessages((m) => [...m, a])
+      }
+      // Reset status to OFF after response delivered
       setStatus({ retrieval: 'OFF', generation: 'OFF', citations: 'OFF' })
     } catch (e) {
-      // STEP 1 only: do not synthesize an assistant message
       setStatus({ retrieval: 'OFF', generation: 'OFF', citations: 'OFF' })
       setTurnInfo(null)
     } finally {

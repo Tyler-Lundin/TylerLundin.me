@@ -1,9 +1,12 @@
 "use client";
 
 import { useEffect, useMemo, useState, useTransition } from "react";
+import { useSearchParams } from "next/navigation";
 import { sendInquiry } from "@/app/actions/sendInquiry";
 
 export default function ContactSimpleForm() {
+  const searchParams = useSearchParams();
+  const bundleParam = (searchParams?.get("bundle") || "").trim();
   const [isPending, startTransition] = useTransition();
   const [status, setStatus] = useState<"idle" | "error" | "success">("idle");
   const [statusMsg, setStatusMsg] = useState<string>("");
@@ -35,6 +38,7 @@ export default function ContactSimpleForm() {
     form.set("name", name);
     form.set("email", email);
     form.set("description", message);
+    if (bundleParam) form.set("bundle", bundleParam);
     if (phone) form.set("phone", phone);
     if (company) form.set("company", company);
     if (website) form.set("website", website);
@@ -90,6 +94,12 @@ export default function ContactSimpleForm() {
   return (
     <section className="py-8">
       <div className="max-w-3xl mx-auto px-4">
+        {bundleParam && (
+          <div className="mb-4 text-xs inline-flex items-center gap-2 rounded-md border border-emerald-600/20 bg-emerald-500/5 text-emerald-800 dark:text-emerald-300 px-2.5 py-1.5">
+            <span className="inline-block h-1.5 w-1.5 rounded-full bg-emerald-500" />
+            Asking about bundle: <strong className="font-semibold">{bundleParam}</strong>
+          </div>
+        )}
         {status !== "idle" && (
           <div
             className={`mb-4 rounded-md border p-3 text-sm ${

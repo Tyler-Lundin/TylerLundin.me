@@ -76,4 +76,8 @@ export interface Bundle {
   status?: ServiceStatus
   /** ISO timestamp */
   updatedAt?: string
+  /** Background Image */
+  bgImg?: string
+  /** Image Classname Append */
+  className?: string
 }

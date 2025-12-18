@@ -388,37 +388,54 @@ function localPlan(input: { userMessage: string; analysis: AnkrAnalysis; snippet
     const response = [`Here are specific ideas to push this forward:`, ...ideas.map((i) => `- ${i}`), `Would you like me to elaborate one into a mini spec?`].join('\n')
     return { response, decision: 'Brainstorming mode: ideate first.', recommendedActions: [] }
   }
+  // Action-mode fallback: try to be concrete and caring, especially for change requests
+  const text = input.userMessage.toLowerCase()
+  const percentMatch = text.match(/(\d{1,3})\s*%/)
+  const wantsPricing = /\b(price|prices|pricing|rate|rates|fee|fees)\b/.test(text)
+  const wantsUpdate = /\b(update|change|raise|increase|decrease|adjust|set|modify)\b/.test(text)
+  const allServices = /\b(all|every|entire|across)\b.*\b(service|services)\b/.test(text)
+
   // Always capture user goal as a note
   safePush('SaveNote', { noteType: 'goal', content: input.userMessage.slice(0, 500) }, 0.9)
-  // Suggest concrete forward motion by category
+
+  if ((category === 'ContentOrSEO' || wantsPricing) && wantsUpdate) {
+    const pct = percentMatch ? Number(percentMatch[1]) : undefined
+    const changeLabel = pct ? `${pct}%` : 'requested change'
+    // Suggest site change flow
+    safePush('CreateChangeRequest', { field: 'Pricing', ...(pct ? { value: `${pct}% increase` } : {}) }, 0.88)
+    safePush('PreviewChanges', { targets: ['Pricing', ...(allServices ? ['services.all'] as any : [])] }, 0.84)
+    const response = [
+      `Got it — we can bump ${allServices ? 'all services' : 'your services'} by ${pct ? `${pct}%` : 'the requested amount'}.`,
+      `Here’s what I’ll do next:`,
+      `- Create a change request to update pricing${pct ? ` by ${pct}%` : ''}.`,
+      `- Prepare a preview so you can confirm before publishing.`,
+      `Quick check: do you want prices rounded to whole dollars, and when should we publish the update?`,
+    ].join('\n')
+    const decision = `Proceed with pricing update${pct ? ` (+${pct}%)` : ''} and show a preview.`
+    return { response, decision, recommendedActions: proposals, bypassNextStep: false }
+  }
+
+  // Category-specific nudges
   if (category === 'FeatureIdea' || category === 'PlanningOrTaskBreakdown') {
     safePush('DraftNextSteps', { analysis: input.analysis }, 0.85)
-  }
-  if (category === 'ProjectUpdate') {
+  } else if (category === 'ProjectUpdate') {
     const title = goal || 'Ankr Project'
     safePush('CreateTopic', { title }, 0.75)
-  }
-  if (category === 'BugOrIssue') {
+  } else if (category === 'BugOrIssue') {
     safePush('SearchRepo', {}, 0.75)
     safePush('CreateIssue', {}, 0.7)
-  }
-  if (proposals.length < 1) {
+  } else {
     // Fallback general action
     safePush('DraftNextSteps', { analysis: input.analysis }, 0.8)
   }
 
-  const bullets = [
-    `Capture your goal so we keep direction tight.`,
-    `Draft a crisp next-steps list tailored to your aim.`,
-    `Optionally create a topic to anchor future work.`,
-  ]
   const response = [
-    `Here’s a concrete way to move this forward:`,
-    `- ${bullets[0]}`,
-    `- ${bullets[1]}`,
-    `- ${bullets[2]}`,
-    `Shall I save your goal and draft next steps now?`,
+    `Got it — I’ll move this forward.`,
+    `- Capture your goal so we keep direction tight.`,
+    `- Draft a crisp next-steps list tailored to your aim.`,
+    `- (Optional) create a topic to anchor future work.`,
+    `Would you like me to save the goal and draft next steps now?`,
   ].join('\n')
-  const decision = `Recommend: save your goal now, then draft next steps.`
+  const decision = `Draft next steps and set up a topic if helpful.`
   return { response, decision, recommendedActions: proposals, bypassNextStep: false }
 }

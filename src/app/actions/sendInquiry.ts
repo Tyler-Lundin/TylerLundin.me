@@ -61,6 +61,7 @@ type InquiryPayload = {
   assets?: string[];
   exampleLinks?: string[];
   notes?: string;
+  bundle?: string; // selected bundle slug/name from query
   // Anti-spam fields
   nickname?: string; // honeypot (should be empty)
   elapsedMs?: string; // time spent on form
@@ -94,6 +95,7 @@ export async function sendInquiry(formData: FormData) {
     assets: (formData.getAll('assets') as string[] | null) || undefined,
     exampleLinks: (formData.getAll('exampleLinks') as string[] | null) || undefined,
     notes: sanitize(formData.get('notes') as string),
+    bundle: sanitize(formData.get('bundle') as string),
     nickname: sanitize(formData.get('nickname') as string),
     elapsedMs: sanitize(formData.get('elapsedMs') as string),
     csrf_token: sanitize(formData.get('csrf_token') as string),
@@ -110,11 +112,26 @@ export async function sendInquiry(formData: FormData) {
     return { ok: false, message: 'Please provide a valid email.' };
   }
 
-  // CSRF: double-submit cookie validation (cookies() is async in Server Actions)
+  // CSRF and origin checks (defense in depth)
+  // Prefer double-submit cookie, but allow same-origin fallback to reduce false negatives.
   const cookieStore = await cookies();
   const csrfCookie = cookieStore.get('csrf_token')?.value;
-  if (!csrfCookie || !payload.csrf_token || csrfCookie !== payload.csrf_token) {
-    return { ok: false, message: 'Security check failed. Refresh and try again.' };
+  let csrfOk = Boolean(csrfCookie && payload.csrf_token && csrfCookie === payload.csrf_token);
+
+  if (!csrfOk) {
+    // Fallback: check same-origin via headers
+    const h: any = await (headers() as unknown as Promise<Headers>);
+    const origin = h.get('origin') || '';
+    const referer = h.get('referer') || '';
+    const host = h.get('host') || '';
+    const envOrigin = process.env.NEXT_PUBLIC_SITE_URL || process.env.NEXT_PUBLIC_ORIGIN;
+    const expected = envOrigin || (process.env.NODE_ENV === 'production' ? `https://${host}` : `http://${host}`);
+    const sameOrigin = (origin && origin.startsWith(expected)) || (referer && referer.startsWith(expected));
+    csrfOk = sameOrigin;
+  }
+
+  if (!csrfOk) {
+    return { ok: false, message: 'Security check failed. Please refresh and try again.' };
   }
 
   // Anti-spam checks
@@ -146,7 +163,7 @@ export async function sendInquiry(formData: FormData) {
   const resendKey = process.env.RESEND_API_KEY;
   const brevoKey = process.env.BREVO_API_KEY; // aka Sendinblue
 
-  const subject = `New inquiry from ${payload.name}`;
+  const subject = `New inquiry from ${payload.name}${payload.bundle ? ` • Bundle: ${payload.bundle}` : ''}`;
   const html = `
     <div style="font-family: -apple-system, Segoe UI, Roboto, sans-serif; line-height:1.6; color:#111">
       <h2 style="margin:0 0 8px 0">New Inquiry</h2>
@@ -154,6 +171,7 @@ export async function sendInquiry(formData: FormData) {
       <table style="border-collapse:collapse; width:100%" cellpadding="6" border="0">
         <tr><td><b>Name</b></td><td>${payload.name}</td></tr>
         <tr><td><b>Email</b></td><td>${payload.email}</td></tr>
+        ${payload.bundle ? `<tr><td><b>Bundle</b></td><td>${payload.bundle}</td></tr>` : ''}
         ${payload.phone ? `<tr><td><b>Phone</b></td><td>${payload.phone}</td></tr>` : ''}
         ${payload.company ? `<tr><td><b>Company</b></td><td>${payload.company}</td></tr>` : ''}
         ${payload.website ? `<tr><td><b>Website</b></td><td>${payload.website}</td></tr>` : ''}

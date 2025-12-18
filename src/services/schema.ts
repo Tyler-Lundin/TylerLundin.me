@@ -77,7 +77,9 @@ export const bundleSchema = z
       })
       .optional(),
     status: serviceStatus.optional(),
-    updatedAt: z.string().datetime().optional()
+    updatedAt: z.string().datetime().optional(),
+    bgImg: z.string().optional(),
+    className: z.string().optional(),
   })
   .strict()
 

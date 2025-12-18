@@ -124,7 +124,7 @@ export default function ServicesIndexPage() {
             <div className="pt-1">
               <Link
                 href={contactHref()}
-                className="inline-flex items-center gap-2 rounded-md border border-black/10 dark:border-white/10 bg-black text-white dark:bg-white dark:text-black px-3 py-1.5 text-sm font-medium hover:opacity-90 transition"
+                className="inline-flex items-center gap-2 rounded-md border border-black/10 dark:border-white/10 bg-black text-white dark:bg-white dark:text-black px-3 py-1.5 text-sm font-medium transition-none"
               >
                 Contact me
                 <span aria-hidden>→</span>
@@ -167,7 +167,6 @@ export default function ServicesIndexPage() {
                 <h2 className="text-lg sm:text-xl font-medium">
                   <Link
                     href={`/services/${s.slug}`}
-                    className="hover:underline"
                   >
                     {s.title}
                   </Link>
@@ -210,7 +209,7 @@ export default function ServicesIndexPage() {
               <div className="mt-3 flex items-center gap-3">
                 <Link
                   href={`/services/${s.slug}`}
-                  className="text-sm text-indigo-600 hover:underline dark:text-emerald-400"
+                  className="text-sm text-indigo-600 dark:text-emerald-400"
                 >
                   Learn more
                 </Link>
@@ -258,8 +257,8 @@ export default function ServicesIndexPage() {
             <p className="text-sm text-neutral-700 dark:text-neutral-300">Tell me what you’re trying to achieve — I’ll suggest a lean plan.</p>
           </div>
           <div className="flex items-center gap-2">
-            <Link href={contactHref()} className="inline-flex items-center gap-2 rounded-md border border-black/10 dark:border-white/10 bg-neutral-900 text-white dark:bg-white dark:text-black px-3 py-1.5 text-sm font-medium hover:opacity-90 transition">Contact me</Link>
-            <Link href="/services/faq" className="inline-flex items-center gap-2 rounded-md border border-black/10 dark:border-white/10 px-3 py-1.5 text-sm hover:bg-neutral-100/60 dark:hover:bg-neutral-800/40 transition">FAQ & Pricing</Link>
+            <Link href={contactHref()} className="inline-flex items-center gap-2 rounded-md border border-black/10 dark:border-white/10 bg-neutral-900 text-white dark:bg-white dark:text-black px-3 py-1.5 text-sm font-medium transition-none">Contact me</Link>
+            <Link href="/services/faq" className="inline-flex items-center gap-2 rounded-md border border-black/10 dark:border-white/10 px-3 py-1.5 text-sm">FAQ & Pricing</Link>
           </div>
         </section>
       </div>

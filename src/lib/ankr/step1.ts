@@ -1,6 +1,7 @@
 // @ts-nocheck
 import { ANKR_CONFIG, type AnkrStep1Response } from '@/lib/ankr/config'
 import { ACTION_SPECS } from '@/lib/ankr/actions/spec'
+import { ACTION_PROPOSAL_PRESETS } from '@/lib/ankr/actions/proposals'
 import { flagIntents, extractSubjects } from '@/lib/ankr/openai'
 
 export type Step1Input = {
@@ -327,6 +328,17 @@ function detectAll(text: string) {
     if (/phone|number/i.test(lc)) entities.push({ type: 'ContactMethod', value: 'Phone', weight: 0.75 })
     if (/email/i.test(lc)) entities.push({ type: 'ContactMethod', value: 'Email', weight: 0.72 })
     if (/services?/i.test(lc)) entities.push({ type: 'Service', value: 'Services', weight: 0.7 })
+    // Pricing change cues
+    try {
+      const pricingCue = /\b(price|prices|pricing|rate|rates|fee|fees)\b/i
+      if (pricingCue.test(lc)) {
+        entities.push({ type: 'BusinessField', value: 'Pricing', weight: 0.82 })
+        const pct = t.match(/(\d{1,3})\s*%/)
+        const allServices = /\b(all|every|entire|across)\b[^\n]{0,40}\bservices?\b/i.test(lc)
+        const desired = pct ? `Increase ${pct[1]}%${allServices ? ' (all services)' : ''}` : undefined
+        businessChanges.push({ field: 'Pricing', ...(desired ? { desired } : {}), ...(allServices ? { location: 'All Services' } : {}) })
+      }
+    } catch {}
     const pages: Array<{ val: string; w: number }> = []
     if (/footer/i.test(lc)) pages.push({ val: 'Footer', w: 0.7 })
     if (/contact/i.test(lc)) pages.push({ val: 'Contact Page', w: 0.7 })
@@ -718,6 +730,19 @@ function detectAll(text: string) {
     return hoursCorrectionDetected ? 'Business Hours' : undefined
   })()
   const ctx = { project: projectName, projectSlug, interfaceName, snippetTitle, hasTS, hasSQL: hasSQLWord, docPath, docTitle, firstSentence, businessField: resolvedField, businessHours: businessHoursText || undefined, pageTargets, businessChanges }
+
+  // Enforce field-specific proposal presets (config-driven) before building concrete proposals
+  if (resolvedField && ACTION_PROPOSAL_PRESETS[resolvedField]) {
+    const preset = ACTION_PROPOSAL_PRESETS[resolvedField]
+    for (const pa of preset.actions) {
+      if (!prunedActs.some(a => a.name === pa.name) && (ANKR_CONFIG.actions as readonly string[]).includes(pa.name)) {
+        prunedActs.push({ name: pa.name, weight: pa.weight })
+      }
+    }
+    // Re-sort and cap to top 4
+    prunedActs.sort((a, b) => b.weight - a.weight)
+    prunedActs = prunedActs.slice(0, 4)
+  }
   for (const s of prunedActs) {
     const spec = ACTION_SPECS[s.name]
     let sampleArgs = (spec && spec.planSampleArgs ? spec.planSampleArgs(ctx) : {}) as Record<string, any>

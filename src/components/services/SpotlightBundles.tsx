@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import Link from 'next/link'
 import type { Bundle } from '@/services'
+import Image from 'next/image'
 
 export type BundleSpotlightItem = Bundle
 
@@ -95,9 +96,9 @@ export default function SpotlightBundles({
         key={`${item.slug}-${state}`}
         className={`${baseCls} ${layout[state]} h-full shadow cursor-pointer ${theme.bg}`}
         style={{ zIndex: state === 'current' ? 3 : state === 'prev' ? 2 : 1 }}
-        initial={{ opacity: 0, scale: 0.985 }}
+        initial={false}
         animate={{ opacity, scale }}
-        transition={{ duration: 0.35, ease: 'easeOut' }}
+        transition={{ duration: 0 }}
         onClick={open}
         role="link"
         tabIndex={0}
@@ -130,6 +131,13 @@ export default function SpotlightBundles({
               </span>
             )}
           </div>
+
+          {item.bgImg && (
+            <Image
+              src={item.bgImg} style={{ objectFit: 'cover' }}
+              fill className={["-z-10 opacity-10 grayscale blur-[2px] group-hover:blur-none", item.className].join(" ")} alt={`${item.title} bundle `}
+            />
+          )}
 
           {/* Title + summary + tags */}
           <div className="min-w-0">
@@ -218,7 +226,7 @@ export default function SpotlightBundles({
             <Link
               href={`/contact?bundle=${encodeURIComponent(item.slug)}`}
               className={[
-                'inline-flex items-center gap-2 rounded-md border border-black/10 dark:border-white/10 bg-neutral-900 text-white dark:bg-white dark:text-black font-medium hover:opacity-90 transition',
+                'inline-flex items-center gap-2 rounded-md border border-black/10 dark:border-white/10 bg-neutral-900 text-white dark:bg-white dark:text-black font-medium transition-none',
                 isCurrent ? 'px-3.5 py-2 text-sm md:text-base' : 'px-2.5 py-1.5 text-xs'
               ].join(' ')}
             >
@@ -231,11 +239,11 @@ export default function SpotlightBundles({
   }
 
   return (
-    <section className={["w-full relative z-10 select-none ", 
+    <section className={["w-full relative z-10 select-none ",
       className].filter(Boolean).join(" ")}
       onMouseEnter={() => setPaused(true)} onMouseLeave={() => setPaused(false)} id="bundles">
       <div className="mx-auto max-w-7xl px-4 pb-10">
-        <div className="relative aspect-[16/9] sm:aspect-[16/8] md:aspect-[16/7] mt-4">
+        <div className="relative aspect-[3/4] sm:aspect-[16/9] md:aspect-[16/8] mt-4">
           <AnimatePresence initial={false}>
             <Card key={`prev-${items[prevIdx]?.slug ?? prevIdx}`} item={items[prevIdx]} state="prev" />
             <Card key={`current-${current?.slug ?? index}`} item={current} state="current" />
@@ -248,7 +256,7 @@ export default function SpotlightBundles({
           {count > 1 && (
             <div className=" absolute -bottom-4 translate-y-full  z-50 left-1/2 -translate-x-1/2 flex gap-2">
               {items.map((p, i) => (
-                <button key={p.slug ?? i} className={`h-1.5 rounded-full transition-all ${i === index ? 'w-6 bg-white' : 'w-2 bg-white/60'}`} onClick={() => setIndex(i)} />
+                <button key={p.slug ?? i} className={`h-1.5 rounded-full ${i === index ? 'w-6 bg-white' : 'w-2 bg-white/60'}`} onClick={() => setIndex(i)} />
               ))}
             </div>
           )}
@@ -289,11 +297,11 @@ function NavButton({
         'pointer-events-auto select-none',
         'h-12 w-14 sm:h-12 sm:w-12',
         isLeft ? 'rounded-2xl rounded-l-3xl' : 'rounded-2xl rounded-r-3xl',
-        'opacity-100 sm:opacity-80 hover:sm:opacity-100',
-        'bg-black/15 hover:bg-black/20 dark:bg-white/15 dark:hover:bg-white/20',
+        'opacity-100',
+        'bg-black/15 dark:bg-white/15',
         'border border-black/20 dark:border-white/20',
         'shadow-[0_10px_30px_rgba(0,0,0,0.25)]',
-        'transition duration-200 active:scale-[0.96]',
+        'transition-none active:scale-[0.96]',
         'focus:outline-none focus-visible:ring-2 focus-visible:ring-white/70 focus-visible:ring-offset-2 focus-visible:ring-offset-black/30',
         isLeft ? 'sm:-translate-x-1' : 'sm:translate-x-1',
         'grid place-items-center',

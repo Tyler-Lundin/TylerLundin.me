@@ -1,11 +1,32 @@
-import { type AnkrStep1Response } from '@/lib/ankr/config'
+import { ANKR_ACTIONS, ANKR_CATEGORIES, type AnkrAnalysis, type AnkrStep1Response } from '@/lib/ankr/config'
+import { generatePlanResponse } from '@/lib/ankr/openai'
 
 function fmtKV(k: string, v: string) {
   return `  - ${k}: ${v}`
 }
 
-export async function runStep2(input: AnkrStep1Response) {
-  const { intent, messageAnalysis: ma, threadId, telemetry } = input
+export type Step2Input = {
+  step1: AnkrStep1Response
+  originalMessage: string
+  mode?: 'idea' | 'action'
+}
+
+export type Step2Output = {
+  plan: {
+    response: string
+    decision: string
+    recommendedActions: { name: string; args?: Record<string, any>; confidence: number }[]
+    analysisOverrides?: any
+    citations?: { id: string; locator?: string }[]
+    reasoning?: string
+    bypassNextStep?: boolean
+  }
+  assistantContent: string
+}
+
+export async function runStep2(input: Step2Input): Promise<Step2Output> {
+  const { step1, originalMessage, mode } = input
+  const { intent, messageAnalysis: ma, threadId, telemetry } = step1
   const header = `▶︎ ANKR STEP 2\n  In.thread: ${threadId || 'new'}\n  Flags: ${intent.flags.join(', ') || '(none)'}\n  Route: ${ma.route}\n  Intent: ${ma.intent} (${ma.intentConfidence.toFixed(2)})`
 
   const entities = (ma.entities || [])
@@ -77,5 +98,54 @@ export async function runStep2(input: AnkrStep1Response) {
   ].join('\n')
 
   console.log(out)
+
+  // Map Step 1 signal into a minimal AnkrAnalysis for Step 2
+  const analysis: AnkrAnalysis = buildAnalysisFromStep1(step1)
+
+  // Call model to generate a humanized response plan (actions optional)
+  const plan = await generatePlanResponse({
+    userMessage: originalMessage,
+    analysis,
+    actions: ANKR_ACTIONS,
+    mode: mode || 'action',
+  })
+
+  // Ensure a friendly close: if the model didn't add a follow-up or sign-off, append one
+  const msg = ensureFollowUpOrSignoff(plan.response)
+
+  return { plan, assistantContent: msg }
 }
 
+function buildAnalysisFromStep1(step1: AnkrStep1Response): AnkrAnalysis {
+  const ma = step1.messageAnalysis
+  // Category mapping from flags/intent
+  const f = new Set((step1.intent?.flags || []).map((x) => x.toUpperCase()))
+  let category: typeof ANKR_CATEGORIES[number] = 'Other'
+  if (f.has('BUG_REPORT') || f.has('SITE_ISSUE')) category = 'BugOrIssue'
+  else if (f.has('CONTENT') || f.has('CHANGE_REQUEST')) category = 'ContentOrSEO'
+  else if (f.has('CODE_WRITE') || f.has('CODE_DEBUG')) category = 'RefactorOrDX'
+  else if (f.has('PLAN') || f.has('FEATURE_REQUEST')) category = 'PlanningOrTaskBreakdown'
+  else if (ma.intent.toLowerCase().includes('question')) category = 'ResearchOrQuestion'
+
+  const subjects = Array.isArray(step1.intent?.subjects) ? step1.intent.subjects.slice(0, 3).map((s) => s.label).filter(Boolean) : []
+  const topEntities = (ma.entities || []).slice(0, 3).map((e) => e.value)
+  const goalParts: string[] = []
+  if (ma.primaryIntent) goalParts.push(ma.primaryIntent)
+  if (ma.intent) goalParts.push(ma.intent)
+  if (subjects.length) goalParts.push(subjects.join(', '))
+  const goal = (goalParts.join(' — ') || 'Address user request').slice(0, 120)
+  const relatedTo = [...subjects, ...topEntities].slice(0, 4)
+  const confidence = typeof ma.intentConfidence === 'number' && isFinite(ma.intentConfidence) ? Math.max(0, Math.min(1, ma.intentConfidence)) : 0.6
+  return { category, goal, relatedTo, confidence }
+}
+
+function ensureFollowUpOrSignoff(text: string): string {
+  const t = String(text || '').trim()
+  if (!t) return 'Got it — I can take this on. Anything else you want me to consider?'
+  const lower = t.toLowerCase()
+  const hasQuestion = /\?\s*$/.test(t) || /\b(anything else|sound good|does that work|would you like)\b/.test(lower)
+  const hasSignoff = /\b(thanks|thank you|cheers|talk soon|have a great|have a good|take care)\b/.test(lower)
+  if (hasQuestion || hasSignoff) return t
+  // Default friendly follow-up prompt
+  return t.endsWith('.') ? `${t} Anything else you’d like me to tackle?` : `${t} — Anything else you’d like me to tackle?`
+}

@@ -91,6 +91,18 @@ export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
                   <li className="pt-2">
                     <div className="text-xs uppercase text-center tracking-wide text-neutral-500 dark:text-neutral-400 mb-2">Services</div>
                     <ul className="space-y-2">
+                      {/* Parent services index link */}
+                      <motion.li initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.18, delay: 0.02 }}>
+                        <Link
+                          href="/services"
+                          className="group flex items-center justify-between rounded-md border border-transparent px-3 py-3.5 hover:bg-neutral-100/60 dark:hover:bg-neutral-800/60 hover:border-black/10 dark:hover:border-white/10 transition-colors"
+                          onClick={onClose}
+                        >
+                          <span className="text-base font-medium text-neutral-900 dark:text-neutral-100">All Services</span>
+                          <svg width="16" height="16" viewBox="0 0 24 24" className="opacity-50 group-hover:opacity-80 text-neutral-700 dark:text-neutral-300"><path d="M9 5l7 7-7 7" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                        </Link>
+                      </motion.li>
+                      <li><div className="h-[1px] mx-1 bg-neutral-200/60 dark:bg-neutral-800/60" /></li>
                       {services.map((s, i) => (
                         <motion.li key={s.slug} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.18, delay: 0.04 + 0.02 * i }}>
                           <Link

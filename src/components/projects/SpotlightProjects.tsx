@@ -75,6 +75,7 @@ export default function SpotlightProjects({ projects, className, intervalMs = 10
               ))}
             </div>
           )}
+          {/* external hero timer controls which showcase is visible */}
         </div>
       </div>
     </section>

@@ -129,61 +129,68 @@ type StatItem = {
   type?: "metric" | "included";
 };
 
-function StatsChips({ stats }: { stats?: StatItem[] }) {
+function StatsChips({ stats, mode = 'both' }: { stats?: StatItem[]; mode?: 'both' | 'desktop' | 'mobile' }) {
   if (!stats?.length) return null;
 
-  return (
-    <div className="mt-5 flex flex-wrap items-center justify-center md:justify-start gap-2 text-xs">
-      {stats.map((s) => {
-        const kind = s.type ?? (s.value ? "metric" : "included");
-        const title = s.helperText ? `${s.label} — ${s.helperText}` : s.label;
-
-        return (
-          <span
-            key={s.label}
-            title={title}
-            className="group inline-flex items-center gap-2 rounded-full border border-black/10 dark:border-white/10 px-2.5 py-1 bg-white/70 dark:bg-white/5 backdrop-blur text-neutral-800 dark:text-neutral-200"
-          >
-            {kind === "included" ? (
-              <span className="inline-flex items-center justify-center w-5 h-5 rounded-full border border-black/10 dark:border-white/10 bg-white/60 dark:bg-white/5">
-                <svg
-                  width="12"
-                  height="12"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  className="opacity-80"
-                >
-                  <path
-                    d="M20 6L9 17l-5-5"
-                    stroke="currentColor"
-                    strokeWidth="2.2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
-              </span>
-            ) : null}
-
-            <span className="font-semibold text-neutral-900 dark:text-neutral-100">
-              {s.label}
-            </span>
-
-            <span className="opacity-70">•</span>
-
-            <span className="opacity-90">
-              {kind === "included" ? "Included" : s.value}
-            </span>
-
-            {s.helperText ? (
-              <span className="ml-0.5 opacity-40 group-hover:opacity-70 transition-opacity">
-                ⓘ
-              </span>
-            ) : null}
+  const renderChip = (s: StatItem) => {
+    const kind = s.type ?? (s.value ? "metric" : "included");
+    const title = s.helperText ? `${s.label} — ${s.helperText}` : s.label;
+    return (
+      <span
+        title={title}
+        className="group inline-flex items-center gap-2 rounded-full border border-black/10 dark:border-white/10 px-2.5 py-1 bg-white/70 dark:bg-white/5 backdrop-blur text-neutral-800 dark:text-neutral-200"
+      >
+        {kind === "included" ? (
+          <span className="inline-flex items-center justify-center w-5 h-5 rounded-full border border-black/10 dark:border-white/10 bg-white/60 dark:bg-white/5">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" className="opacity-80">
+              <path d="M20 6L9 17l-5-5" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
           </span>
-        );
-      })}
+        ) : null}
+        <span className="font-semibold text-neutral-900 dark:text-neutral-100">{s.label}</span>
+        <span className="opacity-70">•</span>
+        <span className="opacity-90">{kind === "included" ? "Included" : s.value}</span>
+        {s.helperText ? (
+          <span className="ml-0.5 opacity-40 group-hover:opacity-70 transition-opacity">ⓘ</span>
+        ) : null}
+      </span>
+    )
+  }
+
+  // Desktop/tablet: original wrapped chips
+  const desktop = (
+    <div className="mt-5 hidden sm:flex flex-wrap items-center justify-center md:justify-start gap-2 text-xs">
+      {stats.map((s, i) => (
+        <span key={`chip-${i}`}>{renderChip(s)}</span>
+      ))}
     </div>
-  );
+  )
+
+  // Mobile: single-row, full-width, slow infinite scroll (marquee)
+  const mobile = (
+    <div className="  sm:hidden z-20 text-xs w-full  ">
+      <div className="relative">
+        <div className="absolute left-0 top-0 bottom-0 w-20 bg-gradient-to-r from-white to-transparent dark:from-black dark:to-transparent z-50" />
+        <div className="absolute right-0 top-0 bottom-0 w-20 bg-gradient-to-l from-white to-transparent dark:from-black dark:to-transparent z-50" />
+        <div className="marquee-container w-full min-h-[36px] py-1">
+          <div className="marquee-track">
+            {stats.map((s, i) => (
+              <span key={`m1-${i}`}>{renderChip(s)}</span>
+            ))}
+            {stats.map((s, i) => (
+              <span key={`m2-${i}`}>{renderChip(s)}</span>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+
+  if (mode === 'desktop') return desktop
+  if (mode === 'mobile') return mobile
+  return (<>
+    {mobile}{desktop}
+  </>)
 }
 
 /** ---------- Hero Image ---------- */
@@ -203,15 +210,17 @@ function HeroImage({ src, alt }: { src: string; alt: string }) {
         animate={{ opacity: 1, rotate: 360 }}
         transition={{
           opacity: { duration: 0.5, delay: 0.12 },
-          rotate: { duration: 80, repeat: Infinity, ease: "linear" },
+          rotate: { duration: 18, repeat: Infinity, ease: "linear" },
         }}
       >
-        <motion.span className="absolute -inset-3 rounded-full border-2 border-cyan-400/60 translate-x-1.5 translate-y-1.5 blur-[0.5px] mix-blend-screen" />
+        <motion.span className="absolute -inset-3 rounded-full border-2 border-cyan-400/60 -translate-x-1.5 translate-y-1.5 blur-[0.5px] mix-blend-screen" />
         <motion.span className="absolute -inset-3 rounded-full border-2 border-rose-500/70 -translate-x-1.5 -translate-y-1.5 blur-[0.5px] mix-blend-screen" />
+        <motion.span className="absolute -inset-3 rounded-full border-2 border-green-500/70 translate-x-1.5 translate-y-1.5 -translate-y-1.5 blur-[0.5px] mix-blend-screen" />
+        <motion.span className="absolute -inset-3 rounded-full border-2 border-yellow-500/70 translate-x-1.5 -translate-y-1.5 -translate-y-1.5 blur-[0.5px] mix-blend-screen" />
       </motion.div>
 
       <div className="relative z-10 w-full h-full rounded-full overflow-hidden border border-black/10 dark:border-white/10 bg-white/40 dark:bg-white/5 backdrop-blur">
-        <Image src={src} alt={alt} fill className="object-cover" priority />
+        <Image src={src} alt={alt} fill className="object-cover " priority />
 
         <div
           className="pointer-events-none absolute inset-0 rounded-full z-10 dark:hidden"
@@ -453,14 +462,16 @@ export default function AboutFlow({ projects }: Props) {
   }, [a.availability]);
 
   return (
-    <section aria-label="About Tyler" className="relative">
-      <div className="relative overflow-hidden bg-gradient-to-b from-neutral-50 via-white/60 to-transparent dark:from-black dark:via-white/[0.03]">
-        <div className="mx-auto max-w-7xl px-4 py-12 sm:py-16">
+    <section aria-label="About Tyler" className="relative  max-w-7xl sm:px-4">
+
+      <div className="relative   bg-gradient-to-b from-neutral-50 via-white/60 to-transparent dark:from-black dark:via-white/[0.03]">
+        <div className="mx-auto px-4 py-10 sm:py-16">
           <div className="grid md:grid-cols-2 gap-8 md:gap-12 items-center">
             <motion.div {...fadeUp(0)}>
               <MetaChips role={a.role} location={a.location} availability={availability} />
               <TitleBlock title={a.title} subtitle={a.subtitle} tagline={a.tagline} />
-              <StatsChips stats={a.stats as any} />
+              {/* Desktop chips inline; mobile will render below image */}
+              <StatsChips stats={a.stats as any} mode="desktop" />
             </motion.div>
 
             <HeroImage
@@ -468,7 +479,9 @@ export default function AboutFlow({ projects }: Props) {
               alt={a.images?.[0]?.alt ?? "Tyler"}
             />
           </div>
+          {/* Mobile chips: render below the hero image to avoid pushing header off-screen */}
         </div>
+          <StatsChips stats={a.stats as any} mode="mobile" />
       </div>
 
       <div className="mx-auto max-w-7xl px-4 py-10 sm:py-14">
@@ -484,4 +497,3 @@ export default function AboutFlow({ projects }: Props) {
     </section>
   );
 }
-

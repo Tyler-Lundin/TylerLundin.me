@@ -55,8 +55,8 @@ export default function SpotlightBundles({
     <section className={["w-full relative z-10 select-none ",
       className].filter(Boolean).join(" ")}
       onMouseEnter={() => setPaused(true)} onMouseLeave={() => setPaused(false)} id="bundles">
-      <div className="mx-auto max-w-7xl px-4 pb-10">
-        <div className="relative aspect-[3/4] sm:aspect-[16/9] md:aspect-[16/8] mt-4">
+      <div className="mx-auto max-w-5xl px-4 pb-10">
+        <div className="relative aspect-[3/4] max-h-[700px] mx-auto sm:aspect-[4/3] md:aspect-[16/8] mt-4">
           <AnimatePresence initial={false}>
             <BundleCard key={`prev-${items[prevIdx]?.slug ?? prevIdx}`} item={items[prevIdx]} state="prev" />
             <BundleCard key={`current-${current?.slug ?? index}`} item={current} state="current" />
@@ -69,10 +69,11 @@ export default function SpotlightBundles({
           {count > 1 && (
             <div className=" absolute -bottom-4 translate-y-full  z-50 left-1/2 -translate-x-1/2 flex gap-2">
               {items.map((p, i) => (
-                <button key={p.slug ?? i} className={`h-1.5 rounded-full ${i === index ? 'w-6 bg-white' : 'w-2 bg-white/60'}`} onClick={() => setIndex(i)} />
+                <button key={p.slug ?? i} className={`h-1.5 rounded-full transition-all duration-750 ${i === index ? 'w-6 bg-black dark:bg-white' : 'w-2 bg-black/50 dark:bg-white/60'}`} onClick={() => setIndex(i)} />
               ))}
             </div>
           )}
+          {/* external hero timer controls which showcase is visible */}
         </div>
       </div>
     </section>

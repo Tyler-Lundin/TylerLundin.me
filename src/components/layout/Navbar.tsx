@@ -151,8 +151,7 @@ const PrimaryNav = ({ isScrolled, setIsMenuOpen }: NavProps) => (
 const StickyNav = ({ bannerVisible, isScrolled, setIsMenuOpen }: NavProps) => (
   <div
     className={cn(
-      'fixed left-1/2  -translate-x-1/2 max-w-6xl w-full sm:rounded-lg z-50 backdrop-blur-lg bg-white/80 dark:bg-black/80  border border-black/10 dark:border-white/10 transition-transform duration-300  py-2',
-      bannerVisible ? 'sm:top-2' : 'sm:top-2',
+      'fixed inset-x-0 top-0 sm:rounded-lg z-50 backdrop-blur-lg bg-white/80 dark:bg-black/80  border border-black/10 dark:border-white/10 transition-transform duration-300  py-2',
       isScrolled ? 'translate-y-0 opacity-100' : '-translate-y-full opacity-0'
     )}
   >

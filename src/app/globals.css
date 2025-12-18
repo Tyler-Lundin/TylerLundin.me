@@ -315,3 +315,17 @@ body {
   animation: ankr-breathe 4.2s ease-in-out infinite;
   will-change: transform, opacity;
 }
+
+/* Mobile marquee scroll for about page chips */
+@keyframes marquee-left {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+.marquee-container { overflow: hidden; }
+.marquee-track {
+  display: inline-flex;
+  gap: 0.5rem;
+  white-space: nowrap;
+  will-change: transform;
+  animation: marquee-left 40s linear infinite;
+}

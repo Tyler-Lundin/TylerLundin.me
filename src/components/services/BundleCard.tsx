@@ -10,7 +10,7 @@ import Image from "next/image"
         return {
           bg: 'bg-gradient-to-br from-emerald-100 to-teal-200 dark:from-emerald-950 dark:to-teal-900',
           accentText: 'text-emerald-900 dark:text-emerald-200',
-          badge: 'border-emerald-600/30 bg-emerald-50/90 dark:bg-emerald-900/25',
+          badge: 'border-green-400 dark:border-green-700 bg-emerald-50/90 dark:bg-emerald-900/25',
           bestFor: 'New sites, fast launch, marketing pages',
           ribbon: 'Popular'
         }
@@ -18,7 +18,7 @@ import Image from "next/image"
         return {
           bg: 'bg-gradient-to-br from-indigo-100 to-violet-200 dark:from-indigo-950 dark:to-violet-900',
           accentText: 'text-indigo-900 dark:text-indigo-200',
-          badge: 'border-indigo-600/30 bg-indigo-50/90 dark:bg-indigo-900/25',
+          badge: 'border-purple-700 dark:border-purple-400 bg-indigo-50/90 dark:bg-indigo-900/25',
           bestFor: 'Internal tools, portals, role-based areas',
           ribbon: 'Pro'
         }
@@ -26,7 +26,7 @@ import Image from "next/image"
         return {
           bg: 'bg-gradient-to-br from-neutral-100 to-neutral-200 dark:from-neutral-950 dark:to-neutral-900',
           accentText: 'text-neutral-900 dark:text-neutral-200',
-          badge: 'border-neutral-500/30 bg-white/80 dark:bg-neutral-800/30',
+          badge: 'border-green-500 bg-white/80 dark:bg-neutral-800/30',
           bestFor: 'Modern web foundations',
           ribbon: ''
         }
@@ -41,13 +41,13 @@ export default function BundleCard({
   state: 'prev' | 'current' | 'next'
 }) {
   const baseCls =
-    'group absolute top-1/2 -translate-y-1/2 rounded-2xl overflow-hidden border border-black/10 dark:border-white/10 shadow-2xl cursor-pointer select-none'
+    'group absolute top-1/2 -translate-y-1/2 rounded-2xl overflow-hidden border shadow-2xl cursor-pointer select-none'
 
   const layout: Record<typeof state, string> = {
-    prev: 'left-[2%] w-[40%] sm:left-[4%] sm:w-[42%] md:left-[2%] md:w-[38%] lg:left-[2%] lg:w-[36%]',
+    prev: 'left-[0%] w-[40%] sm:left-[4%] sm:w-[42%] md:left-[2%] md:w-[38%] lg:left-[2%] lg:w-[36%]',
     current:
       'left-1/2 -translate-x-1/2 w-[86%] sm:w-[78%] md:w-[74%] lg:w-[70%] xl:w-[64%] 2xl:w-[60%]',
-    next: 'right-[2%] w-[40%] sm:right-[4%] sm:w-[42%] md:right-[2%] md:w-[38%] lg:right-[2%] lg:w-[36%]',
+    next: 'right-[0%] w-[40%] sm:right-[4%] sm:w-[42%] md:right-[2%] md:w-[38%] lg:right-[2%] lg:w-[36%]',
   }
 
   const isCurrent = state === 'current'

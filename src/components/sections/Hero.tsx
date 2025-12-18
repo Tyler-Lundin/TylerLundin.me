@@ -1,15 +1,19 @@
 "use client";
 
 import Image from 'next/image';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import SpotlightProjects from '../projects/SpotlightProjects';
 import type { Project } from '@/types/projects';
 import SpotlightBundles from '../services/SpotlightBundles';
 import { bundles } from '@/services';
+import { useEffect, useState } from 'react';
 
 type HeroProps = {
   projects?: Project[];
 };
+
+
+type HeroTypes = "bundles" | "projects"
 
 
 
@@ -21,6 +25,18 @@ const BUG = {
 }
 
 export function Hero({ projects }: HeroProps) {
+
+  const [current, setCurrent] = useState<HeroTypes>("bundles")
+
+  // Auto-rotate between hero types every ~20s
+  useEffect(() => {
+    const id = setInterval(() => {
+      setCurrent((prev) => (prev === 'bundles' ? 'projects' : 'bundles'))
+    }, 20000)
+    return () => clearInterval(id)
+  }, [])
+
+
   return (
     <section
       id="hero"
@@ -32,7 +48,7 @@ export function Hero({ projects }: HeroProps) {
         BUG.content && "border border-green-400"
       ].join(" ")}>
         {/* Compact intro above the showcase */}
-        <Heading />
+        <Heading {...{current}}/>
 
         {/* Showcase: spotlight format */}
         <motion.div
@@ -41,9 +57,30 @@ export function Hero({ projects }: HeroProps) {
           transition={{ duration: 0.5, delay: 0.12 }}
           className=""
         >
-          <SpotlightBundles bundles={bundles}/>
-          <SpotlightProjects projects={projects}  />
-
+          <AnimatePresence mode="wait" initial={false}>
+            {current === "bundles" && (
+              <motion.div
+                key="bundles"
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -12 }}
+                transition={{ duration: 0.35, ease: 'easeOut' }}
+              >
+                <SpotlightBundles bundles={bundles} />
+              </motion.div>
+            )}
+            {current === "projects" && (
+              <motion.div
+                key="projects"
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -12 }}
+                transition={{ duration: 0.35, ease: 'easeOut' }}
+              >
+                <SpotlightProjects projects={projects} />
+              </motion.div>
+            )}
+          </AnimatePresence>
         </motion.div>
       </div>
 
@@ -66,7 +103,7 @@ const Arrow = () => {
   )
 }
 
-const Heading = () => {
+const Heading = ({current}:{current:HeroTypes}) => {
   return (
     <div className="relative mx-auto max-w-xl text-center w-fit">
       {/* Avatar + Label */}
@@ -76,7 +113,7 @@ const Heading = () => {
         transition={{ duration: 0.4 }}
         className="mb-3 flex flex-col items-center justify-center gap-2 sm:flex-row sm:gap-3"
       >
-        <span className="relative block h-10 w-10 overflow-hidden rounded-full border border-black/20 dark:border-white/20">
+        <span className="md:absolute md:top-0 md:-left-4 relative block h-10 w-10 overflow-hidden rounded-full border border-black/20 dark:border-white/20">
           <Image
             src="/images/tyler.png"
             alt="Tyler"
@@ -108,7 +145,9 @@ const Heading = () => {
         transition={{ duration: 0.45, delay: 0.1 }}
         className="mt-3 text-sm text-neutral-700 dark:text-neutral-300 sm:text-base"
       >
-        Building fast, clean, modern websites. Take a look.
+        {current === "bundles" && ("Bundles built for your needs. Take a look.") }
+        {current === "projects" && ("Building fast, clean, modern websites. Take a look.")}
+        
       </motion.p>
 
       <Arrow />

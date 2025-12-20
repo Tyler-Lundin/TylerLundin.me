@@ -3,6 +3,9 @@ import SpotlightPosts, { type BlogSpotlightItem } from '@/components/blog/Spotli
 import PostCard, { type PostCardData } from '@/components/blog/PostCard'
 import { createClient } from '@/lib/supabase/server'
 import { randomUUID } from 'crypto'
+import { themeConfig, billboardThemes } from '@/config/theme'
+import type { BillboardThemeKey as BillboardThemeKeyFromConfig } from '@/config/themes/billboard'
+import BlogBillboard from '@/components/billboard/BlogBillboard'
 
 export const metadata: Metadata = {
   title: 'Blog | Tyler Lundin',
@@ -45,17 +48,32 @@ export default async function BlogPage() {
   const fitness = byTag('fitness').slice(0, 8)
   const personal = byTag('personal').slice(0, 8)
 
+  const themeKey: BillboardThemeKeyFromConfig = themeConfig.billboard.themeKey
+
   return (
-    <main className="max-w-screen mx-1 md:mx-4 border border-black/10 dark:border-white/10 rounded-lg py-4 my-4 min-h-screen overflow-visible bg-gradient-to-b from-neutral-50 dark:from-black z-10 via-transparent to-white dark:to-black text-black dark:text-white ">
-      <div className="mx-auto max-w-7xl px-4">
-        <div className="text-center mb-8">
-          <h1 className="text-3xl sm:text-4xl font-black">Blog</h1>
-          <p className="text-sm sm:text-base text-neutral-600 dark:text-neutral-300 mt-2">Long-form notes on code, training, and life.</p>
+    <main
+      className={[
+        'max-w-full overflow-x-hidden mx-2 md:mx-4 my-4 rounded-2xl',
+        'border border-black/10 dark:border-white/10',
+        billboardThemes[themeKey].wrap,
+        'text-black dark:text-white',
+      ].join(' ')}
+    >
+      <section className="relative py-10 sm:py-14">
+        <div className="mx-auto max-w-5xl px-4 sm:px-6">
+          <BlogBillboard
+            headline="Blog"
+            description="Long-form notes on code, training, and life."
+            themeKey={themeKey}
+          />
+          <div className="mt-8 sm:mt-10">
+            {/* Rotating spotlight hero, similar to projects */}
+            <SpotlightPosts posts={spotlight} />
+          </div>
         </div>
+      </section>
 
-        {/* Rotating spotlight hero, similar to projects */}
-        <SpotlightPosts posts={spotlight} />
-
+      <div className="mx-auto max-w-7xl px-4">
         {/* Segments */}
         <div className="mt-12 space-y-10">
           {tech.length > 0 && (

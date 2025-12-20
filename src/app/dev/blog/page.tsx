@@ -47,12 +47,12 @@ function Toolbar() {
   return (
     <div className="flex flex-col sm:flex-row sm:items-center gap-3 justify-between">
       <div>
-        <h1 className="text-xl font-semibold">Blog</h1>
-        <div className="text-xs opacity-70">Manage posts and drafts</div>
+        <h1 className="text-xl font-semibold text-white">Blog</h1>
+        <div className="text-xs text-[#949BA4]">Manage posts and drafts</div>
       </div>
       <div className="flex items-center gap-2">
-        <Link href="/dev/blog/wizard" className="px-3 py-2 rounded bg-black text-white dark:bg-white dark:text-black text-sm">Create New</Link>
-        <Link href="/dev" className="px-3 py-2 rounded bg-black/5 dark:bg-white/10 text-sm">Back</Link>
+        <Link href="/dev/blog/wizard" className="px-3 py-2 rounded bg-[#5865F2] text-white text-sm">Create New</Link>
+        <Link href="/dev" className="px-3 py-2 rounded bg-[#383A40] text-[#DBDEE1] text-sm">Back</Link>
       </div>
     </div>
   )
@@ -61,14 +61,14 @@ function Toolbar() {
 function Filters({ q, status }: { q: string; status: string }) {
   return (
     <div className="flex flex-col sm:flex-row gap-2">
-      <input name="q" defaultValue={q} placeholder="Search title…" className="flex-1 rounded border border-black/10 dark:border-white/10 bg-white dark:bg-neutral-900 px-3 py-2 text-sm" />
-      <select name="status" defaultValue={status} className="rounded border border-black/10 dark:border-white/10 bg-white dark:bg-neutral-900 px-3 py-2 text-sm">
+      <input name="q" defaultValue={q} placeholder="Search title…" className="flex-1 rounded border border-[#3F4147] bg-[#1E1F22] placeholder-[#949BA4] px-3 py-2 text-sm text-[#DBDEE1]" />
+      <select name="status" defaultValue={status} className="rounded border border-[#3F4147] bg-[#1E1F22] px-3 py-2 text-sm text-[#DBDEE1]">
         <option value="">All</option>
         <option value="published">Published</option>
         <option value="draft">Draft</option>
         <option value="archived">Archived</option>
       </select>
-      <button type="submit" className="px-3 py-2 rounded bg-black text-white dark:bg-white dark:text-black text-sm">Apply</button>
+      <button type="submit" className="px-3 py-2 rounded bg-[#5865F2] text-white text-sm">Apply</button>
     </div>
   )
 }
@@ -80,8 +80,8 @@ function truncate(s: string, n = 80) {
 
 function CardRow({ p }: { p: PostRow }) {
   return (
-    <li className="flex items-center gap-3 p-3 border-b border-black/5 dark:border-white/10">
-      <div className="w-14 h-10 bg-neutral-200 dark:bg-neutral-800 rounded overflow-hidden shrink-0">
+    <li className="flex items-center gap-3 p-3 border-b border-[#1F2124]">
+      <div className="w-14 h-10 bg-[#3F4147] rounded overflow-hidden shrink-0">
         {p.cover_image_url ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img src={p.cover_image_url} alt="thumb" className="w-full h-full object-cover" />
@@ -89,16 +89,16 @@ function CardRow({ p }: { p: PostRow }) {
       </div>
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2">
-          <Link href={`/dev/blog/${p.slug}`} className="font-medium truncate hover:underline">
+          <Link href={`/dev/blog/${p.slug}`} className="font-medium truncate text-white hover:underline">
             {truncate(p.title || p.slug, 70)}
           </Link>
           <StatusBadge status={p.status} />
         </div>
-        <div className="text-xs opacity-70 truncate">{truncate(p.excerpt || '', 120)}</div>
+        <div className="text-xs text-[#949BA4] truncate">{truncate(p.excerpt || '', 120)}</div>
       </div>
       <div className="text-right shrink-0 w-24">
-        <div className="text-[11px] opacity-60">Views</div>
-        <div className="text-sm font-semibold">{p.views_count ?? 0}</div>
+        <div className="text-[11px] text-[#949BA4]">Views</div>
+        <div className="text-sm font-semibold text-white">{p.views_count ?? 0}</div>
       </div>
     </li>
   )
@@ -117,13 +117,13 @@ export default async function DevBlogIndex({ searchParams }: { searchParams?: Pr
   })
 
   return (
-    <main className="min-h-screen bg-neutral-100 dark:bg-neutral-900 py-20">
-      <div className="mx-auto max-w-6xl px-4 space-y-4">
+    <main className="min-h-screen bg-[#313338] py-20">
+      <div className="mx-auto max-w-6xl px-4 space-y-4 text-[#DBDEE1]">
         <Toolbar />
-        <form action="" className="rounded-lg border border-black/10 dark:border-white/10 bg-white/60 dark:bg-neutral-900/60 p-3">
+        <form action="" className="rounded-lg border border-[#1F2124] bg-[#2B2D31] p-3">
           <Filters q={sp.q || ''} status={status} />
         </form>
-        <div className="rounded-lg border border-black/10 dark:border-white/10 bg-white/70 dark:bg-neutral-900/70 overflow-hidden">
+        <div className="rounded-lg border border-[#1F2124] bg-[#2B2D31] overflow-hidden">
           <ul>
             <Suspense fallback={<li className="p-3 text-sm opacity-70">Loading…</li>}>
               {filtered.map((p) => (

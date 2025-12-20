@@ -2,6 +2,7 @@
 
 import { Resend } from 'resend';
 import { cookies, headers } from 'next/headers';
+import { createServiceClient } from '@/lib/supabase/server'
 
 // Simple in-memory rate limiter per IP (best-effort in serverless)
 type Rate = { count: number; first: number; last: number };
@@ -195,6 +196,56 @@ export async function sendInquiry(formData: FormData) {
   `;
 
   try {
+    // Persist to DB (contact_submissions or quote_requests) before sending email
+    try {
+      const sb: any = await createServiceClient();
+      const isQuote = Boolean(
+        payload.projectType || payload.pagesEstimate || payload.budgetRange || payload.features || payload.timeline
+      );
+      if (isQuote) {
+        const scope: any = {
+          projectType: payload.projectType,
+          pagesEstimate: payload.pagesEstimate,
+          features: payload.features,
+          ongoingHelp: payload.ongoingHelp,
+          assets: payload.assets,
+          exampleLinks: payload.exampleLinks,
+          notes: payload.notes,
+          website: payload.website,
+        };
+        await sb.from('quote_requests').insert({
+          contact_name: payload.name,
+          contact_email: payload.email,
+          company: payload.company || null,
+          phone: payload.phone || null,
+          project_summary: payload.description,
+          scope,
+          budget_min: null,
+          budget_max: null,
+          currency: 'USD',
+          timeline: payload.timeline || null,
+          priority: null,
+          status: 'new',
+          source: payload.heardFrom || null,
+          tags: null,
+        });
+      } else {
+        await sb.from('contact_submissions').insert({
+          name: payload.name,
+          email: payload.email,
+          phone: payload.phone || null,
+          subject: payload.topic || null,
+          message: payload.description,
+          budget: payload.budgetRange || payload.budget || null,
+          source: payload.heardFrom || null,
+          status: 'new',
+        });
+      }
+    } catch (dbErr) {
+      console.error('sendInquiry DB persist error', dbErr);
+      // Non-fatal: still attempt to notify via email
+    }
+
     if (brevoKey) {
       // Use Brevo transactional email API directly
       const res = await fetch('https://api.brevo.com/v3/smtp/email', {

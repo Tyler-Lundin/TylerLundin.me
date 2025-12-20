@@ -19,7 +19,7 @@ export default function DevDock() {
   const pathname = usePathname() || '/dev'
   return (
     <div className="fixed bottom-[env(safe-area-inset-bottom,16px)] left-1/2 -translate-x-1/2 z-40">
-      <div className="flex items-center gap-2 rounded-t-2xl bg-white/80 dark:bg-neutral-900/80 backdrop-blur-xl shadow-lg ring-1 ring-black/10 dark:ring-white/10 px-2.5 py-2">
+      <div className="flex items-center gap-2 rounded-t-2xl bg-[#1E1F22] shadow-lg ring-1 ring-[#3F4147] px-2.5 py-2">
         {ITEMS.map(({ key, label, Icon, href }) => {
           const isRoot = href === '/dev'
           const isActive = isRoot ? pathname === '/dev' : pathname.startsWith(href)
@@ -28,10 +28,10 @@ export default function DevDock() {
               key={key}
               href={href}
               className={cn(
-                'group relative flex flex-col items-center hover:scale-125 justify-center rounded-xl px-3 py-2 transition-all',
+                'group relative flex flex-col items-center hover:scale-110 justify-center rounded-xl px-3 py-2 transition-all',
                 isActive
-                  ? 'bg-black text-white dark:bg-white dark:text-black shadow-sm'
-                  : 'text-neutral-700 dark:text-neutral-300 hover:bg-black/10 dark:hover:bg-white/10'
+                  ? 'bg-[#5865F2] text-white shadow-sm'
+                  : 'text-[#B5BAC1] hover:bg-[#383A40]'
               )}
               title={label}
             >

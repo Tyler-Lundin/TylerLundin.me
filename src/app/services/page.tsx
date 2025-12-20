@@ -18,7 +18,7 @@ import {
 } from 'lucide-react'
 import type { Metadata } from 'next'
 import { services, bundles } from '@/services'
-import StickerParallax from '@/components/services/StickerParallax'
+import ServicesBillboard from '@/components/billboard/ServicesBillboard'
 import SpotlightBundles from '@/components/services/SpotlightBundles'
 import { themeConfig, billboardThemes } from '@/config/theme'
 import type { BillboardThemeKey as BillboardThemeKeyFromConfig } from '@/config/themes/billboard'
@@ -95,60 +95,15 @@ export default function ServicesIndexPage() {
     >
       <section className="relative py-10 sm:py-14">
         <div className="mx-auto max-w-5xl px-4 sm:px-6">
-          <header className={['relative', t.panel].join(' ')}>
-            <div className={t.overlay} />
-            <div className="relative p-5 sm:p-7">
-              <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between sm:gap-8">
-                <div className="min-w-0">
-                  <div className={t.label}>
-                    SERVICES
-                    <span className="h-1 w-1 rounded-full bg-white/70" />
-                    BILLBOARD
-                  </div>
-                  <h1 className={['mt-3 font-black tracking-tight leading-[1.02]', 'text-3xl sm:text-5xl', t.title].join(' ')}>
-                    Services
-                  </h1>
-                  <p className={['mt-3 text-base sm:text-lg max-w-prose', t.desc].join(' ')}>
-                    Hosting, design, logos, dashboards, and auth—wired together so your site runs fast,
-                    looks sharp, and stays online.
-                  </p>
-                  <div className="mt-4 flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
-                    <Link
-                      href={contactHref()}
-                      className={['inline-flex items-center rounded-full px-4 py-2 text-sm font-semibold', 'bg-neutral-950 text-white dark:bg-white dark:text-black'].join(' ')}
-                    >
-                      Contact me
-                      <span aria-hidden className="ml-1">→</span>
-                    </Link>
-                    <Link
-                      href="/services/faq"
-                      className="inline-flex items-center rounded-full px-4 py-2 text-sm font-semibold border border-black/10 dark:border-white/10"
-                    >
-                      FAQ & Pricing
-                    </Link>
-                  </div>
-                </div>
-                <div className="shrink-0 flex justify-start sm:justify-end">
-                  <div className="relative">
-                    <div className={t.stickerGlow} />
-                    <div className={['relative px-3 py-2', t.stickerPlate].join(' ')}>
-                      <StickerParallax sticker="prepared" size={4} />
-                    </div>
-                  </div>
-
-                  <div className="relative sm:hidden">
-                    <div className={t.stickerGlow} />
-                    <div className={['relative px-3 py-2 ', t.stickerPlate].join(' ')}>
-                      <h1> Hello World, I am Tyler </h1>
-                    </div>
-                    <div className={['relative px-3 py-2 mt-2', t.stickerPlate].join(' ')}>
-                      <h1> Below are just a few of my recent projects. </h1>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </header>
+          <ServicesBillboard
+            themeKey={themeKey}
+            headline="Services"
+            description={
+              'Hosting, design, logos, dashboards, and auth—wired together so your site runs fast, looks sharp, and stays online.'
+            }
+            contactHref={contactHref()}
+            faqHref={'/services/faq'}
+          />
         </div>
       </section>
 

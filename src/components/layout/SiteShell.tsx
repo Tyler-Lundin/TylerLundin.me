@@ -29,11 +29,11 @@ function UserShell({ children }:{ children: React.ReactNode }) {
       {/* Global UI elements that should break the page frame */}
       <div className="relative max-w-screen min-h-screen overflow-x-hidden">
         {/* Dimmed particles background */}
-        <div className="fixed inset-0 -z-10 pointer-events-none opacity-50">
+        <div className="hidden sm:fixed inset-0 -z-10 pointer-events-none opacity-50">
           <ReactiveBackground />
         </div>
 
-        <div className="pt-24 max-w-7xl mx-auto">
+        <div className="pt-24 pb-2 max-w-7xl mx-auto">
           {children}
           <Footer />
           <Greeting />

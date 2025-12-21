@@ -7,6 +7,7 @@ import type { Project } from '@/types/projects';
 import SpotlightBundles from '../services/SpotlightBundles';
 import { bundles } from '@/services';
 import { useEffect, useState } from 'react';
+import Link from 'next/link';
 
 type HeroProps = {
   projects?: Project[];
@@ -113,7 +114,7 @@ const Heading = ({current}:{current:HeroTypes}) => {
         transition={{ duration: 0.4 }}
         className="mb-3 flex flex-col items-center justify-center gap-2 sm:flex-row sm:gap-3"
       >
-        <span className="md:absolute md:top-0 md:-left-4 relative block h-10 w-10 overflow-hidden rounded-full border border-black/20 dark:border-white/20">
+        <Link href="/about" className="md:absolute md:top-0 md:-left-4 relative block h-10 w-10 overflow-hidden rounded-full border border-black/20 dark:border-white/20">
           <Image
             src="/images/tyler.png"
             alt="Tyler"
@@ -121,7 +122,7 @@ const Heading = ({current}:{current:HeroTypes}) => {
             className="pointer-events-none select-none object-cover"
             priority
           />
-        </span>
+        </Link>
 
         <span className="text-xs font-medium uppercase tracking-[0.2em] text-neutral-600 dark:text-neutral-400 sm:text-[11px]">
           Freelance Web Developer

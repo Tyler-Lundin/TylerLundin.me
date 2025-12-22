@@ -59,23 +59,19 @@ export default async function BlogPage() {
         'text-black dark:text-white',
       ].join(' ')}
     >
-      <section className="relative py-10 sm:py-14">
-        <div className="mx-auto max-w-5xl px-4 sm:px-6">
+      <section className="relative p-4  sm:p-6">
           <BlogBillboard
             headline="Blog"
             description="Long-form notes on code, training, and life."
             themeKey={themeKey}
           />
-          <div className="mt-8 sm:mt-10">
             {/* Rotating spotlight hero, similar to projects */}
             <SpotlightPosts posts={spotlight} />
-          </div>
-        </div>
       </section>
 
       <div className="mx-auto max-w-7xl px-4">
         {/* Segments */}
-        <div className="mt-12 space-y-10">
+        <div className=" space-y-10">
           {tech.length > 0 && (
             <section>
               <h2 className="text-xl font-semibold mb-4">Tech</h2>

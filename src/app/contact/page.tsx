@@ -21,8 +21,7 @@ export default function ContactPage() {
         'text-black dark:text-white',
       ].join(' ')}
     >
-      <section className="relative py-10 sm:py-14">
-        <div className="max-w-3xl mx-auto px-4 sm:px-6">
+      <section className="relative p-4  sm:p-6">
           <ContactBillboard
             headline={contactSection.headline}
             description={contactSection.description}
@@ -34,7 +33,6 @@ export default function ContactPage() {
               <ContactSimpleForm />
             </Suspense>
           </div>
-        </div>
       </section>
     </main>
   )

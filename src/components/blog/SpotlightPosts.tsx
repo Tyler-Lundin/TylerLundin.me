@@ -99,7 +99,7 @@ export default function SpotlightPosts({
     <section className={["w-full relative z-10 select-none", className].filter(Boolean).join(" ")}
       onMouseEnter={() => setPaused(true)} onMouseLeave={() => setPaused(false)}>
       <div className="mx-auto max-w-7xl px-4">
-        <div className="relative aspect-[16/9] mt-4">
+        <div className="relative aspect-[16/9] ">
           <AnimatePresence initial={false}>
             <Card key={`prev-${items[prevIdx]?.id ?? prevIdx}`} item={items[prevIdx]} state="prev" />
             <Card key={`current-${current?.id ?? index}`} item={current} state="current" />

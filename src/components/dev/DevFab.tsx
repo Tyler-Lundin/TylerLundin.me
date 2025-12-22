@@ -4,7 +4,6 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { cn } from '@/lib/utils'
 import {
-  LayoutDashboard,
   X,
   BookOpenText,
   PlusCircle,
@@ -13,9 +12,9 @@ import {
   Users,
   Briefcase,
   Settings,
-  Menu,
+  Home,
 } from 'lucide-react'
-import Image from 'next/image'
+import {  OrbitDotMark } from '../layout/Logo'
 
 type ActionItem = {
   label: string
@@ -31,6 +30,7 @@ const ACTIONS: ActionItem[] = [
   { label: 'Team', href: '/dev/team', Icon: Users },
   { label: 'Projects', href: '/dev/projects', Icon: Briefcase },
   { label: 'Settings', href: '/dev/settings', Icon: Settings },
+  { label: 'Home', href: "/", Icon: Home }
 ]
 
 export default function DevFab() {
@@ -85,11 +85,12 @@ export default function DevFab() {
         aria-label="Open actions"
         onClick={() => setOpen((v) => !v)}
         className={cn(
-          'flex h-10 w-10 p-2 border-2 border-white  items-center justify-center rounded-full  ring-1 ring-black/10 transition-all hover:scale-105 focus:outline-none',
-          open && 'rotate-90'
+          "transition-all rotate-0 scale-125 duration-500",
+          !open && "hover:rotate-180",
+          open && 'rotate-360'
         )}
       >
-        <Menu />
+        <OrbitDotMark />
       </button>
     </div>
   )}

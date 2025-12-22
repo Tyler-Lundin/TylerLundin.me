@@ -93,8 +93,7 @@ export default function ServicesIndexPage() {
         'text-black dark:text-white',
       ].join(' ')}
     >
-      <section className="relative py-10 sm:py-14">
-        <div className="mx-auto max-w-5xl px-4 sm:px-6">
+      <section className="relative p-4  sm:p-6">
           <ServicesBillboard
             themeKey={themeKey}
             headline="Services"
@@ -104,7 +103,6 @@ export default function ServicesIndexPage() {
             contactHref={contactHref()}
             faqHref={'/services/faq'}
           />
-        </div>
       </section>
 
       {/* FULL-WIDTH BUNDLES SHOWCASE */}

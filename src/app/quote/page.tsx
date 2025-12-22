@@ -19,8 +19,7 @@ export default function QuotePage() {
         'text-black dark:text-white',
       ].join(' ')}
     >
-      <section className="relative py-10 sm:py-14">
-        <div className="max-w-3xl mx-auto px-4 sm:px-6">
+      <section className="relative p-4  sm:p-6">
           <QuoteBillboard
             headline="Request a Quote"
             description={section.description}
@@ -30,7 +29,6 @@ export default function QuotePage() {
           <div className="mt-8 sm:mt-10">
             <QuoteWizard />
           </div>
-        </div>
       </section>
     </main>
   )

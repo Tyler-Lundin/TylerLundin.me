@@ -1,11 +1,17 @@
 import Link from "next/link";
 import { Sora } from "next/font/google";
+import { motion } from "framer-motion";
+import Flower from "../Flower";
 
 const sora = Sora({ subsets: ["latin"], display: "swap" });
 
-function OrbitDotMark() {
+
+
+export function OrbitDotMark() {
   return (
     <span className="relative inline-flex h-6 w-6 items-center justify-center">
+      <Flower jitter={2} circleSize={90} count={15} radius={40}/>
+
       {/* core dot */}
       <span className="h-2 w-2 rounded-full bg-indigo-500/90 group-hover:bg-indigo-500 transition-colors duration-300" />
 

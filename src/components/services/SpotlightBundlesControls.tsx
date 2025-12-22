@@ -128,7 +128,7 @@ function Chevron({ dir }: { dir: 'left' | 'right' }) {
       height="18"
       viewBox="0 0 24 24"
       fill="none"
-      className="text-white/90"
+      className="text-black/90 dark:text-white/90"
       stroke="currentColor"
       strokeWidth="2.5"
       strokeLinecap="round"

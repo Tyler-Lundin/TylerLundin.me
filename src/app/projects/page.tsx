@@ -21,14 +21,12 @@ export default async function ProjectsPage() {
         'text-black dark:text-white',
       ].join(' ')}
     >
-      <section className="relative py-10 sm:py-14">
-        <div className="max-w-3xl mx-auto px-4 sm:px-6">
+      <section className="relative p-4  sm:p-6">
           <ProjectsBillboard
             headline={projectsSection?.headline ?? 'Projects'}
             description={projectsSection && 'subheadline' in projectsSection ? (projectsSection as any).subheadline : undefined}
             themeKey={themeKey}
           />
-        </div>
       </section>
 
       <ProjectsIndex

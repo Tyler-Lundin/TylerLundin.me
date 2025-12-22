@@ -1,54 +1,47 @@
-import Link from 'next/link'
-import { BookOpenText, PlusCircle, Inbox, MessageSquare } from 'lucide-react'
+import { createServiceClient } from '@/lib/supabase/server'
 
-export default function DevDashboard() {
+async function getKpis() {
+  const sb: any = await createServiceClient()
+  const [posts, drafts, commentsPending, members] = await Promise.all([
+    sb.from('blog_posts').select('*', { count: 'exact', head: true }),
+    sb.from('blog_posts').select('*', { count: 'exact', head: true }).eq('status', 'draft'),
+    sb.from('blog_comments').select('*', { count: 'exact', head: true }).eq('status', 'pending'),
+    sb.from('users').select('*', { count: 'exact', head: true }),
+  ])
+  return {
+    posts: posts.count ?? 0,
+    drafts: drafts.count ?? 0,
+    commentsPending: commentsPending.count ?? 0,
+    members: members.count ?? 0,
+  }
+}
+
+export default async function DevDashboard() {
+  const kpis = await getKpis().catch(() => ({ posts: 0, drafts: 0, commentsPending: 0, members: 0 }))
   return (
     <div className="min-h-[70vh] max-w-6xl mx-auto px-4 pt-6">
-      <div className="mb-4">
-        <h1 className="text-2xl font-semibold text-white">Dev</h1>
-        <p className="text-sm text-[#949BA4]">Quick actions</p>
+      <div className="mb-6">
+        <h1 className="text-2xl font-semibold text-white">Dev Dashboard</h1>
+        <p className="text-sm text-[#949BA4]">Key metrics at a glance</p>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-        <Link href="/dev/blog" className="group rounded-lg border border-[#3F4147] bg-[#1E1F22] p-4 hover:border-[#5865F2] hover:bg-[#202124] transition-colors">
-          <div className="flex items-start gap-3">
-            <div className="h-9 w-9 rounded-md bg-[#5865F2]/20 text-[#5865F2] flex items-center justify-center"><BookOpenText className="h-5 w-5" /></div>
-            <div className="min-w-0">
-              <div className="font-medium text-white">Blog Manager</div>
-              <div className="text-xs text-[#949BA4]">View posts, filter, create new</div>
-            </div>
-          </div>
-        </Link>
-
-        <Link href="/dev/blog/wizard" className="group rounded-lg border border-[#3F4147] bg-[#1E1F22] p-4 hover:border-[#5865F2] hover:bg-[#202124] transition-colors">
-          <div className="flex items-start gap-3">
-            <div className="h-9 w-9 rounded-md bg-[#5865F2]/20 text-[#5865F2] flex items-center justify-center"><PlusCircle className="h-5 w-5" /></div>
-            <div className="min-w-0">
-              <div className="font-medium text-white">Create New Post</div>
-              <div className="text-xs text-[#949BA4]">Open the blog wizard</div>
-            </div>
-          </div>
-        </Link>
-
-        <Link href="/dev/msgs" className="group rounded-lg border border-[#3F4147] bg-[#1E1F22] p-4 hover:border-[#5865F2] hover:bg-[#202124] transition-colors">
-          <div className="flex items-start gap-3">
-            <div className="h-9 w-9 rounded-md bg-[#5865F2]/20 text-[#5865F2] flex items-center justify-center"><Inbox className="h-5 w-5" /></div>
-            <div className="min-w-0">
-              <div className="font-medium text-white">Inbox</div>
-              <div className="text-xs text-[#949BA4]">Messages and notifications</div>
-            </div>
-          </div>
-        </Link>
-
-        <Link href="/dev/blog/moderation" className="group rounded-lg border border-[#3F4147] bg-[#1E1F22] p-4 hover:border-[#5865F2] hover:bg-[#202124] transition-colors">
-          <div className="flex items-start gap-3">
-            <div className="h-9 w-9 rounded-md bg-[#5865F2]/20 text-[#5865F2] flex items-center justify-center"><MessageSquare className="h-5 w-5" /></div>
-            <div className="min-w-0">
-              <div className="font-medium text-white">Comment Moderation</div>
-              <div className="text-xs text-[#949BA4]">Approve or delete comments</div>
-            </div>
-          </div>
-        </Link>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+        <div className="rounded-lg border border-[#3F4147] bg-[#1E1F22] p-4">
+          <div className="text-xs text-[#949BA4]">Posts</div>
+          <div className="text-3xl font-semibold text-white">{kpis.posts}</div>
+        </div>
+        <div className="rounded-lg border border-[#3F4147] bg-[#1E1F22] p-4">
+          <div className="text-xs text-[#949BA4]">Drafts</div>
+          <div className="text-3xl font-semibold text-white">{kpis.drafts}</div>
+        </div>
+        <div className="rounded-lg border border-[#3F4147] bg-[#1E1F22] p-4">
+          <div className="text-xs text-[#949BA4]">Comments Pending</div>
+          <div className="text-3xl font-semibold text-white">{kpis.commentsPending}</div>
+        </div>
+        <div className="rounded-lg border border-[#3F4147] bg-[#1E1F22] p-4">
+          <div className="text-xs text-[#949BA4]">Team Members</div>
+          <div className="text-3xl font-semibold text-white">{kpis.members}</div>
+        </div>
       </div>
     </div>
   )

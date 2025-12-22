@@ -467,12 +467,34 @@ export default function AboutFlow({ projects }: Props) {
       <div className="relative   bg-gradient-to-b from-neutral-50 via-white/60 to-transparent dark:from-black dark:via-white/[0.03]">
         <div className="mx-auto px-4 py-10 sm:py-16">
           <div className="grid md:grid-cols-2 gap-8 md:gap-12 items-center">
-            <motion.div {...fadeUp(0)}>
-              <MetaChips role={a.role} location={a.location} availability={availability} />
-              <TitleBlock title={a.title} subtitle={a.subtitle} tagline={a.tagline} />
-              {/* Desktop chips inline; mobile will render below image */}
-              <StatsChips stats={a.stats as any} mode="desktop" />
-            </motion.div>
+          <motion.div {...fadeUp(0)}>
+            <MetaChips role={a.role} location={a.location} availability={availability} />
+            <TitleBlock title={a.title} subtitle={a.subtitle} tagline={a.tagline} />
+            <div className="mt-4">
+              <a
+                href="/documents/resume.pdf"
+                download="tyler-lundin-resume.pdf"
+                className="inline-flex items-center gap-2 rounded-full border border-black/10 dark:border-white/10 px-3 py-1.5 bg-white/70 dark:bg-white/5 backdrop-blur text-neutral-800 dark:text-neutral-200 text-xs hover:bg-white/90 dark:hover:bg-white/10 transition"
+                aria-label="Download resume (PDF)"
+              >
+                <svg
+                  width="14"
+                  height="14"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                  aria-hidden="true"
+                  className="opacity-80"
+                >
+                  <path d="M12 3v12m0 0l-4-4m4 4l4-4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                  <path d="M5 21h14" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+                </svg>
+                <span className="font-medium">Download Resume</span>
+              </a>
+            </div>
+            {/* Desktop chips inline; mobile will render below image */}
+            <StatsChips stats={a.stats as any} mode="desktop" />
+          </motion.div>
 
             <HeroImage
               src={a.images?.[0]?.src ?? "/images/tyler.png"}

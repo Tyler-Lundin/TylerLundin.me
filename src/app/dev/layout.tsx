@@ -1,6 +1,6 @@
 import { requireAdmin } from '@/lib/auth'
 import { redirect } from 'next/navigation'
-import DevDock from '@/components/dev/DevDock'
+import DevFab from '@/components/dev/DevFab'
 
 export default async function DevLayout({
   children,
@@ -18,7 +18,7 @@ export default async function DevLayout({
       <main className="pt-4 pb-[6rem]">
         {children}
       </main>
-      <DevDock />
+      <DevFab />
     </div>
   )
 }

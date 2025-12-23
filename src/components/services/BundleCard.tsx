@@ -19,7 +19,7 @@ export default function BundleCard({
   ctaLabel?: string
 }) {
   const baseCls =
-    'group absolute top-1/2  -translate-y-1/2 rounded-2xl overflow-hidden border shadow-2xl cursor-pointer select-none transition-all p-4 sm:p-8 max-w-[80vw]'
+    'group absolute top-1/2  -translate-y-1/2 rounded-2xl overflow-hidden border shadow-2xl cursor-pointer select-none transition-all p-3 sm:p-4 md:p-6 lg:p-8 max-w-[80vw]'
 
   const layout: Record<typeof state, string> = {
     prev: 'left-0 -translate-x-5/6 aspect-[9/11] scale-80 -rotate-3',
@@ -83,13 +83,33 @@ export default function BundleCard({
         <div className="absolute inset-0 ring-1 ring-white/5" />
       </div>
 
+          {priceText ? (
+            <div className=" flex items-center justify-center absolute top-3 left-3">
+              <span className="inline-flex items-center rounded-xl bg-white text-black px-2.5 py-1 text-[11px] font-semibold ring-1 ring-white/30">
+              </span>
+            </div>
+          ) : null}
+
+
+      {/* Status badge */}
+      <div className="absolute left-3 top-3 z-10">
+        <span
+          className={[
+            'inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wide shadow-sm',
+            'bg-emerald-400 text-black',
+          ].join(' ')}
+        >
+                {priceText}
+        </span>
+      </div>
+
       {/* Bottom content (poster-style) */}
       <div
         className={[
           'relative grid items-end  z-10 flex h-full flex-col p-2 sm:p-4 md:p-6 lg:p-8 ',
         ].join(' ')}
       >
-        <div className="max-w-3xl">
+        <div className="max-w-3xl grid gap-2">
           <h3
             className={[
               'font-extrabold tracking-tight text-white text-center',
@@ -99,19 +119,11 @@ export default function BundleCard({
             {item.title}
           </h3>
 
-          {priceText ? (
-            <div className="mt-2 flex items-center justify-center">
-              <span className="inline-flex items-center rounded-xl bg-white text-black px-2.5 py-1 text-[11px] font-semibold ring-1 ring-white/30">
-                {priceText}
-              </span>
-            </div>
-          ) : null}
 
           {item.summary ? (
             <p
               className={[
                 'text-xs sm:text-sm font-light pb-2 text-center',
-                'line-clamp-3 sm:line-clamp-none',
               ].join(' ')}
             >
               {item.summary}
@@ -135,7 +147,7 @@ const CTAButton = ({ slug, href, label }: { slug: string; href?: string; label?:
         href={href ?? `/bundle/${slug}`}
         onClick={(e) => e.stopPropagation()}
         className={[
-          'inline-flex items-center justify-center rounded-xl whitespace-nowrap p-2',
+          'inline-flex items-center justify-center rounded-xl whitespace-nowrap py-1 px-4',
           'bg-white text-black font-semibold ring-1 ring-white/30',
           'text-[13px] sm:text-sm md:text-base',
         ].join(' ')}

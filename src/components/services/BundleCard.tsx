@@ -50,7 +50,7 @@ export default function BundleCard({
         'h-full',
         isCurrent ? 'blur-[0px]' : 'blur-[1px] saturate-[0.8] brightness-[0.75]',
       ].join(' ')}
-      style={{ zIndex: state === 'prev' ? 3 : state === 'current' ? 2 : 1 }}
+      style={{ zIndex: state === 'current' ? 3 : state === 'prev' ? 2 : 1 }}
       initial={false}
       animate={{ opacity, scale }}
       transition={{ type: 'spring', stiffness: 420, damping: 42, mass: 0.6 }}

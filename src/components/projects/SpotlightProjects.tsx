@@ -58,8 +58,8 @@ export default function SpotlightProjects({ projects, className, intervalMs = 10
 
   return (
     <section className={[ 'w-full relative z-10 select-none', className ].filter(Boolean).join(' ')} onMouseEnter={() => setPaused(true)} onMouseLeave={() => setPaused(false)}>
-      <div className="mx-auto max-w-7xl px-4 pb-10">
-        <div className="relative aspect-[3/4] sm:aspect-[16/9] md:aspect-[16/8] mt-4">
+      <div className="mx-auto max-w-5xl px-4 pb-10">
+        <div className="relative min-h-[500px] sm:min-h-[575px] md:min-h-[650px]  mt-4 max-w-lg mx-auto">
           <AnimatePresence initial={false}>
             <ProjectsCard key={`prev-${items[prevIdx]?.id ?? prevIdx}`} project={items[prevIdx]} state="prev" />
             <ProjectsCard key={`current-${items[index]?.id ?? index}`} project={items[index]} state="current" />

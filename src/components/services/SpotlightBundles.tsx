@@ -1,10 +1,8 @@
 "use client"
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
-import Link from 'next/link'
+import { AnimatePresence } from 'framer-motion'
 import type { Bundle } from '@/services'
-import Image from 'next/image'
 import BundleCard from './BundleCard'
 import SpotlightBundlesControls from './SpotlightBundlesControls'
 import { useRouter } from 'next/navigation'
@@ -45,6 +43,7 @@ export default function SpotlightBundles({
       if (timerRef.current) clearInterval(timerRef.current)
     }
   }, [count, paused, next, intervalMs, initialDelayMs])
+
 
   if (!count) return null
 

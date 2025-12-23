@@ -23,12 +23,11 @@ export default function ProjectsCard({ project, state }: { project: Project; sta
 
   const status: 'live' | 'demo' = project.status ?? (project.links?.some((l) => l.type === 'live') ? 'live' : 'demo')
 
-  const baseCls = 'group absolute top-1/2 -translate-y-1/2 rounded-2xl overflow-hidden border border-black/10 dark:border-white/10 bg-white/60 dark:bg-white/5 backdrop-blur shadow-2xl cursor-pointer select-none'
+  const baseCls = 'group absolute top-1/2 -translate-y-1/2 rounded-2xl overflow-hidden border border-black/10 dark:border-white/10 bg-white/60 dark:bg-white/5 backdrop-blur shadow-2xl cursor-pointer select-none p-4 sm:p-8 max-w-[80vw]'
   const layout: Record<typeof state, string> = {
-    prev: 'left-[0%] w-[40%] sm:left-[4%] sm:w-[42%] md:left-[2%] md:w-[38%] lg:left-[2%] lg:w-[36%]',
-    current:
-      'left-1/2 -translate-x-1/2 w-[86%] sm:w-[78%] md:w-[74%] lg:w-[70%] xl:w-[64%] 2xl:w-[60%]',
-    next: 'right-[0%] w-[40%] sm:right-[4%] sm:w-[42%] md:right-[2%] md:w-[38%] lg:right-[2%] lg:w-[36%]',
+    prev: 'left-0 -translate-x-5/6 aspect-[9/11] scale-80 -rotate-3',
+    current: 'left-1/2 -translate-x-1/2 aspect-[9/11]',
+    next: 'right-0 translate-x-5/6 aspect-[9/11] scale-80 rotate-3',
   }
   const isCurrent = state === 'current'
   const scale = isCurrent ? 1 : 0.94

@@ -19,7 +19,7 @@ export default function BundleCard({
   ctaLabel?: string
 }) {
   const baseCls =
-    'group absolute top-1/2  -translate-y-1/2 rounded-2xl overflow-hidden border shadow-2xl cursor-pointer select-none transition-all p-4 sm:p-8'
+    'group absolute top-1/2  -translate-y-1/2 rounded-2xl overflow-hidden border shadow-2xl cursor-pointer select-none transition-all p-4 sm:p-8 max-w-[80vw]'
 
   const layout: Record<typeof state, string> = {
     prev: 'left-0 -translate-x-5/6 aspect-[9/11] scale-80 -rotate-3',

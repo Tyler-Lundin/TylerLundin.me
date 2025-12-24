@@ -5,7 +5,7 @@ const raw: Bundle[] = [
   // SMALL — Get them live fast, no fluff.
   {
     slug: 'launch',
-    title: 'Launch bundle',
+    title: 'Launch',
     summary:
       'A clean, professional website that looks great on phones and desktops — plus reliable hosting. Get online quickly with the right basics handled for you.',
     priceRange: '$499 + $15/mo',
@@ -26,7 +26,7 @@ const raw: Bundle[] = [
   // MEDIUM — Most profitable “default” for local businesses.
   {
     slug: 'grow',
-    title: 'Grow bundle',
+    title: 'Grow',
     summary:
       'A fuller small‑business website that helps new customers find you and contact you — with ongoing care and improvements each month.',
     priceRange: '$999 + $49/mo',
@@ -53,7 +53,7 @@ const raw: Bundle[] = [
   // LARGE — For portals / internal tools / serious build work.
   {
     slug: 'operate',
-    title: 'Operate bundle',
+    title: 'Operate',
     summary:
       'Sign‑in areas, dashboards, and simple internal tools. Give different people the right access and streamline routine work.',
     priceRange: 'from $2,500 + $99/mo',

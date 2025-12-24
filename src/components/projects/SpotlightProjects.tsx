@@ -61,9 +61,23 @@ export default function SpotlightProjects({ projects, className, intervalMs = 10
       <div className="mx-auto max-w-5xl px-4 pb-10">
         <div className="relative min-h-[500px] sm:min-h-[575px] md:min-h-[650px]  mt-4 max-w-lg mx-auto">
           <AnimatePresence initial={false}>
-            <ProjectsCard key={`prev-${items[prevIdx]?.id ?? prevIdx}`} project={items[prevIdx]} state="prev" />
-            <ProjectsCard key={`current-${items[index]?.id ?? index}`} project={items[index]} state="current" />
-            <ProjectsCard key={`next-${items[nextIdx]?.id ?? nextIdx}`} project={items[nextIdx]} state="next" />
+            <ProjectsCard
+              key={`prev-${items[prevIdx]?.id ?? prevIdx}`}
+              project={items[prevIdx]}
+              state="prev"
+              onClick={() => setIndex(prevIdx)}
+            />
+            <ProjectsCard
+              key={`current-${items[index]?.id ?? index}`}
+              project={items[index]}
+              state="current"
+            />
+            <ProjectsCard
+              key={`next-${items[nextIdx]?.id ?? nextIdx}`}
+              project={items[nextIdx]}
+              state="next"
+              onClick={() => setIndex(nextIdx)}
+            />
           </AnimatePresence>
 
           {count > 1 && <SpotlightProjectsControls prev={prev} next={next} index={index} total={count} />}

@@ -1,10 +1,9 @@
-import Image from 'next/image'
 import Link from 'next/link'
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 
 import { getBundleBySlug, getServices, expandBundle, getBundles } from '@/services'
-import BundleCard from '@/components/services/BundleCard'
+import BundleCard from '@/components/bundles/BundleCard'
 
 type RouteParams = { 'bundle-slug': string }
 

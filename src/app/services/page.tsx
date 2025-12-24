@@ -19,7 +19,7 @@ import {
 import type { Metadata } from 'next'
 import { services, bundles } from '@/services'
 import ServicesBillboard from '@/components/billboard/ServicesBillboard'
-import SpotlightBundles from '@/components/services/SpotlightBundles'
+import SpotlightBundles from '@/components/bundles/SpotlightBundles'
 import { themeConfig, billboardThemes } from '@/config/theme'
 import type { BillboardThemeKey as BillboardThemeKeyFromConfig } from '@/config/themes/billboard'
 

@@ -4,7 +4,7 @@ import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
 import SpotlightProjects from '../projects/SpotlightProjects';
 import type { Project } from '@/types/projects';
-import SpotlightBundles from '../services/SpotlightBundles';
+import SpotlightBundles from '../bundles/SpotlightBundles';
 import { bundles } from '@/services';
 import { useEffect, useState } from 'react';
 import Link from 'next/link';

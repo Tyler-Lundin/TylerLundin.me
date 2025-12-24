@@ -15,7 +15,7 @@ function firstFeaturedMedia(media: ProjectMedia[], isDark: boolean): ProjectMedi
   )
 }
 
-export default function ProjectsCard({ project, state }: { project: Project; state: 'prev'|'current'|'next' }) {
+export default function ProjectsCard({ project, state, onClick }: { project: Project; state: 'prev'|'current'|'next'; onClick?: () => void }) {
   const isDark = usePrefersDark()
   const media = firstFeaturedMedia(project.media, isDark)
   const [isLoaded, setIsLoaded] = useState(false)
@@ -63,7 +63,7 @@ export default function ProjectsCard({ project, state }: { project: Project; sta
       initial={false}
       animate={{ opacity: isCurrent ? 1 : 0.6, scale }}
       transition={{ type: 'spring', stiffness: 420, damping: 42, mass: 0.6 }}
-      onClick={() => { window.location.href = `/project/${project.slug}` }}
+      onClick={() => { if (onClick) { onClick() } else { window.location.href = `/project/${project.slug}` } }}
       role="link" tabIndex={0}
       onMouseEnter={(e) => setPlaybackRate(e.currentTarget as HTMLElement, 0.10)}
       onMouseLeave={(e) => setPlaybackRate(e.currentTarget as HTMLElement, .5)}

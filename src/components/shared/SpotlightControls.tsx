@@ -1,4 +1,7 @@
-export default function SpotlightProjectsControls({
+// Universal Spotlight controls used across sections
+// - Mobile: bottom corner buttons + optional center pill counter
+// - Desktop: subtle side buttons centered vertically
+export default function SpotlightControls({
   prev,
   next,
   index,
@@ -6,8 +9,8 @@ export default function SpotlightProjectsControls({
 }: {
   prev: () => void
   next: () => void
-  index?: number
-  total?: number
+  index?: number // 0-based optional
+  total?: number // optional
 }) {
   return (
     <div className="pointer-events-none absolute inset-0 z-40">
@@ -15,7 +18,6 @@ export default function SpotlightProjectsControls({
       <div className="absolute inset-x-0 bottom-0 px-3 pb-3 sm:hidden">
         <div className="relative flex items-center justify-between">
           <NavButtonMobile dir="left" label="Previous" onClick={prev} />
-          <CenterPill index={index} total={total} />
           <NavButtonMobile dir="right" label="Next" onClick={next} />
         </div>
       </div>
@@ -31,18 +33,15 @@ export default function SpotlightProjectsControls({
   )
 }
 
-function CenterPill({ index, total }: { index?: number; total?: number }) {
-  if (typeof index !== 'number' || typeof total !== 'number' || total <= 0) return <span />
-  return (
-    <div className="pointer-events-none absolute left-1/2 -translate-x-1/2">
-      <div className="rounded-full bg-black/55 dark:bg-black/55 ring-1 ring-white/12 px-3 py-1 text-[11px] font-medium text-white/85 backdrop-blur-md">
-        {index + 1} / {total}
-      </div>
-    </div>
-  )
-}
-
-function NavButtonMobile({ dir, label, onClick }: { dir: 'left'|'right'; label: string; onClick: () => void }) {
+function NavButtonMobile({
+  dir,
+  label,
+  onClick,
+}: {
+  dir: 'left' | 'right'
+  label: string
+  onClick: () => void
+}) {
   const isLeft = dir === 'left'
   return (
     <button
@@ -57,6 +56,8 @@ function NavButtonMobile({ dir, label, onClick }: { dir: 'left'|'right'; label: 
         'ring-1 ring-white/15',
         'backdrop-blur-md',
         'shadow-[0_12px_30px_rgba(0,0,0,0.35)]',
+        // ensure chevron is visible on dark mobile background
+        'text-white/90',
         'grid place-items-center',
         'active:scale-[0.96]',
         'focus:outline-none focus-visible:ring-2 focus-visible:ring-white/70 focus-visible:ring-offset-2 focus-visible:ring-offset-black/40',
@@ -68,7 +69,15 @@ function NavButtonMobile({ dir, label, onClick }: { dir: 'left'|'right'; label: 
   )
 }
 
-function NavButtonDesktop({ dir, label, onClick }: { dir: 'left'|'right'; label: string; onClick: () => void }) {
+function NavButtonDesktop({
+  dir,
+  label,
+  onClick,
+}: {
+  dir: 'left' | 'right'
+  label: string
+  onClick: () => void
+}) {
   const isLeft = dir === 'left'
   return (
     <button
@@ -81,6 +90,8 @@ function NavButtonDesktop({ dir, label, onClick }: { dir: 'left'|'right'; label:
         'rounded-2xl',
         'bg-white/45 dark:bg-black/45',
         'border border-black/15 dark:border-white/15',
+        // high contrast: dark chevron on light, white on dark
+        'text-black/80 dark:text-white/90',
         'shadow-[0_10px_30px_rgba(0,0,0,0.25)]',
         'grid place-items-center',
         'active:scale-[0.96]',
@@ -93,12 +104,20 @@ function NavButtonDesktop({ dir, label, onClick }: { dir: 'left'|'right'; label:
   )
 }
 
-function Chevron({ dir }: { dir: 'left'|'right' }) {
+function Chevron({ dir }: { dir: 'left' | 'right' }) {
   const isLeft = dir === 'left'
   return (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" className="text-white/90" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+    <svg
+      width="18"
+      height="18"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
       {isLeft ? <polyline points="15 18 9 12 15 6" /> : <polyline points="9 18 15 12 9 6" />}
     </svg>
   )
 }
-

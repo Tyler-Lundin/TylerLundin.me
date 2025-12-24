@@ -4,7 +4,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { AnimatePresence } from 'framer-motion'
 import type { Bundle } from '@/services'
 import BundleCard from './BundleCard'
-import SpotlightBundlesControls from './SpotlightBundlesControls'
+import SpotlightControls from '../shared/SpotlightControls'
 import { useRouter } from 'next/navigation'
 
 export type BundleSpotlightItem = Bundle
@@ -87,7 +87,7 @@ export default function SpotlightBundles({
           </AnimatePresence>
 
           {/* Controls (match home hero showcase) */}
-          {count > 1 && <SpotlightBundlesControls {...{ prev, next }} />}
+          {count > 1 && <SpotlightControls prev={prev} next={next} index={index} total={count} />}
 
           {count > 1 && (
             <div className=" absolute -bottom-4 translate-y-full  z-50 left-1/2 -translate-x-1/2 flex gap-2">

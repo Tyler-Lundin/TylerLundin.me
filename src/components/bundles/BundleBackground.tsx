@@ -3,7 +3,7 @@ import Image from "next/image"
 
 export default function BundleBackground({ bgImg, title, isCurrent }: { bgImg: string, title: string, isCurrent: boolean }) {
   return (
-    <div className="absolute inset-0 translate-y-14">
+    <div className="absolute inset-0 translate-y-12">
       {bgImg && (
         <Image
           src={bgImg}

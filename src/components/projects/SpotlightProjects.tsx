@@ -5,7 +5,7 @@ import { AnimatePresence } from 'framer-motion'
 import type { Project } from '@/types/projects'
 import { projects as defaultProjects } from '@/data/projects'
 import ProjectsCard from './ProjectsCard'
-import SpotlightProjectsControls from './SpotlightProjectsControls'
+import SpotlightControls from '../shared/SpotlightControls'
 
 type SpotlightProjectsProps = {
   projects?: Project[]
@@ -80,7 +80,7 @@ export default function SpotlightProjects({ projects, className, intervalMs = 10
             />
           </AnimatePresence>
 
-          {count > 1 && <SpotlightProjectsControls prev={prev} next={next} index={index} total={count} />}
+          {count > 1 && <SpotlightControls prev={prev} next={next} index={index} total={count} />}
 
           {count > 1 && (
             <div className=" absolute -bottom-4 translate-y-full  z-50 left-1/2 -translate-x-1/2 flex gap-2">

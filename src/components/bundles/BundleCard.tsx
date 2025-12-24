@@ -67,11 +67,11 @@ export default function BundleCard({
       }}
     >
       <BundleBackground bgImg={String(item.bgImg)} title={String(item.title)} isCurrent={isCurrent} />
-      <span className="absolute inset-0 bg-gradient-to-b from-black via-black to-transparent h-24 top-2" />
 
-      <div className="absolute top-0 left-0 right-0 flex justify-between items-center p-4">
+      <div className="absolute top-0 left-0 right-0 flex justify-between items-center p-4 bg-white dark:bg-black">
         <BundleTitle title={String(item.title)} />
         <BundlePrice priceText={String(priceText)} />
+        <span className="absolute -z-10 inset-0 bg-gradient-to-b from-white dark:from-black via-white dark:via-black to-transparent h-24 top-2" />
       </div>
 
       <div className={ 'relative grid items-end  z-10 flex h-full flex-col p-2 sm:p-4 md:p-6 lg:p-8 '} >

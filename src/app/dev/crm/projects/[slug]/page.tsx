@@ -8,7 +8,8 @@ import ProjectInvoices from '@/components/dev/crm/ProjectInvoices'
 import ProjectDocuments from '@/components/dev/crm/ProjectDocuments'
 import ProjectSubscription from '@/components/dev/crm/ProjectSubscription'
 
-type Props = { params: { slug: string } }
+// Align with app route typing where params is a Promise
+type PageProps = { params: Promise<{ slug: string }> }
 
 const MOCK_PROJECTS = { [ZevlinProject.slug]: ZevlinProject }
 
@@ -33,8 +34,8 @@ function PriorityPill({ value }: { value: string }) {
   return <span className={`px-2 py-0.5 text-xs rounded border ${map[value] || map.normal}`}>{value}</span>
 }
 
-export default function ProjectDetailPage({ params }: Props) {
-  const slug = params.slug
+export default async function ProjectDetailPage({ params }: PageProps) {
+  const { slug } = await params
   const project = (MOCK_PROJECTS as any)[slug]
 
   if (!project) {

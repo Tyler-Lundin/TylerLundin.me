@@ -1,9 +1,8 @@
-interface Props {
-  params: { slug: string }
-}
+// Align with app route typing where params is a Promise
+type PageProps = { params: Promise<{ slug: string }> };
 
-export default function PortalProjectPage({ params }: Props) {
-  const { slug } = params
+export default async function PortalProjectPage({ params }: PageProps) {
+  const { slug } = await params
   return (
     <div className="min-h-[60vh] max-w-5xl mx-auto px-4 pt-10">
       <h1 className="text-2xl font-semibold">Project</h1>
@@ -21,4 +20,3 @@ export default function PortalProjectPage({ params }: Props) {
     </div>
   )
 }
-

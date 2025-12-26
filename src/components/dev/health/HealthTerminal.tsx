@@ -34,12 +34,15 @@ export default function HealthTerminal({ title = 'Health Checks', items = [], ch
         setList(next)
       } else {
         // Simulate a run locally: mark pending, then finalize with slightly tweaked timestamps
-        const pendingList = list.map((i) => ({ ...i, status: i.status === 'error' ? 'error' : 'pending' as HealthStatus }))
+        const pendingList = list.map((i) => ({
+          ...i,
+          status: (i.status === 'error' ? 'error' : 'pending') as HealthStatus,
+        }))
         setList(pendingList)
         await new Promise((r) => setTimeout(r, 700))
         const finalize = pendingList.map((i, idx) => ({
           ...i,
-          status: i.status === 'error' ? 'error' : (idx % 3 === 0 ? 'warn' : 'ok'),
+          status: (i.status === 'error' ? 'error' : (idx % 3 === 0 ? 'warn' : 'ok')) as HealthStatus,
           ts: new Date().toLocaleTimeString(),
         }))
         setList(finalize)

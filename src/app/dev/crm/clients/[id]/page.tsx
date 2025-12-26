@@ -1,7 +1,8 @@
 import Link from 'next/link'
 import { cmsProject as ZevlinProject } from '@/data/projects/zevlin'
 
-type Props = { params: { id: string } }
+// Align with app route typing where params is a Promise
+type PageProps = { params: Promise<{ id: string }> }
 
 const MOCK_CLIENT = {
   id: ZevlinProject.client.id,
@@ -21,7 +22,7 @@ const MOCK_PROJECTS = [
   },
 ]
 
-export default function ClientDetailPage(_props: Props) {
+export default function ClientDetailPage(_props: PageProps) {
   const client = MOCK_CLIENT
   const projects = MOCK_PROJECTS
 

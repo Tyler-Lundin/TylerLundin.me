@@ -13,6 +13,7 @@ import {
   Briefcase,
   Settings,
   Home,
+  LayoutDashboard,
 } from 'lucide-react'
 import {  OrbitDotMark } from '../layout/Logo'
 
@@ -22,15 +23,45 @@ type ActionItem = {
   Icon: any
 }
 
-const ACTIONS: ActionItem[] = [
-  { label: 'Blog', href: '/dev/blog', Icon: BookOpenText },
-  { label: 'New Post', href: '/dev/blog/wizard', Icon: PlusCircle },
-  { label: 'Inbox', href: '/dev/msgs', Icon: Inbox },
-  { label: 'Moderation', href: '/dev/blog/moderation', Icon: MessageSquare },
-  { label: 'Team', href: '/dev/team', Icon: Users },
-  { label: 'Projects', href: '/dev/projects', Icon: Briefcase },
-  { label: 'Settings', href: '/dev/settings', Icon: Settings },
-  { label: 'Home', href: "/", Icon: Home }
+type ActionGroup = {
+  title: string
+  items: ActionItem[]
+}
+
+const ACTION_GROUPS: ActionGroup[] = [
+  {
+    title: 'CRM',
+    items: [
+      { label: 'CRM', href: '/dev/crm', Icon: LayoutDashboard },
+      { label: 'CRM Clients', href: '/dev/crm/clients', Icon: Users },
+      { label: 'CRM Projects', href: '/dev/crm/projects', Icon: Briefcase },
+      { label: 'CRM Invites', href: '/dev/crm/invitations', Icon: MessageSquare },
+    ],
+  },
+  {
+    title: 'Blog',
+    items: [
+      { label: 'Blog', href: '/dev/blog', Icon: BookOpenText },
+      { label: 'New Post', href: '/dev/blog/wizard', Icon: PlusCircle },
+      { label: 'Moderation', href: '/dev/blog/moderation', Icon: MessageSquare },
+    ],
+  },
+  {
+    title: 'Team',
+    items: [
+      { label: 'Team', href: '/dev/team', Icon: Users },
+      { label: 'Inbox', href: '/dev/msgs', Icon: Inbox },
+    ],
+  },
+  {
+    title: 'General',
+    items: [
+      { label: 'Services', href: '/dev/services', Icon: Briefcase },
+      { label: 'Projects', href: '/dev/projects', Icon: Briefcase },
+      { label: 'Settings', href: '/dev/settings', Icon: Settings },
+      { label: 'Home', href: '/', Icon: Home },
+    ],
+  },
 ]
 
 export default function DevFab() {
@@ -63,19 +94,26 @@ export default function DevFab() {
             <X className="h-4 w-4" />
           </button>
         </div>
-        <div className="grid grid-cols-3 gap-2 p-3">
-          {ACTIONS.map(({ label, href, Icon }) => (
-            <Link
-              key={href}
-              href={href}
-              onClick={() => setOpen(false)}
-              className="group rounded-xl border border-transparent hover:border-[#3F4147] bg-[#232428] hover:bg-[#26272b] p-3 text-center"
-            >
-              <div className="mx-auto mb-1 flex h-9 w-9 items-center justify-center rounded-md bg-[#5865F2]/15 text-[#5865F2] group-hover:bg-[#5865F2]/20">
-                <Icon className="h-5 w-5" />
+        <div className="p-3 space-y-2">
+          {ACTION_GROUPS.map(({ title, items }) => (
+            <div key={title}>
+              <div className="px-1 pb-1 text-[10px] uppercase tracking-wide text-[#949BA4]">{title}</div>
+              <div className="grid grid-cols-3 gap-2">
+                {items.map(({ label, href, Icon }) => (
+                  <Link
+                    key={href}
+                    href={href}
+                    onClick={() => setOpen(false)}
+                    className="group rounded-xl border border-transparent hover:border-[#3F4147] bg-[#232428] hover:bg-[#26272b] p-3 text-center"
+                  >
+                    <div className="mx-auto mb-1 flex h-9 w-9 items-center justify-center rounded-md bg-[#5865F2]/15 text-[#5865F2] group-hover:bg-[#5865F2]/20">
+                      <Icon className="h-5 w-5" />
+                    </div>
+                    <div className="text-[11px] text-[#DBDEE1] group-hover:text-white">{label}</div>
+                  </Link>
+                ))}
               </div>
-              <div className="text-[11px] text-[#DBDEE1] group-hover:text-white">{label}</div>
-            </Link>
+            </div>
           ))}
         </div>
       </div>
@@ -94,4 +132,3 @@ export default function DevFab() {
       </button>
     </div>
   )}
-

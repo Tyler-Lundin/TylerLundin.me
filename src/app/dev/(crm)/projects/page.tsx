@@ -59,10 +59,10 @@ export default function CrmProjectsPage() {
             {projects.map((p) => (
               <tr key={p.id} className="hover:bg-[#1E1F22]">
                 <td className="px-4 py-3">
-                  <Link className="text-white underline" href={`/dev/crm/projects/${p.slug}`}>{p.title}</Link>
+                  <Link className="text-white underline" href={`/dev/projects/${p.slug}`}>{p.title}</Link>
                 </td>
                 <td className="px-4 py-3 text-[#DBDEE1]">
-                  <Link className="underline" href={`/dev/crm/clients/${p.client.id}`}>{p.client.name}</Link>
+                  <Link className="underline" href={`/dev/clients/${p.client.id}`}>{p.client.name}</Link>
                 </td>
                 <td className="px-4 py-3"><StatusBadge value={p.status} /></td>
                 <td className="px-4 py-3"><PriorityPill value={p.priority} /></td>
@@ -75,3 +75,4 @@ export default function CrmProjectsPage() {
     </div>
   )
 }
+

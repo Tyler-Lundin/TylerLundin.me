@@ -45,7 +45,7 @@ export default function ClientDetailPage(_props: PageProps) {
         <section className="rounded-lg border border-[#3F4147] overflow-hidden">
           <div className="px-4 py-3 bg-[#1E1F22] border-b border-[#3F4147] flex items-center justify-between">
             <h2 className="text-sm font-medium text-white">Projects</h2>
-            <Link href="/dev/crm/projects" className="text-xs underline text-[#DBDEE1]">View all</Link>
+            <Link href="/dev/projects" className="text-xs underline text-[#DBDEE1]">View all</Link>
           </div>
           <table className="w-full text-sm">
             <thead className="bg-[#1E1F22] text-[#949BA4]">
@@ -60,7 +60,7 @@ export default function ClientDetailPage(_props: PageProps) {
               {projects.map((p) => (
                 <tr key={p.id} className="hover:bg-[#1E1F22]">
                   <td className="px-4 py-2">
-                    <Link className="text-white underline" href={`/dev/crm/projects/${p.slug}`}>{p.title}</Link>
+                    <Link className="text-white underline" href={`/dev/projects/${p.slug}`}>{p.title}</Link>
                   </td>
                   <td className="px-4 py-2 text-[#DBDEE1]">{p.status}</td>
                   <td className="px-4 py-2 text-[#DBDEE1]">{p.priority}</td>
@@ -73,8 +73,9 @@ export default function ClientDetailPage(_props: PageProps) {
       </div>
 
       <div className="mt-6">
-        <Link href="/dev/crm/clients" className="text-sm underline text-[#DBDEE1]">← Back to Clients</Link>
+        <Link href="/dev/clients" className="text-sm underline text-[#DBDEE1]">← Back to Clients</Link>
       </div>
     </div>
   )
 }
+

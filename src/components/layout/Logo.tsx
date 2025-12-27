@@ -5,9 +5,12 @@ const sora = Sora({ subsets: ["latin"], display: "swap" });
 
 
 
-export function OrbitDotMark() {
+export function OrbitDotMark({className}:{className?:string}) {
   return (
-    <span className="relative inline-flex h-6 w-6 items-center justify-center">
+    <span className={`
+        relative inline-flex items-center justify-center
+        ${className ? className : "h-6 w-6"}
+    `}>
 
       {/* core dot */}
       <span className="h-2 w-2 rounded-full bg-indigo-500/90 group-hover:bg-indigo-500 transition-colors duration-300" />

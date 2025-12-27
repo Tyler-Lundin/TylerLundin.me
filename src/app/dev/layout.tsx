@@ -1,6 +1,8 @@
 import { requireAdmin } from '@/lib/auth'
 import { redirect } from 'next/navigation'
 import DevFab from '@/components/dev/DevFab'
+import DevBreadcrumbs from '@/components/dev/DevBreadcrumbs'
+import { SiteShell } from '@/components/layout/SiteShell'
 
 export default async function DevLayout({
   children,
@@ -14,10 +16,11 @@ export default async function DevLayout({
   }
 
   return (
-    <div className="min-h-screen bg-red text-[#DBDEE1]">
-      <main className="pt-4 pb-[6rem]">
+    <div className="min-h-screen pt-6">
+      <DevBreadcrumbs />
+      <SiteShell>
         {children}
-      </main>
+      </SiteShell>
       <DevFab />
     </div>
   )

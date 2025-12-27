@@ -42,7 +42,7 @@ export default async function ProjectDetailPage({ params }: PageProps) {
     return (
       <div className="max-w-6xl mx-auto px-4 pt-6">
         <div className="text-sm text-[#949BA4]">Mock: project not found.</div>
-        <div className="mt-4"><Link href="/dev/crm/projects" className="text-sm underline text-[#DBDEE1]">← Back to Projects</Link></div>
+        <div className="mt-4"><Link href="/dev/projects" className="text-sm underline text-[#DBDEE1]">← Back to Projects</Link></div>
       </div>
     )
   }
@@ -54,7 +54,7 @@ export default async function ProjectDetailPage({ params }: PageProps) {
         <h1 className="text-2xl font-semibold text-white">{project.title}</h1>
         <div className="mt-1 text-sm text-[#949BA4]">
           <span>
-            for <Link className="underline" href={`/dev/crm/clients/${project.client.id}`}>{project.client.name}</Link>
+            for <Link className="underline" href={`/dev/clients/${project.client.id}`}>{project.client.name}</Link>
           </span>
         </div>
         <div className="mt-2 flex items-center gap-3 text-sm">
@@ -167,7 +167,7 @@ export default async function ProjectDetailPage({ params }: PageProps) {
       </div>
 
       <div className="mt-6">
-        <Link href="/dev/crm/projects" className="text-sm underline text-[#DBDEE1]">← Back to Projects</Link>
+        <Link href="/dev/projects" className="text-sm underline text-[#DBDEE1]">← Back to Projects</Link>
       </div>
     </div>
   )
@@ -217,23 +217,11 @@ function RepoUpdates({ project }: { project: any }) {
                 ) : (
                   <span className="text-sm text-[#DBDEE1]">{c.message}</span>
                 )}
-                <div className="text-xs text-[#949BA4] mt-1">{repoUrl ? c.sha : '—'}</div>
+                <div className="text-xs text-[#949BA4] my-1">{repoUrl ? c.sha : '0000000'}</div>
               </li>
             ))}
           </ul>
         </div>
-
-        {!repoUrl && (
-          <div className="absolute inset-0 flex items-center justify-center">
-            <div className="rounded-lg border border-[#3F4147] bg-[#1E1F22]/90 backdrop-blur p-4 text-center max-w-sm mx-auto">
-              <div className="text-sm text-white font-medium">Link GitHub repo</div>
-              <div className="mt-1 text-xs text-[#949BA4]">Connect this project to a repository to see recent commits.</div>
-              <div className="mt-3">
-                <button className="px-3 h-8 rounded-md border border-[#3F4147] bg-[#232428] text-xs text-[#DBDEE1] opacity-60 cursor-not-allowed">Link GitHub Repo</button>
-              </div>
-            </div>
-          </div>
-        )}
       </div>
     </section>
   )
@@ -248,3 +236,4 @@ function normalizeRepoUrl(url: string) {
     return url.replace(/\/$/, '')
   }
 }
+

@@ -14,13 +14,13 @@ export function SiteShell({ children }: { children: React.ReactNode }) {
   const isAbout = pathname === '/about' || pathname === '/about/'
   const isProjectSlug = /^\/project\/[^/]+\/?$/.test(pathname) || /^\/projects\/[^/]+\/?$/.test(pathname)
 
-  if (!isDevRoute) return <UserShell children={children}/>
+  if (!isDevRoute) return <UserShell children={children} />
 
-  return <DevShell children={children}/>
+  return <DevShell children={children} />
 }
 
 
-function UserShell({ children }:{ children: React.ReactNode }) {
+function UserShell({ children }: { children: React.ReactNode }) {
   return (
     <>
       <div className={`relative max-w-7xl mx-auto`}>
@@ -43,10 +43,16 @@ function UserShell({ children }:{ children: React.ReactNode }) {
   )
 }
 
-function DevShell({ children }:{ children: React.ReactNode }) {
-  return(
-    <div className="max-w-7xl mx-auto">
-      {children}
+function DevShell({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="relative max-w-screen min-h-screen overflow-x-hidden">
+      {/* Dimmed particles background */}
+      <div className="hidden sm:fixed inset-0 -z-10 pointer-events-none opacity-50">
+        <ReactiveBackground />
+      </div>
+      <div className="pb-2 max-w-7xl mx-auto">
+        {children}
+      </div>
     </div>
   )
 }

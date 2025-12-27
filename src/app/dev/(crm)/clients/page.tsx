@@ -41,7 +41,7 @@ export default function CrmClientsPage() {
             {clients.map((c) => (
               <tr key={c.id} className="hover:bg-[#1E1F22]">
                 <td className="px-4 py-3 text-white">
-                  <Link className="underline" href={`/dev/crm/clients/${c.id}`}>{c.name}</Link>
+                  <Link className="underline" href={`/dev/clients/${c.id}`}>{c.name}</Link>
                 </td>
                 <td className="px-4 py-3 text-[#DBDEE1]">{c.company || '—'}</td>
                 <td className="px-4 py-3">
@@ -60,3 +60,4 @@ export default function CrmClientsPage() {
     </div>
   )
 }
+

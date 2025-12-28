@@ -1,19 +1,69 @@
 "use client"
-import { useMemo, useState } from 'react'
+import { useMemo, useState, useEffect } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
-import { getServices, getBundles, expandBundle } from '@/services'
-import { Check } from 'lucide-react'
+import { createClient } from '@/lib/supabase/client'
+import { Check, Search, Plus, MoreHorizontal, Copy, Archive, Layers, Package, Link as LinkIcon } from 'lucide-react'
 import { AnimatePresence, motion } from 'framer-motion'
 
 export default function DevServicesPage() {
-  const services = getServices()
-  const bundlesRaw = getBundles()
-  const bundles = useMemo(() => bundlesRaw.map((b) => ({ b, expanded: expandBundle(b, services) })), [bundlesRaw, services])
+  const [services, setServices] = useState<any[]>([])
+  const [bundles, setBundles] = useState<any[]>([])
+  const [loading, setLoading] = useState(true)
 
-  // Selection state (mock)
+  // Selection state
   const [selectedServiceSlugs, setSelectedServiceSlugs] = useState<Set<string>>(new Set())
   const [selectedBundleSlugs, setSelectedBundleSlugs] = useState<Set<string>>(new Set())
+
+  useEffect(() => {
+    async function fetchData() {
+      const sb = createClient()
+      
+      const [
+        { data: sData },
+        { data: bData },
+        { data: bsData }
+      ] = await Promise.all([
+        sb.from('crm_services').select('*').order('title'),
+        sb.from('crm_bundles').select('*').order('title'),
+        sb.from('crm_bundle_services').select('*')
+      ])
+
+      const servicesList = (sData || []).map(s => ({
+        ...s,
+        priceRange: s.price_range,
+        updatedAt: s.updated_at,
+        category: s.category || 'general'
+      }))
+
+      // Map join table to expand bundles
+      const bundlesList = (bData || []).map(b => {
+        const myServiceSlugs = (bsData || [])
+          .filter((x: any) => x.bundle_slug === b.slug)
+          .map((x: any) => x.service_slug)
+        
+        const myServices = servicesList.filter(s => myServiceSlugs.includes(s.slug))
+        
+        return {
+          b: {
+            ...b,
+            priceRange: b.price_range,
+            bgImg: b.bg_img,
+            serviceSlugs: myServiceSlugs
+          },
+          expanded: {
+            services: myServices
+          }
+        }
+      })
+
+      setServices(servicesList)
+      setBundles(bundlesList)
+      setLoading(false)
+    }
+
+    fetchData()
+  }, [])
 
   const toggleService = (slug: string) => {
     setSelectedServiceSlugs((prev) => {
@@ -35,332 +85,300 @@ export default function DevServicesPage() {
   // Derived insights
   const usage = useMemo(() => {
     const m = new Map<string, number>()
-    for (const b of bundlesRaw) for (const slug of b.serviceSlugs) m.set(slug, (m.get(slug) || 0) + 1)
+    for (const { b } of bundles) {
+      for (const slug of (b.serviceSlugs || [])) {
+        m.set(slug, (m.get(slug) || 0) + 1)
+      }
+    }
     return m
-  }, [bundlesRaw])
+  }, [bundles])
+
   const linkedServices = services.filter((s) => (usage.get(s.slug) || 0) > 0)
   const unlinkedServices = services.length - linkedServices.length
   const categories = Array.from(new Set(services.map((s) => s.category).filter(Boolean))) as string[]
   const selectedBundlesCount = selectedBundleSlugs.size
   const selectedServicesCount = selectedServiceSlugs.size
 
-  const selectAllBundles = () => setSelectedBundleSlugs(new Set(bundlesRaw.map((b) => b.slug)))
+  const selectAllBundles = () => setSelectedBundleSlugs(new Set(bundles.map(({ b }) => b.slug)))
   const clearBundles = () => setSelectedBundleSlugs(new Set())
   const selectAllServices = () => setSelectedServiceSlugs(new Set(services.map((s) => s.slug)))
   const clearServices = () => setSelectedServiceSlugs(new Set())
 
+  if (loading) {
+    return <div className="min-h-screen pt-20 flex items-center justify-center text-neutral-500">Loading catalog...</div>
+  }
+
   return (
-    <div className="max-w-7xl mx-auto px-4 pt-6">
-      {/* Header / Toolbar */}
-      <div className="mb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-        <div>
-          <h1 className="text-2xl font-semibold text-white">Services</h1>
-          <p className="text-sm text-[#949BA4]">Internal dashboard for CRUD and insights</p>
+    <div className="min-h-screen bg-neutral-50/50 pb-20 pt-20 dark:bg-neutral-950">
+      <div className="mx-auto max-w-6xl px-4 sm:px-6">
+        
+        {/* Header / Toolbar */}
+        <div className="mb-8 flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
+          <div>
+            <h1 className="text-2xl font-bold text-neutral-900 dark:text-white">Services & Bundles</h1>
+            <p className="text-sm text-neutral-500">Manage service catalog and package configurations</p>
+          </div>
+          <div className="flex items-center gap-2">
+            <div className="relative hidden sm:block">
+              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-400" />
+              <input
+                disabled
+                placeholder="Search services..."
+                className="h-10 w-64 rounded-lg border border-neutral-200 bg-white pl-10 pr-4 text-sm outline-none ring-offset-2 focus:ring-2 focus:ring-neutral-900 disabled:opacity-60 dark:border-neutral-800 dark:bg-neutral-900 dark:focus:ring-white"
+              />
+            </div>
+            <button className="flex h-10 items-center gap-2 rounded-lg bg-neutral-900 px-4 text-sm font-medium text-white transition hover:bg-neutral-800 dark:bg-white dark:text-neutral-900 dark:hover:bg-neutral-200">
+              <Plus className="h-4 w-4" />
+              <span className="hidden sm:inline">New Service</span>
+            </button>
+          </div>
         </div>
-        <div className="flex items-center gap-2">
-          <input
-            disabled
-            placeholder="Search services (mock)"
-            className="h-9 w-56 rounded-md bg-[#1E1F22] border border-[#3F4147] px-3 text-sm text-white placeholder-[#6B7280]"
-          />
-          <select disabled className="h-9 rounded-md bg-[#1E1F22] border border-[#3F4147] px-3 text-sm text-[#949BA4]">
-            <option>Status: All</option>
-          </select>
-          <button className="h-9 rounded-md border border-[#3F4147] bg-[#1E1F22] px-3 text-sm text-white opacity-60 cursor-not-allowed">
-            New Service
-          </button>
-          <button className="h-9 rounded-md border border-[#3F4147] bg-[#1E1F22] px-3 text-sm text-white opacity-60 cursor-not-allowed">
-            New Bundle
-          </button>
-        </div>
-      </div>
 
-      {/* Insights */}
-      <section className="mb-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-        <div className="rounded-lg border border-[#3F4147] bg-[#121316] p-3">
-          <div className="text-[11px] text-[#949BA4]">Total services</div>
-          <div className="mt-1 text-xl font-semibold text-white">{services.length}</div>
-        </div>
-        <div className="rounded-lg border border-[#3F4147] bg-[#121316] p-3">
-          <div className="text-[11px] text-[#949BA4]">Total bundles</div>
-          <div className="mt-1 text-xl font-semibold text-white">{bundles.length}</div>
-        </div>
-        <div className="rounded-lg border border-[#3F4147] bg-[#121316] p-3">
-          <div className="text-[11px] text-[#949BA4]">Linked in bundles</div>
-          <div className="mt-1 text-xl font-semibold text-white">{linkedServices.length}</div>
-        </div>
-        <div className="rounded-lg border border-[#3F4147] bg-[#121316] p-3">
-          <div className="text-[11px] text-[#949BA4]">Unlinked services</div>
-          <div className="mt-1 text-xl font-semibold text-white">{unlinkedServices}</div>
-        </div>
-      </section>
-      {categories.length ? (
-        <div className="mb-4 flex flex-wrap items-center gap-1.5">
-          {categories.map((c) => (
-            <span key={c} className="text-[11px] px-1.5 py-0.5 rounded bg-[#232428] border border-[#3F4147] text-[#C2C7CE]">
-              {c}
-            </span>
-          ))}
-        </div>
-      ) : null}
+        {/* Insights */}
+        <section className="mb-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <KpiCard title="Total Services" value={services.length} icon={<Layers className="h-5 w-5 text-neutral-400" />} />
+          <KpiCard title="Total Bundles" value={bundles.length} icon={<Package className="h-5 w-5 text-neutral-400" />} />
+          <KpiCard title="Linked Services" value={linkedServices.length} icon={<LinkIcon className="h-5 w-5 text-emerald-500" />} />
+          <KpiCard title="Unlinked Services" value={unlinkedServices} icon={<span className="flex size-2 rounded-full bg-amber-500" />} />
+        </section>
 
-      {/* Bundles */}
-      <motion.section layout transition={{ duration: 0.2, ease: 'easeOut' }} className="rounded-lg border border-[#3F4147] overflow-hidden">
-        <div className="relative px-4 py-3 bg-[#1E1F22] border-b border-[#3F4147] flex items-center justify-between">
-          <h2 className="text-sm font-medium text-white">Bundles</h2>
-          <div className="text-[11px] text-[#949BA4]">{bundles.length} total</div>
-          {/* Overlay bundles action bar */}
-          <AnimatePresence initial={false}>
-            {selectedBundlesCount > 0 && (
-              <motion.div
-                key="bundles-action-bar"
-                initial={{ opacity: 0, y: -8 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -8 }}
-                transition={{ duration: 0.16, ease: 'easeOut' }}
-                className="absolute inset-0 bg-[#15171A]/95 backdrop-blur flex items-center justify-between px-4"
-              >
-                <div className="flex items-center gap-2">
-                  <span className="inline-flex items-center rounded-full border border-[#3F4147] bg-[#232428] px-2 py-0.5 text-[11px] text-[#C2C7CE]">
-                    {selectedBundlesCount} selected
-                  </span>
-                </div>
-                <div className="flex items-center gap-1.5">
-                  <button onClick={selectAllBundles} className="h-7 px-2 rounded-md border border-[#3F4147] bg-[#121316] text-[12px] text-[#C2C7CE] hover:border-[#4b4e55]">Select all</button>
-                  <button onClick={clearBundles} className="h-7 px-2 rounded-md border border-[#3F4147] bg-[#1E1F22] text-[12px] text-[#949BA4] hover:border-[#4b4e55]">Clear</button>
-                  <span className="mx-2 h-5 w-px bg-[#3F4147]" />
-                  <button className="h-7 px-2 rounded-md border border-[#3F4147] bg-[#1E1F22] text-[12px] text-[#949BA4] hover:border-[#4b4e55]">Duplicate</button>
-                  <button className="h-7 px-2 rounded-md border border-[#3F4147] bg-[#1E1F22] text-[12px] text-[#949BA4] hover:border-[#4b4e55]">Archive</button>
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </div>
-        <div className="overflow-x-auto bg-[#16171A]">
-          <table className="w-full text-sm">
-            <thead className="bg-[#1E1F22]/95 backdrop-blur sticky top-0 z-10 text-[#949BA4] border-b border-[#3F4147]">
-              <tr>
-                <th className="w-1 px-0 py-0" />
-                <th className="text-left px-2 py-2 font-medium">Cover</th>
-                <th className="text-left px-2 py-2 font-medium">Title</th>
-                <th className="text-left px-4 py-2 font-medium">Billing</th>
-                <th className="text-left px-4 py-2 font-medium">Price</th>
-                <th className="text-left px-4 py-2 font-medium">Included</th>
-                <th className="text-left px-4 py-2 font-medium">Tags</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-[#3F4147]">
-              {bundles.map(({ b, expanded }) => {
-                const selected = selectedBundleSlugs.has(b.slug)
-                return (
-                <tr
-                  key={b.slug}
-                  className={["hover:bg-[#1E1F22] cursor-pointer", selected ? "bg-[#15201A]" : ""].join(" ")}
-                  onClick={() => toggleBundle(b.slug)}
-                  role="button"
-                  tabIndex={0}
-                  onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') toggleBundle(b.slug) }}
+        {categories.length > 0 && (
+          <div className="mb-6 flex flex-wrap items-center gap-2">
+            {categories.map((c) => (
+              <button key={c} className="rounded-full border border-neutral-200 bg-white px-3 py-1 text-xs font-medium text-neutral-600 hover:bg-neutral-50 dark:border-neutral-800 dark:bg-neutral-900 dark:text-neutral-400 dark:hover:bg-neutral-800">
+                {c}
+              </button>
+            ))}
+          </div>
+        )}
+
+        {/* Bundles */}
+        <motion.section layout transition={{ duration: 0.2 }} className="mb-8 overflow-hidden rounded-xl border border-neutral-200 bg-white shadow-sm dark:border-neutral-800 dark:bg-neutral-900">
+          <div className="relative flex items-center justify-between border-b border-neutral-100 bg-neutral-50/50 px-6 py-4 dark:border-neutral-800 dark:bg-neutral-900/50">
+            <div>
+              <h2 className="text-base font-semibold text-neutral-900 dark:text-white">Bundles</h2>
+              <div className="text-xs text-neutral-500">{bundles.length} configurations</div>
+            </div>
+            
+            {/* Overlay bundles action bar */}
+            <AnimatePresence initial={false}>
+              {selectedBundlesCount > 0 && (
+                <motion.div
+                  key="bundles-action-bar"
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  transition={{ duration: 0.2 }}
+                  className="absolute inset-0 z-10 flex items-center justify-between bg-white px-6 dark:bg-neutral-900"
                 >
-                  <td className="px-0 py-0 align-top">
-                    <div className={["w-1 h-full", selected ? "bg-emerald-700/60" : "bg-transparent"].join(" ")} />
-                  </td>
-                  <td className="px-2 py-2">
-                    <div className="relative h-10 w-16 overflow-hidden rounded bg-[#232428]">
-                      {b.bgImg ? (
-                        <Image src={b.bgImg} alt={b.title} fill className={["object-cover", b.className || ''].join(' ')} />
-                      ) : (
-                        <div className="absolute inset-0 bg-gradient-to-br from-[#2a2c31] to-[#141519]" />
-                      )}
-                      <div className="absolute inset-0 ring-1 ring-black/20" />
-                    </div>
-                  </td>
-                  <td className="px-2 py-2 text-white">
-                    <div className="font-medium leading-tight flex items-center gap-1.5">
-                      {selected && (
-                        <span className="inline-flex h-4 w-4 items-center justify-center rounded-full bg-emerald-900/40 ring-1 ring-emerald-700/30">
-                          <Check className="h-3 w-3 text-emerald-300" />
-                        </span>
-                      )}
-                      <span>{b.title}</span>
-                    </div>
-                    <div className="mt-1 flex flex-wrap gap-1.5">
-                      {b.priceRange ? (
-                        <span className="text-[10px] px-1.5 py-0.5 rounded bg-[#232428] border border-[#3F4147] text-[#C2C7CE]">
-                          {b.priceRange}
-                        </span>
-                      ) : null}
-                      {(b.tags || []).slice(0, 2).map((t) => (
-                        <span key={t} className="text-[10px] px-1.5 py-0.5 rounded border border-[#3F4147] bg-[#181A1E] text-[#949BA4]">#{t}</span>
-                      ))}
-                    </div>
-                  </td>
-                  <td className="px-4 py-2 text-[#DBDEE1]">{b.billing || '—'}</td>
-                  <td className="px-4 py-2 text-[#DBDEE1]">{b.priceRange || '—'}</td>
-                  <td className="px-4 py-2">
-                    <div className="flex flex-wrap gap-1.5">
-                      {(expanded.services || []).slice(0, 3).map((s) => (
-                        <span key={s.slug} className="text-[11px] px-1.5 py-0.5 rounded border border-[#3F4147] text-[#DBDEE1]">
-                          {s.title}
-                        </span>
-                      ))}
-                      {expanded.services.length > 3 && (
-                        <span className="text-[11px] px-1.5 py-0.5 rounded border border-dashed border-[#3F4147] text-[#949BA4]">
-                          +{expanded.services.length - 3}
-                        </span>
-                      )}
-                    </div>
-                  </td>
-                  <td className="px-4 py-2">
-                    {(b.tags || []).length ? (
-                      <span className="inline-flex items-center rounded-full border border-[#3F4147] bg-[#232428] px-2 py-0.5 text-[11px] text-[#C2C7CE]">
-                        {(b.tags || []).length} tags
-                      </span>
-                    ) : (
-                      <span className="text-[#949BA4]">—</span>
-                    )}
-                  </td>
-                </tr>
-              )})}
-              {bundles.length === 0 && (
-                <tr>
-                  <td colSpan={7} className="px-4 py-6 text-center text-[#949BA4]">No bundles.</td>
-                </tr>
+                  <div className="flex items-center gap-3">
+                    <span className="flex items-center gap-2 rounded-lg bg-neutral-100 px-3 py-1 text-xs font-medium text-neutral-900 dark:bg-neutral-800 dark:text-white">
+                      {selectedBundlesCount} selected
+                    </span>
+                    <button onClick={selectAllBundles} className="text-xs font-medium text-neutral-500 hover:text-neutral-900 dark:hover:text-white">Select all</button>
+                    <button onClick={clearBundles} className="text-xs font-medium text-neutral-500 hover:text-neutral-900 dark:hover:text-white">Clear</button>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <button className="flex h-8 items-center gap-2 rounded-lg border border-neutral-200 px-3 text-xs font-medium text-neutral-600 hover:bg-neutral-50 dark:border-neutral-800 dark:text-neutral-400 dark:hover:bg-neutral-800"><Copy className="h-3.5 w-3.5" /> Duplicate</button>
+                    <button className="flex h-8 items-center gap-2 rounded-lg border border-neutral-200 px-3 text-xs font-medium text-neutral-600 hover:bg-neutral-50 dark:border-neutral-800 dark:text-neutral-400 dark:hover:bg-neutral-800"><Archive className="h-3.5 w-3.5" /> Archive</button>
+                  </div>
+                </motion.div>
               )}
-            </tbody>
-          </table>
-        </div>
-      </motion.section>
-
-      {/* Services */}
-      <motion.section layout transition={{ duration: 0.2, ease: 'easeOut' }} className="mt-4 rounded-lg border border-[#3F4147] overflow-hidden">
-        <div className="relative px-4 py-3 bg-[#1E1F22] border-b border-[#3F4147] flex items-center justify-between">
-          <h2 className="text-sm font-medium text-white">All Services</h2>
-          <div className="text-[11px] text-[#949BA4]">{services.length} total</div>
-          {/* Overlay services action bar */}
-          <AnimatePresence initial={false}>
-            {selectedServicesCount > 0 && (
-              <motion.div
-                key="services-action-bar"
-                initial={{ opacity: 0, y: -8 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -8 }}
-                transition={{ duration: 0.16, ease: 'easeOut' }}
-                className="absolute inset-0 bg-[#15171A]/95 backdrop-blur flex items-center justify-between px-4"
-              >
-                <div className="flex items-center gap-2">
-                  <span className="inline-flex items-center rounded-full border border-[#3F4147] bg-[#232428] px-2 py-0.5 text-[11px] text-[#C2C7CE]">
-                    {selectedServicesCount} selected
-                  </span>
-                </div>
-                <div className="flex items-center gap-1.5">
-                  <button onClick={selectAllServices} className="h-7 px-2 rounded-md border border-[#3F4147] bg-[#121316] text-[12px] text-[#C2C7CE] hover:border-[#4b4e55]">Select all</button>
-                  <button onClick={clearServices} className="h-7 px-2 rounded-md border border-[#3F4147] bg-[#1E1F22] text-[12px] text-[#949BA4] hover:border-[#4b4e55]">Clear</button>
-                  <span className="mx-2 h-5 w-px bg-[#3F4147]" />
-                  <button className="h-7 px-2 rounded-md border border-[#3F4147] bg-[#1E1F22] text-[12px] text-[#949BA4] hover:border-[#4b4e55]">Edit</button>
-                  <button className="h-7 px-2 rounded-md border border-[#3F4147] bg-[#1E1F22] text-[12px] text-[#949BA4] hover:border-[#4b4e55]">Duplicate</button>
-                  <button className="h-7 px-2 rounded-md border border-[#3F4147] bg-[#1E1F22] text-[12px] text-[#949BA4] hover:border-[#4b4e55]">Archive</button>
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </div>
-        <div className="overflow-x-auto bg-[#16171A]">
-          <table className="w-full text-sm">
-            <thead className="bg-[#1E1F22]/95 backdrop-blur sticky top-0 z-10 text-[#949BA4] border-b border-[#3F4147]">
-              <tr>
-                <th className="w-1 px-0 py-0" />
-                <th className="text-left px-2 py-2 font-medium">Title</th>
-                <th className="text-left px-4 py-2 font-medium">Category</th>
-                <th className="text-left px-4 py-2 font-medium">Status</th>
-                <th className="text-left px-4 py-2 font-medium">Price</th>
-                <th className="text-left px-4 py-2 font-medium">Tags</th>
-                <th className="text-left px-4 py-2 font-medium">In Bundles</th>
-                <th className="text-left px-4 py-2 font-medium">Updated</th>
-                <th className="text-left px-4 py-2 font-medium">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-[#3F4147]">
-              {services.map((s) => {
-                const count = usage.get(s.slug) || 0
-                const status = s.status || 'active'
-                const updated = s.updatedAt ? new Date(s.updatedAt).toLocaleDateString() : '—'
-                const selected = selectedServiceSlugs.has(s.slug)
-                return (
+            </AnimatePresence>
+          </div>
+          
+          <div className="overflow-x-auto">
+            <table className="w-full text-left text-sm">
+              <thead className="bg-neutral-50 text-neutral-500 dark:bg-neutral-900 dark:text-neutral-400">
+                <tr>
+                  <th className="w-1 px-0 py-0" />
+                  <th className="px-6 py-3 font-medium">Bundle</th>
+                  <th className="px-6 py-3 font-medium">Billing</th>
+                  <th className="px-6 py-3 font-medium">Price</th>
+                  <th className="px-6 py-3 font-medium">Services</th>
+                  <th className="px-6 py-3 font-medium text-right">Tags</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-neutral-100 dark:divide-neutral-800">
+                {bundles.map(({ b, expanded }) => {
+                  const selected = selectedBundleSlugs.has(b.slug)
+                  return (
                   <tr
-                    key={s.slug}
-                    className={["hover:bg-[#1E1F22] cursor-pointer", selected ? "bg-[#15201A]" : ""].join(" ")}
-                    onClick={() => toggleService(s.slug)}
-                    role="button"
-                    tabIndex={0}
-                    onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') toggleService(s.slug) }}
+                    key={b.slug}
+                    className={`group cursor-pointer transition-colors hover:bg-neutral-50 dark:hover:bg-neutral-800/50 ${selected ? "bg-neutral-50 dark:bg-neutral-800/50" : ""}`}
+                    onClick={() => toggleBundle(b.slug)}
                   >
-                    <td className="px-0 py-0 align-top">
-                      <div className={["w-1 h-full", selected ? "bg-emerald-700/60" : "bg-transparent"].join(" ")} />
+                    <td className="px-0 py-0">
+                      <div className={`h-full w-1 transition-colors ${selected ? "bg-blue-500" : "bg-transparent"}`} />
                     </td>
-                    <td className="px-2 py-2 text-white">
-                      <div className="font-medium flex items-center gap-1.5">
-                        {selected && (
-                          <span className="inline-flex h-4 w-4 items-center justify-center rounded-full bg-emerald-900/40 ring-1 ring-emerald-700/30">
-                            <Check className="h-3 w-3 text-emerald-300" />
+                    <td className="px-6 py-4">
+                      <div className="flex items-center gap-3">
+                        <div className="relative h-10 w-16 overflow-hidden rounded bg-neutral-200 dark:bg-neutral-800">
+                          {b.bgImg && <Image src={b.bgImg} alt={b.title} fill className="object-cover" />}
+                          <div className="absolute inset-0 ring-1 ring-inset ring-black/10 dark:ring-white/10" />
+                        </div>
+                        <div>
+                          <div className="flex items-center gap-2 font-medium text-neutral-900 dark:text-white">
+                            {b.title}
+                            {selected && <Check className="h-3.5 w-3.5 text-blue-500" />}
+                          </div>
+                          <div className="flex gap-1.5 mt-0.5">
+                            {b.tags?.slice(0, 2).map((t: string) => (
+                              <span key={t} className="inline-flex text-[10px] text-neutral-500">#{t}</span>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 text-neutral-600 dark:text-neutral-300">{b.billing || '—'}</td>
+                    <td className="px-6 py-4 text-neutral-600 dark:text-neutral-300">{b.priceRange || '—'}</td>
+                    <td className="px-6 py-4">
+                      <div className="flex flex-wrap gap-1.5">
+                        {(expanded.services || []).slice(0, 3).map((s: any) => (
+                          <span key={s.slug} className="rounded bg-neutral-100 px-1.5 py-0.5 text-[11px] text-neutral-600 dark:bg-neutral-800 dark:text-neutral-400">
+                            {s.title}
+                          </span>
+                        ))}
+                        {expanded.services.length > 3 && (
+                          <span className="rounded bg-neutral-100 px-1.5 py-0.5 text-[11px] text-neutral-500 dark:bg-neutral-800">
+                            +{expanded.services.length - 3}
                           </span>
                         )}
-                        <span>{s.title}</span>
                       </div>
-                      <div className="text-[11px] text-[#949BA4] font-mono">/{s.slug}</div>
                     </td>
-                    <td className="px-4 py-2 text-[#DBDEE1]">{s.category || '—'}</td>
-                    <td className="px-4 py-2">
-                      <span
-                        className={[
-                          'inline-flex items-center rounded-full px-2 py-0.5 text-[11px] border',
-                          status === 'active'
-                            ? 'border-emerald-600/20 bg-emerald-900/20 text-emerald-300'
-                            : status === 'draft'
-                            ? 'border-yellow-600/20 bg-yellow-900/20 text-yellow-300'
-                            : 'border-[#3F4147] bg-[#232428] text-[#C2C7CE]'
-                        ].join(' ')}
-                      >
-                        {status}
-                      </span>
-                    </td>
-                    <td className="px-4 py-2 text-[#DBDEE1]">{s.priceRange || '—'}</td>
-                    <td className="px-4 py-2">
-                      {(s.tags || []).length ? (
-                        <span className="inline-flex items-center rounded-full border border-[#3F4147] bg-[#232428] px-2 py-0.5 text-[11px] text-[#C2C7CE]">
-                          {(s.tags || []).length} tags
-                        </span>
-                      ) : (
-                        <span className="text-[#949BA4]">—</span>
-                      )}
-                    </td>
-                    <td className="px-4 py-2 text-[#DBDEE1]">{count}</td>
-                    <td className="px-4 py-2 text-[#949BA4]">{updated}</td>
-                    <td className="px-4 py-2">
-                      <div className="flex items-center gap-1.5">
-                        <button disabled className="h-7 px-2 rounded-md border border-[#3F4147] bg-[#1E1F22] text-[12px] text-[#949BA4] cursor-not-allowed hover:border-[#4b4e55]">Edit</button>
-                        <Link href={`/services/${s.slug}`} onClick={(e) => e.stopPropagation()} className="h-7 inline-flex items-center px-2 rounded-md border border-[#3F4147] bg-[#121316] text-[12px] text-emerald-300 hover:text-emerald-200">View</Link>
-                        <button disabled className="h-7 px-2 rounded-md border border-[#3F4147] bg-[#1E1F22] text-[12px] text-[#949BA4] cursor-not-allowed hover:border-[#4b4e55]">Duplicate</button>
-                        <button disabled className="h-7 px-2 rounded-md border border-[#3F4147] bg-[#1E1F22] text-[12px] text-[#949BA4] cursor-not-allowed hover:border-[#4b4e55]">Archive</button>
-                      </div>
+                    <td className="px-6 py-4 text-right">
+                       <span className="text-xs text-neutral-400">{b.tags?.length || 0}</span>
                     </td>
                   </tr>
-                )
-              })}
-              {services.length === 0 && (
-                <tr>
-                  <td colSpan={9} className="px-4 py-6 text-center text-[#949BA4]">No services.</td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
-      </motion.section>
+                )})}
+              </tbody>
+            </table>
+          </div>
+        </motion.section>
 
-      {/* Footer links */}
-      <div className="mt-4 flex items-center gap-2 text-[12px] text-[#949BA4]">
-        <Link href="/services" className="underline decoration-dotted underline-offset-2">View public services page</Link>
-        <span aria-hidden>•</span>
-        <Link href="/services/faq" className="underline decoration-dotted underline-offset-2">FAQ & Pricing</Link>
+        {/* Services */}
+        <motion.section layout transition={{ duration: 0.2 }} className="overflow-hidden rounded-xl border border-neutral-200 bg-white shadow-sm dark:border-neutral-800 dark:bg-neutral-900">
+          <div className="relative flex items-center justify-between border-b border-neutral-100 bg-neutral-50/50 px-6 py-4 dark:border-neutral-800 dark:bg-neutral-900/50">
+            <div>
+              <h2 className="text-base font-semibold text-neutral-900 dark:text-white">All Services</h2>
+              <div className="text-xs text-neutral-500">{services.length} services</div>
+            </div>
+            
+            <AnimatePresence initial={false}>
+              {selectedServicesCount > 0 && (
+                <motion.div
+                  key="services-action-bar"
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  transition={{ duration: 0.2 }}
+                  className="absolute inset-0 z-10 flex items-center justify-between bg-white px-6 dark:bg-neutral-900"
+                >
+                  <div className="flex items-center gap-3">
+                    <span className="flex items-center gap-2 rounded-lg bg-neutral-100 px-3 py-1 text-xs font-medium text-neutral-900 dark:bg-neutral-800 dark:text-white">
+                      {selectedServicesCount} selected
+                    </span>
+                    <button onClick={selectAllServices} className="text-xs font-medium text-neutral-500 hover:text-neutral-900 dark:hover:text-white">Select all</button>
+                    <button onClick={clearServices} className="text-xs font-medium text-neutral-500 hover:text-neutral-900 dark:hover:text-white">Clear</button>
+                  </div>
+                  <div className="flex items-center gap-2">
+                     <button className="flex h-8 items-center gap-2 rounded-lg border border-neutral-200 px-3 text-xs font-medium text-neutral-600 hover:bg-neutral-50 dark:border-neutral-800 dark:text-neutral-400 dark:hover:bg-neutral-800"><Copy className="h-3.5 w-3.5" /> Duplicate</button>
+                     <button className="flex h-8 items-center gap-2 rounded-lg border border-neutral-200 px-3 text-xs font-medium text-neutral-600 hover:bg-neutral-50 dark:border-neutral-800 dark:text-neutral-400 dark:hover:bg-neutral-800"><Archive className="h-3.5 w-3.5" /> Archive</button>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+          
+          <div className="overflow-x-auto">
+            <table className="w-full text-left text-sm">
+              <thead className="bg-neutral-50 text-neutral-500 dark:bg-neutral-900 dark:text-neutral-400">
+                <tr>
+                  <th className="w-1 px-0 py-0" />
+                  <th className="px-6 py-3 font-medium">Service</th>
+                  <th className="px-6 py-3 font-medium">Category</th>
+                  <th className="px-6 py-3 font-medium">Status</th>
+                  <th className="px-6 py-3 font-medium">Price</th>
+                  <th className="px-6 py-3 font-medium text-right">In Bundles</th>
+                  <th className="px-6 py-3 font-medium text-right">Updated</th>
+                  <th className="px-6 py-3 font-medium text-right"></th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-neutral-100 dark:divide-neutral-800">
+                {services.map((s) => {
+                  const count = usage.get(s.slug) || 0
+                  const status = s.status || 'active'
+                  const updated = s.updatedAt ? new Date(s.updatedAt).toLocaleDateString() : '—'
+                  const selected = selectedServiceSlugs.has(s.slug)
+                  return (
+                    <tr
+                      key={s.slug}
+                      className={`group cursor-pointer transition-colors hover:bg-neutral-50 dark:hover:bg-neutral-800/50 ${selected ? "bg-neutral-50 dark:bg-neutral-800/50" : ""}`}
+                      onClick={() => toggleService(s.slug)}
+                    >
+                      <td className="px-0 py-0">
+                        <div className={`h-full w-1 transition-colors ${selected ? "bg-blue-500" : "bg-transparent"}`} />
+                      </td>
+                      <td className="px-6 py-4">
+                        <div>
+                          <div className="flex items-center gap-2 font-medium text-neutral-900 dark:text-white">
+                            {s.title}
+                            {selected && <Check className="h-3.5 w-3.5 text-blue-500" />}
+                          </div>
+                          <div className="font-mono text-xs text-neutral-400">/{s.slug}</div>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 text-neutral-600 dark:text-neutral-300">{s.category || '—'}</td>
+                      <td className="px-6 py-4">
+                         <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium border capitalize
+                           ${status === 'active' 
+                             ? 'bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-900/20 dark:text-emerald-300 dark:border-emerald-800' 
+                             : 'bg-neutral-100 text-neutral-600 border-neutral-200 dark:bg-neutral-800 dark:text-neutral-400 dark:border-neutral-700'
+                           }`}
+                         >
+                           {status}
+                         </span>
+                      </td>
+                      <td className="px-6 py-4 text-neutral-600 dark:text-neutral-300">{s.priceRange || '—'}</td>
+                      <td className="px-6 py-4 text-right text-neutral-600 dark:text-neutral-300">{count}</td>
+                      <td className="px-6 py-4 text-right text-xs text-neutral-500">{updated}</td>
+                      <td className="px-6 py-4 text-right">
+                        <Link 
+                          href={`/services/${s.slug}`} 
+                          onClick={(e) => e.stopPropagation()} 
+                          className="inline-flex items-center justify-center rounded-lg p-1.5 text-neutral-400 hover:bg-white hover:text-neutral-900 hover:shadow-sm dark:hover:bg-neutral-800 dark:hover:text-white"
+                        >
+                          <MoreHorizontal className="h-4 w-4" />
+                        </Link>
+                      </td>
+                    </tr>
+                  )
+                })}
+              </tbody>
+            </table>
+          </div>
+        </motion.section>
+
+        {/* Footer links */}
+        <div className="mt-8 flex items-center justify-center gap-4 text-xs text-neutral-500">
+          <Link href="/services" className="hover:text-neutral-900 dark:hover:text-white">Public Page</Link>
+          <span className="text-neutral-300 dark:text-neutral-700">•</span>
+          <Link href="/services/faq" className="hover:text-neutral-900 dark:hover:text-white">Pricing FAQ</Link>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function KpiCard({ title, value, icon }: { title: string, value: string | number, icon?: React.ReactNode }) {
+  return (
+    <div className="flex flex-col justify-between rounded-xl border border-neutral-200 bg-white p-5 shadow-sm dark:border-neutral-800 dark:bg-neutral-900">
+      <div className="flex items-center justify-between">
+        <span className="text-xs font-medium text-neutral-500 uppercase tracking-wide">{title}</span>
+        {icon}
+      </div>
+      <div className="mt-4">
+        <div className="text-2xl font-bold text-neutral-900 dark:text-white">{value}</div>
       </div>
     </div>
   )

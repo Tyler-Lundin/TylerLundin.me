@@ -5,14 +5,15 @@ import { Footer } from '@/components/layout/Footer'
 import ReactiveBackground from '@/components/ReactiveBackground'
 import StatsDrawer from '@/components/sections/StatsDrawer'
 import Greeting from '../Greeting'
+import DevBreadcrumbs from '../dev/DevBreadcrumbs'
 
 export function SiteShell({ children }: { children: React.ReactNode }) {
 
   const pathname = usePathname()
   const isDevRoute = pathname.includes('/dev')
-  const isHome = pathname === '/'
-  const isAbout = pathname === '/about' || pathname === '/about/'
-  const isProjectSlug = /^\/project\/[^/]+\/?$/.test(pathname) || /^\/projects\/[^/]+\/?$/.test(pathname)
+  // const isHome = pathname === '/'
+  // const isAbout = pathname === '/about' || pathname === '/about/'
+  // const isProjectSlug = /^\/project\/[^/]+\/?$/.test(pathname) || /^\/projects\/[^/]+\/?$/.test(pathname)
 
   if (!isDevRoute) return <UserShell children={children} />
 
@@ -44,13 +45,23 @@ function UserShell({ children }: { children: React.ReactNode }) {
 }
 
 function DevShell({ children }: { children: React.ReactNode }) {
+  const pathname = usePathname()
+  const isDevRoute = pathname.includes('/dev')
+
+  const disabledLinks = [
+    '/dev/blog/wizard'
+  ]
+
+  const isDisabled = disabledLinks.includes(pathname) 
+
   return (
     <div className="relative max-w-screen min-h-screen overflow-x-hidden">
       {/* Dimmed particles background */}
       <div className="hidden sm:fixed inset-0 -z-10 pointer-events-none opacity-50">
         <ReactiveBackground />
       </div>
-      <div className="pb-2 max-w-7xl mx-auto">
+      <div className={`max-w-7xl mx-auto ${!isDisabled && "pt-12"}`}>
+      {!isDisabled && (<DevBreadcrumbs />)}
         {children}
       </div>
     </div>

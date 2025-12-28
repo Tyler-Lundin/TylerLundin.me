@@ -1,5 +1,6 @@
 "use client"
-import React, { useMemo, useRef, useState, useEffect } from 'react'
+import React, { useMemo, useRef, useState, useEffect, useActionState } from 'react'
+import { createProjectMessageAction } from '@/app/dev/actions/crm'
 
 type ChatAuthor = 'admin' | 'client'
 
@@ -26,9 +27,31 @@ export default function ProjectMessages({
   const fileInputRef = useRef<HTMLInputElement>(null)
   const [attachments, setAttachments] = useState<{ id: string; url: string; name?: string; type?: string }[]>([])
 
+  // State for Server Action
+  const [state, formAction, isPending] = useActionState(async (prev: any, formData: FormData) => {
+    // Append the dynamic fields that are not in the form but in local state
+    formData.append('project_id', project.id)
+    formData.append('author_role', role)
+    formData.append('author_name', role === 'admin' ? 'Admin' : project.client.name)
+    
+    const result = await createProjectMessageAction(prev, formData)
+    if (result.success) {
+      setDraft('')
+      setAttachments([])
+      // Note: revalidatePath in server action will refresh server data, 
+      // but if we want instant optimistic UI, we could push here.
+      // For now, we rely on the refresh.
+    }
+    return result
+  }, null)
+
+  // Update messages state when initialMessages (props) change (from server refresh)
   useEffect(() => {
-    // auto-scroll to bottom on mount and when messages change
-    listRef.current?.scrollTo({ top: listRef.current.scrollHeight })
+    setMessages(initialMessages)
+  }, [initialMessages])
+
+  useEffect(() => {
+    listRef.current?.scrollTo({ top: listRef.current.scrollHeight, behavior: 'smooth' })
   }, [messages.length])
 
   const counts = useMemo(() => {
@@ -38,27 +61,6 @@ export default function ProjectMessages({
       client: messages.filter((m) => m.author === 'client').length,
     }
   }, [messages])
-
-  function sendMock(e: React.FormEvent) {
-    e.preventDefault()
-    if (!draft.trim()) return
-    // purely in-memory mock send for look & feel
-    setMessages((prev) => [
-      ...prev,
-      {
-        id: `${Date.now()}`,
-        author: role,
-        name: role === 'admin' ? 'Admin' : project.client.name,
-        text: draft.trim(),
-        ts: new Date().toLocaleTimeString(),
-        attachments: attachments.length ? attachments : undefined,
-      },
-    ])
-    setDraft('')
-    // clear attachments and revoke URLs
-    attachments.forEach((a) => a.url.startsWith('blob:') && URL.revokeObjectURL(a.url))
-    setAttachments([])
-  }
 
   function onPickImage() {
     fileInputRef.current?.click()
@@ -73,7 +75,6 @@ export default function ProjectMessages({
       next.push({ id: `${Date.now()}-${f.name}`, url, name: f.name, type: f.type })
     })
     if (next.length) setAttachments((prev) => [...prev, ...next])
-    // reset input value to allow re-selecting same file
     if (fileInputRef.current) fileInputRef.current.value = ''
   }
 
@@ -102,33 +103,36 @@ export default function ProjectMessages({
   }
 
   return (
-    <section className="rounded-lg border border-[#3F4147] overflow-hidden">
-      <div className="px-4 py-2.5 bg-[#1E1F22] border-b border-[#3F4147] flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <span className="text-sm font-medium text-white">Messages</span>
-          <span className="text-[10px] px-1.5 py-0.5 rounded bg-[#232428] border border-[#3F4147] text-[#949BA4]">{counts.total}</span>
-          <span className="hidden sm:inline text-[10px] text-[#949BA4]">{counts.admin} admin · {counts.client} client</span>
+    <section className="rounded-2xl border border-neutral-200 dark:border-neutral-800 overflow-hidden bg-white dark:bg-neutral-950 shadow-sm transition-all">
+      <div className="px-6 py-4 border-b border-neutral-100 dark:border-neutral-800/50 flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <span className="text-sm font-bold text-neutral-900 dark:text-white">Workspace Chat</span>
+          <div className="flex items-center gap-1.5">
+            <span className="text-[10px] px-2 py-0.5 rounded-full bg-neutral-100 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 text-neutral-500 font-bold">{counts.total}</span>
+            <span className="hidden sm:inline text-[10px] text-neutral-400 font-medium tracking-wider uppercase">{counts.admin} admin · {counts.client} client</span>
+          </div>
         </div>
-        <button className="h-7 px-2 rounded border border-[#3F4147] bg-[#232428] text-xs text-[#DBDEE1] opacity-60 cursor-not-allowed">Open full chat</button>
+        <button className="text-xs font-semibold text-blue-600 hover:text-blue-700 dark:text-blue-400 transition-colors">Open full view</button>
       </div>
 
-      {/* Messages list */}
-      <div ref={listRef} className="max-h-72 overflow-y-auto bg-[#0F1115]">
-        <ul className="px-3 py-3 space-y-2">
+      <div ref={listRef} className="max-h-80 overflow-y-auto bg-neutral-50/30 dark:bg-neutral-900/20 p-6 custom-scrollbar">
+        <ul className="space-y-4">
           {messages.map((m) => (
             <li key={m.id} className={`flex ${m.author === 'admin' ? 'justify-end' : 'justify-start'}`}>
-              <div className={`max-w-[80%] rounded-lg border px-3 py-2 text-sm leading-5 ${
+              <div className={`max-w-[85%] sm:max-w-[70%] rounded-2xl px-4 py-3 shadow-sm border ${
                 m.author === 'admin'
-                  ? 'bg-[#1E1F22] border-[#3F4147] text-[#DBDEE1]'
-                  : 'bg-[#0E2A3A] border-[#0B364A] text-[#93C5FD]'
+                  ? 'bg-neutral-900 border-neutral-800 text-white dark:bg-white dark:text-neutral-900 dark:border-white'
+                  : 'bg-white border-neutral-200 text-neutral-900 dark:bg-neutral-800 dark:border-neutral-700 dark:text-white'
               }`}>
-                <div className="text-[10px] opacity-70 mb-0.5">{m.name} · {m.ts}</div>
-                <div className="whitespace-pre-wrap">{m.text}</div>
+                <div className={`text-[10px] font-bold uppercase tracking-widest mb-1.5 opacity-60 ${m.author === 'admin' ? 'text-neutral-300 dark:text-neutral-500' : 'text-neutral-500 dark:text-neutral-400'}`}>
+                  {m.name} • {m.ts}
+                </div>
+                <div className="text-sm leading-relaxed whitespace-pre-wrap font-medium">{m.text}</div>
                 {m.attachments && m.attachments.length > 0 && (
-                  <div className="mt-2 grid grid-cols-3 gap-2">
+                  <div className="mt-3 grid grid-cols-2 gap-2">
                     {m.attachments.map((a) => (
-                      <a key={a.id} href={a.url} target="_blank" rel="noreferrer" className="block overflow-hidden rounded border border-[#3F4147] bg-black/20">
-                        <img src={a.url} alt={a.name || 'attachment'} className="h-24 w-full object-cover" />
+                      <a key={a.id} href={a.url} target="_blank" rel="noreferrer" className="block overflow-hidden rounded-xl border border-neutral-200 dark:border-neutral-700 hover:opacity-90 transition-opacity">
+                        <img src={a.url} alt={a.name || 'attachment'} className="h-32 w-full object-cover" />
                       </a>
                     ))}
                   </div>
@@ -137,42 +141,62 @@ export default function ProjectMessages({
             </li>
           ))}
           {messages.length === 0 && (
-            <li className="text-[12px] text-[#949BA4]">No messages yet.</li>
+            <li className="py-10 text-center">
+               <div className="text-xs font-bold text-neutral-400 uppercase tracking-widest">No conversation history</div>
+               <p className="mt-1 text-[11px] text-neutral-500">Messages sent here are visible to the project team.</p>
+            </li>
           )}
         </ul>
       </div>
 
-      {/* Composer (mock-send, local only) */}
-      <form onSubmit={sendMock} className="px-3 sm:px-4 py-3 bg-[#16171A] border-t border-[#3F4147] flex flex-col gap-2">
-        {attachments.length > 0 && (
-          <div className="flex items-center gap-2 flex-wrap">
-            {attachments.map((a) => (
-              <div key={a.id} className="relative w-14 h-14 rounded-md overflow-hidden border border-[#3F4147]">
-                <img src={a.url} alt={a.name || ''} className="w-full h-full object-cover" />
-                <button type="button" onClick={() => removeAttachment(a.id)} className="absolute top-0 right-0 m-0.5 text-[10px] bg-black/50 px-1 rounded">×</button>
-              </div>
-            ))}
+      <form action={formAction} className="p-4 bg-white dark:bg-neutral-950 border-t border-neutral-100 dark:border-neutral-800/50">
+        <div className="flex flex-col gap-3">
+          {attachments.length > 0 && (
+            <div className="flex items-center gap-2 flex-wrap px-2">
+              {attachments.map((a) => (
+                <div key={a.id} className="relative w-16 h-16 rounded-xl overflow-hidden border-2 border-neutral-100 dark:border-neutral-800 shadow-sm group">
+                  <img src={a.url} alt={a.name || ''} className="w-full h-full object-cover" />
+                  <button type="button" onClick={() => removeAttachment(a.id)} className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity text-white font-bold text-lg">×</button>
+                </div>
+              ))}
+            </div>
+          )}
+          
+          <div className="flex items-center gap-2">
+            <select
+              value={role}
+              onChange={(e) => setRole(e.target.value as ChatAuthor)}
+              className="h-10 rounded-xl bg-neutral-50 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 px-3 text-xs font-bold text-neutral-600 dark:text-neutral-400 outline-none focus:ring-2 focus:ring-neutral-100 transition-all"
+            >
+              <option value="admin">As Admin</option>
+              <option value="client">As Client</option>
+            </select>
+            <input
+              name="text"
+              value={draft}
+              onChange={(e) => setDraft(e.target.value)}
+              onPaste={onPaste}
+              required
+              placeholder="Type your message..."
+              autoComplete="off"
+              className="flex-1 h-10 rounded-xl bg-neutral-50 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 px-4 text-sm text-neutral-900 dark:text-white placeholder-neutral-400 outline-none focus:bg-white dark:focus:bg-neutral-950 focus:ring-4 focus:ring-neutral-100 dark:focus:ring-neutral-800/50 transition-all"
+            />
+            <input ref={fileInputRef} type="file" accept="image/png,image/jpeg,image/jpg,image/gif,image/webp" multiple hidden onChange={(e) => onFilesSelected(e.target.files)} />
+            <button 
+              type="button" 
+              onClick={onPickImage} 
+              className="hidden sm:flex h-10 px-4 items-center justify-center rounded-xl border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 text-xs font-bold text-neutral-600 dark:text-neutral-400 hover:bg-neutral-50 dark:hover:bg-neutral-800 transition-all"
+            >
+              Attach
+            </button>
+            <button 
+              type="submit" 
+              disabled={isPending || !draft.trim()}
+              className="h-10 px-6 rounded-xl bg-neutral-900 dark:bg-white text-xs font-bold text-white dark:text-neutral-900 hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:scale-100 transition-all"
+            >
+              {isPending ? '...' : 'Send'}
+            </button>
           </div>
-        )}
-        <div className="flex items-center gap-2">
-        <select
-          value={role}
-          onChange={(e) => setRole(e.target.value as ChatAuthor)}
-          className="h-8 rounded-md bg-[#1E1F22] border border-[#3F4147] px-2 text-xs text-[#DBDEE1]"
-        >
-          <option value="admin">Admin</option>
-          <option value="client">Client</option>
-        </select>
-        <input
-          value={draft}
-          onChange={(e) => setDraft(e.target.value)}
-          onPaste={onPaste}
-          placeholder="Type a message (mock)"
-          className="flex-1 h-9 rounded-md bg-[#1E1F22] border border-[#3F4147] px-3 text-sm text-white placeholder-[#6B7280] focus:outline-none"
-        />
-        <input ref={fileInputRef} type="file" accept="image/png,image/jpeg,image/jpg,image/gif,image/webp" multiple hidden onChange={(e) => onFilesSelected(e.target.files)} />
-        <button type="button" onClick={onPickImage} className="h-9 px-3 rounded-md border border-[#3F4147] bg-[#1E1F22] text-sm text-[#DBDEE1] hover:bg-[#2a2b30]">Attach image</button>
-        <button type="submit" className="h-9 px-3 rounded-md border border-[#3F4147] bg-[#1E1F22] text-sm text-[#DBDEE1] hover:bg-[#2a2b30]">Send</button>
         </div>
       </form>
     </section>

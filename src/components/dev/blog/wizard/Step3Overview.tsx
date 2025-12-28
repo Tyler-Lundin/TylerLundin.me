@@ -5,6 +5,7 @@ import type { ChatMessage, WizardState } from './types'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import { useActivity } from './activity/ActivityContext'
+import { Sparkles, Send } from 'lucide-react'
 
 export default function Step3Overview({ state, setState }: { state: WizardState; setState: (s: Partial<WizardState>) => void }) {
   const [input, setInput] = useState('')
@@ -59,119 +60,118 @@ export default function Step3Overview({ state, setState }: { state: WizardState;
   }, [])
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-      <div className="lg:col-span-3 space-y-5">
-        {/* 1) Core details */}
-        <div className="rounded-lg border border-black/10 dark:border-white/10 p-4 bg-white/70 dark:bg-neutral-900/60">
-          <div className="text-xs uppercase opacity-70 mb-2">Core details</div>
-          <div className="grid md:grid-cols-2 gap-4">
-          <div className="space-y-3">
-            <div className="flex flex-col gap-2">
-              <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-200">Title</label>
-              <input
-                value={d.title || ''}
-                onChange={(e) => setState({ draft: { ...d, title: e.target.value } })}
-                className="rounded-lg border border-black/10 dark:border-white/10 bg-white dark:bg-neutral-900 px-4 py-3 text-base placeholder:text-neutral-400 dark:placeholder:text-neutral-500 focus:outline-none focus:ring-2 focus:ring-black/20 dark:focus:ring-white/20"
-              />
-            </div>
-            <div className="flex flex-col gap-2">
-              <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-200">Excerpt</label>
-              <textarea
-                value={d.excerpt || ''}
-                onChange={(e) => setState({ draft: { ...d, excerpt: e.target.value } })}
-                rows={4}
-                className="rounded-lg border border-black/10 dark:border-white/10 bg-white dark:bg-neutral-900 px-4 py-3 text-base placeholder:text-neutral-400 dark:placeholder:text-neutral-500 focus:outline-none focus:ring-2 focus:ring-black/20 dark:focus:ring-white/20"
-              />
-            </div>
-            <div className="flex flex-col gap-2">
-              <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-200">Tags</label>
-              <input
-                value={(d.tags || []).join(', ')}
-                onChange={(e) => setState({ draft: { ...d, tags: e.target.value.split(',').map((s) => s.trim()).filter(Boolean) } })}
-                placeholder="Comma separated"
-                className="rounded-lg border border-black/10 dark:border-white/10 bg-white dark:bg-neutral-900 px-4 py-3 text-base placeholder:text-neutral-400 dark:placeholder:text-neutral-500 focus:outline-none focus:ring-2 focus:ring-black/20 dark:focus:ring-white/20"
-              />
-            </div>
+    <div className="mx-auto max-w-3xl space-y-8">
+      
+      {/* --- Card 1: Core Details --- */}
+      <div className="rounded-xl border border-neutral-200 bg-white shadow-sm dark:border-neutral-800 dark:bg-neutral-900">
+        <div className="p-6">
+          <h2 className="text-lg font-semibold text-neutral-900 dark:text-white">Review & Edit Draft</h2>
+          <p className="mt-1 text-sm text-neutral-500">
+            This is your working draft. Edit the title, excerpt, and markdown content directly. Use the AI editor for quick revisions.
+          </p>
+        </div>
+        <div className="space-y-6 border-t border-neutral-200 p-6 dark:border-neutral-800">
+          <div>
+            <label className="mb-1.5 block text-sm font-medium text-neutral-700 dark:text-neutral-300">Title</label>
+            <input
+              value={d.title || ''}
+              onChange={(e) => setState({ draft: { ...d, title: e.target.value } })}
+              className="w-full rounded-lg border border-neutral-200 bg-white px-4 py-2.5 text-sm outline-none shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-100 dark:border-neutral-700 dark:bg-neutral-950 dark:text-white dark:focus:border-blue-500 dark:focus:ring-blue-500/20"
+            />
           </div>
-          <div className="flex flex-col">
-            <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-200 mb-1">Quick repair (AI)</label>
-            <div className="flex flex-wrap gap-2 mb-2">
-              {quickChips.map((chip) => (
-                <button
-                  key={chip}
-                  type="button"
-                  onClick={() => setInput(chip)}
-                  className="px-2.5 py-1.5 text-xs rounded-full bg-black/5 dark:bg-white/10 hover:bg-black/10 dark:hover:bg-white/20"
-                >
-                  {chip}
-                </button>
-              ))}
-            </div>
-            <div className="rounded-lg border border-black/10 dark:border-white/10 bg-white/70 dark:bg-neutral-900/60 p-3 min-h-[160px] max-h-[220px] overflow-auto">
-              <div className="space-y-3">
-                {state.edit_messages?.map((m, i) => {
-                  const isUser = m.role === 'user'
-                  const bubbleBase = 'inline-block max-w-[95%] rounded-lg px-3 py-2 align-top'
-                  const bubbleTone = isUser
-                    ? 'bg-black text-white dark:bg-white dark:text-black'
-                    : 'bg-black/5 dark:bg-white/10'
-                  const proseTone = isUser ? 'prose-invert' : ''
-                  return (
-                    <div key={i} className={isUser ? 'text-right' : 'text-left'}>
-                      <div className={`${bubbleBase} ${bubbleTone}`}>
-                        <div className={`prose prose-sm ${proseTone} max-w-none [&>p:first-child]:mt-0 [&>p:last-child]:mb-0`}>
-                          <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                            {m.content}
-                          </ReactMarkdown>
-                        </div>
-                      </div>
-                    </div>
-                  )
-                })}
-                {state.edit_messages?.length === 0 && (
-                  <div className="text-xs opacity-70">Type a quick change below and press Send.</div>
-                )}
-              </div>
-            </div>
-            <div className="mt-2 flex gap-2 items-center">
-              <input
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                placeholder="Describe a change…"
-                className="flex-1 rounded-lg border border-black/10 dark:border-white/10 bg-white dark:bg-neutral-900 px-3 py-2 text-sm placeholder:text-neutral-400 dark:placeholder:text-neutral-500 focus:outline-none focus:ring-2 focus:ring-black/20 dark:focus:ring-white/20"
-              />
-              <button onClick={send} disabled={!input.trim()} className="shrink-0 px-3 py-2 rounded bg-black text-white text-sm dark:bg-white dark:text-black">
-                {loading ? 'Applying…' : 'Send'}
-              </button>
-            </div>
-            {error && <p className="text-xs text-rose-500 mt-2">{error}</p>}
+          <div>
+            <label className="mb-1.5 block text-sm font-medium text-neutral-700 dark:text-neutral-300">Excerpt</label>
+            <textarea
+              value={d.excerpt || ''}
+              onChange={(e) => setState({ draft: { ...d, excerpt: e.target.value } })}
+              rows={3}
+              className="w-full rounded-lg border border-neutral-200 bg-white px-4 py-2.5 text-sm outline-none shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-100 dark:border-neutral-700 dark:bg-neutral-950 dark:text-white dark:focus:border-blue-500 dark:focus:ring-blue-500/20"
+            />
           </div>
+          <div>
+            <label className="mb-1.5 block text-sm font-medium text-neutral-700 dark:text-neutral-300">Tags</label>
+            <input
+              value={(d.tags || []).join(', ')}
+              onChange={(e) => setState({ draft: { ...d, tags: e.target.value.split(',').map((s) => s.trim()).filter(Boolean) } })}
+              placeholder="Comma separated"
+              className="w-full rounded-lg border border-neutral-200 bg-white px-4 py-2.5 text-sm outline-none shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-100 dark:border-neutral-700 dark:bg-neutral-950 dark:text-white dark:focus:border-blue-500 dark:focus:ring-blue-500/20"
+            />
           </div>
         </div>
+      </div>
 
-        {/* 2) Body editing */}
-        <div className="rounded-lg border border-black/10 dark:border-white/10 p-4 bg-white/70 dark:bg-neutral-900/60">
-          <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-200 mb-2">Body (Markdown)</label>
+      {/* --- Card 2: AI Quick Editor --- */}
+      <div className="rounded-xl border border-neutral-200 bg-white shadow-sm dark:border-neutral-800 dark:bg-neutral-900">
+        <div className="p-6">
+          <div className="flex items-center gap-3">
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-100 text-blue-600 dark:bg-blue-500/10 dark:text-blue-400">
+              <Sparkles className="h-5 w-5" />
+            </div>
+            <h2 className="text-lg font-semibold text-neutral-900 dark:text-white">AI Quick Editor</h2>
+          </div>
+          <p className="mt-2 text-sm text-neutral-500">
+            Need a quick fix? Ask the assistant to make specific changes to the draft.
+          </p>
+        </div>
+        <div className="border-t border-neutral-200 bg-neutral-50/50 p-6 dark:border-neutral-800 dark:bg-neutral-900/50">
+          <div className="mb-4 flex flex-wrap gap-2">
+            {quickChips.map((chip) => (
+              <button
+                key={chip}
+                type="button"
+                onClick={() => setInput(chip)}
+                className="rounded-full bg-white px-3 py-1 text-xs text-neutral-600 ring-1 ring-inset ring-neutral-200 transition hover:bg-neutral-50 dark:bg-neutral-800 dark:text-neutral-300 dark:ring-neutral-700 dark:hover:bg-neutral-700"
+              >
+                {chip}
+              </button>
+            ))}
+          </div>
+          <div className="h-[200px] space-y-4 overflow-y-auto rounded-lg border border-neutral-200 bg-white p-4 dark:border-neutral-700 dark:bg-neutral-900">
+            {state.edit_messages?.map((m, i) => {
+              const isUser = m.role === 'user'
+              return (
+                <div key={i} className={`flex ${isUser ? 'justify-end' : 'justify-start'}`}>
+                  <div className={`max-w-[85%] rounded-2xl px-4 py-2.5 text-sm leading-relaxed ${isUser ? 'rounded-br-none bg-neutral-900 text-white dark:bg-white dark:text-neutral-900' : 'rounded-bl-none bg-neutral-100 text-neutral-800 dark:bg-neutral-800 dark:text-neutral-200'}`}>
+                    <ReactMarkdown remarkPlugins={[remarkGfm]}>{m.content}</ReactMarkdown>
+                  </div>
+                </div>
+              )
+            })}
+          </div>
+          <div className="mt-3 flex items-center gap-2">
+            <input
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              onKeyDown={(e) => e.key === 'Enter' && !e.shiftKey && input.trim() && send()}
+              placeholder="Describe a change…"
+              className="flex-1 rounded-lg border border-neutral-200 bg-white px-4 py-2.5 text-sm outline-none shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-100 dark:border-neutral-700 dark:bg-neutral-950 dark:text-white dark:focus:border-blue-500 dark:focus:ring-blue-500/20"
+            />
+            <button onClick={send} disabled={!input.trim()} className="flex h-10 w-10 items-center justify-center rounded-lg bg-neutral-900 text-white shadow-sm transition hover:bg-neutral-800 disabled:opacity-50 dark:bg-white dark:text-neutral-900 dark:hover:bg-neutral-200">
+              <Send className="h-4 w-4" />
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* --- Card 3: Body Content --- */}
+      <div className="rounded-xl border border-neutral-200 bg-white shadow-sm dark:border-neutral-800 dark:bg-neutral-900">
+        <div className="p-6">
+          <h2 className="text-lg font-semibold text-neutral-900 dark:text-white">Body Content</h2>
+          <p className="mt-1 text-sm text-neutral-500">
+            Edit the full post content using Markdown. Use the preview drawer (top right) to see your changes rendered live.
+          </p>
+        </div>
+        <div className="border-t border-neutral-200 p-2 dark:border-neutral-800">
           <textarea
             value={d.content_md || ''}
             onChange={(e) => setState({ draft: { ...d, content_md: e.target.value } })}
-            rows={16}
-            className="w-full rounded-lg border border-black/10 dark:border-white/10 bg-white dark:bg-neutral-900 px-4 py-3 font-mono text-sm placeholder:text-neutral-400 dark:placeholder:text-neutral-500 focus:outline-none focus:ring-2 focus:ring-black/20 dark:focus:ring-white/20"
+            rows={20}
+            className="w-full rounded-lg border-transparent bg-white p-4 font-mono text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 dark:border-transparent dark:bg-neutral-900 dark:text-neutral-200 dark:focus:border-blue-500 dark:focus:ring-blue-500/20"
           />
-          <div className="text-[11px] opacity-70 mt-1">Use the preview drawer to confirm rendered formatting.</div>
         </div>
       </div>
-      <div className="lg:col-span-1 space-y-3">
-        <div className="rounded-lg border border-black/10 dark:border-white/10 p-4 bg-white/60 dark:bg-neutral-900/60">
-          <div className="text-xs uppercase opacity-70 mb-1">Context</div>
-          <div className="text-xs opacity-80">Topic: {state.topic || '—'}</div>
-          <div className="text-xs opacity-80">Goal: {state.goals || '—'}</div>
-          <div className="text-xs opacity-80">Anchors: {state.keywords?.join(', ') || '—'}</div>
-        </div>
-        <div className="rounded-lg border border-black/10 dark:border-white/10 p-4 bg-white/60 dark:bg-neutral-900/60">
-          <div className="text-xs opacity-70">Use the preview drawer to see the updated rendered output. Your edits apply to the working draft.</div>
-        </div>
-      </div>
+
     </div>
   )
 }
+

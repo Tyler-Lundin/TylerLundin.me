@@ -11,6 +11,7 @@ import Step5Finalize from './Step5Finalize'
 import { ActivityProvider, useActivity } from './activity/ActivityContext'
 import ActivityBar from './activity/ActivityBar'
 import BlogPreviewDrawer from './BlogPreviewDrawer'
+import { ChevronLeft, ChevronRight, X } from 'lucide-react'
 
 function nowIso() {
   return new Date().toISOString()
@@ -68,105 +69,88 @@ function BlogWizardInner() {
     complete(actId, 'Draft ready')
   }
 
-  const finish = async (status: 'draft' | 'published') => {
-    const body = {
-      title: state.draft.title,
-      excerpt: state.draft.excerpt,
-      content_md: state.draft.content_md,
-      cover_image_url: state.cover_image_url,
-      status,
-      tags: state.draft.tags || [],
-      published_at: status === 'published' ? nowIso() : null,
-      reading_time_minutes: state.draft.reading_time_minutes,
-    }
-    const res = await fetch('/api/dev/blog/posts', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(body),
-    })
-    const json = await res.json()
-    if (!res.ok) throw new Error(json?.error || 'Failed to save')
-    setState({ step: 1, draft: {}, cover_image_url: undefined, topic: '', messages: [] })
-  }
-
   return (
-    <div className="min-h-[calc(100vh-6rem)]">
+    <div className="min-h-screen bg-neutral-50/50 dark:bg-neutral-950">
       <BlogPreviewDrawer state={state} />
-      <div className="sticky top-0 z-20 bg-neutral-100/80 dark:bg-neutral-900/80 backdrop-blur border-b border-black/5 dark:border-white/10 px-5 sm:px-6 py-4">
-        <div className="flex items-center justify-between">
-          <div className="text-sm font-semibold tracking-wide uppercase">Blog Post Wizard</div>
-          <div className="flex items-center gap-3">
-            <div className="hidden sm:flex items-center gap-2 text-xs">
-              {[1, 2, 3, 4, 5].map((n) => (
-                <div key={n} className={'rounded-full px-3 py-1 ' + (n === step ? 'bg-black text-white dark:bg-white dark:text-black' : 'bg-black/5 dark:bg-white/10')}>
-                  Step {n}
-                </div>
-              ))}
-            </div>
-            <ActivityBar />
-            <div className="sm:hidden text-xs opacity-80">Step {step} of 5</div>
-            <Link href="/dev" className="text-xs px-3 py-1.5 rounded bg-black/5 hover:bg-black/10 dark:bg-white/10 dark:hover:bg-white/20">
-              Cancel
+      
+      {/* Wizard Header */}
+      <div className="fixed top-0 left-0 right-0 h-16 z-20 border-b border-neutral-200 bg-white/80 px-4 py-3 backdrop-blur-md dark:border-neutral-800 dark:bg-neutral-900/80">
+        <div className="mx-auto flex max-w-6xl items-center justify-between">
+          <div className="flex items-center gap-4">
+            <Link href="/dev/blog" className="rounded-md p-1.5 text-neutral-500 hover:bg-neutral-100 hover:text-neutral-900 dark:hover:bg-neutral-800 dark:hover:text-white">
+              <X className="h-5 w-5" />
             </Link>
+            <div>
+              <h1 className="text-sm font-semibold text-neutral-900 dark:text-white">New Blog Post</h1>
+              <div className="flex items-center gap-2 text-xs text-neutral-500">
+                <span>Step {step} of 5</span>
+                <span className="h-1 w-1 rounded-full bg-neutral-300 dark:bg-neutral-700" />
+                <span className="truncate max-w-[200px]">{state.topic || 'Untitled'}</span>
+              </div>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-3">
+            <ActivityBar />
+            <div className="hidden h-6 w-px bg-neutral-200 dark:bg-neutral-800 sm:block" />
+            <div className="flex items-center gap-2">
+              <button 
+                onClick={() => setState({ step: Math.max(1, step - 1) })}
+                disabled={step === 1}
+                className="hidden rounded-lg border border-neutral-200 px-3 py-1.5 text-xs font-medium text-neutral-600 hover:bg-neutral-50 disabled:opacity-50 sm:block dark:border-neutral-800 dark:text-neutral-400 dark:hover:bg-neutral-800"
+              >
+                Back
+              </button>
+              <button 
+                onClick={() => setState({ step: Math.min(5, step + 1) })}
+                disabled={step === 5 || !canNext}
+                className="rounded-lg bg-neutral-900 px-3 py-1.5 text-xs font-medium text-white shadow-sm hover:bg-neutral-800 disabled:opacity-50 dark:bg-white dark:text-neutral-900 dark:hover:bg-neutral-200"
+              >
+                {step === 5 ? 'Finish' : 'Next'}
+              </button>
+            </div>
           </div>
         </div>
-        <div className="sm:hidden mt-2 h-1.5 rounded-full bg-black/10 dark:bg-white/10 overflow-hidden">
-          <div
-            className="h-full bg-black dark:bg-white transition-all"
+        
+        {/* Progress Bar */}
+        <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-neutral-100 dark:bg-neutral-800">
+          <div 
+            className="h-full bg-neutral-900 transition-all duration-300 dark:bg-white"
             style={{ width: `${(step / 5) * 100}%` }}
           />
         </div>
       </div>
 
-      <div className="px-5 sm:px-6 py-6 space-y-8 pb-32 sm:pb-8">
-        {step === 1 && <Step1Topic state={state} setState={setState} />}
-        {step === 2 && <Step2Chat state={state} setState={setState} onGenerate={generate} />}
-        {step === 3 && <Step3Overview state={state} setState={setState} />}
-        {step === 4 && <Step4CoverUpload state={state} setState={setState} />}
-        {step === 5 && <Step5Finalize state={state} />}
-
-        <div className="hidden sm:flex items-center justify-between pt-2">
-          <div className="text-xs opacity-70">Topic: {state.topic || '—'}</div>
-          <div className="flex items-center gap-2">
-            {step > 1 && (
-              <button onClick={() => setState({ step: step - 1 })} className="px-3 py-2 rounded bg-black/10 dark:bg-white/10">Back</button>
-            )}
-            {step < 5 && (
-              <button onClick={() => setState({ step: step + 1 })} disabled={!canNext} className="px-4 py-2 rounded bg-black text-white dark:bg-white dark:text-black">
-                Next
-              </button>
-            )}
-          </div>
+      {/* Content Area */}
+      <div className="mx-auto max-w-6xl px-4 pt-8 pb-32">
+        <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+          {step === 1 && <Step1Topic state={state} setState={setState} />}
+          {step === 2 && <Step2Chat state={state} setState={setState} onGenerate={generate} />}
+          {step === 3 && <Step3Overview state={state} setState={setState} />}
+          {step === 4 && <Step4CoverUpload state={state} setState={setState} />}
+          {step === 5 && <Step5Finalize state={state} />}
         </div>
       </div>
 
-      {/* Mobile action bar */}
-      <div className="sm:hidden fixed bottom-0 left-0 right-0 z-30 border-t border-black/10 dark:border-white/10 bg-neutral-100/95 dark:bg-neutral-900/95 backdrop-blur px-4 py-3 pb-[calc(env(safe-area-inset-bottom,0px)+14px)]">
-        <div className="flex items-center gap-3">
-          <Link href="/dev/blog" className="shrink-0 px-2 py-3 text-sm text-neutral-700 dark:text-neutral-300">
-            Cancel
-          </Link>
-          {step > 1 ? (
-            <button
-              onClick={() => setState({ step: step - 1 })}
-              className="flex-1 px-4 py-3 rounded bg-black/10 dark:bg-white/10"
-            >
-              Back
-            </button>
-          ) : (
-            <div className="flex-1" />
-          )}
-          {step < 5 && (
-            <button
-              onClick={() => setState({ step: step + 1 })}
-              disabled={!canNext}
-              className="flex-1 px-4 py-3 rounded bg-black text-white disabled:opacity-60 disabled:cursor-not-allowed dark:bg-white dark:text-black"
-            >
-              Next
-            </button>
-          )}
+      {/* Mobile Footer Nav */}
+      <div className="fixed bottom-0 left-0 right-0 z-20 border-t border-neutral-200 bg-white/90 p-4 backdrop-blur-lg sm:hidden dark:border-neutral-800 dark:bg-neutral-900/90">
+        <div className="flex items-center justify-between gap-4">
+          <button 
+            onClick={() => setState({ step: Math.max(1, step - 1) })}
+            disabled={step === 1}
+            className="flex h-10 w-10 items-center justify-center rounded-full border border-neutral-200 text-neutral-600 disabled:opacity-50 dark:border-neutral-800 dark:text-neutral-400"
+          >
+            <ChevronLeft className="h-5 w-5" />
+          </button>
+          <div className="text-xs font-medium text-neutral-500">Step {step} / 5</div>
+          <button 
+            onClick={() => setState({ step: Math.min(5, step + 1) })}
+            disabled={step === 5 || !canNext}
+            className="flex h-10 w-10 items-center justify-center rounded-full bg-neutral-900 text-white disabled:opacity-50 dark:bg-white dark:text-neutral-900"
+          >
+            <ChevronRight className="h-5 w-5" />
+          </button>
         </div>
-        <div className="text-[11px] opacity-70 mt-2 truncate">Topic: {state.topic || '—'}</div>
       </div>
     </div>
   )
@@ -179,3 +163,4 @@ export default function BlogWizard() {
     </ActivityProvider>
   )
 }
+

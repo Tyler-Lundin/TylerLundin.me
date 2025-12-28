@@ -1,4 +1,5 @@
 import React from 'react'
+import { Eye } from 'lucide-react'
 
 type BlogPreviewToggleButtonProps = {
   isOpen: boolean
@@ -11,14 +12,13 @@ export default function BlogPreviewToggleButton({ isOpen, onToggle }: BlogPrevie
       type="button"
       aria-label={isOpen ? 'Hide blog preview' : 'Show blog preview'}
       aria-expanded={isOpen}
-      className={`group ${isOpen ? 'opacity-0 pointer-events-none' : 'opacity-100'} transition-all border border-black/10 dark:border-white/15 bg-white/90 dark:bg-white/10 backdrop-blur w-9 h-9 flex items-center justify-center shadow-md hover:shadow-lg text-neutral-900 dark:text-neutral-100`}
+      className={`group flex h-10 w-10 items-center justify-center rounded-full border border-neutral-200 bg-white/80 text-neutral-500 shadow-lg backdrop-blur-md transition-all hover:bg-white focus:ring-2 focus:ring-blue-500/50 dark:border-neutral-800 dark:bg-neutral-900/80 dark:text-neutral-400 dark:hover:bg-neutral-800
+        ${isOpen ? 'opacity-0 pointer-events-none scale-90' : 'opacity-100'}`}
       onClick={onToggle}
     >
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="block">
-        <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-        <circle cx="12" cy="12" r="3" stroke="currentColor" strokeWidth="2"/>
-      </svg>
+      <Eye className="h-5 w-5" />
     </button>
   )
 }
+
 

@@ -1,199 +1,322 @@
-import { cmsProject as ZevlinProject } from '@/data/projects/zevlin'
+import React from 'react'
+import DevCommandCenterHero from './components/DevCommandCenterHero'
+import { createClient } from '@/lib/supabase/server'
+import Link from 'next/link'
+import { CrmProject, Invoice } from '@/types/crm'
 
-// Mocked, frontend-only dashboard for look & feel (Zevlin-only)
-const MOCK_COUNTS = {
-  clients: 1,
-  projects: 1,
-  openItems: (ZevlinProject.lists?.[0]?.items?.length as number) || 0,
-  invites: 1,
+// --- Icons ---
+const Icons = {
+  TrendingUp: () => <svg className="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" /></svg>,
+  Users: () => <svg className="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" /></svg>,
+  Folder: () => <svg className="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" /></svg>,
+  Clock: () => <svg className="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>,
+  ArrowRight: () => <svg className="size-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>,
 }
 
-const MOCK_RECENT_PROJECTS = [
-  {
-    id: ZevlinProject.id,
-    title: ZevlinProject.title,
-    slug: ZevlinProject.slug,
-    client: ZevlinProject.client,
-    status: ZevlinProject.status,
-    priority: ZevlinProject.priority,
-    created_at: ZevlinProject.created_at,
-  },
-]
+// --- Internal Types ---
+interface ActivityLogEntry {
+  id: string
+  action_type: 'deploy' | 'money' | 'edit' | 'create' | string
+  description: string
+  created_at: string
+}
 
-const MOCK_INVITES = [
-  { id: 'i1', email: 'client@zevlinbike.com', role: 'client', client: 'Zevlin Bike', expires: 'in 3 days' },
-]
+interface TeamInvite {
+  id: string
+  email: string
+  role: string
+  expires_at?: string | null
+}
 
-const MOCK_ACTIVITY = [
-  { id: 'a1', text: 'Added production link to Zevlin Bike', ts: '2h ago' },
-  { id: 'a2', text: 'Updated priorities for MVP Launch Goals', ts: 'yesterday' },
-]
-
-const MOCK_TOP_CLIENTS = [
-  { id: ZevlinProject.client.id, name: ZevlinProject.client.name, projects: 1 },
-]
+// --- Components ---
 
 function StatusBadge({ value }: { value: string }) {
-  const map: Record<string, string> = {
-    planned: 'bg-[#1E1F22] border-[#3F4147] text-[#DBDEE1]',
-    in_progress: 'bg-[#0E3A2A] border-[#0B4A34] text-[#9FEFBC]',
-    paused: 'bg-[#3A2A0E] border-[#4A360B] text-[#FDE68A]',
-    completed: 'bg-[#0E2A3A] border-[#0B364A] text-[#93C5FD]',
-    archived: 'bg-[#2B2C30] border-[#3F4147] text-[#949BA4]',
+  const styles: Record<string, string> = {
+    planned:    'bg-neutral-100 text-neutral-600 dark:bg-neutral-800 dark:text-neutral-400 border-neutral-200 dark:border-neutral-700',
+    in_progress: 'bg-blue-50 text-blue-700 dark:bg-blue-900/20 dark:text-blue-300 border-blue-200 dark:border-blue-800',
+    paused:     'bg-amber-50 text-amber-700 dark:bg-amber-900/20 dark:text-amber-300 border-amber-200 dark:border-amber-800',
+    completed:  'bg-emerald-50 text-emerald-700 dark:bg-emerald-900/20 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800',
+    archived:   'bg-neutral-100 text-neutral-500 dark:bg-neutral-800 dark:text-neutral-500 border-neutral-200 dark:border-neutral-700',
   }
+  const style = styles[value] || styles.planned
+
   return (
-    <span className={`px-2 py-0.5 text-xs rounded border ${map[value] || map.planned}`}>{value}</span>
+    <span className={`inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium border capitalize ${style}`}>
+      {value.replace('_', ' ')}
+    </span>
   )
 }
 
 function PriorityPill({ value }: { value: string }) {
-  const map: Record<string, string> = {
-    low: 'bg-[#1E1F22] text-[#949BA4] border-[#3F4147]',
-    normal: 'bg-[#1E1F22] text-[#DBDEE1] border-[#3F4147]',
-    high: 'bg-[#3A0E0E] text-[#FCA5A5] border-[#4A0B0B]',
-    urgent: 'bg-[#4A0B0B] text-[#F87171] border-[#7F1D1D]',
+  const styles: Record<string, string> = {
+    low:    'text-neutral-500',
+    normal: 'text-neutral-700 dark:text-neutral-300',
+    high:   'text-amber-600 dark:text-amber-400 font-medium',
+    urgent: 'text-rose-600 dark:text-rose-400 font-bold',
   }
+  const style = styles[value] || styles.normal
+
+  return <span className={`text-xs capitalize ${style}`}>{value}</span>
+}
+
+
+function KpiCard({ title, value, subtext, icon, trend }: { title: string, value: string | number, subtext?: string, icon?: React.ReactNode, trend?: 'up' | 'down' | 'neutral' }) {
   return (
-    <span className={`px-2 py-0.5 text-xs rounded border ${map[value] || map.normal}`}>{value}</span>
+    <div className="flex flex-col justify-between rounded-xl border border-neutral-200 bg-white p-5 shadow-sm dark:border-neutral-800 dark:bg-neutral-900">
+      <div className="flex items-center justify-between">
+        <span className="text-xs font-medium text-neutral-500 uppercase tracking-wide">{title}</span>
+        {icon && <span className="text-neutral-400">{icon}</span>}
+      </div>
+      <div className="mt-4">
+        <div className="text-2xl font-bold text-neutral-900 dark:text-white">{value}</div>
+        {subtext && (
+          <div className="mt-1 flex items-center gap-2 text-xs text-neutral-500">
+             {trend === 'up' && <span className="text-emerald-600 font-medium">↑ 12%</span>}
+             {trend === 'down' && <span className="text-rose-600 font-medium">↓ 5%</span>}
+             <span>{subtext}</span>
+          </div>
+        )}
+      </div>
+    </div>
   )
 }
 
-export default function CrmDashboard() {
-  const { clients, projects, openItems, invites } = MOCK_COUNTS
-  // Finance KPIs (mock)
-  const FINANCE = {
-    mrr_cents: 19900,
-    open_invoices_cents: 165000,
-    overdue_cents: 45000,
+function formatCurrency(cents: number) {
+  return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(cents / 100)
+}
+
+async function fetchData() {
+  const sb = await createClient()
+  
+  // Parallel fetch for dashboard stats
+  const [
+    { count: clientsCount },
+    { count: projectsCount },
+    { count: openItemsCount },
+    { count: invitesCount },
+    { data: recentProjects },
+    { data: pendingInvites },
+    { data: activityLog },
+    { data: openInvoices },
+    { data: overdueInvoices }
+  ] = await Promise.all([
+    sb.from('crm_clients').select('*', { count: 'exact', head: true }),
+    sb.from('crm_projects').select('*', { count: 'exact', head: true }),
+    sb.from('crm_project_list_items').select('*', { count: 'exact', head: true }).neq('status', 'done'),
+    sb.from('team_invites').select('*', { count: 'exact', head: true }).eq('status', 'pending'),
+    
+    // Recent Projects
+    sb.from('crm_projects')
+      .select('*, client:crm_clients(name)')
+      .order('created_at', { ascending: false })
+      .limit(5),
+
+    // Pending Invites
+    sb.from('team_invites')
+      .select('*')
+      .eq('status', 'pending')
+      .order('created_at', { ascending: false })
+      .limit(5),
+      
+    // Activity Log
+    sb.from('crm_activity_log')
+      .select('*')
+      .order('created_at', { ascending: false })
+      .limit(5),
+
+    // Financials
+    sb.from('invoices').select('amount_cents').eq('status', 'open'),
+    sb.from('invoices').select('amount_cents').eq('status', 'open').lt('due_at', new Date().toISOString())
+  ])
+
+  // Aggregate Finance
+  const open_invoices_cents = ((openInvoices || []) as Pick<Invoice, 'amount_cents'>[]).reduce((acc, curr) => acc + curr.amount_cents, 0)
+  const overdue_cents = ((overdueInvoices || []) as Pick<Invoice, 'amount_cents'>[]).reduce((acc, curr) => acc + curr.amount_cents, 0)
+
+  return {
+    counts: {
+      clients: clientsCount || 0,
+      projects: projectsCount || 0,
+      openItems: openItemsCount || 0,
+      invites: invitesCount || 0,
+    },
+    recentProjects: (recentProjects || []) as CrmProject[],
+    pendingInvites: (pendingInvites || []) as TeamInvite[],
+    activityLog: (activityLog || []) as ActivityLogEntry[],
+    finance: {
+      mrr_cents: 0, 
+      open_invoices_cents,
+      overdue_cents,
+    }
   }
+}
+
+export default async function CrmDashboard() {
+  const { counts, recentProjects, pendingInvites, activityLog, finance } = await fetchData()
 
   return (
-    <div className="min-h-[70vh] max-w-6xl mx-auto px-4 pt-6">
-      {/* Finance KPIs */}
-      <section className="mb-3 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-        <div className="rounded-lg border border-[#3F4147] bg-[#1E1F22] p-4">
-          <div className="text-xs text-[#949BA4]">MRR</div>
-          <div className="text-2xl font-semibold text-white">${(FINANCE.mrr_cents/100).toLocaleString()}</div>
-        </div>
-        <div className="rounded-lg border border-[#3F4147] bg-[#1E1F22] p-4">
-          <div className="text-xs text-[#949BA4]">Open Invoices</div>
-          <div className="text-2xl font-semibold text-white">${(FINANCE.open_invoices_cents/100).toLocaleString()}</div>
-        </div>
-        <div className="rounded-lg border border-[#3F4147] bg-[#1E1F22] p-4">
-          <div className="text-xs text-[#949BA4]">Overdue</div>
-          <div className="text-2xl font-semibold text-white">${(FINANCE.overdue_cents/100).toLocaleString()}</div>
-        </div>
-      </section>
+    <div className="min-h-screen bg-neutral-50/50 pb-20 dark:bg-neutral-950">
+      <div className="mx-auto max-w-6xl px-4 sm:px-6">
+        
+        {/* 1. Command Center Hero */}
+        <DevCommandCenterHero className="mb-8" />
 
-      {/* Stats */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-        <div className="rounded-lg border border-[#3F4147] bg-[#1E1F22] p-4">
-          <div className="text-xs text-[#949BA4]">Active Clients</div>
-          <div className="text-3xl font-semibold text-white">{clients}</div>
-        </div>
-        <div className="rounded-lg border border-[#3F4147] bg-[#1E1F22] p-4">
-          <div className="text-xs text-[#949BA4]">Active Projects</div>
-          <div className="text-3xl font-semibold text-white">{projects}</div>
-        </div>
-        <div className="rounded-lg border border-[#3F4147] bg-[#1E1F22] p-4">
-          <div className="text-xs text-[#949BA4]">Open Goals/Tasks</div>
-          <div className="text-3xl font-semibold text-white">{openItems}</div>
-        </div>
-        <div className="rounded-lg border border-[#3F4147] bg-[#1E1F22] p-4">
-          <div className="text-xs text-[#949BA4]">Pending Invites</div>
-          <div className="text-3xl font-semibold text-white">{invites}</div>
-        </div>
-      </div>
-
-      <div className="mt-4 grid grid-cols-1 lg:grid-cols-3 gap-4">
-        {/* Recent Projects */}
-        <section className="lg:col-span-2 rounded-lg border border-[#3F4147] overflow-hidden">
-          <div className="px-4 py-3 bg-[#1E1F22] border-b border-[#3F4147] flex items-center justify-between">
-            <h2 className="text-sm font-medium text-white">Recent Projects</h2>
-            <a href="/dev/projects" className="text-xs underline text-[#DBDEE1]">View all</a>
+        {/* 2. Finance Section (High Priority) */}
+        <section className="mb-8">
+          <h3 className="mb-3 text-sm font-semibold text-neutral-900 dark:text-white">Financial Health</h3>
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+            <KpiCard 
+              title="MRR" 
+              value={formatCurrency(finance.mrr_cents)} 
+              subtext="vs last month" 
+              trend="neutral"
+              icon={<Icons.TrendingUp />}
+            />
+            <KpiCard 
+              title="Outstanding" 
+              value={formatCurrency(finance.open_invoices_cents)} 
+              subtext="All open invoices"
+              icon={<span className="text-amber-500">●</span>}
+            />
+             <KpiCard 
+              title="Overdue" 
+              value={formatCurrency(finance.overdue_cents)} 
+              subtext="Action needed"
+              icon={<span className="text-rose-500">●</span>}
+            />
           </div>
-          <table className="w-full text-sm">
-            <thead className="bg-[#1E1F22] text-[#949BA4]">
-              <tr>
-                <th className="text-left px-4 py-2 font-medium">Title</th>
-                <th className="text-left px-4 py-2 font-medium">Client</th>
-                <th className="text-left px-4 py-2 font-medium">Status</th>
-                <th className="text-left px-4 py-2 font-medium">Priority</th>
-                <th className="text-left px-4 py-2 font-medium">Created</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-[#3F4147] bg-[#16171A]">
-              {MOCK_RECENT_PROJECTS.map((p) => (
-                <tr key={p.id} className="hover:bg-[#1E1F22]">
-                  <td className="px-4 py-2">
-                    <a className="text-white underline" href={`/dev/projects/${p.slug}`}>{p.title}</a>
-                  </td>
-                  <td className="px-4 py-2 text-[#DBDEE1]">
-                    <a className="underline" href={`/dev/clients/${p.client.id}`}>{p.client.name}</a>
-                  </td>
-                  <td className="px-4 py-2"><StatusBadge value={p.status} /></td>
-                  <td className="px-4 py-2"><PriorityPill value={p.priority} /></td>
-                  <td className="px-4 py-2 text-[#949BA4]">{new Date(p.created_at).toLocaleDateString()}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
         </section>
 
-        {/* Side Panel: Pending Invites + Activity */}
-        <div className="flex flex-col gap-4">
-          <section className="rounded-lg border border-[#3F4147] overflow-hidden">
-            <div className="px-4 py-3 bg-[#1E1F22] border-b border-[#3F4147] flex items-center justify-between">
-              <h3 className="text-sm font-medium text-white">Pending Invitations</h3>
-              <a href="/dev/invitations" className="text-xs underline text-[#DBDEE1]">Manage</a>
-            </div>
-            <ul className="divide-y divide-[#3F4147] bg-[#16171A]">
-              {MOCK_INVITES.map((i) => (
-                <li key={i.id} className="px-4 py-3 text-sm">
-                  <div className="flex items-center justify-between">
-                    <div className="text-white">{i.email}</div>
-                    <div className="text-xs text-[#949BA4]">{i.expires}</div>
+        {/* 3. Operational Grid */}
+        <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
+          
+          {/* Left Column: Projects Table (2/3 width) */}
+          <div className="lg:col-span-2">
+            
+            {/* Stats Row */}
+            <div className="mb-6 grid grid-cols-2 gap-4 sm:grid-cols-4">
+              {[
+                { label: "Active Clients", val: counts.clients, icon: <Icons.Users /> },
+                { label: "Active Projects", val: counts.projects, icon: <Icons.Folder /> },
+                { label: "Open Tasks", val: counts.openItems, icon: <Icons.Clock /> },
+                { label: "Invites", val: counts.invites, icon: <span className="flex size-2 rounded-full bg-blue-500" /> },
+              ].map((s) => (
+                <div key={s.label} className="rounded-lg border border-neutral-200 bg-white p-3 shadow-sm dark:border-neutral-800 dark:bg-neutral-900">
+                  <div className="flex items-center gap-2 text-[10px] font-medium text-neutral-500 uppercase">
+                    {s.icon} {s.label}
                   </div>
-                  <div className="text-xs text-[#949BA4]">{i.role} • {i.client}</div>
-                </li>
+                  <div className="mt-1 text-lg font-bold text-neutral-900 dark:text-white">{s.val}</div>
+                </div>
               ))}
-              {MOCK_INVITES.length === 0 && (
-                <li className="px-4 py-6 text-center text-[#949BA4]">No pending invites.</li>
-              )}
-            </ul>
-          </section>
-
-          <section className="rounded-lg border border-[#3F4147] overflow-hidden">
-            <div className="px-4 py-3 bg-[#1E1F22] border-b border-[#3F4147]">
-              <h3 className="text-sm font-medium text-white">Recent Activity</h3>
             </div>
-            <ul className="divide-y divide-[#3F4147] bg-[#16171A]">
-              {MOCK_ACTIVITY.map((a) => (
-                <li key={a.id} className="px-4 py-3 text-sm flex items-center justify-between">
-                  <div className="text-[#DBDEE1]">{a.text}</div>
-                  <div className="text-xs text-[#949BA4]">{a.ts}</div>
-                </li>
-              ))}
-            </ul>
-          </section>
+
+            {/* Recent Projects Card */}
+            <section className="overflow-hidden rounded-xl border border-neutral-200 bg-white shadow-sm dark:border-neutral-800 dark:bg-neutral-900">
+              <div className="flex items-center justify-between border-b border-neutral-100 px-6 py-4 dark:border-neutral-800">
+                <h2 className="text-base font-semibold text-neutral-900 dark:text-white">Recent Projects</h2>
+                <Link href="/dev/projects" className="group flex items-center gap-1 text-xs font-medium text-blue-600 hover:text-blue-700 dark:text-blue-400">
+                  View all <Icons.ArrowRight />
+                </Link>
+              </div>
+              <div className="overflow-x-auto">
+                <table className="w-full text-left text-sm">
+                  <thead className="bg-neutral-50 text-neutral-500 dark:bg-neutral-900 dark:text-neutral-400">
+                    <tr>
+                      <th className="px-6 py-3 font-medium">Project Name</th>
+                      <th className="px-6 py-3 font-medium">Status</th>
+                      <th className="px-6 py-3 font-medium">Priority</th>
+                      <th className="px-6 py-3 font-medium text-right">Created</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-neutral-100 dark:divide-neutral-800">
+                    {recentProjects.map((p) => (
+                      <tr key={p.id} className="group transition-colors hover:bg-neutral-50 dark:hover:bg-neutral-800/50">
+                        <td className="px-6 py-4">
+                          <div className="font-medium text-neutral-900 dark:text-neutral-100">{p.title}</div>
+                          <div className="text-xs text-neutral-500">{p.client?.name || 'Unknown'}</div>
+                        </td>
+                        <td className="px-6 py-4">
+                          <StatusBadge value={p.status} />
+                        </td>
+                        <td className="px-6 py-4">
+                          <PriorityPill value={p.priority} />
+                        </td>
+                        <td className="px-6 py-4 text-right text-xs text-neutral-400 tabular-nums">
+                          {new Date(p.created_at).toLocaleDateString()}
+                        </td>
+                      </tr>
+                    ))}
+                    {recentProjects.length === 0 && (
+                      <tr>
+                        <td colSpan={4} className="p-8 text-center text-neutral-500">No active projects</td>
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </section>
+          </div>
+
+          {/* Right Column: Feeds (1/3 width) */}
+          <div className="flex flex-col gap-6">
+            
+            {/* Pending Invites */}
+            <section className="rounded-xl border border-neutral-200 bg-white shadow-sm dark:border-neutral-800 dark:bg-neutral-900">
+              <div className="border-b border-neutral-100 px-5 py-3 dark:border-neutral-800">
+                <h3 className="text-sm font-semibold text-neutral-900 dark:text-white">Pending Invites</h3>
+              </div>
+              <ul className="divide-y divide-neutral-100 dark:divide-neutral-800">
+                {pendingInvites.map((i) => (
+                  <li key={i.id} className="flex items-center justify-between px-5 py-3">
+                    <div>
+                      <div className="text-sm font-medium text-neutral-900 dark:text-neutral-200">{i.email}</div>
+                      <div className="text-xs text-neutral-500">{i.role}</div>
+                    </div>
+                    <div className="rounded bg-neutral-100 px-2 py-1 text-[10px] text-neutral-600 dark:bg-neutral-800 dark:text-neutral-400">
+                      {i.expires_at ? new Date(i.expires_at).toLocaleDateString() : 'No Expiry'}
+                    </div>
+                  </li>
+                ))}
+                {pendingInvites.length === 0 && (
+                  <li className="px-5 py-3 text-sm text-neutral-500">No pending invites</li>
+                )}
+              </ul>
+              <div className="border-t border-neutral-100 bg-neutral-50 p-2 text-center dark:border-neutral-800 dark:bg-neutral-900/50">
+                 <Link href="/dev/team" className="text-xs font-medium text-neutral-500 hover:text-neutral-900 dark:hover:text-neutral-300">Manage Team</Link>
+              </div>
+            </section>
+
+            {/* Activity Feed */}
+            <section className="rounded-xl border border-neutral-200 bg-white shadow-sm dark:border-neutral-800 dark:bg-neutral-900">
+              <div className="border-b border-neutral-100 px-5 py-3 dark:border-neutral-800">
+                <h3 className="text-sm font-semibold text-neutral-900 dark:text-white">Recent Activity</h3>
+              </div>
+              <ul className="relative space-y-4 px-5 py-4">
+                {/* Connector Line */}
+                <div className="absolute left-[29px] top-6 bottom-6 w-px bg-neutral-200 dark:bg-neutral-800" />
+                
+                {activityLog.map((a) => (
+                  <li key={a.id} className="relative flex gap-3">
+                    <div className={`relative z-10 flex size-2.5 mt-1.5 flex-none rounded-full ring-4 ring-white dark:ring-neutral-900 
+                      ${a.action_type === 'deploy' ? 'bg-emerald-500' : a.action_type === 'money' ? 'bg-amber-500' : 'bg-blue-500'}`} 
+                    />
+                    <div>
+                      <p className="text-sm text-neutral-600 dark:text-neutral-300">
+                        {a.description}
+                      </p>
+                      <p className="text-xs text-neutral-400">{new Date(a.created_at).toLocaleString()}</p>
+                    </div>
+                  </li>
+                ))}
+                {activityLog.length === 0 && (
+                  <li className="text-sm text-neutral-500 pl-4">No recent activity logged.</li>
+                )}
+              </ul>
+            </section>
+
+          </div>
         </div>
       </div>
-
-      {/* Top Clients */}
-      <section className="mt-4 rounded-lg border border-[#3F4147] overflow-hidden">
-        <div className="px-4 py-3 bg-[#1E1F22] border-b border-[#3F4147] flex items-center justify-between">
-          <h2 className="text-sm font-medium text-white">Top Clients</h2>
-          <a href="/dev/clients" className="text-xs underline text-[#DBDEE1]">Browse</a>
-        </div>
-        <ul className="divide-y divide-[#3F4147] bg-[#16171A]">
-          {MOCK_TOP_CLIENTS.map((c) => (
-            <li key={c.id} className="px-4 py-3 text-sm flex items-center justify-between">
-              <a className="text-white underline" href={`/dev/clients/${c.id}`}>{c.name}</a>
-              <span className="text-xs text-[#949BA4]">{c.projects} projects</span>
-            </li>
-          ))}
-        </ul>
-      </section>
     </div>
   )
 }

@@ -12,23 +12,24 @@ type BlogPreviewContentProps = {
 export default function BlogPreviewContent({ draft, topic, coverImageUrl }: BlogPreviewContentProps) {
   const title = draft.title || topic || 'Untitled'
   return (
-    <div className="min-h-0 flex-1 overflow-auto p-4">
-      <div className="space-y-3">
+    <div className="min-h-0 flex-1 overflow-y-auto px-6 py-8">
+      <div className="space-y-6">
         {!!coverImageUrl && (
           // eslint-disable-next-line @next/next/no-img-element
-          <img src={coverImageUrl} alt="cover" className="rounded-md w-full object-cover aspect-[16/9]" />
+          <img src={coverImageUrl} alt="cover" className="w-full rounded-lg object-cover aspect-[16/9] shadow-md" />
         )}
-        <div>
-          <h1 className="text-2xl font-bold">{title}</h1>
-          {!!draft.excerpt && <p className="text-sm opacity-80 mt-1">{draft.excerpt}</p>}
+        <div className="space-y-2">
+          <h1 className="text-3xl font-bold tracking-tight text-neutral-900 dark:text-white">{title}</h1>
+          {!!draft.excerpt && <p className="text-lg text-neutral-500">{draft.excerpt}</p>}
         </div>
-        <div className="prose prose-lg dark:prose-invert mt-2 bg-white/70 dark:bg-neutral-900/70 p-5 rounded-lg">
+        <article className="prose prose-neutral max-w-none pt-4 dark:prose-invert">
           <ReactMarkdown remarkPlugins={[remarkGfm]}>
             {draft.content_md || ''}
           </ReactMarkdown>
-        </div>
+        </article>
       </div>
     </div>
   )
 }
+
 

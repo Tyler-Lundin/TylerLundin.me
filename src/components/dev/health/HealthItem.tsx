@@ -31,16 +31,16 @@ export default function HealthItem({ item }: { item: HealthItemData }) {
       <div className="min-w-0">
         <div className="flex items-center gap-2">
           {item.link ? (
-            <a href={item.link} target="_blank" rel="noreferrer" className="text-xs sm:text-[13px] font-medium text-white hover:underline">
+            <a href={item.link} target="_blank" rel="noreferrer" className="text-xs sm:text-[13px] font-medium text-neutral-900 hover:underline dark:text-white">
               {item.label}
             </a>
           ) : (
-            <span className="text-xs sm:text-[13px] font-medium text-white">{item.label}</span>
+            <span className="text-xs sm:text-[13px] font-medium text-neutral-900 dark:text-white">{item.label}</span>
           )}
-          {item.ts ? <span className="text-[10px] text-[#949BA4]">{item.ts}</span> : null}
+          {item.ts ? <span className="text-[10px] text-neutral-500 dark:text-[#949BA4]">{item.ts}</span> : null}
         </div>
         {item.detail ? (
-          <div className="mt-0.5 text-[11px] text-[#B5BAC1] leading-snug">
+          <div className="mt-0.5 text-[11px] text-neutral-600 leading-snug dark:text-[#B5BAC1]">
             {item.detail}
           </div>
         ) : null}
@@ -48,4 +48,3 @@ export default function HealthItem({ item }: { item: HealthItemData }) {
     </li>
   )
 }
-

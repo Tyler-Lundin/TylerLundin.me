@@ -1,18 +1,19 @@
-'use client';
+'use client'
 
-import { createBrowserClient } from '@supabase/ssr';
-import type { SupabaseClient } from '@supabase/supabase-js';
-import type { AuthChangeEvent, Session } from '@supabase/supabase-js';
+import { createBrowserClient } from '@supabase/ssr'
+import type { SupabaseClient } from '@supabase/supabase-js'
+import type { AuthChangeEvent, Session } from '@supabase/supabase-js'
+import type { Database } from '@/types/database.types'
 
-let supabaseClient: SupabaseClient | null = null;
+let supabaseClient: SupabaseClient<Database> | null = null
 
-export function createClient(): SupabaseClient {
+export function createClient(): SupabaseClient<Database> {
   if (supabaseClient) return supabaseClient;
 
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
   const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
 
-  supabaseClient = createBrowserClient(supabaseUrl, supabaseAnonKey);
+  supabaseClient = createBrowserClient<Database>(supabaseUrl, supabaseAnonKey)
 
   // Only add auth state change listener in browser
   if (typeof window !== 'undefined') {
@@ -27,7 +28,7 @@ export function createClient(): SupabaseClient {
           // Session is removed, you can update your UI here
         }
       }
-    );
+    )
   }
 
   return supabaseClient;

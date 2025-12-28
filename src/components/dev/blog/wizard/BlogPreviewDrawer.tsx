@@ -23,27 +23,37 @@ export default function BlogPreviewDrawer({ state }: { state: WizardState }) {
   const isOpen = open
 
   return (
-    <div className="fixed right-0 top-0 z-[110]  pointer-events-none ">
-      <div className="flex items-stretch justify-end">
+    <>
+      {/* Toggle Button */}
+      <div className="fixed right-4 top-[88px] z-50">
+         <BlogPreviewToggleButton isOpen={isOpen} onToggle={() => setOpen((v) => !v)} />
+      </div>
+
+      {/* Drawer */}
+      <div className={`fixed inset-0 z-40 ${isOpen ? 'pointer-events-auto' : 'pointer-events-none'}`}>
+        {/* Backdrop */}
+        <motion.div 
+          className="absolute inset-0 bg-neutral-900/20 dark:bg-black/50"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: isOpen ? 1 : 0 }}
+          onClick={() => setOpen(false)}
+        />
+        
         {/* Sliding panel */}
         <motion.div
-          initial={{ x: '100%', opacity: 0 }}
-          animate={{ x: isOpen ? 0 : '100%', opacity: isOpen ? 1 : 0 }}
-          transition={{ type: 'spring', stiffness: 260, damping: 26 }}
-          className="pointer-events-auto "
-          aria-hidden={!isOpen}
+          initial={{ x: '100%' }}
+          animate={{ x: isOpen ? 0 : '100%' }}
+          transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+          className="absolute right-0 top-0 h-full w-full"
         >
-          <div className="w-screen md:w-[560px] h-screen md:h-[80vh] bg-white dark:bg-black border-l border-black/10 dark:border-white/15 shadow-2xl flex flex-col">
+          <div className="flex h-full w-screen flex-col border-l border-neutral-200 bg-white shadow-2xl md:w-[560px] dark:border-neutral-800 dark:bg-neutral-900">
             <BlogPreviewHeader onClose={() => setOpen(false)} />
             <BlogPreviewContent draft={d} topic={state.topic} coverImageUrl={state.cover_image_url} />
           </div>
         </motion.div>
-
-        {/* Handle flush with right-0 (aligned similarly to StatsDrawer) */}
-        <div className="pointer-events-auto mt-[25vh] absolute">
-          <BlogPreviewToggleButton isOpen={isOpen} onToggle={() => setOpen((v) => !v)} />
-        </div>
       </div>
-    </div>
+    </>
   )
 }
+
+

@@ -1,7 +1,7 @@
 "use client"
 
 import { useMemo, useState, useEffect } from 'react'
-import { Wand2, CheckCircle2 } from 'lucide-react'
+import { Wand2, CheckCircle2, Lightbulb } from 'lucide-react'
 import type { WizardState } from './types'
 import { useActivity } from './activity/ActivityContext'
 
@@ -11,10 +11,6 @@ export default function Step1Topic({ state, setState }: { state: WizardState; se
   const { start, complete, fail } = useActivity()
   const [goalInput, setGoalInput] = useState(state.goals || '')
   const [keywordsInput, setKeywordsInput] = useState((state.keywords || []).join(', '))
-  const [goalRefineOpen, setGoalRefineOpen] = useState(false)
-  const [goalSuggestions, setGoalSuggestions] = useState<string[]>([])
-  const [kwRefineOpen, setKwRefineOpen] = useState(false)
-  const [kwSuggestions, setKwSuggestions] = useState<string[]>([])
 
   useEffect(() => {
     setGoalInput(state.goals || '')
@@ -43,43 +39,6 @@ export default function Step1Topic({ state, setState }: { state: WizardState; se
     return dedup.slice(0, 8)
   }
 
-  async function refineGoal() {
-    if (!goalInput.trim()) return
-    const actId = start('Refining goal…')
-    try {
-      const res = await fetch('/api/dev/blog/refine', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ field: 'goal', value: goalInput, context: { anchors: cleanKeywords(keywordsInput) } }),
-      })
-      const json = await res.json()
-      if (!res.ok) throw new Error(json?.error || 'Failed to refine')
-      setGoalSuggestions(json.suggestions || [])
-      setGoalRefineOpen(true)
-      complete(actId, 'Found rephrases')
-    } catch (e: any) {
-      fail(actId, e?.message || 'Refine failed')
-    }
-  }
-
-  async function refineKeywords() {
-    const actId = start('Refining keywords…')
-    try {
-      const res = await fetch('/api/dev/blog/refine', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ field: 'keywords', value: keywordsInput, context: { goal: cleanGoal(goalInput) } }),
-      })
-      const json = await res.json()
-      if (!res.ok) throw new Error(json?.error || 'Failed to refine')
-      setKwSuggestions(json.suggestions || [])
-      setKwRefineOpen(true)
-      complete(actId, 'Keyword options ready')
-    } catch (e: any) {
-      fail(actId, e?.message || 'Refine failed')
-    }
-  }
-
   const suggest = async () => {
     setLoading(true)
     setError(null)
@@ -106,11 +65,20 @@ export default function Step1Topic({ state, setState }: { state: WizardState; se
   }
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
-      <div className="lg:col-span-3 space-y-4">
-        <div className="flex flex-col gap-2 relative">
-          <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-200">What is the goal of this blog post?</label>
-          <div className="flex items-center gap-2">
+    <div className="mx-auto max-w-3xl space-y-8">
+      
+      {/* --- Card 1: Goal & Keywords --- */}
+      <div className="rounded-xl border border-neutral-200 bg-white shadow-sm dark:border-neutral-800 dark:bg-neutral-900">
+        <div className="p-6">
+          <h2 className="text-lg font-semibold text-neutral-900 dark:text-white">Define Your Topic</h2>
+          <p className="mt-1 text-sm text-neutral-500">
+            Start by defining the goal and any keywords. We'll use this to generate targeted topic ideas.
+          </p>
+        </div>
+        
+        <div className="space-y-6 border-t border-neutral-200 p-6 dark:border-neutral-800">
+          <div>
+            <label className="mb-1.5 block text-sm font-medium text-neutral-700 dark:text-neutral-300">What's the goal?</label>
             <input
               value={goalInput}
               onChange={(e) => {
@@ -119,160 +87,86 @@ export default function Step1Topic({ state, setState }: { state: WizardState; se
                 setState({ goals: v })
               }}
               onBlur={() => setState({ goals: cleanGoal(goalInput) })}
-              placeholder="e.g., persuade small business owners to rethink templates"
-              className="flex-1 rounded-lg border border-black/10 dark:border-white/10 bg-white dark:bg-neutral-900 px-4 py-3 text-base placeholder:text-neutral-400 dark:placeholder:text-neutral-500 focus:outline-none focus:ring-2 focus:ring-black/20 dark:focus:ring-white/20"
+              placeholder="e.g., Persuade small business owners to rethink templates"
+              className="w-full rounded-lg border border-neutral-200 bg-white px-4 py-2.5 text-sm outline-none shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-100 dark:border-neutral-700 dark:bg-neutral-950 dark:text-white dark:focus:border-blue-500 dark:focus:ring-blue-500/20"
             />
-            <button
-              type="button"
-              onClick={refineGoal}
-              disabled={!goalInput.trim()}
-              title="Refine goal"
-              className="shrink-0 rounded-lg border border-black/10 dark:border-white/10 px-3 py-2 hover:bg-black/5 dark:hover:bg-white/10 text-neutral-700 dark:text-neutral-200"
-            >
-              <Wand2 size={18} />
-            </button>
           </div>
-          {goalRefineOpen && (
-            <div className="absolute z-10 top-[100%] mt-2 left-0 right-0 rounded-lg border border-black/10 dark:border-white/10 bg-white dark:bg-neutral-900 shadow-xl">
-              <div className="p-2 text-xs uppercase opacity-60">Refine goal</div>
-              <div className="max-h-60 overflow-auto p-2 space-y-2">
-                {goalSuggestions.map((s, i) => (
-                  <button
-                    key={i}
-                    className="w-full text-left rounded-md px-3 py-2 text-sm hover:bg-black/5 dark:hover:bg-white/10"
-                    onClick={() => {
-                      setGoalInput(s)
-                      setState({ goals: s })
-                      setGoalRefineOpen(false)
-                    }}
-                  >
-                    {s}
-                  </button>
-                ))}
-                {!goalSuggestions.length && (
-                  <div className="text-sm opacity-60 px-3 py-2">No suggestions</div>
-                )}
-              </div>
-              <div className="flex items-center justify-end gap-2 p-2 border-t border-black/10 dark:border-white/10">
-                <button
-                  type="button"
-                  className="text-xs px-3 py-1.5 rounded hover:bg-black/5 dark:hover:bg-white/10"
-                  onClick={() => setGoalRefineOpen(false)}
-                >
-                  Cancel
-                </button>
-              </div>
-            </div>
-          )}
-        </div>
-        <div className="flex flex-col gap-2 relative">
-          <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-200">Keywords (optional, comma-separated)</label>
-          <div className="flex items-center gap-2">
+          
+          <div>
+            <label className="mb-1.5 block text-sm font-medium text-neutral-700 dark:text-neutral-300">Keywords (Optional)</label>
             <input
               value={keywordsInput}
               onChange={(e) => setKeywordsInput(e.target.value)}
               onBlur={() => setState({ keywords: cleanKeywords(keywordsInput) })}
-              placeholder="e.g., website strategy, bespoke design, no-code tools"
-              className="flex-1 rounded-lg border border-black/10 dark:border-white/10 bg-white dark:bg-neutral-900 px-4 py-3 text-base placeholder:text-neutral-400 dark:placeholder:text-neutral-500 focus:outline-none focus:ring-2 focus:ring-black/20 dark:focus:ring-white/20"
+              placeholder="e.g., website strategy, bespoke design, no-code"
+              className="w-full rounded-lg border border-neutral-200 bg-white px-4 py-2.5 text-sm outline-none shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-100 dark:border-neutral-700 dark:bg-neutral-950 dark:text-white dark:focus:border-blue-500 dark:focus:ring-blue-500/20"
             />
-            <button
-              type="button"
-              onClick={refineKeywords}
-              title="Refine keywords"
-              className="shrink-0 rounded-lg border border-black/10 dark:border-white/10 px-3 py-2 hover:bg-black/5 dark:hover:bg-white/10 text-neutral-700 dark:text-neutral-200"
-            >
-              <Wand2 size={18} />
-            </button>
           </div>
-          {useMemo(() => cleanKeywords(keywordsInput), [keywordsInput]).length > 0 && (
-            <div className="text-xs opacity-70">Anchors: {cleanKeywords(keywordsInput).join(', ')}</div>
-          )}
-          {kwRefineOpen && (
-            <div className="absolute z-10 top-[100%] mt-2 left-0 right-0 rounded-lg border border-black/10 dark:border-white/10 bg-white dark:bg-neutral-900 shadow-xl">
-              <div className="p-2 text-xs uppercase opacity-60">Refine keywords</div>
-              <div className="max-h-60 overflow-auto p-2 space-y-2">
-                {kwSuggestions.map((s, i) => (
-                  <button
-                    key={i}
-                    className="w-full text-left rounded-md px-3 py-2 text-sm hover:bg-black/5 dark:hover:bg-white/10"
-                    onClick={() => {
-                      setKeywordsInput(s)
-                      setState({ keywords: cleanKeywords(s) })
-                      setKwRefineOpen(false)
-                    }}
-                  >
-                    {s}
-                  </button>
-                ))}
-                {!kwSuggestions.length && (
-                  <div className="text-sm opacity-60 px-3 py-2">No suggestions</div>
-                )}
-              </div>
-              <div className="flex items-center justify-end gap-2 p-2 border-t border-black/10 dark:border-white/10">
-                <button
-                  type="button"
-                  className="text-xs px-3 py-1.5 rounded hover:bg-black/5 dark:hover:bg-white/10"
-                  onClick={() => setKwRefineOpen(false)}
-                >
-                  Cancel
-                </button>
-              </div>
-            </div>
-          )}
         </div>
-        <div className="pt-2">
-          <button onClick={suggest} className="w-full sm:w-auto px-4 py-3 rounded bg-black text-white dark:bg-white dark:text-black">
-            {loading ? 'Suggesting…' : 'Suggest Ideas'}
+
+        <div className="border-t border-neutral-200 bg-neutral-50 px-6 py-4 dark:border-neutral-800 dark:bg-neutral-900/50">
+          <button 
+            onClick={suggest} 
+            disabled={loading || !goalInput.trim()}
+            className="flex w-full items-center justify-center gap-2 rounded-lg bg-neutral-900 px-4 py-2.5 text-sm font-medium text-white shadow-sm transition hover:bg-neutral-800 disabled:opacity-50 dark:bg-white dark:text-neutral-900 dark:hover:bg-neutral-200"
+          >
+            <Lightbulb className="h-4 w-4" />
+            {loading ? 'Suggesting Ideas...' : 'Suggest Ideas'}
           </button>
-          {error && <p className="text-sm text-rose-500 mt-2">{error}</p>}
         </div>
       </div>
 
-      <div className="lg:col-span-2">
-        <div className="rounded-lg border border-black/10 dark:border-white/10 p-4 h-full overflow-auto bg-white/60 dark:bg-neutral-900/60">
-          <div className="flex items-center justify-between mb-2">
-            <div className="text-xs uppercase opacity-70">Suggestions</div>
-            {!!state.topic && (
-              <div className="text-[11px] opacity-80 flex items-center gap-1">
-                <CheckCircle2 size={14} className="text-emerald-600" />
-                Selected: <span className="font-medium truncate max-w-[18ch]">{state.topic}</span>
-              </div>
-            )}
+      {error && (
+        <div className="rounded-lg bg-rose-50 p-4 text-sm text-rose-700 dark:bg-rose-900/20 dark:text-rose-300">
+          {error}
+        </div>
+      )}
+
+      {/* --- Card 2: Suggestions --- */}
+      {state.suggestions && state.suggestions.length > 0 && (
+        <div className="rounded-xl border border-neutral-200 bg-white shadow-sm dark:border-neutral-800 dark:bg-neutral-900">
+          <div className="border-b border-neutral-200 p-6 dark:border-neutral-800">
+            <h2 className="text-lg font-semibold text-neutral-900 dark:text-white">Choose Your Topic</h2>
+            <p className="mt-1 text-sm text-neutral-500">
+              Select one of the AI-generated topics below to proceed.
+            </p>
           </div>
-          <div className="space-y-3">
+          <div className="divide-y divide-neutral-100 dark:divide-neutral-800">
             {state.suggestions?.map((sug, idx) => (
               <button
                 key={idx}
                 onClick={() => setState({ topic: sug.title })}
                 className={
-                  'block w-full text-left rounded-md border p-3 transition-colors ' +
+                  'w-full p-6 text-left transition-colors ' +
                   (state.topic === sug.title
-                    ? 'border-emerald-500 bg-emerald-50/60 dark:bg-emerald-500/10'
-                    : 'border-black/10 dark:border-white/10 hover:bg-black/5 dark:hover:bg-white/10')
+                    ? 'bg-blue-50 dark:bg-blue-900/10'
+                    : 'hover:bg-neutral-50 dark:hover:bg-neutral-800/50')
                 }
               >
-                <div className="flex items-start justify-between gap-3">
-                  <div className="font-medium flex-1">{sug.title}</div>
+                <div className="flex items-start justify-between gap-4">
+                  <div className="flex-1">
+                    <p className="font-medium text-neutral-900 dark:text-white">{sug.title}</p>
+                    {sug.angle && <p className="mt-1 text-sm text-neutral-500 italic">"{sug.angle}"</p>}
+                  </div>
                   {state.topic === sug.title && (
-                    <span className="inline-flex items-center gap-1 text-xs text-emerald-700 dark:text-emerald-300">
-                      <CheckCircle2 size={14} /> Selected
-                    </span>
+                    <div className="flex shrink-0 items-center gap-2 rounded-full bg-blue-100 px-3 py-1 text-xs font-medium text-blue-700 dark:bg-blue-500/20 dark:text-blue-300">
+                      <CheckCircle2 className="h-4 w-4" />
+                      Selected
+                    </div>
                   )}
                 </div>
-                {sug.angle && <div className="text-xs opacity-70 mt-0.5">{sug.angle}</div>}
                 {sug.key_points && (
-                  <ul className="text-xs mt-1 list-disc pl-4 opacity-80">
-                    {sug.key_points.map((p, i) => (
-                      <li key={i}>{p}</li>
-                    ))}
+                  <ul className="mt-4 list-inside list-disc space-y-1.5 text-sm text-neutral-600 dark:text-neutral-400">
+                    {sug.key_points.map((p, i) => <li key={i}>{p}</li>)}
                   </ul>
                 )}
               </button>
             ))}
-            {!state.suggestions?.length && <div className="text-sm opacity-60">No suggestions yet.</div>}
           </div>
         </div>
-      </div>
+      )}
     </div>
   )
 }
+
+

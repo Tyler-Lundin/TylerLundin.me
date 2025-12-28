@@ -62,7 +62,7 @@ export default function DevFab() {
   }
 
   return (
-    <div className="fixed bottom-6 right-6 z-50">
+    <div className="fixed bottom-6 right-6 z-50 ">
       {/* Backdrop */}
       {open && (
         <button
@@ -123,7 +123,7 @@ export default function DevFab() {
         aria-label="Open actions"
         onClick={() => setOpen((v) => !v)}
         className={cn(
-          "transition-all rotate-0 scale-125 duration-500",
+          "transition-all rotate-0 scale-125 duration-500 backdrop-blur-lg rounded-full",
           !open && "hover:rotate-180",
           open && 'rotate-360'
         )}

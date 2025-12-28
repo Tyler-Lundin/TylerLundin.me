@@ -36,8 +36,8 @@ export default function ProjectSubscription({
       </div>
 
       <div className="relative">
-        <div className={linked ? 'bg-[#16171A]' : 'bg-[#16171A] blur-sm select-none pointer-events-none'}>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 p-3 sm:p-4">
+        <div className={linked ? '' : 'blur-[2px] select-none pointer-events-none opacity-40'}>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 p-3 sm:p-4 bg-[#16171A]">
             {/* Plan */}
             <div className="rounded-lg border border-[#3F4147] bg-[#0F1115] p-3">
               <div className="text-[11px] text-[#949BA4]">Plan</div>
@@ -76,19 +76,19 @@ export default function ProjectSubscription({
             </div>
           </div>
 
-          <div className="px-3 sm:px-4 pb-3 flex items-center gap-2">
+          <div className="px-3 sm:px-4 pb-3 flex items-center gap-2 bg-[#16171A]">
             <button className="h-7 px-2 rounded border border-[#3F4147] bg-[#1E1F22] text-xs text-[#DBDEE1] opacity-60 cursor-not-allowed">Update plan</button>
             <button className="h-7 px-2 rounded border border-[#3F4147] bg-[#1E1F22] text-xs text-[#DBDEE1] opacity-60 cursor-not-allowed">Cancel</button>
           </div>
         </div>
 
         {!linked && (
-          <div className="absolute inset-0 flex items-center justify-center">
-            <div className="rounded-lg border border-[#3F4147] bg-[#1E1F22]/90 backdrop-blur p-4 text-center max-w-sm mx-auto">
-              <div className="text-sm text-white font-medium">Create or link subscription</div>
-              <div className="mt-1 text-xs text-[#949BA4]">Connect this project to a subscription to manage plan, billing cycle, and usage.</div>
-              <div className="mt-3">
-                <button className="px-3 h-8 rounded-md border border-[#3F4147] bg-[#232428] text-xs text-[#DBDEE1] opacity-60 cursor-not-allowed">Link Subscription</button>
+          <div className="absolute inset-0 z-20 flex items-center justify-center p-4">
+            <div className="rounded-xl border border-[#3F4147] bg-[#1E1F22]/90 backdrop-blur-md p-6 text-center max-w-sm w-full shadow-2xl">
+              <div className="text-sm text-white font-semibold">Create or link subscription</div>
+              <div className="mt-2 text-xs text-[#949BA4] leading-relaxed">Connect this project to a subscription to manage plan, billing cycle, and usage.</div>
+              <div className="mt-4">
+                <button className="w-full px-4 h-9 rounded-lg bg-neutral-100 hover:bg-white text-sm font-semibold text-neutral-900 transition-colors cursor-not-allowed opacity-80">Link Subscription</button>
               </div>
             </div>
           </div>

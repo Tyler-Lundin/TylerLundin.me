@@ -4,6 +4,7 @@ import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
+import EditorForm from '@/components/dev/blog/EditorForm'
 
 type Post = {
   id: string
@@ -105,7 +106,16 @@ export default async function DevBlogView({ params }: { params: Promise<{ slug: 
           </div>
 
           {post.cover_image_url && (
-            <img src={post.cover_image_url} alt="cover" className="mt-4 rounded-md w-full object-cover" />
+            <div className="mt-4 relative rounded-md overflow-hidden w-full h-[420px]">
+              {/* Use natural height with vertical pan, clipped by container */}
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={post.cover_image_url}
+                alt="cover"
+                className="absolute left-0 top-0 w-full h-auto pan-vert object-top"
+                style={{ ['--pan-amount' as any]: '-60%' }}
+              />
+            </div>
           )}
 
           {tags?.length > 0 && (
@@ -134,6 +144,26 @@ export default async function DevBlogView({ params }: { params: Promise<{ slug: 
               </div>
             </div>
           </div>
+        </div>
+
+        {/* --- Editor Panel --- */}
+        <div className="rounded-xl border border-black/10 dark:border-white/10 bg-white/70 dark:bg-neutral-900/70 p-4 sm:p-6">
+          <div className="mb-4 flex items-center justify-between">
+            <h2 className="text-base font-semibold">Edit</h2>
+            <div className="text-xs opacity-70">ID: {post.id}</div>
+          </div>
+          <EditorForm
+            initial={{
+              id: post.id,
+              title: post.title,
+              slug: post.slug,
+              excerpt: post.excerpt,
+              content_md: post.content_md,
+              cover_image_url: post.cover_image_url,
+              tags: tags?.map((t) => t.name) || [],
+              reading_time_minutes: post.reading_time_minutes,
+            }}
+          />
         </div>
       </div>
     </div>

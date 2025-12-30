@@ -98,11 +98,14 @@ export default function ServicesIndexPage() {
             themeKey={themeKey}
             headline="Services"
             description={
-              'Hosting, design, logos, dashboards, and auth—wired together so your site runs fast, looks sharp, and stays online.'
+              'Hosting, design, logos, dashboards, and auth—wired together so your site runs fast, looks sharp, and stays online. Based in Spokane, WA.'
             }
             contactHref={contactHref()}
             faqHref={'/services/faq'}
           />
+          <p className="mt-3 text-xs text-neutral-700 dark:text-neutral-300">
+            Based in Spokane — see how I work with local businesses: <a href="/spokane-web-developer" className="underline">Spokane web developer</a>.
+          </p>
       </section>
 
       {/* FULL-WIDTH BUNDLES SHOWCASE */}

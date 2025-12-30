@@ -13,7 +13,7 @@ export default function SpotlightControls({
   total?: number // optional
 }) {
   return (
-    <div className="pointer-events-none absolute inset-0 z-40">
+    <div className="pointer-events-none absolute inset-0 z-40 ">
       {/* Mobile: bottom controls */}
       <div className="absolute inset-x-0 bottom-0 px-3 pb-3 sm:hidden">
         <div className="relative flex items-center justify-between">

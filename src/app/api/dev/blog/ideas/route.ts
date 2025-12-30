@@ -15,7 +15,8 @@ export async function POST(req: Request) {
     const body = await req.json()
     const { goals, keywords } = body || {}
 
-    const cleanGoal = (input: any) => (String(input || '')).replace(/\s+/g, ' ').trim().slice(0, 300)
+    // Allow generous goal length; model will still handle summarization
+    const cleanGoal = (input: any) => (String(input || '')).replace(/\s+/g, ' ').trim().slice(0, 4000)
     const cleanKeywords = (arr: any): string[] => {
       const src = Array.isArray(arr) ? arr : []
       const out: string[] = []

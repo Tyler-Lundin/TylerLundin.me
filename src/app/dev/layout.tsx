@@ -2,6 +2,8 @@ import { requireAdmin } from '@/lib/auth'
 import { redirect } from 'next/navigation'
 import DevFab from '@/components/dev/DevFab'
 import { SiteShell } from '@/components/layout/SiteShell'
+import { ActiveProjectProvider } from '@/components/dev/ActiveProjectContext'
+import { cookies } from 'next/headers'
 
 export default async function DevLayout({
   children,
@@ -14,10 +16,15 @@ export default async function DevLayout({
     redirect('/login?redirect=/dev')
   }
 
+  const cookieStore = await cookies()
+  const initialProjectId = cookieStore.get('dev_active_project')?.value || null
+
   return (
     <div className="min-h-screen">
       <SiteShell>
-        {children}
+        <ActiveProjectProvider initialProjectId={initialProjectId}>
+          {children}
+        </ActiveProjectProvider>
       </SiteShell>
       <DevFab />
     </div>

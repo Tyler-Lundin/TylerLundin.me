@@ -3,6 +3,7 @@ import { loadProjectsFromFolders } from '@/lib/projects.server';
 import { heroFolders } from '@/data/heroFolders';
 import { projects as seededProjects } from '@/data/projects';
 import ContactCTA from '@/components/sections/ContactCTA';
+import AutoScrollHeroSpotlights from '@/components/behavior/AutoScrollHeroSpotlights';
 
 export default async function LandingPage() {
   // Load media from public/projects/<folder>/ for the hero showcase
@@ -19,6 +20,8 @@ export default async function LandingPage() {
   return (
     <main className="max-w-full overflow-x-hidden mx-2 md:mx-4 border border-black/10 dark:border-white/10 rounded-lg my-4 min-h-fit overflow-visible bg-gradient-to-b from-neutral-50 dark:from-black z-10 via-transparent to-white dark:to-black text-black dark:text-white ">
       <Hero projects={combined} />
+      {/* Auto-scroll toward Hero spotlights on first visit until user cancels */}
+      <AutoScrollHeroSpotlights />
       <ContactCTA />
     </main>
   );

@@ -1,8 +1,11 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
+import { Suspense } from "react";
 import "./globals.css";
 import { SiteShell } from "@/components/layout/SiteShell";
 import { Analytics } from "@vercel/analytics/next";
+import Script from "next/script";
+import GoogleAnalytics from "@/components/analytics/GoogleAnalytics";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -38,12 +41,78 @@ export default async function RootLayout({
       <head>
         <link rel="icon" href="/favicon-light.ico" media="(prefers-color-scheme: light)" />
         <link rel="icon" href="/favicon-dark.ico" media="(prefers-color-scheme: dark)" />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              '@context': 'https://schema.org',
+              '@type': 'WebSite',
+              name: 'Tyler Lundin',
+              url: 'https://tylerlundin.me',
+              potentialAction: {
+                '@type': 'SearchAction',
+                target: 'https://www.google.com/search?q={search_term_string}',
+                'query-input': 'required name=search_term_string',
+              },
+            }),
+          }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              '@context': 'https://schema.org',
+              '@type': 'Person',
+              name: 'Tyler Lundin',
+              url: 'https://tylerlundin.me',
+              jobTitle: 'Web Developer',
+              address: {
+                '@type': 'PostalAddress',
+                addressLocality: 'Spokane',
+                addressRegion: 'WA',
+                addressCountry: 'US',
+              },
+              sameAs: [
+                'https://github.com/Tyler-Lundin',
+                'https://www.linkedin.com/in/tyler-l-81b839378',
+              ],
+            }),
+          }}
+        />
+        {process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID ? (
+          <>
+            <Script
+              src={`https://www.googletagmanager.com/gtag/js?id=${process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID}`}
+              strategy="afterInteractive"
+            />
+            <Script id="ga-init" strategy="afterInteractive">
+              {`
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){dataLayer.push(arguments);}
+                gtag('js', new Date());
+                gtag('config', '${process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID}', {
+                  anonymize_ip: true,
+                  send_page_view: false
+                });
+              `}
+            </Script>
+          </>
+        ) : null}
       </head>
       <body className={[inter.className, "max-w-screen overflow-x-hidden"].join(" ")}>
-        <SiteShell>
-          {children}
-        </SiteShell>
-        <Analytics />
+        <Suspense fallback={null}>
+          <SiteShell>
+            {children}
+          </SiteShell>
+        </Suspense>
+        {process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID ? (
+          <Suspense fallback={null}>
+            <GoogleAnalytics measurementId={process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID} />
+          </Suspense>
+        ) : null}
+        <Suspense fallback={null}>
+          <Analytics />
+        </Suspense>
       </body>
     </html>
   );

@@ -24,6 +24,9 @@ export default function ServicesFaqPage() {
           <p className="text-neutral-700 dark:text-neutral-300 mt-3">
             A quick overview of the moving pieces of the web—and what typical websites cost to build and run.
           </p>
+          <p className="text-neutral-700 dark:text-neutral-300 mt-2 text-sm">
+            Based in Spokane. If you’re searching locally, see my <a className="underline" href="/spokane-web-developer">Spokane web developer</a> page.
+          </p>
         </section>
 
         {/* Moving Pieces */}
@@ -114,4 +117,3 @@ export default function ServicesFaqPage() {
     </main>
   )
 }
-

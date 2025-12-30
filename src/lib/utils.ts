@@ -24,3 +24,16 @@ export function randomHexColor(theme: 'light' | 'dark') {
 
   return `#${rand()}${rand()}${rand()}`;
 }
+
+// Simple, consistent slug generator used across CRM pages
+export function slugify(input: string): string {
+  try {
+    return input
+      .toLowerCase()
+      .trim()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/(^-|-$)/g, '')
+  } catch {
+    return input
+  }
+}

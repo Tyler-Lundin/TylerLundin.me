@@ -66,10 +66,10 @@ export default async function BlogPage() {
             themeKey={themeKey}
           />
             {/* Rotating spotlight hero, similar to projects */}
-            <SpotlightPosts posts={spotlight} />
       </section>
 
       <div className="mx-auto max-w-7xl px-4">
+            <SpotlightPosts posts={spotlight} />
         {/* Segments */}
         <div className=" space-y-10">
           {tech.length > 0 && (

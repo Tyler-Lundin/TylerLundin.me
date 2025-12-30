@@ -64,7 +64,8 @@ export const siteConfig: SiteConfig = {
     text: "© 2025 Tyler Lundin. Serving Spokane and the Inland Northwest.",
     links: [
       { label: "Privacy Policy", url: "/privacy" },
+      { label: "Spokane Web Developer", url: "/spokane-web-developer" },
       { label: "GitHub", url: "https://github.com/tyler-lundin" }
     ]
   }
-}; 
+};

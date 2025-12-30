@@ -25,6 +25,7 @@ import {
   CrmProjectDocument,
   Invoice 
 } from '@/types/crm'
+import { slugify } from '@/lib/utils'
 
 // Align with app route typing where params is a Promise
 type PageProps = { params: Promise<{ slug: string }> }
@@ -131,7 +132,7 @@ export default async function ProjectDetailPage(props: PageProps) {
             <h1 className="text-3xl font-bold text-neutral-900 dark:text-white tracking-tight">{typedProject.title}</h1>
             <div className="mt-2 flex items-center gap-3 text-sm text-neutral-500">
               <span>
-                for <Link className="font-medium text-blue-600 hover:underline dark:text-blue-400" href={`/dev/clients/${typedProject.client_id}`}>{typedProject.client?.name}</Link>
+                for <Link className="font-medium text-blue-600 hover:underline dark:text-blue-400" href={`/dev/clients/${slugify(typedProject.client?.name || '')}`}>{typedProject.client?.name}</Link>
               </span>
               <span className="text-neutral-300 dark:text-neutral-700">•</span>
               <div className="flex items-center gap-2">

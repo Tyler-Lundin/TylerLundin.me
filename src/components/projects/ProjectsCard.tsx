@@ -6,39 +6,53 @@ import { motion } from 'framer-motion'
 import type { Project, ProjectMedia } from '@/types/projects'
 import { usePrefersDark } from '@/hooks/usePrefersDark'
 
+// Helper to pick the best media based on dark/light mode and featured status
 function firstFeaturedMedia(media: ProjectMedia[], isDark: boolean): ProjectMedia | undefined {
   if (!media?.length) return undefined
   const pref: 'dark' | 'light' = isDark ? 'dark' : 'light'
+  // 1. Match preference, 2. Fallback to any
   const byVariant = media.filter((m) => (m.variant ? m.variant === pref : true))
+  // 3. Find featured in filtered, 4. First in filtered, 5. Featured in all, 6. First in all
   return (
     byVariant.find((m) => m.featured) || byVariant[0] || media.find((m) => m.featured) || media[0]
   )
 }
 
-export default function ProjectsCard({ project, state, onClick }: { project: Project; state: 'prev'|'current'|'next'; onClick?: () => void }) {
+export default function ProjectsCard({ 
+  project, 
+  state, 
+  onClick 
+}: { 
+  project: Project; 
+  state: 'prev' | 'current' | 'next'; 
+  onClick?: () => void 
+}) {
   const isDark = usePrefersDark()
   const media = firstFeaturedMedia(project.media, isDark)
   const [isLoaded, setIsLoaded] = useState(false)
+
   if (!media) return null
 
+  // Determine status (Live vs Demo)
   const status: 'live' | 'demo' = project.status ?? (project.links?.some((l) => l.type === 'live') ? 'live' : 'demo')
 
-  const baseCls = 'group absolute top-1/2 -translate-y-1/2 rounded-2xl overflow-hidden border border-black/10 dark:border-white/10 bg-white/60 dark:bg-white/5 backdrop-blur shadow-2xl cursor-pointer select-none p-4 sm:p-8 max-w-[80vw]'
+  // Layout & Animation Constants
+  const baseCls = 'group absolute top-1/2 -translate-y-1/2 rounded-2xl overflow-hidden border border-black/10 dark:border-white/10 bg-white/60 dark:bg-white/5 backdrop-blur shadow-2xl cursor-pointer select-none max-w-[80vw]'
+  
+  // Adjusted aspect ratios and positioning
   const layout: Record<typeof state, string> = {
-    prev: 'left-0 -translate-x-5/6 aspect-[9/11] scale-80 -rotate-3',
-    current: 'left-1/2 -translate-x-1/2 aspect-[9/11]',
-    next: 'right-0 translate-x-5/6 aspect-[9/11] scale-80 rotate-3',
+    prev: 'left-0 -translate-x-5/6 aspect-[9/11] scale-80 -rotate-3 z-10',
+    current: 'left-1/2 -translate-x-1/2 aspect-[9/11] z-30',
+    next: 'right-0 translate-x-5/6 aspect-[9/11] scale-80 rotate-3 z-20',
   }
+
   const isCurrent = state === 'current'
   const scale = isCurrent ? 1 : 0.94
+  // Dim non-active cards slightly
+  const inactiveFilter = isCurrent ? '' : 'saturate-[0.8] brightness-[0.95]'
   const blur = isCurrent ? 'none' : 'blur-[1px] opacity-50'
 
-  const onVisitClick = (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.stopPropagation()
-    const live = project.links?.find((l) => l.type === 'live')?.url
-    if (live) window.open(live, '_blank', 'noopener,noreferrer')
-  }
-
+  // Cinematic "Pan" Logic
   const isTallAuto = media.type === 'image' && (media.autoScroll ?? media.src.startsWith('/projects/')) && (media.scrollDirection ?? 'vertical') === 'vertical'
 
   const setPlaybackRate = (el: HTMLElement, rate: number) => {
@@ -47,32 +61,37 @@ export default function ProjectsCard({ project, state, onClick }: { project: Pro
       const anims = (t as HTMLElement).getAnimations?.() ?? []
       anims.forEach((a) => {
         try {
-          // @ts-ignore
+          // @ts-ignore - TS doesn't always know about updatePlaybackRate
           if (typeof a.updatePlaybackRate === 'function') a.updatePlaybackRate(rate)
           // @ts-ignore
           if ('playbackRate' in a) (a as any).playbackRate = rate
-        } catch {}
+        } catch (err) {
+            // safely ignore animation errors
+        }
       })
     })
   }
 
   return (
     <motion.div
-      className={[`${baseCls} ${layout[state]} h-full`, isCurrent ? '' : 'saturate-[0.8] brightness-[0.95]'].join(' ')}
-      style={{ zIndex: state === 'current' ? 3 : state === 'prev' ? 2 : 1 }}
+      className={`${baseCls} ${layout[state]} h-full ${inactiveFilter}`}
       initial={false}
       animate={{ opacity: isCurrent ? 1 : 0.6, scale }}
       transition={{ type: 'spring', stiffness: 420, damping: 42, mass: 0.6 }}
       onClick={() => { if (onClick) { onClick() } else { window.location.href = `/project/${project.slug}` } }}
-      role="link" tabIndex={0}
+      role="link" 
+      tabIndex={0}
+      // Slow down pan on enter, speed up on leave
       onMouseEnter={(e) => setPlaybackRate(e.currentTarget as HTMLElement, 0.10)}
-      onMouseLeave={(e) => setPlaybackRate(e.currentTarget as HTMLElement, .5)}
+      onMouseLeave={(e) => setPlaybackRate(e.currentTarget as HTMLElement, 0.5)}
       onTouchStart={(e) => setPlaybackRate(e.currentTarget as HTMLElement, 0.10)}
-      onTouchEnd={(e) => setPlaybackRate(e.currentTarget as HTMLElement, .5)}
+      onTouchEnd={(e) => setPlaybackRate(e.currentTarget as HTMLElement, 0.5)}
     >
-      <div className="absolute inset-0">
+      {/* --- MEDIA LAYER --- */}
+      <div className="absolute inset-0 bg-neutral-100 dark:bg-neutral-900">
         {media.type === 'image' ? (
           isTallAuto ? (
+            /* CSS Animated Image (Standard img for simpler CSS control) */
             <img
               src={media.src}
               alt={media.alt ?? project.title}
@@ -84,6 +103,7 @@ export default function ProjectsCard({ project, state, onClick }: { project: Pro
               onLoad={() => setIsLoaded(true)}
             />
           ) : (
+            /* Next.js Optimized Image */
             <Image
               src={media.src}
               alt={media.alt ?? project.title}
@@ -98,16 +118,15 @@ export default function ProjectsCard({ project, state, onClick }: { project: Pro
                 state !== 'current' && !isLoaded ? 'blur-md' : '',
               ].join(' ')}
               priority={state === 'current'}
+              fetchPriority={state === 'current' ? 'high' : 'auto'}
               loading={state === 'current' ? 'eager' : 'lazy'}
-              fetchPriority={state === 'current' ? 'high' : 'low'}
-              decoding={state === 'current' ? 'auto' : 'async'}
               quality={state === 'current' ? 75 : 40}
-              placeholder="empty"
               onLoadingComplete={() => setIsLoaded(true)}
               style={ media.scrollDurationMs ? ({ ['--pan-duration' as any]: `${media.scrollDurationMs}ms` } as any) : undefined }
             />
           )
         ) : (
+          /* Video Handling */
           <video
             className={`h-full w-full object-cover ${blur} ${state !== 'current' && !isLoaded ? 'blur-md' : ''}`}
             autoPlay={state === 'current' ? (media.autoplay ?? true) : false}
@@ -121,20 +140,22 @@ export default function ProjectsCard({ project, state, onClick }: { project: Pro
             <source src={media.src} />
           </video>
         )}
+
+        {/* Loading Placeholder */ }
         {!isLoaded && (
           <div className="absolute inset-0 bg-neutral-200/40 dark:bg-neutral-800/30 animate-pulse" />
         )}
-        {/* Cinematic overlays to match bundles */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/55 to-black/20 sm:from-black/80 sm:via-black/45 sm:to-black/10" />
-        <div className="absolute inset-0 bg-[radial-gradient(1200px_circle_at_20%_10%,rgba(255,255,255,0.10),transparent_60%)]" />
-        <div className="absolute inset-0 ring-1 ring-white/5" />
+
+        {/* Cinematic Overlays (Subtle) */}
+        <div className="absolute inset-0 bg-[radial-gradient(1200px_circle_at_20%_10%,rgba(255,255,255,0.10),transparent_60%)] pointer-events-none" />
+        <div className="absolute inset-0 ring-1 ring-white/10 pointer-events-none" />
       </div>
 
-      {/* Status badge */}
-      <div className="absolute left-3 top-3 z-10">
+      {/* --- STATUS BADGE --- */}
+      <div className="absolute left-4 top-4 z-20">
         <span
           className={[
-            'inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wide shadow-sm',
+            'inline-flex items-center gap-1 rounded-full px-3 py-1 text-[11px] font-bold uppercase tracking-wide shadow-sm border border-black/5',
             status === 'live' ? 'bg-emerald-400 text-black' : 'bg-amber-300 text-black',
           ].join(' ')}
         >
@@ -142,27 +163,30 @@ export default function ProjectsCard({ project, state, onClick }: { project: Pro
         </span>
       </div>
 
-      {/* Meta overlay */}
-      <div className="absolute inset-x-0 bottom-0 h-full grid items-center px-4 text-black dark:text-white bg-gradient-to-b from-white/50 via-white/80 to-white dark:from-black/50 dark:via-black/80 dark:to-black group-hover:opacity-0 opacity-100 transition-all">
-        <div className="flex text-center justify-center gap-3">
-          <div className="min-w-0">
-            <h3
-              className={[
-                // Responsive sizing (slightly smaller on mobile to avoid overflow)
-                state === 'current' ? 'text-xl sm:text-3xl md:text-5xl' : 'text-lg sm:text-2xl md:text-3xl',
-                // Wrapping behavior
-                'font-black break-words whitespace-normal hyphens-auto text-balance drop-shadow',
-                'max-w-full'
-              ].join(' ')}
-            >
-              {project.title}
-            </h3>
-            {project.tagline && (
-              <p className="mt-0.5 text-xs sm:text-sm text-black/85 dark:text-white/85 line-clamp-1">{project.tagline}</p>
-            )}
-          </div>
-        </div>
+      {/* --- TEXT OVERLAY (Refactored) --- */}
+      {/* Only covers bottom, gradient fade, hides on hover to show image */}
+      <div className="absolute inset-x-0 bottom-0 z-20 pt-24 pb-6 px-4 flex flex-col justify-end text-center
+                      bg-gradient-to-t from-white via-white/90 to-transparent 
+                      dark:from-black dark:via-black/90 dark:to-transparent
+                      group-hover:opacity-0 transition-opacity duration-300 ease-in-out">
+        
+        <h3
+          className={[
+            'font-black text-black dark:text-white drop-shadow-sm',
+            state === 'current' ? 'text-2xl sm:text-4xl md:text-5xl' : 'text-xl sm:text-2xl',
+            'break-words whitespace-normal text-balance'
+          ].join(' ')}
+        >
+          {project.title}
+        </h3>
+        
+        {project.tagline && (
+          <p className="mt-2 text-sm sm:text-base font-medium text-black/70 dark:text-white/70 line-clamp-2">
+            {project.tagline}
+          </p>
+        )}
       </div>
+
     </motion.div>
   )
 }

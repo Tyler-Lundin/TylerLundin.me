@@ -1,4 +1,5 @@
 "use client"
+
 import { Bundle } from "@/services"
 import { motion } from "framer-motion"
 import BundleBackground from './BundleBackground'
@@ -6,7 +7,6 @@ import BundleTitle from './BundleTitle'
 import BundlePrice from './BundlePrice'
 import BundleSummary from './BundleSummary'
 import CTAButton from './CTAButton'
-
 
 export default function BundleCard({
   item,
@@ -21,26 +21,16 @@ export default function BundleCard({
   ctaHref?: string
   ctaLabel?: string
 }) {
-  const baseCls = [
-    'group absolute top-1/2  -translate-y-1/2 rounded-2xl overflow-hidden border shadow-2xl cursor-pointer select-none transition-all p-3 sm:p-4 md:p-6 lg:p-8 max-w-[80vw]',
-    ''
-  ].join(" ")
-
+  const isCurrent = state === 'current'
+  
+  // Layout definitions
   const layout: Record<typeof state, string> = {
-    prev: 'left-0 -translate-x-5/6 aspect-[9/11] scale-80 -rotate-3',
-    current: 'left-1/2 -translate-x-1/2 aspect-[9/11]',
-    next: 'right-0 translate-x-5/6 aspect-[9/11] scale-80 rotate-3',
+    prev: 'left-0 -translate-x-1/2 scale-90 -rotate-3 z-10 brightness-[0.6] blur-[1px]',
+    current: 'left-1/2 -translate-x-1/2 z-30 brightness-100 blur-0',
+    next: 'right-0 translate-x-1/2 scale-90 rotate-3 z-20 brightness-[0.6] blur-[1px]',
   }
 
-  const isCurrent = state === 'current'
-  const scale = isCurrent ? 1 : 0.94
-  const opacity = isCurrent ? 1 : 1
-
-
-  // Mobile-friendly caps: keep poster vibe without becoming a brochure
-  const bullets = (item.features ?? []).slice(0, 2)
-  const shortTags = (item.tags ?? []).slice(0, 2)
-  const includes = (item.serviceSlugs ?? []).slice(0, 4)
+  // Formatting Price
   const priceText = item.priceRange
     ?? (item.prices && item.prices.length
       ? `$${item.prices[0].amount}/${item.prices[0].cadence === 'monthly' ? 'mo' : 'one-time'}`
@@ -50,15 +40,17 @@ export default function BundleCard({
     <motion.div
       key={`${item.slug}-${state}`}
       className={[
-        baseCls,
-        layout[state],
-        'h-full',
-        isCurrent ? 'blur-[0px]' : 'blur-[1px] saturate-[0.8] brightness-[0.75]',
+        'group absolute top-1/2 -translate-y-1/2 rounded-2xl overflow-hidden',
+        'border border-white/10 shadow-2xl cursor-pointer select-none',
+        'aspect-[9/11] h-full max-w-[80vw]',
+        layout[state]
       ].join(' ')}
-      style={{ zIndex: state === 'current' ? 3 : state === 'prev' ? 2 : 1 }}
       initial={false}
-      animate={{ opacity, scale }}
-      transition={{ type: 'spring', stiffness: 420, damping: 42, mass: 0.6 }}
+      animate={{ 
+        scale: isCurrent ? 1 : 0.94,
+        opacity: 1
+      }}
+      transition={{ type: 'spring', stiffness: 400, damping: 40, mass: 0.8 }}
       onClick={() => onCardClick?.(item, state)}
       role="link"
       tabIndex={0}
@@ -66,24 +58,45 @@ export default function BundleCard({
         if (e.key === 'Enter' || e.key === ' ') onCardClick?.(item, state)
       }}
     >
-      <BundleBackground bgImg={String(item.bgImg)} title={String(item.title)} isCurrent={isCurrent} />
+      {/* --- LAYER 1: Background --- */}
+      <BundleBackground 
+        bgImg={item.bgImg || ''} 
+        title={item.title || ''} 
+        isCurrent={isCurrent} 
+      />
 
-      <div className="absolute top-0 left-0 right-0 flex justify-between items-center p-4 bg-white dark:bg-black">
-        <BundleTitle title={String(item.title)} />
-        <BundlePrice priceText={String(priceText)} />
-        <span className="absolute -z-10 inset-0 bg-gradient-to-b from-white dark:from-black via-white dark:via-black to-transparent h-24 top-2" />
-      </div>
+      {/* --- LAYER 2: Scrims (Gradient Overlays) --- */}
+      {/* Top Gradient for Title visibility */}
+      <div className="absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-black/80 via-black/40 to-transparent pointer-events-none" />
+      {/* Bottom Gradient for Content visibility */}
+      <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/90 via-black/60 to-transparent pointer-events-none" />
 
-      <div className={ 'relative grid items-end  z-10 flex h-full flex-col p-2 sm:p-4 md:p-6 lg:p-8 '} >
-        <div className="grid gap-2">
-          <BundleSummary summary={item.summary} />
-          <CTAButton slug={item.slug} href={ctaHref} label={ctaLabel} />
+      {/* --- LAYER 3: Content Grid --- */}
+      <div className="relative z-10 flex h-full flex-col justify-between p-4 sm:p-6 lg:p-8">
+        
+        {/* Top Section: Title & Price */}
+        <div className="flex justify-between items-start gap-4">
+          <BundleTitle title={item.title || ''} />
+          {priceText && <BundlePrice priceText={priceText} />}
         </div>
-      </div>
 
+        {/* Bottom Section: Summary & Action */}
+        <div className="flex flex-col gap-4">
+          <BundleSummary summary={item.summary} />
+          
+          {/* Stop Propagation to prevent card click when clicking button */}
+          <div 
+            onClick={(e) => e.stopPropagation()} 
+            onKeyDown={(e) => e.stopPropagation()}
+          >
+            <CTAButton slug={item.slug} href={ctaHref} label={ctaLabel} />
+          </div>
+        </div>
+
+      </div>
+      
+      {/* Optional: Hover border highlight */}
+      <div className="absolute inset-0 border-2 border-white/0 group-hover:border-white/10 transition-colors rounded-2xl pointer-events-none" />
     </motion.div>
   )
 }
-
-
-// Note: Bullets component was extracted but isn't used here.

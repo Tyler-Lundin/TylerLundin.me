@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState, useRef } from "react"
 import { createClient } from "@/lib/supabase/client"
+import { useActiveProject } from '@/components/dev/ActiveProjectContext'
 
 // --- Types ---
 
@@ -17,6 +18,16 @@ export type ActionId =
 export type DevCommandCenterHeroProps = {
   onAction?: (action: ActionId, ctx: { projectId: string }) => void
   className?: string
+  initialProjects?: {
+    id: string
+    name: string
+    client: string
+    branch: string
+    env: 'preview' | 'prod' | 'dev'
+    deploy: 'ready' | 'running' | 'failed'
+    tasksDue: number
+    lastActivity: string
+  }[]
 }
 
 const ACTIVE_PROJECT_STORAGE_KEY = "dev.activeProject"
@@ -62,16 +73,40 @@ import { CrmProject } from "@/types/crm"
 
 // ... existing timeAgo ...
 
-export default function DevCommandCenterHero({ onAction, className }: DevCommandCenterHeroProps) {
+export default function DevCommandCenterHero({ onAction, className, initialProjects }: DevCommandCenterHeroProps) {
   const [projects, setProjects] = useState<ProjectMeta[]>([])
-  const [activeProjectId, setActiveProjectId] = useState<string>("")
+  // Context-driven active project with local fallback
+  const activeCtx = useActiveProject()
+  const [localActiveProjectId, setLocalActiveProjectId] = useState<string>("")
   const [query, setQuery] = useState("")
   const [isProjectMenuOpen, setIsProjectMenuOpen] = useState(false)
   const [loading, setLoading] = useState(true)
   const menuRef = useRef<HTMLDivElement>(null)
 
-  // Data Fetching
+  // Initial from server (if provided)
   useEffect(() => {
+    if (initialProjects && initialProjects.length > 0) {
+      setProjects(initialProjects)
+      setLoading(false)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  // Ensure an active selection once projects are available
+  useEffect(() => {
+    if (!projects || projects.length === 0) return
+    const current = activeCtx?.activeProjectId || localActiveProjectId
+    if (!current) {
+      const fallback = projects[0].id
+      activeCtx?.setActiveProjectId?.(fallback)
+      setLocalActiveProjectId(fallback)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [projects])
+
+  // Data Fetching (client refresh if no server data)
+  useEffect(() => {
+    if (initialProjects && initialProjects.length > 0) return
     async function fetchProjects() {
       const sb = createClient()
       
@@ -126,29 +161,33 @@ export default function DevCommandCenterHero({ onAction, className }: DevCommand
       setProjects(mapped)
       
       // Handle initial active project selection
-      const stored = window.localStorage.getItem(ACTIVE_PROJECT_STORAGE_KEY)
-      if (stored && mapped.find(p => p.id === stored)) {
-        setActiveProjectId(stored)
+      const selectedId = activeCtx?.activeProjectId || (typeof window !== 'undefined' ? window.localStorage.getItem(ACTIVE_PROJECT_STORAGE_KEY) : null) || ''
+      if (selectedId && mapped.find(p => p.id === selectedId)) {
+        activeCtx?.setActiveProjectId(selectedId)
+        setLocalActiveProjectId(selectedId)
       } else if (mapped.length > 0) {
-        setActiveProjectId(mapped[0].id)
+        activeCtx?.setActiveProjectId?.(mapped[0].id)
+        setLocalActiveProjectId(mapped[0].id)
       }
       
       setLoading(false)
     }
 
     fetchProjects()
-  }, [])
+  }, [initialProjects])
 
-  // Save persistence
+  // Sync context -> local fallback and localStorage (for older code)
   useEffect(() => {
-    if (activeProjectId) {
-      try {
-        window.localStorage.setItem(ACTIVE_PROJECT_STORAGE_KEY, activeProjectId)
-      } catch {}
+    const id = activeCtx?.activeProjectId
+    if (id) {
+      setLocalActiveProjectId(id)
+      try { window.localStorage.setItem(ACTIVE_PROJECT_STORAGE_KEY, id) } catch {}
     }
-  }, [activeProjectId])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeCtx?.activeProjectId])
 
   // Derived state
+  const activeProjectId = activeCtx?.activeProjectId || localActiveProjectId
   const activeProject = useMemo(() => 
     projects.find(p => p.id === activeProjectId) || projects[0] || null
   , [projects, activeProjectId])
@@ -296,7 +335,7 @@ export default function DevCommandCenterHero({ onAction, className }: DevCommand
                 {projects.map(p => (
                   <button
                     key={p.id}
-                    onClick={() => { setActiveProjectId(p.id); setIsProjectMenuOpen(false) }}
+                    onClick={() => { activeCtx?.setActiveProjectId?.(p.id); setLocalActiveProjectId(p.id); setIsProjectMenuOpen(false) }}
                     className={`flex items-center justify-between rounded-lg px-3 py-2 text-left text-sm transition
                       ${activeProjectId === p.id 
                         ? 'bg-neutral-100 text-neutral-900 dark:bg-neutral-800 dark:text-white' 

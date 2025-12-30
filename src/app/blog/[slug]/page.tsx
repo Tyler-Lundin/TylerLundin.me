@@ -89,7 +89,7 @@ export default async function PublicBlogPost({ params }: { params: Promise<{ slu
             </header>
 
             {post.cover_image_url && (
-              <img src={post.cover_image_url} alt="cover" className="rounded-xl w-full object-cover mb-6" />
+              <img src={post.cover_image_url} alt="cover" className="rounded-xl w-full object-cover max-h-[420px] pan-vert mb-6" style={{ ['--pan-amount' as any]: '-18%' }} />
             )}
 
             <div className="prose prose-lg dark:prose-invert">

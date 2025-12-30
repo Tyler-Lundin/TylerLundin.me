@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { createServiceClient } from '@/lib/supabase/server'
 import { Search, Plus, Building2, ExternalLink, Calendar } from 'lucide-react'
 import NewClientWizard from './components/NewClientWizard'
+import { slugify } from '@/lib/utils'
 
 export default async function CrmClientsPage() {
   const sb = await createServiceClient()
@@ -62,7 +63,7 @@ export default async function CrmClientsPage() {
                         <div className="flex h-8 w-8 items-center justify-center rounded bg-neutral-100 text-neutral-500 dark:bg-neutral-800 dark:text-neutral-400">
                           <Building2 className="h-4 w-4" />
                         </div>
-                        <Link className="font-medium text-neutral-900 hover:underline dark:text-white" href={`/dev/clients/${c.id}`}>
+                        <Link className="font-medium text-neutral-900 hover:underline dark:text-white" href={`/dev/clients/${slugify(c.name)}`}>
                           {c.name}
                         </Link>
                       </div>

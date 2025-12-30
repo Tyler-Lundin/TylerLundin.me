@@ -54,7 +54,8 @@ export default function DevBreadcrumbs() {
             {trail.map((seg, i) => {
               const href = `/${['dev', ...trail.slice(0, i + 1)].join('/')}`
               const isLast = i === trail.length - 1
-              const title = titleize(seg)
+              const isClientDetail = trail[0] === 'clients' && i === 1
+              const title = isClientDetail ? seg : titleize(seg)
 
               return (
                 <div key={href} className="flex items-center gap-0.5 flex-shrink-0">

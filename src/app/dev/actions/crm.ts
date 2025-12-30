@@ -2,6 +2,7 @@
 
 import { createServiceClient } from '@/lib/supabase/server'
 import { revalidatePath } from 'next/cache'
+import { slugify } from '@/lib/utils'
 import { z } from 'zod'
 
 const clientSchema = z.object({
@@ -144,6 +145,9 @@ export async function updateClientAction(prevState: any, formData: FormData) {
   if (error) return { error: error.message }
 
   revalidatePath(`/dev/clients/${id}`)
+  // also revalidate slug path for new URL scheme
+  const slug = slugify(result.data.name)
+  if (slug) revalidatePath(`/dev/clients/${slug}`)
   revalidatePath('/dev/clients')
   return { success: true }
 }
@@ -165,6 +169,12 @@ export async function createProjectAction(prevState: any, formData: FormData) {
   if (error) return { error: error.message }
 
   revalidatePath(`/dev/clients/${result.data.client_id}`)
+  // revalidate slug-based path
+  try {
+    const { data: client } = await sb.from('crm_clients').select('name').eq('id', result.data.client_id).single()
+    const slug = client?.name ? slugify(client.name) : ''
+    if (slug) revalidatePath(`/dev/clients/${slug}`)
+  } catch {}
   revalidatePath('/dev/projects')
   return { success: true }
 }
@@ -186,6 +196,12 @@ export async function createContactAction(prevState: any, formData: FormData) {
   if (error) return { error: error.message }
 
   revalidatePath(`/dev/clients/${result.data.client_id}`)
+  // revalidate slug-based path
+  try {
+    const { data: client } = await sb.from('crm_clients').select('name').eq('id', result.data.client_id).single()
+    const slug = client?.name ? slugify(client.name) : ''
+    if (slug) revalidatePath(`/dev/clients/${slug}`)
+  } catch {}
   return { success: true }
 }
 

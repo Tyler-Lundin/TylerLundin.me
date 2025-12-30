@@ -22,7 +22,8 @@ export default function Step1Topic({ state, setState }: { state: WizardState; se
 
   function cleanGoal(input: string): string {
     const trimmed = (input || '').replace(/\s+/g, ' ').trim()
-    return trimmed.slice(0, 240)
+    // Allow very generous length for goals (was 240)
+    return trimmed.slice(0, 4000)
   }
 
   function cleanKeywords(input: string): string[] {
@@ -79,7 +80,7 @@ export default function Step1Topic({ state, setState }: { state: WizardState; se
         <div className="space-y-6 border-t border-neutral-200 p-6 dark:border-neutral-800">
           <div>
             <label className="mb-1.5 block text-sm font-medium text-neutral-700 dark:text-neutral-300">What's the goal?</label>
-            <input
+            <textarea
               value={goalInput}
               onChange={(e) => {
                 const v = e.target.value
@@ -88,6 +89,7 @@ export default function Step1Topic({ state, setState }: { state: WizardState; se
               }}
               onBlur={() => setState({ goals: cleanGoal(goalInput) })}
               placeholder="e.g., Persuade small business owners to rethink templates"
+              rows={4}
               className="w-full rounded-lg border border-neutral-200 bg-white px-4 py-2.5 text-sm outline-none shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-100 dark:border-neutral-700 dark:bg-neutral-950 dark:text-white dark:focus:border-blue-500 dark:focus:ring-blue-500/20"
             />
           </div>
@@ -168,5 +170,4 @@ export default function Step1Topic({ state, setState }: { state: WizardState; se
     </div>
   )
 }
-
 

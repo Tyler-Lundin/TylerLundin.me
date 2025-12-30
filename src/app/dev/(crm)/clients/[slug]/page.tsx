@@ -6,9 +6,10 @@ import EditClientDialog from '../components/EditClientDialog'
 import NewProjectDialog from '../components/NewProjectDialog'
 import NewContactDialog from '../components/NewContactDialog'
 import { CrmClient, CrmProject } from '@/types/crm'
+import { slugify } from '@/lib/utils'
 
 // Align with app route typing where params is a Promise
-type PageProps = { params: Promise<{ id: string }> }
+type PageProps = { params: Promise<{ slug: string }> }
 
 interface ClientContact {
   id: string
@@ -38,26 +39,42 @@ function StatusBadge({ value }: { value: string }) {
 }
 
 export default async function ClientDetailPage(props: PageProps) {
-  const params = await props.params
+  const { slug } = await props.params
   const sb = await createServiceClient()
 
-  // Parallel fetch: Client + Contacts + Projects
-  const [
-    { data: client, error: clientError },
-    { data: contacts },
-    { data: projects, error: projectsError }
-  ] = await Promise.all([
-    sb.from('crm_clients').select('*').eq('id', params.id).single(),
-    sb.from('crm_client_contacts').select('*').eq('client_id', params.id).order('created_at'),
-    sb.from('crm_projects').select('*').eq('client_id', params.id).order('created_at', { ascending: false })
-  ])
+  // Determine if param is a UUID; if so, fetch directly by id
+  const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(slug)
 
-  if (projectsError) {
-    console.error('[ClientDetailPage] projects fetch error:', projectsError)
+  // Resolve client by id or by slugified name
+  let client: any | null = null
+  let clientError: any | null = null
+
+  if (isUuid) {
+    const res = await sb.from('crm_clients').select('*').eq('id', slug).single()
+    client = res.data
+    clientError = res.error
+  } else {
+    const res = await sb.from('crm_clients').select('*')
+    const row = (res.data || []).find((c: any) => slugify(c.name) === slug)
+    client = row || null
+    clientError = res.error || (!row ? new Error('Not found') : null)
   }
 
   if (clientError || !client) {
     return notFound()
+  }
+
+  // Parallel fetch: Contacts + Projects using resolved client.id
+  const [
+    { data: contacts },
+    { data: projects, error: projectsError }
+  ] = await Promise.all([
+    sb.from('crm_client_contacts').select('*').eq('client_id', client.id).order('created_at'),
+    sb.from('crm_projects').select('*').eq('client_id', client.id).order('created_at', { ascending: false })
+  ])
+
+  if (projectsError) {
+    console.error('[ClientDetailPage] projects fetch error:', projectsError)
   }
 
   const typedClient = client as CrmClient

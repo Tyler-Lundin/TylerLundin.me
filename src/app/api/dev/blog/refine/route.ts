@@ -5,7 +5,7 @@ import OpenAI from 'openai'
 const MODEL = process.env.OPENAI_MODEL || 'gpt-4o-mini'
 
 function cleanGoal(input: any) {
-  return String(input || '').replace(/\s+/g, ' ').trim().slice(0, 300)
+  return String(input || '').replace(/\s+/g, ' ').trim().slice(0, 4000)
 }
 
 function cleanKeywords(input: any): string[] {
@@ -65,4 +65,3 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: 'Failed to refine' }, { status: 500 })
   }
 }
-

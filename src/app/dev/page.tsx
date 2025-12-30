@@ -1,5 +1,5 @@
 import React from 'react'
-import DevCommandCenterHero from './components/DevCommandCenterHero'
+import CommandCenter from './components/CommandCenter'
 import { createClient } from '@/lib/supabase/server'
 import Link from 'next/link'
 import { CrmProject, Invoice } from '@/types/crm'
@@ -158,8 +158,11 @@ export default async function CrmDashboard() {
     <div className="min-h-screen bg-neutral-50/50 pb-20 dark:bg-neutral-950">
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
         
-        {/* 1. Command Center Hero */}
-        <DevCommandCenterHero className="mb-8" />
+        {/* 1. Command Center */}
+        <div className="mb-8">
+          {/* Server wrapper provides initial projects via service client */}
+          <CommandCenter />
+        </div>
 
         {/* 2. Finance Section (High Priority) */}
         <section className="mb-8">

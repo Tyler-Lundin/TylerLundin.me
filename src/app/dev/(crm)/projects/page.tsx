@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { createServiceClient } from '@/lib/supabase/server'
 import { Search, Plus, Folder, Calendar } from 'lucide-react'
 import { CrmProject } from '@/types/crm'
+import { slugify } from '@/lib/utils'
 
 function StatusBadge({ value }: { value: string }) {
   const styles: Record<string, string> = {
@@ -98,7 +99,7 @@ export default async function CrmProjectsPage() {
                       </div>
                     </td>
                     <td className="px-6 py-4">
-                      <Link className="text-neutral-600 hover:text-neutral-900 hover:underline dark:text-neutral-300 dark:hover:text-white" href={`/dev/clients/${p.client_id}`}>
+                      <Link className="text-neutral-600 hover:text-neutral-900 hover:underline dark:text-neutral-300 dark:hover:text-white" href={`/dev/clients/${slugify(p.client?.name || '')}`}>
                         {p.client?.name || 'Unknown'}
                       </Link>
                     </td>

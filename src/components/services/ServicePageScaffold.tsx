@@ -25,6 +25,10 @@ export function ServicePageScaffold({
           </div>
           <h1 className="text-3xl font-semibold leading-tight">{title}</h1>
           <p className="text-neutral-700 dark:text-neutral-300 mt-3">{description}</p>
+          <p className="text-neutral-700 dark:text-neutral-300 mt-2 text-sm">
+            Based in <strong>Spokane, WA</strong>. Looking for a local partner? See
+            {' '}<a href="/spokane-web-developer" className="underline">Spokane web developer</a>.
+          </p>
 
           {features?.length ? (
             <div className="mt-8">
@@ -70,4 +74,3 @@ function CheckIcon({ className = '' }: { className?: string }) {
     </svg>
   )
 }
-

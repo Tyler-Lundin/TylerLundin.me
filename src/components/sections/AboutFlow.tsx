@@ -470,7 +470,7 @@ export default function AboutFlow({ projects }: Props) {
           <motion.div {...fadeUp(0)}>
             <MetaChips role={a.role} location={a.location} availability={availability} />
             <TitleBlock title={a.title} subtitle={a.subtitle} tagline={a.tagline} />
-            <div className="mt-4">
+            <div className="mt-4 grid justify-center md:justify-start">
               <a
                 href="/documents/resume.pdf"
                 download="tyler-lundin-resume.pdf"

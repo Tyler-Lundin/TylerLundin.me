@@ -9,6 +9,9 @@ import { Logo } from './Logo';
 import { cn } from '@/lib/utils';
 import { Section } from '@/types/site';
 import { services } from '@/data/services';
+import { Sora } from "next/font/google";
+
+const sora = Sora({ subsets: ["latin"], display: "swap" });
 
 interface NavProps {
   bannerVisible: boolean;
@@ -77,6 +80,7 @@ const NavLinks = ({ isScrolled, minimal }: { isScrolled?: boolean; minimal?: boo
           <Link
             key={section.type}
             href={section.type === 'home' ? '/' : `/${section.type}`}
+            style={{...sora.style}}
             className={cn(
               'text-gray-900 dark:text-white font-light text-md transition-opacity duration-200',
               'hover:opacity-75',

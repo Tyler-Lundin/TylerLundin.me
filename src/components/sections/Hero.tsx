@@ -6,6 +6,10 @@ import type { Project } from '@/types/projects';
 import { bundles } from '@/services';
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { Sora } from "next/font/google";
+import { motion, AnimatePresence } from "framer-motion"; // Added for smooth transitions
+
+const sora = Sora({ subsets: ["latin"], display: "swap" });
 
 // Code-split heavy spotlights; mount after idle
 const SpotlightProjects = dynamic(() => import('../projects/SpotlightProjects'))
@@ -15,13 +19,10 @@ type HeroProps = {
   projects?: Project[];
 };
 
-
 type HeroTypes = "bundles" | "projects"
 
-
-
-const [on, off ] = [true, false]
-const DE = (i:number) => (off ? i : 0)
+const [on, off] = [true, false]
+const DE = (i: number) => (off ? i : 0)
 const BUG = {
   root: DE(1),
   content: DE(1),
@@ -32,13 +33,7 @@ export function Hero({ projects }: HeroProps) {
   const [current, setCurrent] = useState<HeroTypes>("bundles")
   const [showSpotlights, setShowSpotlights] = useState(false)
 
-  // Auto-rotate between hero types every ~20s
-  useEffect(() => {
-    const id = setInterval(() => {
-      setCurrent((prev) => (prev === 'bundles' ? 'projects' : 'bundles'))
-    }, 20000)
-    return () => clearInterval(id)
-  }, [])
+  // REMOVED: The auto-rotate setInterval is gone.
 
   // Mount heavy spotlights after idle or small delay to improve LCP
   useEffect(() => {
@@ -52,8 +47,8 @@ export function Hero({ projects }: HeroProps) {
     }
     const id = schedule(() => setShowSpotlights(true))
     return () => {
-      try { (window as any).cancelIdleCallback?.(id) } catch {}
-      try { window.clearTimeout(id as any) } catch {}
+      try { (window as any).cancelIdleCallback?.(id) } catch { }
+      try { window.clearTimeout(id as any) } catch { }
     }
   }, [])
 
@@ -65,16 +60,20 @@ export function Hero({ projects }: HeroProps) {
         BUG.root && "border border-red-400"
       ].join(" ")}
     >
-      <div className={["relative z-10 mx-auto max-w-7xl px-4 grid gap-16",
+      <div className={["relative z-10 mx-auto max-w-7xl px-4 grid gap-12", // Increased gap slightly for the toggle
         BUG.content && "border border-green-400"
       ].join(" ")}>
-        {/* Compact intro above the showcase */}
-        <Heading {...{current}}/>
+        
+        {/* Intro + Controls */}
+        <div className="flex flex-col items-center gap-6">
+          <Heading {...{ current }} />
+          <ViewToggle current={current} onChange={setCurrent} />
+        </div>
 
         {/* Showcase: spotlight format */}
         <div
           id="hero-spotlights"
-          className=""
+          className="min-h-[600px]" // Min-height prevents collapse during fade
         >
           {!showSpotlights ? (
             // Maintain space to avoid CLS while we defer mounting
@@ -82,13 +81,31 @@ export function Hero({ projects }: HeroProps) {
               <div className="relative h-[550px] sm:h-[650px] md:h-[750px] w-full max-w-[600px] mx-auto rounded-2xl bg-black/5 dark:bg-white/5 animate-pulse" />
             </div>
           ) : (
-            <>
-              {current === "bundles" ? (
-                <SpotlightBundles bundles={bundles} />
-              ) : (
-                <SpotlightProjects projects={projects} />
-              )}
-            </>
+            <div className="relative w-full">
+              <AnimatePresence mode="wait">
+                {current === "bundles" ? (
+                  <motion.div
+                    key="bundles"
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    transition={{ duration: 0.25 }}
+                  >
+                    <SpotlightBundles bundles={bundles} />
+                  </motion.div>
+                ) : (
+                  <motion.div
+                    key="projects"
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    transition={{ duration: 0.25 }}
+                  >
+                    <SpotlightProjects projects={projects} />
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
           )}
         </div>
       </div>
@@ -97,6 +114,40 @@ export function Hero({ projects }: HeroProps) {
   );
 }
 
+// --- New Luxury Toggle Component ---
+const ViewToggle = ({ current, onChange }: { current: HeroTypes, onChange: (v: HeroTypes) => void }) => {
+  return (
+    <div className="relative flex p-1 bg-neutral-100 dark:bg-white/5 rounded-full border border-black/5 dark:border-white/10">
+      <button
+        onClick={() => onChange("bundles")}
+        className={`relative z-10 px-6 py-1.5 text-sm font-semibold transition-colors duration-200 rounded-full ${
+          current === "bundles" ? "text-neutral-900 dark:text-white" : "text-neutral-500 hover:text-neutral-700 dark:text-neutral-400"
+        }`}
+      >
+        Bundles
+      </button>
+      <button
+        onClick={() => onChange("projects")}
+        className={`relative z-10 px-6 py-1.5 text-sm font-semibold transition-colors duration-200 rounded-full ${
+          current === "projects" ? "text-neutral-900 dark:text-white" : "text-neutral-500 hover:text-neutral-700 dark:text-neutral-400"
+        }`}
+      >
+        Projects
+      </button>
+      
+      {/* Sliding Background Pill */}
+      <div className="absolute inset-0 p-1 pointer-events-none">
+        <motion.div
+          layout
+          className="h-full w-[calc(50%-4px)] bg-white dark:bg-neutral-800 rounded-full shadow-sm border border-black/5 dark:border-white/5"
+          initial={false}
+          animate={{ x: current === "bundles" ? "0%" : "100%" }}
+          transition={{ type: "spring", stiffness: 500, damping: 30 }}
+        />
+      </div>
+    </div>
+  )
+}
 
 const Arrow = () => {
   return (
@@ -105,26 +156,26 @@ const Arrow = () => {
       alt="Down arrow"
       width={88}
       height={88}
-      className="absolute dark:invert -right-16 invisible md:visible -bottom-12 rotate-12 opacity-90 select-none pointer-events-none"
+      className="absolute dark:invert right-0 translate-x-full top-full invisible md:visible opacity-90 select-none pointer-events-none rotate-45"
       aria-hidden
       priority
     />
   )
 }
 
-const Heading = ({current}:{current:HeroTypes}) => {
+const Heading = ({ current }: { current: HeroTypes }) => {
   return (
     <div className="relative mx-auto max-w-xl text-center w-fit">
       {/* Avatar + Label */}
       <div
         className="mb-3 flex flex-col items-center justify-center gap-2 sm:flex-row sm:gap-3"
       >
-        <Link href="/about" className="md:absolute md:top-0 md:-left-4 relative block h-10 w-10 overflow-hidden rounded-full border border-black/20 dark:border-white/20">
+        <Link href="/about" className="md:absolute md:top-0 md:-left-2 md:-translate-x-full relative block h-14 w-14 overflow-hidden rounded-full border border-black/20 dark:border-white/20">
           <Image
             src="/images/tyler.png"
             alt="Tyler"
-            width={40}
-            height={40}
+            width={80}
+            height={80}
             sizes="40px"
             className="pointer-events-none select-none object-cover"
             priority
@@ -138,21 +189,25 @@ const Heading = ({current}:{current:HeroTypes}) => {
 
       {/* Name */}
       <h1
+        style={{ ...sora.style }}
         className="text-3xl font-black tracking-tight text-neutral-900 dark:text-neutral-100 sm:text-4xl"
       >
         Tyler Lundin
       </h1>
 
+
       {/* Tagline */}
       <p
-        className="mt-3 text-sm text-neutral-700 dark:text-neutral-300 sm:text-base"
+        style={{ ...sora.style }}
+        className="mt-3 text-sm text-neutral-700 dark:text-neutral-300 sm:text-base absolute whitespace-nowrap left-1/2 -translate-x-1/2"
       >
-        {current === "bundles" && ("Bundles built for your needs. Take a look.") }
-        {current === "projects" && ("Building fast, clean, modern websites. Take a look.")}
-        
+        {current === "bundles" && ("Bundles built for your needs. Take a look.")}
+        {current === "projects" && ("Building fast, modern websites. Take a look.")}
+
       </p>
 
+      <div className="w-80 h-6" />
       <Arrow />
     </div>
   );
-};
+};;

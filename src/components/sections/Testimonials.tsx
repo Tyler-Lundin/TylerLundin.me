@@ -65,14 +65,33 @@ const SingleTestimonial = ({ testimonial, title }: { testimonial: Testimonial, t
 
         <div className="mt-10 flex flex-col items-center justify-center gap-4">
             {testimonial.logoSrc && (
-                 <div className="relative h-10 w-32 grayscale transition-all hover:grayscale-0">
+                testimonial.href ? (
+                  <a
+                    href={testimonial.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={`${testimonial.company ?? testimonial.author} website`}
+                    className="focus:outline-none focus:ring-2 focus:ring-black/40 dark:focus:ring-white/40 rounded-md"
+                  >
+                    <div className="relative h-10 w-32 grayscale transition-all hover:grayscale-0">
+                      <Image
+                          src={testimonial.logoSrc}
+                          alt={testimonial.logoAlt || "Company Logo"}
+                          fill
+                          className="object-contain"
+                      />
+                    </div>
+                  </a>
+                ) : (
+                  <div className="relative h-10 w-32 grayscale transition-all hover:grayscale-0">
                     <Image
                         src={testimonial.logoSrc}
                         alt={testimonial.logoAlt || "Company Logo"}
                         fill
                         className="object-contain"
                     />
-                </div>
+                  </div>
+                )
             )}
             
             <div className="flex items-center gap-3">
@@ -103,9 +122,23 @@ const MasonryGrid = ({ testimonials }: { testimonials: Testimonial[] }) => {
                 <div className="pointer-events-none absolute right-6 top-6 select-none font-serif text-6xl text-neutral-200/50 dark:text-neutral-800/50">”</div>
                 <div className="relative z-10 flex flex-col gap-6">
                   {t.logoSrc && (
-                    <div className="relative h-6 w-24">
-                      <Image src={t.logoSrc} alt={t.logoAlt || ""} fill className="object-contain object-left opacity-80 grayscale transition-all duration-300 group-hover:grayscale-0" />
-                    </div>
+                    t.href ? (
+                      <a
+                        href={t.href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        aria-label={`${t.company ?? t.author} website`}
+                        className="block focus:outline-none focus:ring-2 focus:ring-black/40 dark:focus:ring-white/40 rounded-md"
+                      >
+                        <div className="relative h-6 w-24">
+                          <Image src={t.logoSrc} alt={t.logoAlt || ""} fill className="object-contain object-left opacity-80 grayscale transition-all duration-300 group-hover:grayscale-0" />
+                        </div>
+                      </a>
+                    ) : (
+                      <div className="relative h-6 w-24">
+                        <Image src={t.logoSrc} alt={t.logoAlt || ""} fill className="object-contain object-left opacity-80 grayscale transition-all duration-300 group-hover:grayscale-0" />
+                      </div>
+                    )
                   )}
                   <blockquote className="text-lg font-medium leading-relaxed text-neutral-800 dark:text-neutral-200">"{t.quote}"</blockquote>
                   <figcaption className="mt-auto flex items-center gap-3 border-t border-neutral-200 pt-4 dark:border-neutral-800">

@@ -9,6 +9,6 @@ export const testimonials: Testimonial[] = [
     company: 'Zevlin Bike',
     logoSrc: '/images/testimonials/zevlin-bike.webp',
     logoAlt: 'Zevlin Bike logo',
+    href: 'https://zevlinbike.com',
   },
 ]
-

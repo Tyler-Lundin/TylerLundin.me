@@ -27,10 +27,10 @@ export default function Billboard({
 
   return (
     <header className={['relative max-w-5xl h-80 grid items-center mx-auto', t.panel].join(' ')}>
-      <div className={t.overlay} />
+      {/* Reactive particles background, clipped by panel, tinted by overlay */}
 
-      <div className="relative p-5 sm:p-7">
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between sm:gap-8">
+      <div className="relative z-20 p-3 sm:p-7">
+        <div className="grid place-items-center">
           <div className="min-w-0">
             <div className={t.label}>{label}</div>
 
@@ -47,7 +47,7 @@ export default function Billboard({
             </h1>
 
             {description && (
-              <p className={['mt-3 text-base sm:text-lg max-w-prose', t.desc].join(' ')}>
+              <p className={['mt-3 text-[12px] sm:text-lg max-w-prose', t.desc].join(' ')}>
                 {description}
               </p>
             )}
@@ -65,4 +65,3 @@ export default function Billboard({
     </header>
   )
 }
-

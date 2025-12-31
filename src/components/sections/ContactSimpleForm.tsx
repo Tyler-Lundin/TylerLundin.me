@@ -93,7 +93,7 @@ export default function ContactSimpleForm() {
 
   return (
     <section className="py-8">
-      <div className="max-w-3xl mx-auto px-4">
+      <div className="max-w-5xl mx-auto px-4">
         {bundleParam && (
           <div className="mb-4 text-xs inline-flex items-center gap-2 rounded-md border border-emerald-600/20 bg-emerald-500/5 text-emerald-800 dark:text-emerald-300 px-2.5 py-1.5">
             <span className="inline-block h-1.5 w-1.5 rounded-full bg-emerald-500" />

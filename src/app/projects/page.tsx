@@ -17,17 +17,16 @@ export default async function ProjectsPage() {
       className={[
         'max-w-full overflow-x-hidden mx-2 md:mx-4 my-4 rounded-2xl',
         'border border-black/10 dark:border-white/10',
+        'p-2 sm:p-3 md:p-4 lg:p-8',
         billboardThemes[themeKey].wrap,
         'text-black dark:text-white',
       ].join(' ')}
     >
-      <section className="relative p-4  sm:p-6">
-          <ProjectsBillboard
-            headline={"My Projects"}
-            description={projectsSection && 'subheadline' in projectsSection ? (projectsSection as any).subheadline : undefined}
-            themeKey={themeKey}
-          />
-      </section>
+      <ProjectsBillboard
+        headline={"My Projects"}
+        description={projectsSection && 'subheadline' in projectsSection ? (projectsSection as any).subheadline : undefined}
+        themeKey={themeKey}
+      />
 
       <ProjectsIndex
         title={projectsSection?.headline ?? 'Projects'}

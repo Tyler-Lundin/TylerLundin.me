@@ -1,5 +1,4 @@
 import Billboard from '@/components/billboard/Billboard'
-import StickerParallax from '@/components/services/StickerParallax'
 import { billboardThemes } from '@/config/theme'
 import type { BillboardThemeKey } from '@/config/themes/billboard'
 import { Sora } from 'next/font/google'
@@ -19,16 +18,12 @@ export default function ContactBillboard({
 }: ContactBillboardProps) {
   const t = billboardThemes[themeKey]
 
-  // Shared wrapper style for the sticker/message box
-  const stickerContainerCls = "relative"
-  const plateCls = `relative px-3 py-2 ${t.stickerPlate}`
-
   // --- Slots ---
 
   const Label = (
     <div className="inline-flex items-center gap-2">
       <span className="uppercase tracking-widest">Contact</span>
-      <span className="h-1 w-1 rounded-full bg-white/70" />
+      <span className="h-1 w-1 rounded-full bg-white/70 dark:bg-black/70" />
       <span className="uppercase tracking-widest">Billboard</span>
     </div>
   )

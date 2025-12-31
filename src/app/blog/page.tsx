@@ -55,19 +55,18 @@ export default async function BlogPage() {
       className={[
         'max-w-full overflow-x-hidden mx-2 md:mx-4 my-4 rounded-2xl',
         'border border-black/10 dark:border-white/10',
+        'p-2 sm:p-3 md:p-4 lg:p-8',
         billboardThemes[themeKey].wrap,
         'text-black dark:text-white',
       ].join(' ')}
     >
-      <section className="relative p-4  sm:p-6">
         <BlogBillboard
           headline="Tyler's Notes"
           description="Web dev, gym, and whatever else I'm thinking about lately."
           themeKey={themeKey}
         />            {/* Rotating spotlight hero, similar to projects */}
-      </section>
 
-      <div className="mx-auto max-w-7xl px-4">
+      <div className="mx-auto max-w-5xl my-8">
         <SpotlightPosts posts={spotlight} />
         {/* Segments */}
         <div className=" space-y-10">

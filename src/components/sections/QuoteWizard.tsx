@@ -133,7 +133,7 @@ export default function QuoteWizard() {
 
   return (
     <section className="py-12">
-      <div className="max-w-3xl mx-auto px-4">
+      <div className="max-w-5xl mx-auto px-4">
         <div className="flex items-center gap-2 mb-6 text-sm text-neutral-600 dark:text-neutral-300">
           {[1, 2, 3, 4].map((i) => (
             <div

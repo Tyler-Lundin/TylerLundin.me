@@ -27,18 +27,8 @@ export default function ProjectsIndex({ title, subtitle, projects }: Props) {
   const sorted = [...projects].sort((a, b) => (a.weight ?? 0) - (b.weight ?? 0));
 
   return (
-    <section className="py-10">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {(title || subtitle) && (
-          <header className="text-center mb-10">
-            {title && (
-          <h1 style={{...sora.style, }} className="text-4xl sm:text-5xl font-black tracking-tight ">
-                {title}
-              </h1>
-            )}
-          </header>
-        )}
-
+    <section className="mx-auto max-w-5xl my-8">
+      <div className="max-w-7xl mx-auto ">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {sorted.map((p) => {
             const media = pickFeaturedMedia(p.media, isDark);

@@ -77,6 +77,19 @@ export default function CommentsSection({ postId }: { postId: string }) {
       <h2 className="text-xl font-semibold mb-3">Comments</h2>
 
       {/* List */}
+      {loading && (
+        <ul className="space-y-4 mb-8">
+          {Array.from({ length: 3 }).map((_, i) => (
+            <li key={i} className="rounded-md border border-black/10 dark:border-white/10 p-3 bg-white/60 dark:bg-neutral-900/60 animate-pulse">
+              <div className="h-4 w-3/4 rounded bg-black/10 dark:bg-white/10" />
+              <div className="mt-2 h-3 w-full rounded bg-black/10 dark:bg-white/10" />
+              <div className="mt-1 h-3 w-2/3 rounded bg-black/10 dark:bg-white/10" />
+              <div className="mt-3 h-3 w-40 rounded bg-black/10 dark:bg-white/10" />
+            </li>
+          ))}
+        </ul>
+      )}
+
       {!loading && comments.length > 0 && (
         <ul className="space-y-4 mb-8">
           {comments.map((c) => (

@@ -5,7 +5,7 @@ export default function BundleSummary({ summary }: { summary: string }) {
     <p
       className={[
         'text-xs sm:text-sm font-light pb-2 text-center',
-        'text-black dark:text-white',
+        'text-white',
       ].join(' ')}
     >
       {summary}

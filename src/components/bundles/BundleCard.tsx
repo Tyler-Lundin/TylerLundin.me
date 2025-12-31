@@ -70,12 +70,10 @@ export default function BundleCard({
       {/* --- LAYER 2: Scrims (Gradient Overlays) --- */}
       {/* Top Gradient for Title visibility (light: white, dark: black) */}
       <div className="absolute inset-x-0 top-0 h-32 bg-gradient-to-b 
-                      from-white/80 via-white/40 to-transparent 
-                      dark:from-black/80 dark:via-black/40 dark:to-transparent pointer-events-none" />
+                      from-black/80 via-black/40 to-transparent pointer-events-none" />
       {/* Bottom Gradient for Content visibility (light: white, dark: black) */}
       <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t 
-                      from-white/90 via-white/60 to-transparent 
-                      dark:from-black/90 dark:via-black/60 dark:to-transparent pointer-events-none" />
+                      from-black/90 via-black/60 to-transparent pointer-events-none" />
 
       {/* --- LAYER 3: Content Grid --- */}
       <div className="relative z-10 flex h-full flex-col justify-between p-4 sm:p-6 lg:p-8">

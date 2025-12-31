@@ -12,7 +12,7 @@ const BUG = {
 
 export default function ContactCTA() {
   return (
-    <section aria-label="Availability" className={["relative z-10 h-fit p-8",
+    <section aria-label="Availability" className={["relative z-10 h-fit max-w-5xl mx-auto py-8",
       BUG.root && "border border-red-400"
     ].join(" ")}>
       <motion.div

@@ -43,7 +43,7 @@ const MenuButton = ({ onClick, minimal }: { onClick: () => void; minimal?: boole
 const LogoWrapper = ({ children, isScrolled }: { children: React.ReactNode; isScrolled: boolean }) => (
   <div
     className={cn(
-      'flex flex-col items-center justify-center transition-transform duration-300 absolute  left-1/2 -translate-x-1/2 -translate-y-1/2 lg:relative lg:top-0 lg:left-0 lg:translate-x-0 lg:translate-y-0',
+      'flex flex-col items-center justify-center  absolute  left-1/2 -translate-x-1/2 -translate-y-1/2 lg:relative lg:top-0 lg:left-0 lg:translate-x-0 lg:translate-y-0',
       isScrolled ? '-translate-y-20 opacity-0' : 'translate-y-0 opacity-100'
     )}
   >
@@ -70,7 +70,7 @@ const NavLinks = ({ isScrolled, minimal }: { isScrolled?: boolean; minimal?: boo
   return (
     <div
       className={cn(
-        'hidden lg:flex items-center justify-center space-x-12 mx-auto transition-all duration-150',
+        'hidden lg:flex items-center justify-center space-x-12 mx-auto transition-all duration-300',
         minimal ? '' : isScrolled ? 'opacity-0' : 'opacity-100'
       )}
     >
@@ -81,14 +81,24 @@ const NavLinks = ({ isScrolled, minimal }: { isScrolled?: boolean; minimal?: boo
             key={section.type}
             href={section.type === 'home' ? '/' : `/${section.type}`}
             style={{...sora.style}}
+            aria-current={isActive ? 'page' : undefined}
             className={cn(
-              'text-gray-900 dark:text-white font-light text-md transition-opacity duration-200',
-              'hover:opacity-75',
-              section.type === 'projects' && 'text-indigo-600 dark:text-emerald-500',
-              isActive && 'opacity-25 pointer-events-none'
+              'group relative text-gray-900 dark:text-white font-light text-md transition-colors duration-300',
+              'hover:opacity-85 hover:-translate-y-[1px] transition-transform',
+              isActive && 'text-emerald-600 dark:text-emerald-500 font-medium'
             )}
           >
-            {RenderContent(section)}
+            <span className="relative inline-block">
+              {RenderContent(section)}
+              <span
+                className={cn(
+                  'pointer-events-none absolute -bottom-2 left-1/2 h-1.5 w-1.5 -translate-x-1/2 rounded-full bg-emerald-500',
+                  'opacity-0 scale-0 transition-all duration-300 ease-out',
+                  'group-hover:opacity-100 group-hover:scale-100',
+                  isActive && 'opacity-100 scale-100'
+                )}
+              />
+            </span>
           </Link>
         );
       })}
@@ -101,11 +111,23 @@ const NavLinks = ({ isScrolled, minimal }: { isScrolled?: boolean; minimal?: boo
     {/* Trigger */}
     <Link
       href="/services"
+      aria-current={pathname?.startsWith('/services') ? 'page' : undefined}
       className={cn(
-        'text-gray-900 group-hover:underline pb-0 transition-all p-2 rounded-t-md dark:text-white font-light text-md transition-opacity duration-200 hover:opacity-75'
+        'group relative text-gray-900 pb-0 transition-all p-2 rounded-t-md dark:text-white font-light text-md duration-300 hover:opacity-85 hover:-translate-y-[1px] transition-transform',
+        pathname?.startsWith('/services') && 'text-emerald-600 dark:text-emerald-500 font-medium'
       )}
     >
-      services
+      <span className="relative inline-block">
+        services
+        <span
+          className={cn(
+            'pointer-events-none absolute -bottom-1.5 left-1/2 h-1.5 w-1.5 -translate-x-1/2 rounded-full bg-emerald-500',
+            'opacity-0 scale-0 transition-all duration-300 ease-out',
+            'group-hover:opacity-100 group-hover:scale-100',
+            pathname?.startsWith('/services') && 'opacity-100 scale-100'
+          )}
+        />
+      </span>
     </Link>
 
     {/* Invisible hover buffer (10% larger hit area) */}

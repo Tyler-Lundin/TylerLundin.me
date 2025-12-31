@@ -25,7 +25,7 @@ export default function ServicesBillboard({
   const label = (
     <div className="inline-flex items-center gap-2">
       SERVICES
-      <span className="h-1 w-1 rounded-full bg-white/70" />
+      <span className="h-1 w-1 rounded-full bg-white/70 dark:bg-black/70" />
       BILLBOARD
     </div>
   )

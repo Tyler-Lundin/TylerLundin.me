@@ -12,7 +12,7 @@ export type ThemeConfig = {
 export const themeConfig: ThemeConfig = {
   billboard: {
     // Change this to switch the billboard theme globally
-    themeKey: 'desert_highway',
+    themeKey: 'industrial_hazard',
   },
 }
 

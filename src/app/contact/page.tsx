@@ -22,17 +22,16 @@ export default function ContactPage() {
       ].join(' ')}
     >
       <section className="relative p-4  sm:p-6">
-          <ContactBillboard
-            headline={contactSection.headline}
-            description={contactSection.description}
-            themeKey={themeKey}
-          />
-
-          <div className="mt-8 sm:mt-10">
-            <Suspense fallback={<div className="text-sm text-neutral-600 dark:text-neutral-300">Loading form…</div>}>
-              <ContactSimpleForm />
-            </Suspense>
-          </div>
+        <ContactBillboard
+          headline="Contact Tyler"
+          description="Send a quick message. I’ll reply with the next step."
+          themeKey={themeKey}
+        />
+        <div className="mt-8 sm:mt-10">
+          <Suspense fallback={<div className="text-sm text-neutral-600 dark:text-neutral-300">Loading form…</div>}>
+            <ContactSimpleForm />
+          </Suspense>
+        </div>
       </section>
     </main>
   )

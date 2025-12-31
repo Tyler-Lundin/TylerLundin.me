@@ -6,6 +6,9 @@ import Image from "next/image";
 import { aboutConfig } from "@/config/about";
 import ContactCTA from "@/components/sections/ContactCTA";
 import type { Project, ProjectMedia } from "@/types/projects";
+import { Sora } from "next/font/google";
+
+const sora = Sora({ subsets: ["latin"] });
 
 const fadeUp = (d = 0) => ({
   initial: { opacity: 0, y: 16 },
@@ -103,7 +106,7 @@ function TitleBlock({
 }) {
   return (
     <div>
-      <h1 className="text-4xl sm:text-5xl font-black tracking-tight text-neutral-900 dark:text-neutral-100 text-center md:text-left">
+      <h1 className={["text-4xl sm:text-5xl font-black tracking-tight text-neutral-900 dark:text-neutral-100 text-center md:text-left", sora.className].join(" ") }>
         {title}
       </h1>
 
@@ -249,7 +252,7 @@ function IntroBlock({ paragraphs }: { paragraphs?: string[] }) {
   if (!paragraphs?.length) return null;
   return (
     <motion.div {...fadeUp(0)} className="lg:col-span-2">
-      <h2 className="text-xl font-semibold mb-3 text-neutral-900 dark:text-neutral-100">
+      <h2 className={["text-xl font-semibold mb-3 text-neutral-900 dark:text-neutral-100", sora.className].join(" ")}>
         A little about me
       </h2>
       <div className="space-y-4 text-neutral-700 dark:text-neutral-300 leading-relaxed">
@@ -418,7 +421,7 @@ function ProjectsSection({
     <div className="relative">
       <div className="absolute inset-0 -z-10 bg-gradient-to-b from-transparent via-neutral-100/60 to-transparent dark:via-white/[0.04]" />
       <div className="mx-auto max-w-7xl px-4 py-10 sm:py-14">
-        <motion.h2 {...fadeUp(0)} className="text-xl font-semibold mb-4">
+        <motion.h2 {...fadeUp(0)} className={["text-xl font-semibold mb-4", sora.className].join(" ")}>
           Selected Work
         </motion.h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">

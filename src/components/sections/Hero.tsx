@@ -201,7 +201,7 @@ const Heading = ({ current }: { current: HeroTypes }) => {
         style={{ ...sora.style }}
         className="mt-3 text-sm text-neutral-700 dark:text-neutral-300 sm:text-base absolute whitespace-nowrap left-1/2 -translate-x-1/2"
       >
-        {current === "bundles" && ("Bundles built for your needs. Take a look.")}
+        {current === "bundles" && ("Websites built for your needs. Take a look.")}
         {current === "projects" && ("Building fast, modern websites. Take a look.")}
 
       </p>

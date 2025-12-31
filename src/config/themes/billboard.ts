@@ -69,7 +69,7 @@ export const billboardThemes: Record<BillboardThemeKey, BillboardTheme> = {
     wrap: 'bg-gradient-to-b from-neutral-50 dark:from-black via-transparent to-white dark:to-black',
     panel:
       'rounded-2xl overflow-hidden border shadow-[0_24px_90px_rgba(0,0,0,0.22)] ' +
-      'bg-neutral-900/90 border-white/10',
+      'bg-gradient-to-b from-neutral-50 dark:from-black via-transparent to-white dark:to-black',
     overlay:
       'pointer-events-none absolute inset-0 ' +
       'bg-[linear-gradient(135deg,rgba(250,204,21,0.18)_0%,transparent_35%,transparent_65%,rgba(250,204,21,0.10)_100%)] ' +
@@ -77,8 +77,8 @@ export const billboardThemes: Record<BillboardThemeKey, BillboardTheme> = {
     label:
       'inline-flex w-fit items-center gap-2 rounded-full px-3 py-1 text-[11px] font-semibold tracking-[0.22em] uppercase ' +
       'bg-yellow-300 text-black',
-    title: 'text-white',
-    desc: 'text-white/80',
+    title: 'text-black dark:text-white',
+    desc: 'text-black dark:text-white/80',
     stickerPlate:
       'rounded-2xl border border-white/10 bg-white/5 shadow-[0_14px_60px_rgba(0,0,0,0.35)]',
     stickerGlow:

@@ -94,18 +94,21 @@ export default function ServicesIndexPage() {
       ].join(' ')}
     >
       <section className="relative p-4  sm:p-6">
-          <ServicesBillboard
-            themeKey={themeKey}
-            headline="Services"
-            description={
-              'Hosting, design, logos, dashboards, and auth—wired together so your site runs fast, looks sharp, and stays online. Based in Spokane, WA.'
-            }
-            contactHref={contactHref()}
-            faqHref={'/services/faq'}
-          />
-          <p className="mt-3 text-xs text-neutral-700 dark:text-neutral-300">
-            Based in Spokane — see how I work with local businesses: <a href="/spokane-web-developer" className="underline">Spokane web developer</a>.
-          </p>
+        <ServicesBillboard
+          themeKey={themeKey}
+          headline="Services"
+          description="Websites and small-business software: design, builds, hosting, dashboards, and auth. Wired together so it runs fast, looks sharp, and stays online. Spokane, WA."
+          contactHref={contactHref()}
+          faqHref="/services/faq"
+        />        
+        <div className="mt-3 flex flex-wrap items-center justify-center gap-2 text-center text-xs text-neutral-700 dark:text-neutral-300">
+          <span className="inline-flex items-center rounded-full border border-black/10 dark:border-white/10 bg-neutral-100/70 dark:bg-neutral-800/60 px-2 py-0.5">
+            Spokane, WA
+          </span>
+          <a href="/spokane-web-developer" className="underline">
+            How I work with local businesses
+          </a>
+        </div>
       </section>
 
       {/* FULL-WIDTH BUNDLES SHOWCASE */}

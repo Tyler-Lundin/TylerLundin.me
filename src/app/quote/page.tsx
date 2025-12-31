@@ -20,15 +20,14 @@ export default function QuotePage() {
       ].join(' ')}
     >
       <section className="relative p-4  sm:p-6">
-          <QuoteBillboard
-            headline="Request a Quote"
-            description={section.description}
-            themeKey={themeKey}
-          />
-
-          <div className="mt-8 sm:mt-10">
-            <QuoteWizard />
-          </div>
+        <QuoteBillboard
+          headline="Request a Quote"
+          description="Tell me what you’re building, your timeline, and your budget range. I’ll respond with a clear estimate and plan."
+          themeKey={themeKey}
+        />
+        <div className="mt-8 sm:mt-10">
+          <QuoteWizard />
+        </div>
       </section>
     </main>
   )

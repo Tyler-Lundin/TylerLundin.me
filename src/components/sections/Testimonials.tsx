@@ -3,6 +3,8 @@ import Image from 'next/image'
 import type { Testimonial } from '@/types/testimonials'
 import { testimonials as defaultTestimonials } from '@/data/testimonials'
 import { cn } from '@/lib/utils' // Helper assumed, or just use template literals
+import ProjectsCard from '@/components/projects/ProjectsCard'
+import { projects as allProjects } from '@/data/projects'
 
 type Props = {
   testimonials?: Testimonial[]
@@ -33,7 +35,7 @@ export default function Testimonials({ testimonials = defaultTestimonials, title
 
         {/* Dynamic Layout Switch */}
         {isSingle ? (
-          <SingleTestimonial testimonial={testimonials[0]} title={title} />
+          <SingleWithProject testimonial={testimonials[0]} title={title} />
         ) : (
           <MasonryGrid testimonials={testimonials} />
         )}
@@ -43,68 +45,88 @@ export default function Testimonials({ testimonials = defaultTestimonials, title
   )
 }
 
+// --- Variant: Single with project showcase side-by-side ---
+const SingleWithProject = ({ testimonial, title }: { testimonial: Testimonial, title: string }) => {
+  const zevlin = allProjects.find(p => p.slug === 'zevlin-bike' || p.id === 'zevlin-bike')
+
+  return (
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-14 items-center">
+      <SingleTestimonial testimonial={testimonial} title={title} />
+
+      {zevlin && (
+        <div className="relative w-full h-[420px] sm:h-[520px] md:h-[560px]">
+          <ProjectsCard project={zevlin} state="current" />
+        </div>
+      )}
+    </div>
+  )
+}
+
 // --- Layout 1: The "Hero" (Looks great when you only have one) ---
 const SingleTestimonial = ({ testimonial, title }: { testimonial: Testimonial, title: string }) => {
   return (
-    <div className="relative mx-auto flex max-w-4xl flex-col items-center text-center">
+    <div className="relative mx-auto flex max-w-3xl flex-col items-center text-center">
         
         {/* Subtle background decoration to fill space */}
         <div className="absolute inset-0 -z-10 scale-[0.8] rounded-full bg-gradient-to-tr from-neutral-200/40 to-transparent blur-3xl dark:from-neutral-800/40" />
 
         <div className="mb-6 rounded-full border border-black/5 bg-neutral-100 px-4 py-1.5 text-xs font-bold uppercase tracking-widest text-neutral-500 dark:border-white/10 dark:bg-neutral-900 dark:text-neutral-400">
-            {title}
+            {testimonial.company || title}
         </div>
 
         <blockquote className="relative">
-             <span className="absolute -left-4 -top-6 text-7xl text-neutral-200 dark:text-neutral-800 sm:-left-8 sm:-top-8">“</span>
-             <p className="text-2xl font-medium leading-normal text-neutral-900 dark:text-neutral-100 sm:text-3xl md:text-4xl">
+             <span className="absolute -left-4 -top-6 text-7xl md:text-6xl text-neutral-200 dark:text-neutral-800 sm:-left-8 sm:-top-8">“</span>
+             <p className="text-xl sm:text-2xl md:text-3xl font-normal leading-relaxed text-neutral-900 dark:text-neutral-100">
                 {testimonial.quote}
             </p>
-            <span className="absolute -bottom-8 -right-4 text-7xl text-neutral-200 dark:text-neutral-800 sm:-right-8">”</span>
+            <span className="absolute -bottom-8 -right-4 text-7xl md:text-6xl text-neutral-200 dark:text-neutral-800 sm:-right-8">”</span>
         </blockquote>
 
-        <div className="mt-10 flex flex-col items-center justify-center gap-4">
-            {testimonial.logoSrc && (
-                testimonial.href ? (
-                  <a
-                    href={testimonial.href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    aria-label={`${testimonial.company ?? testimonial.author} website`}
-                    className="focus:outline-none focus:ring-2 focus:ring-black/40 dark:focus:ring-white/40 rounded-md"
-                  >
-                    <div className="relative h-10 w-32 grayscale transition-all hover:grayscale-0">
-                      <Image
+        <div className="mt-8 md:mt-10 flex flex-col items-center justify-center gap-4">
+
+            <div className="flex items-center gap-3">
+                {testimonial.logoSrc ? (
+                  testimonial.href ? (
+                    <a
+                      href={testimonial.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label={`${testimonial.company ?? testimonial.author} website`}
+                      className="focus:outline-none focus:ring-2 focus:ring-black/40 dark:focus:ring-white/40 rounded-md"
+                    >
+                      <div className="relative h-10 w-10">
+                        <Image
                           src={testimonial.logoSrc}
                           alt={testimonial.logoAlt || "Company Logo"}
                           fill
                           className="object-contain"
-                      />
-                    </div>
-                  </a>
-                ) : (
-                  <div className="relative h-10 w-32 grayscale transition-all hover:grayscale-0">
-                    <Image
+                        />
+                      </div>
+                    </a>
+                  ) : (
+                    <div className="relative h-10 w-10">
+                      <Image
                         src={testimonial.logoSrc}
                         alt={testimonial.logoAlt || "Company Logo"}
                         fill
                         className="object-contain"
-                    />
-                  </div>
-                )
-            )}
-            
-            <div className="flex items-center gap-3">
-                 <div className="flex h-12 w-12 items-center justify-center rounded-full bg-neutral-200 text-lg font-bold text-neutral-600 dark:bg-neutral-800 dark:text-neutral-300">
+                      />
+                    </div>
+                  )
+                ) : (
+                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-neutral-200 text-base font-semibold text-neutral-600 dark:bg-neutral-800 dark:text-neutral-300">
                     {testimonial.author.charAt(0)}
-                </div>
+                  </div>
+                )}
                 <div className="text-left">
-                    <div className="font-bold text-neutral-900 dark:text-white">
+                    <div className="font-semibold text-neutral-900 dark:text-white">
                         {testimonial.author}
                     </div>
-                    <div className="text-sm text-neutral-500 dark:text-neutral-400">
-                        {testimonial.role ? `${testimonial.role}, ` : ''}{testimonial.company}
-                    </div>
+                    {(testimonial.role) && (
+                      <div className="text-sm text-neutral-500 dark:text-neutral-400">
+                        {testimonial.role}
+                      </div>
+                    )}
                 </div>
             </div>
         </div>

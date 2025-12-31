@@ -60,16 +60,15 @@ export default async function BlogPage() {
       ].join(' ')}
     >
       <section className="relative p-4  sm:p-6">
-          <BlogBillboard
-            headline="Blog"
-            description="Long-form notes on code, training, and life."
-            themeKey={themeKey}
-          />
-            {/* Rotating spotlight hero, similar to projects */}
+        <BlogBillboard
+          headline="Tyler's Notes"
+          description="Web dev, gym, and whatever else I'm thinking about lately."
+          themeKey={themeKey}
+        />            {/* Rotating spotlight hero, similar to projects */}
       </section>
 
       <div className="mx-auto max-w-7xl px-4">
-            <SpotlightPosts posts={spotlight} />
+        <SpotlightPosts posts={spotlight} />
         {/* Segments */}
         <div className=" space-y-10">
           {tech.length > 0 && (

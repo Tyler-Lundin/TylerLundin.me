@@ -3,6 +3,9 @@ import { billboardThemes } from '@/config/theme'
 import type { BillboardThemeKey } from '@/config/themes/billboard'
 import Link from 'next/link'
 import StickerParallax from '@/components/services/StickerParallax'
+import { Sora } from 'next/font/google'
+
+const sora = Sora({ subsets: ['latin'] })
 
 export default function ServicesBillboard({
   headline = 'Services',
@@ -48,22 +51,6 @@ export default function ServicesBillboard({
     </>
   )
 
-  const right = (
-    <>
-      <div className="relative">
-        <div className={t.stickerGlow} />
-        <div className={["relative px-3 py-2", t.stickerPlate].join(' ')}>
-          <StickerParallax sticker="prepared" size={4} />
-        </div>
-      </div>
-      <div className="relative sm:hidden">
-        <div className={t.stickerGlow} />
-        <div className={["relative px-3 py-2 ", t.stickerPlate].join(' ')}>
-          <h1 className={t.title}> Hello World, I am Tyler </h1>
-        </div>
-      </div>
-    </>
-  )
 
   return (
     <Billboard
@@ -71,8 +58,8 @@ export default function ServicesBillboard({
       headline={headline}
       description={description}
       themeKey={themeKey}
+      titleClassName={sora.className}
       actions={actions}
-      right={right}
     />
   )
 }

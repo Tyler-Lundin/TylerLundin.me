@@ -23,7 +23,7 @@ export default async function ProjectsPage() {
     >
       <section className="relative p-4  sm:p-6">
           <ProjectsBillboard
-            headline={projectsSection?.headline ?? 'Projects'}
+            headline={"My Projects"}
             description={projectsSection && 'subheadline' in projectsSection ? (projectsSection as any).subheadline : undefined}
             themeKey={themeKey}
           />

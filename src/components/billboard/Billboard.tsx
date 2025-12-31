@@ -9,7 +9,6 @@ export type BillboardProps = {
   themeKey?: BillboardThemeKey
   actions?: ReactNode
   meta?: ReactNode
-  right?: ReactNode
   titleClassName?: string
   titleStyle?: CSSProperties
 }
@@ -21,14 +20,13 @@ export default function Billboard({
   themeKey = 'neon_arcade',
   actions,
   meta,
-  right,
   titleClassName,
   titleStyle,
 }: BillboardProps) {
   const t = billboardThemes[themeKey]
 
   return (
-    <header className={['relative', t.panel].join(' ')}>
+    <header className={['relative max-w-5xl h-80 grid items-center mx-auto', t.panel].join(' ')}>
       <div className={t.overlay} />
 
       <div className="relative p-5 sm:p-7">
@@ -62,11 +60,6 @@ export default function Billboard({
             )}
           </div>
 
-          {right && (
-            <div className="shrink-0 flex justify-start sm:justify-end gap-2">
-              {right}
-            </div>
-          )}
         </div>
       </div>
     </header>

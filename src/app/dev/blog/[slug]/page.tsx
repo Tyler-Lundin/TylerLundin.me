@@ -107,13 +107,12 @@ export default async function DevBlogView({ params }: { params: Promise<{ slug: 
 
           {post.cover_image_url && (
             <div className="mt-4 relative rounded-md overflow-hidden w-full h-[420px]">
-              {/* Use natural height with vertical pan, clipped by container */}
+              {/* Subtle blog-specific vertical ping-pong using object-position */}
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={post.cover_image_url}
                 alt="cover"
-                className="absolute left-0 top-0 w-full h-auto pan-vert object-top"
-                style={{ ['--pan-amount' as any]: '-60%' }}
+                className="absolute inset-0 w-full h-full blog-pan-vert"
               />
             </div>
           )}

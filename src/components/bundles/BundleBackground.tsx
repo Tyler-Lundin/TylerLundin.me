@@ -10,17 +10,21 @@ export default function BundleBackground({ bgImg, title, isCurrent }: { bgImg: s
           fill
           alt={`${title}`}
           className={[
-            'object-cover pan-vert',
+            'object-cover bundle-pan-vert',
             'transition-opacity duration-200',
           ].join(' ')}
           priority={isCurrent}
           fetchPriority={isCurrent ? 'high' : 'auto'}
+          // Smaller default travel; tweak with --bundle-pan-end if needed
+          style={{ ['--bundle-pan-end' as any]: '12%' }}
         />
       )}
 
-      {/* Cinematic overlays (mobile slightly darker for readability) */}
+      {/* Cinematic overlays: light mode uses white scrim, dark uses black */}
       {/* Ensure overlay sits above image but below content */}
-      <div className="absolute inset-0 z-0 pointer-events-none bg-gradient-to-t from-black via-black/55 to-black/20 sm:from-black/80 sm:via-black/45 sm:to-black/10" />
+      <div className="absolute inset-0 z-0 pointer-events-none bg-gradient-to-t 
+                      from-white via-white/55 to-white/20 
+                      dark:from-black dark:via-black/55 dark:to-black/20" />
       <div className="absolute inset-0 bg-[radial-gradient(1200px_circle_at_20%_10%,rgba(255,255,255,0.10),transparent_60%)]" />
       <div className="absolute inset-0 ring-1 ring-white/5" />
     </div>

@@ -6,6 +6,7 @@ import ReviewButton from "@/components/cta/ReviewButton";
 import { useEffect, useState } from "react";
 import Billboard from "@/components/billboard/Billboard";
 import { themeConfig, billboardThemes } from "@/config/theme";
+import Testimonials from "@/components/sections/Testimonials";
 import type { BillboardThemeKey } from "@/config/themes/billboard";
 
 export type SeoLandingProps = {
@@ -180,6 +181,11 @@ export default function SeoLanding({
           />
         </>
       )}
+
+      {/* Testimonials (shared across SEO pages) */}
+      <div className="mt-4">
+        <Testimonials />
+      </div>
 
       <StickyCta visible={showFloatingCta} href={primaryCtaHref} label={primaryCtaLabel} />
       </section>

@@ -4,6 +4,7 @@ import { heroFolders } from '@/data/heroFolders';
 import { projects as seededProjects } from '@/data/projects';
 import ContactCTA from '@/components/sections/ContactCTA';
 import AutoScrollHeroSpotlights from '@/components/behavior/AutoScrollHeroSpotlights';
+import Testimonials from '@/components/sections/Testimonials';
 
 export default async function LandingPage() {
   // Load media from public/projects/<folder>/ for the hero showcase
@@ -23,6 +24,7 @@ export default async function LandingPage() {
       {/* Auto-scroll toward Hero spotlights on first visit until user cancels */}
       <AutoScrollHeroSpotlights />
       <ContactCTA />
+      <Testimonials />
     </main>
   );
 }

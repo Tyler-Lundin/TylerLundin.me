@@ -297,6 +297,28 @@ body {
   will-change: transform;
 }
 
+/* Blog-specific subtle vertical ping-pong using object-position (no layout shift/gaps) */
+@keyframes blog-pan-vert {
+  0% { object-position: 50% 0%; transform: scale(1.01); }
+  100% { object-position: 50% var(--blog-pan-end, 100%); transform: scale(1.01); }
+}
+.blog-pan-vert {
+  animation: blog-pan-vert var(--blog-pan-duration, 30000ms) ease-in-out infinite alternate;
+  object-fit: cover;
+  will-change: object-position, transform;
+}
+
+/* Bundle card: even subtler vertical ping-pong (smaller default range) */
+@keyframes bundle-pan-vert {
+  0% { object-position: 50% 0%; transform: scale(1.01); }
+  100% { object-position: 50% var(--bundle-pan-end, 12%); transform: scale(1.01); }
+}
+.bundle-pan-vert {
+  animation: bundle-pan-vert var(--bundle-pan-duration, 70000ms) ease-in-out infinite alternate;
+  object-fit: cover;
+  will-change: object-position, transform;
+}
+
 /* Ankr avatar subtle floating + aura */
 @keyframes ankr-float {
   0%, 100% { transform: translateY(0) translateZ(0); }

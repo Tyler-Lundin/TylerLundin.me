@@ -67,9 +67,9 @@ export default async function PublicBlogPost({ params }: { params: Promise<{ slu
   recordView(post.id)
 
   return (
-    <main className="py-32  bg-gradient-to-b from-neutral-50 dark:from-black via-transparent to-neutral-100 dark:to-neutral-950 min-h-screen">
-      <div className="mx-auto max-w-7xl px-4">
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+    <main className="max-w-full overflow-x-hidden mx-2 md:mx-4 border border-black/10 dark:border-white/10 rounded-lg my-4 min-h-fit overflow-visible bg-gradient-to-b from-neutral-50 dark:from-black z-10 via-transparent to-white dark:to-black text-black dark:text-white ">
+      <div className="mx-auto max-w-7xl sm:px-4 py-10 sm:py-16 ">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 px-4">
           {/* Main */}
           <article className="lg:col-span-3">
             <header className="mb-6">
@@ -89,7 +89,9 @@ export default async function PublicBlogPost({ params }: { params: Promise<{ slu
             </header>
 
             {post.cover_image_url && (
-              <img src={post.cover_image_url} alt="cover" className="rounded-xl w-full object-cover max-h-[420px] pan-vert mb-6" style={{ ['--pan-amount' as any]: '-18%' }} />
+              <div className="relative w-full h-[420px] rounded-xl overflow-hidden mb-6">
+                <img src={post.cover_image_url} alt="cover" className="absolute inset-0 w-full h-full blog-pan-vert" />
+              </div>
             )}
 
             <div className="prose prose-lg dark:prose-invert">

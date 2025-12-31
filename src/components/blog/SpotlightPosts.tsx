@@ -145,13 +145,12 @@ export default function SpotlightPosts({
             >
               {/* Image Layer */}
               {currentItem.cover_image_url ? (
-                // Use natural-height image with vertical pan; container clips overflow
+                // Use natural-height image with subtle blog-specific vertical ping-pong; container clips overflow
                 // eslint-disable-next-line @next/next/no-img-element
                 <img
                   src={currentItem.cover_image_url}
                   alt={currentItem.title}
-                  className="absolute left-0 top-0 w-full h-auto pan-vert object-top"
-                  style={{ ['--pan-amount' as any]: '-28%' }}
+                  className="absolute inset-0 w-full h-full blog-pan-vert"
                 />
               ) : (
                 <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/40 to-pink-500/40 dark:from-indigo-900/40 dark:to-pink-900/40" />

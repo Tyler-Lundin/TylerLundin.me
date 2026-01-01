@@ -20,13 +20,16 @@ export default function BlogBillboard({
   const label = (
     <div className="inline-flex items-center gap-2">
       BLOG
-      <span className="h-1 w-1 rounded-full bg-white/70 dark:bg-black/70" />
+      <span className="h-1 w-1 rounded-full bg-black" />
       BILLBOARD
     </div>
   )
 
   const meta = (
-    <div className="text-xs text-black dark:text-white/60 ">Fresh posts, projects, and notes</div>
+    <div className="flex flex-wrap items-center gap-3">
+      <div className={t.metaPill}> Thoughts & Ideas </div>
+        <div className="text-xs text-black dark:text-white/60 ">Fresh posts, projects, and notes</div>
+    </div>
   )
 
   return (

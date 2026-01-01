@@ -66,7 +66,7 @@ export default function SeoLanding({
         />
       ))}
 
-      <section className="relative p-4 sm:p-6">
+      <section className="relative p-4 sm:p-6 max-w-5xl mx-auto">
         <Billboard
           label={
             <div className="inline-flex items-center gap-2">

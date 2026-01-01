@@ -1,7 +1,6 @@
 "use client";
 
 import Image from 'next/image';
-import dynamic from 'next/dynamic'
 import type { Project } from '@/types/projects';
 import { bundles } from '@/services';
 import { useEffect, useState } from 'react';
@@ -11,9 +10,9 @@ import { motion, AnimatePresence } from "framer-motion"; // Added for smooth tra
 
 const sora = Sora({ subsets: ["latin"], display: "swap" });
 
-// Code-split heavy spotlights; mount after idle
-const SpotlightProjects = dynamic(() => import('../projects/SpotlightProjects'))
-const SpotlightBundles = dynamic(() => import('../bundles/SpotlightBundles'))
+// Import spotlights directly; we still defer mounting via `showSpotlights`
+import SpotlightProjects from '../projects/SpotlightProjects'
+import SpotlightBundles from '../bundles/SpotlightBundles'
 
 type HeroProps = {
   projects?: Project[];
@@ -73,7 +72,10 @@ export function Hero({ projects }: HeroProps) {
         {/* Showcase: spotlight format */}
         <div
           id="hero-spotlights"
-          className="min-h-[600px]" // Min-height prevents collapse during fade
+          className={[
+            'relative',
+            !showSpotlights ? 'min-h-[700px] sm:min-h-[820px] md:min-h-[900px]' : ''
+          ].join(' ')}
         >
           {!showSpotlights ? (
             // Maintain space to avoid CLS while we defer mounting
@@ -81,30 +83,26 @@ export function Hero({ projects }: HeroProps) {
               <div className="relative h-[550px] sm:h-[650px] md:h-[750px] w-full max-w-[600px] mx-auto rounded-2xl bg-black/5 dark:bg-white/5 animate-pulse" />
             </div>
           ) : (
-            <div className="relative w-full">
-              <AnimatePresence mode="wait">
-                {current === "bundles" ? (
-                  <motion.div
-                    key="bundles"
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -10 }}
-                    transition={{ duration: 0.25 }}
-                  >
-                    <SpotlightBundles bundles={bundles} />
-                  </motion.div>
-                ) : (
-                  <motion.div
-                    key="projects"
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -10 }}
-                    transition={{ duration: 0.25 }}
-                  >
-                    <SpotlightProjects projects={projects} />
-                  </motion.div>
-                )}
-              </AnimatePresence>
+            <div className="relative w-full grid grid-cols-1">
+              {/* Keep both mounted to avoid chunk loads/layout shifts; grid overlays and lets height auto-fit tallest */}
+              <motion.div
+                className="col-start-1 row-start-1"
+                initial={false}
+                animate={{ opacity: current === 'bundles' ? 1 : 0 }}
+                transition={{ duration: 0.25, ease: 'easeOut' }}
+                style={{ pointerEvents: current === 'bundles' ? 'auto' : 'none' }}
+              >
+                <SpotlightBundles bundles={bundles} />
+              </motion.div>
+              <motion.div
+                className="col-start-1 row-start-1"
+                initial={false}
+                animate={{ opacity: current === 'projects' ? 1 : 0 }}
+                transition={{ duration: 0.25, ease: 'easeOut' }}
+                style={{ pointerEvents: current === 'projects' ? 'auto' : 'none' }}
+              >
+                <SpotlightProjects projects={projects} />
+              </motion.div>
             </div>
           )}
         </div>

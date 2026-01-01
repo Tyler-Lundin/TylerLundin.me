@@ -24,7 +24,7 @@ export default function QuoteBillboard({
   const Label = (
     <div className="inline-flex items-center gap-2">
       <span className="uppercase tracking-widest">Quote</span>
-      <span className="h-1 w-1 rounded-full bg-white/70 dark:bg-black/70" />
+      <span className="h-1 w-1 rounded-full bg-black" />
       <span className="uppercase tracking-widest">Billboard</span>
     </div>
   )

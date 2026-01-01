@@ -30,7 +30,7 @@ export default function Billboard({
       {/* Reactive particles background, clipped by panel, tinted by overlay */}
 
       <div className="relative z-20 p-3 sm:p-7">
-        <div className="grid place-items-center">
+        <div className="grid px-1 sm:px-2 md:px-4 lg:px-8">
           <div className="min-w-0">
             <div className={t.label}>{label}</div>
 

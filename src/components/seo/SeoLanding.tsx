@@ -71,7 +71,7 @@ export default function SeoLanding({
           label={
             <div className="inline-flex items-center gap-2">
               {areaLabel?.toUpperCase()}
-              <span className="h-1 w-1 rounded-full bg-white/70" />
+              <span className="h-1 w-1 rounded-full bg-black" />
               BILLBOARD
             </div>
           }

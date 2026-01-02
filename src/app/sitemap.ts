@@ -1,5 +1,6 @@
 import type { MetadataRoute } from 'next'
 import { services } from '@/services'
+import waCities from '@/config/locations/wa'
 
 const BASE = 'https://tylerlundin.me'
 
@@ -11,6 +12,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${BASE}/about`, lastModified: now, changeFrequency: 'monthly', priority: 0.8 },
     { url: `${BASE}/projects`, lastModified: now, changeFrequency: 'weekly', priority: 0.9 },
     { url: `${BASE}/services`, lastModified: now, changeFrequency: 'monthly', priority: 0.8 },
+    { url: `${BASE}/locations`, lastModified: now, changeFrequency: 'monthly', priority: 0.7 },
     { url: `${BASE}/spokane-web-developer`, lastModified: now, changeFrequency: 'monthly', priority: 0.9 },
     { url: `${BASE}/spokane-web-design`, lastModified: now, changeFrequency: 'monthly', priority: 0.85 },
     { url: `${BASE}/spokane-website-maintenance`, lastModified: now, changeFrequency: 'monthly', priority: 0.8 },
@@ -29,5 +31,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.7,
     }))
 
-  return [...staticPages, ...servicePages]
+  const locationPages: MetadataRoute.Sitemap = waCities.map((c) => ({
+    url: `${BASE}/locations/${c.slug}`,
+    lastModified: now,
+    changeFrequency: 'monthly',
+    priority: 0.6,
+  }))
+
+  return [...staticPages, ...servicePages, ...locationPages]
 }

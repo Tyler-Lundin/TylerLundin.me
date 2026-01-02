@@ -26,7 +26,7 @@ export default function Billboard({
   const t = billboardThemes[themeKey]
 
   return (
-    <header className={['relative max-w-5xl h-80 grid items-center mx-auto', t.panel].join(' ')}>
+    <header className={['relative max-w-5xl h-fit grid items-center mx-auto', t.panel].join(' ')}>
       {/* Reactive particles background, clipped by panel, tinted by overlay */}
 
       <div className="relative z-20 p-3 sm:p-7">

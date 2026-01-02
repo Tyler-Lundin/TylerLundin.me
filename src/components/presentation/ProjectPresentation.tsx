@@ -12,12 +12,16 @@ type Props = {
 function MediaFull({ media, project }: { media: ProjectMedia; project: Project }) {
   if (media.type === 'image') {
     return (
-      <img
-        src={media.src}
-        alt={media.alt ?? project.title}
-        className="max-w-full h-auto"
-        loading="eager"
-      />
+      <div className="relative w-full min-h-[320px] sm:min-h-[420px] lg:min-h-[640px]">
+        <Image
+          src={media.src}
+          alt={media.alt ?? project.title}
+          fill
+          sizes="(min-width: 1280px) 672px, (min-width: 1024px) 672px, 92vw"
+          className="object-contain"
+          priority
+        />
+      </div>
     );
   }
   return (

@@ -14,6 +14,7 @@ import {
   Receipt,
 } from 'lucide-react'
 import {  OrbitDotMark } from '../layout/Logo'
+import { usePathname } from 'next/navigation'
 
 type ActionItem = { label: string; Icon: any }
 
@@ -22,33 +23,98 @@ type ActionGroup = {
   items: ActionItem[]
 }
 
-const ACTION_GROUPS: ActionGroup[] = [
-  {
-    title: 'Create',
-    items: [
-      { label: 'New Client', Icon: Users },
-      { label: 'New Project', Icon: Briefcase },
-      { label: 'New Invitation', Icon: MessageSquare },
-      { label: 'New Service', Icon: Settings },
-      { label: 'New Blog Post', Icon: BookOpenText },
-      { label: 'New Team Member', Icon: Users },
-      { label: 'New Message', Icon: Inbox },
-      { label: 'New Bundle', Icon: Briefcase },
-    ],
-  },
-  {
-    title: 'Finance',
-    items: [
-      { label: 'Create Invoice', Icon: Receipt },
-      { label: 'Record Payment', Icon: PlusCircle },
-      { label: 'New Subscription', Icon: Settings },
-    ],
-  },
-]
+function getActionGroups(pathname: string): ActionGroup[] {
+  // Normalize to ensure consistent checks
+  const path = pathname || '/'
+
+  // /dev root: general dev actions
+  if (path === '/dev' || path === '/dev/') {
+    return [
+      {
+        title: 'General',
+        items: [
+          { label: 'New Client', Icon: Users },
+          { label: 'New Project', Icon: Briefcase },
+          { label: 'New Blog Post', Icon: BookOpenText },
+          { label: 'Open Command Center', Icon: Settings },
+          { label: 'View Inbox', Icon: Inbox },
+          { label: 'Invite Teammate', Icon: MessageSquare },
+        ],
+      },
+      {
+        title: 'Finance',
+        items: [
+          { label: 'Create Invoice', Icon: Receipt },
+          { label: 'Record Payment', Icon: PlusCircle },
+        ],
+      },
+    ]
+  }
+
+  // /dev/projects: project-centric actions
+  if (path.startsWith('/dev/projects')) {
+    return [
+      {
+        title: 'Projects',
+        items: [
+          { label: 'New Project', Icon: Briefcase },
+          { label: 'Assign Team', Icon: Users },
+          { label: 'Link Services', Icon: Settings },
+          { label: 'View Inbox', Icon: Inbox },
+        ],
+      },
+      {
+        title: 'Finance',
+        items: [
+          { label: 'Create Invoice', Icon: Receipt },
+          { label: 'Record Payment', Icon: PlusCircle },
+        ],
+      },
+    ]
+  }
+
+  // /dev/clients: client-centric actions
+  if (path.startsWith('/dev/clients')) {
+    return [
+      {
+        title: 'Clients',
+        items: [
+          { label: 'New Client', Icon: Users },
+          { label: 'Invite Client', Icon: MessageSquare },
+          { label: 'Message Client', Icon: MessageSquare },
+          { label: 'Link Projects', Icon: Briefcase },
+        ],
+      },
+      {
+        title: 'Billing',
+        items: [
+          { label: 'Create Invoice', Icon: Receipt },
+          { label: 'Record Payment', Icon: PlusCircle },
+        ],
+      },
+    ]
+  }
+
+  // Default: fall back to general actions
+  return [
+    {
+      title: 'General',
+      items: [
+        { label: 'New Client', Icon: Users },
+        { label: 'New Project', Icon: Briefcase },
+        { label: 'New Blog Post', Icon: BookOpenText },
+        { label: 'Open Command Center', Icon: Settings },
+        { label: 'View Inbox', Icon: Inbox },
+      ],
+    },
+  ]
+}
 
 export default function DevFab() {
   const [open, setOpen] = useState(false)
   const [toast, setToast] = useState<string | null>(null)
+  const pathname = usePathname()
+  const ACTION_GROUPS = getActionGroups(pathname || '/')
 
   useEffect(() => {
     if (!toast) return

@@ -3,6 +3,10 @@ import { siteConfig } from '@/config/site';
 import { StatusIndicator } from '../StatusIndicator';
 
 export function Footer() {
+  const year = new Date().getFullYear();
+  const footerText = siteConfig.footer.text
+    .replace(/\{year\}/gi, String(year))
+    .replace(/©\s*\d{4}/, `© ${year}`);
   return (
     <footer className="z-50 mx-2 md:mx-4 my-4">
       {/* Backdrop blur */}      
@@ -29,7 +33,7 @@ export function Footer() {
             {/* Main content */}
             <div className="flex flex-col md:flex-row items-center justify-between w-full">
               <p className="text-[11px] font-mono tracking-wider text-black/50 dark:text-white/50">
-                {siteConfig.footer.text}
+                {footerText}
               </p>
               <div className="flex space-x-6 mt-1 md:mt-0">
                 {siteConfig.footer.links.map((link) => (

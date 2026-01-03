@@ -43,7 +43,7 @@ export default function BundleCard({
       className={[
         'group absolute top-1/2 -translate-y-1/2 rounded-2xl overflow-hidden',
         'border border-white/10 shadow-2xl cursor-pointer select-none',
-        'aspect-[9/11] h-full max-w-[80vw]',
+        'aspect-[9/11] h-full max-w-[90vw]',
         layout[state],
         sora.className,
       ].join(' ')}

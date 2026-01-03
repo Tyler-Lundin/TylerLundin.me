@@ -116,7 +116,7 @@ export default function SpotlightProjects({
       onMouseLeave={() => setPaused(false)}
       id="projects"
     >
-      <div className="mx-auto max-w-5xl px-4 pb-12">
+      <div className="mx-auto max-w-5xl sm:px-4 pb-12">
         {/* Container for the Card - Height must accommodate the card aspect ratio */}
         <div className="relative h-[550px] sm:h-[650px] md:h-[750px] w-full max-w-[600px] mx-auto flex items-center justify-center">
           

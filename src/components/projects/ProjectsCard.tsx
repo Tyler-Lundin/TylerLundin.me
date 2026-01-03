@@ -41,9 +41,9 @@ export default function ProjectsCard({
   
   // Adjusted aspect ratios and positioning
   const layout: Record<typeof state, string> = {
-    prev: 'left-0 -translate-x-5/6 aspect-[9/11] scale-80 -rotate-3 z-10',
-    current: 'left-1/2 -translate-x-1/2 aspect-[9/11] z-30',
-    next: 'right-0 translate-x-5/6 aspect-[9/11] scale-80 rotate-3 z-20',
+    prev: 'left-0 -translate-x-1/2 scale-90 -rotate-3 z-10 brightness-[0.6] blur-[1px]',
+    current: 'left-1/2 -translate-x-1/2 z-30 brightness-100 blur-0',
+    next: 'right-0 translate-x-1/2 scale-90 rotate-3 z-20 brightness-[0.6] blur-[1px]',
   }
 
   const isCurrent = state === 'current'
@@ -74,7 +74,12 @@ export default function ProjectsCard({
 
   return (
     <motion.div
-      className={`${baseCls} ${layout[state]} h-full ${inactiveFilter}`}
+      className={[
+        'group absolute top-1/2 -translate-y-1/2 rounded-2xl overflow-hidden',
+        'border border-white/10 shadow-2xl cursor-pointer select-none',
+        'aspect-[9/11] h-full max-w-[90vw]',
+        layout[state],
+      ].join(' ')}
       initial={false}
       animate={{ opacity: isCurrent ? 1 : 0.6, scale }}
       transition={{ type: 'spring', stiffness: 420, damping: 42, mass: 0.6 }}

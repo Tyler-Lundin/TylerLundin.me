@@ -89,7 +89,7 @@ export default function SpotlightBundles({
       onMouseLeave={() => setPaused(false)} 
       id="bundles"
     >
-      <div className="mx-auto max-w-5xl px-4 pb-12">
+      <div className="mx-auto max-w-5xl sm:px-4 pb-12">
         {/* Container height: Needs to be tall enough to hold the absolute card.
           Adjust min-h values to match your BundleCard aspect ratio [9/11] 
         */}

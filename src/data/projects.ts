@@ -138,13 +138,33 @@ export const projects: Project[] = [
       { type: 'live', url: 'https://sfc-topaz.vercel.app/', label: 'Live' },
     ],
     media: [
-      { id: 'sfc-hero-light', type: 'image', src: '/projects/suncrest-fitness-center/home-light.webp', alt: 'Suncrest Fitness Center preview', featured: true, }, 
-      { id: 'sfc-hero-dark', type: 'image', src: '/projects/suncrest-fitness-center/home-dark.webp', alt: 'Suncrest Fitness Center home dark preview', featured: true, }, 
-      { id: 'sfc-about-light', type: 'image', src: '/projects/suncrest-fitness-center/about-light.webp', alt: 'Suncrest Fitness Center about light preview', featured: true, }, 
-      { id: 'sfc-memberships-light', type: 'image', src: '/projects/suncrest-fitness-center/memberships-light.webp', alt: 'Suncrest Fitness Center memberships light preview', featured: true, }, 
-      { id: 'sfc-schedule-light', type: 'image', src: '/projects/suncrest-fitness-center/schedule-light.webp', alt: 'Suncrest Fitness Center schedule light preview', featured: true, }, 
+      { id: 'sfc-hero-light', type: 'image', src: '/projects/suncrest-fitness-center/home-light.webp', alt: 'Suncrest Fitness Center preview', featured: true, },
+      { id: 'sfc-hero-dark', type: 'image', src: '/projects/suncrest-fitness-center/home-dark.webp', alt: 'Suncrest Fitness Center home dark preview', featured: true, },
+      { id: 'sfc-about-light', type: 'image', src: '/projects/suncrest-fitness-center/about-light.webp', alt: 'Suncrest Fitness Center about light preview', featured: true, },
+      { id: 'sfc-memberships-light', type: 'image', src: '/projects/suncrest-fitness-center/memberships-light.webp', alt: 'Suncrest Fitness Center memberships light preview', featured: true, },
+      { id: 'sfc-schedule-light', type: 'image', src: '/projects/suncrest-fitness-center/schedule-light.webp', alt: 'Suncrest Fitness Center schedule light preview', featured: true, },
     ],
     weight: 30,
+    heroShowcase: true,
+  },
+  {
+    id: 's1-auto-repair',
+    slug: 's1-auto-repair',
+    title: 'S1 Auto Repair',
+    status: 'live',
+    tagline: 'Professional, transparent auto repair from an ASE-trained technician.',
+    description:
+      'S1 Auto Repair was built on a simple principle: do the job right and treat customers with respect.',
+    tech: ['Next.js', 'React', 'TypeScript', 'CSS Modules'],
+    links: [
+      { type: 'live', url: 'https://s1autorepair.com/', label: 'Live' },
+    ],
+    media: [
+      { id: 's1-root', type: 'image', src: '/projects/s1-auto-repair/s1-root.webp', alt: 'Suncrest Fitness Center preview', featured: true, },
+      { id: 's1-admin', type: 'image', src: '/projects/s1-auto-repair/s1-admin.webp', alt: 'Suncrest Fitness Center preview', featured: true, },
+      { id: 's1-admin-vehicles', type: 'image', src: '/projects/s1-auto-repair/s1-admin-vehicles.webp', alt: 'Suncrest Fitness Center preview', featured: true, },
+    ],
+    weight: 0,
     heroShowcase: true,
   },
 ];

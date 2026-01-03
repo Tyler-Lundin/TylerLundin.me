@@ -29,7 +29,7 @@ const BUG = {
 
 export function Hero({ projects }: HeroProps) {
 
-  const [current, setCurrent] = useState<HeroTypes>("bundles")
+  const [current, setCurrent] = useState<HeroTypes>("projects")
   const [showSpotlights, setShowSpotlights] = useState(false)
 
   // REMOVED: The auto-rotate setInterval is gone.
@@ -59,7 +59,7 @@ export function Hero({ projects }: HeroProps) {
         BUG.root && "border border-red-400"
       ].join(" ")}
     >
-      <div className={["relative z-10 mx-auto max-w-7xl px-4 grid gap-12", // Increased gap slightly for the toggle
+      <div className={["relative z-10 mx-auto max-w-7xl sm:px-4 grid gap-12", // Increased gap slightly for the toggle
         BUG.content && "border border-green-400"
       ].join(" ")}>
         
@@ -79,7 +79,7 @@ export function Hero({ projects }: HeroProps) {
         >
           {!showSpotlights ? (
             // Maintain space to avoid CLS while we defer mounting
-            <div className="mx-auto max-w-5xl px-4 pb-12">
+            <div className="mx-auto max-w-5xl sm:px-4 pb-12">
               <div className="relative h-[550px] sm:h-[650px] md:h-[750px] w-full max-w-[600px] mx-auto rounded-2xl bg-black/5 dark:bg-white/5 animate-pulse" />
             </div>
           ) : (
@@ -163,24 +163,30 @@ const Arrow = () => {
 
 const Heading = ({ current }: { current: HeroTypes }) => {
   return (
-    <div className="relative mx-auto max-w-xl text-center w-fit">
+    <div className="relative mx-auto max-w-[90vw] sm:max-w-xl text-center w-fit">
       {/* Avatar + Label */}
       <div
         className="mb-3 flex flex-col items-center justify-center gap-2 sm:flex-row sm:gap-3"
       >
-        <Link href="/about" className="md:absolute md:top-0 md:-left-2 md:-translate-x-full relative block h-14 w-14 overflow-hidden rounded-full border border-black/20 dark:border-white/20">
+        <Link 
+          href="/about" 
+          className="md:absolute md:top-0 md:-left-2 md:-translate-x-full relative block h-12 w-12 sm:h-14 sm:w-14 overflow-hidden rounded-full border border-black/20 dark:border-white/20"
+        >
           <Image
             src="/images/tyler.png"
             alt="Tyler"
             width={80}
             height={80}
-            sizes="40px"
+            sizes="(max-width: 640px) 48px, 56px"
             className="pointer-events-none select-none object-cover"
             priority
           />
         </Link>
 
-        <Link href="/spokane-web-developer" className="text-xs font-medium uppercase tracking-[0.2em] text-neutral-600 dark:text-neutral-400 sm:text-[11px] hover:underline">
+        <Link 
+          href="/spokane-web-developer" 
+          className="text-[10px] sm:text-xs font-medium uppercase tracking-[0.15em] sm:tracking-[0.2em] text-neutral-600 dark:text-neutral-400 hover:underline"
+        >
           Freelance Web Developer
         </Link>
       </div>
@@ -188,7 +194,7 @@ const Heading = ({ current }: { current: HeroTypes }) => {
       {/* Name */}
       <h1
         style={{ ...sora.style }}
-        className="text-3xl font-black tracking-tight text-neutral-900 dark:text-neutral-100 sm:text-4xl"
+        className="text-2xl sm:text-3xl md:text-4xl font-black tracking-tight text-neutral-900 dark:text-neutral-100"
       >
         Tyler Lundin
       </h1>
@@ -197,15 +203,16 @@ const Heading = ({ current }: { current: HeroTypes }) => {
       {/* Tagline */}
       <p
         style={{ ...sora.style }}
-        className="mt-3 text-sm text-neutral-700 dark:text-neutral-300 sm:text-base absolute whitespace-nowrap left-1/2 -translate-x-1/2"
+        className="mt-2 sm:mt-3 text-xs sm:text-sm text-neutral-700 dark:text-neutral-300 sm:text-base absolute left-1/2 -translate-x-1/2 w-full max-w-[95%] whitespace-normal sm:whitespace-nowrap"
       >
         {current === "bundles" && ("Websites built for your needs. Take a look.")}
         {current === "projects" && ("Building fast, modern websites. Take a look.")}
-
       </p>
 
-      <div className="w-80 h-6" />
+      {/* Spacer - Adjusted width to not force scroll on tiny screens */}
+      <div className="w-64 sm:w-80 h-6" />
+      
       <Arrow />
     </div>
   );
-};;
+};

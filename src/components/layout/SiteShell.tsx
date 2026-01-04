@@ -6,6 +6,9 @@ import { Navbar } from '@/components/layout/Navbar'
 import { Footer } from '@/components/layout/Footer'
 import Greeting from '../Greeting'
 import DevBreadcrumbs from '../dev/DevBreadcrumbs'
+import AdminMenu from '../dev/AdminMenu'
+import AdminMenuToggle from '../dev/AdminMenuToggle'
+import AuthRefresher from '../dev/AuthRefresher'
 
 // Defer loading particles background to idle time to reduce LCP/main-thread
 const ReactiveBackground = dynamic(() => import('@/components/ReactiveBackground'), {
@@ -28,6 +31,23 @@ export function SiteShell({ children }: { children: React.ReactNode }) {
 
 
 function UserShell({ children }: { children: React.ReactNode }) {
+  const [adminOpen, setAdminOpen] = useState(false)
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.code === 'Backquote' || e.key === '`' || e.key === '~') {
+        e.preventDefault()
+        setAdminOpen((v) => !v)
+      }
+      if (e.key === 'Escape') setAdminOpen(false)
+    }
+    const onEvt = () => setAdminOpen((v) => !v)
+    window.addEventListener('keydown', onKey)
+    window.addEventListener('admin-menu-host-toggle' as any, onEvt)
+    return () => {
+      window.removeEventListener('keydown', onKey)
+      window.removeEventListener('admin-menu-host-toggle' as any, onEvt)
+    }
+  }, [])
   const [showBg, setShowBg] = useState(false)
   // Mount background after browser is idle or small delay
   useEffect(() => {
@@ -66,11 +86,30 @@ function UserShell({ children }: { children: React.ReactNode }) {
           <Greeting />
         </div>
       </div>
+      <AdminMenu openProp={adminOpen} onClose={() => setAdminOpen(false)} onToggle={() => setAdminOpen((v)=>!v)} />
+      <AdminMenuToggle />
     </>
   )
 }
 
 function DevShell({ children }: { children: React.ReactNode }) {
+  const [adminOpen, setAdminOpen] = useState(false)
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.code === 'Backquote' || e.key === '`' || e.key === '~') {
+        e.preventDefault()
+        setAdminOpen((v) => !v)
+      }
+      if (e.key === 'Escape') setAdminOpen(false)
+    }
+    const onEvt = () => setAdminOpen((v) => !v)
+    window.addEventListener('keydown', onKey)
+    window.addEventListener('admin-menu-host-toggle' as any, onEvt)
+    return () => {
+      window.removeEventListener('keydown', onKey)
+      window.removeEventListener('admin-menu-host-toggle' as any, onEvt)
+    }
+  }, [])
   const pathname = usePathname()
   const isDevRoute = pathname.includes('/dev')
 
@@ -91,6 +130,10 @@ function DevShell({ children }: { children: React.ReactNode }) {
       {!isDisabled && (<DevBreadcrumbs />)}
         {children}
       </div>
+      {/* Keep access token fresh while on dev pages */}
+      <AuthRefresher />
+      <AdminMenu openProp={adminOpen} onClose={() => setAdminOpen(false)} onToggle={() => setAdminOpen((v)=>!v)} />
+      <AdminMenuToggle />
     </div>
   )
 }

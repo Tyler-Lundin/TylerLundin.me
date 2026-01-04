@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Home, Menu, X, Copy, Check, ChevronRight, Users, Folder, Layers, MessageSquareText, Newspaper, Settings, HomeIcon } from 'lucide-react'
+import { Home, Menu, X, Copy, Check, ChevronRight, Users, Folder, Layers, MessageSquareText, Newspaper, Settings, HomeIcon, MapPin } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 
 function titleize(segment: string) {
@@ -169,6 +169,8 @@ function MenuOverlay({ onClose, query, setQuery, pathname, firstItemRef, trigger
     { key: 'services', label: 'Services', href: '/dev/services', icon: Layers, desc: 'Catalog & bundles' },
     { key: 'messages', label: 'Messages', href: '/dev/msgs', icon: MessageSquareText, desc: 'Inbox & quotes' },
     { key: 'blog', label: 'Blog', href: '/dev/blog', icon: Newspaper, desc: 'Posts & views' },
+    { key: 'leads', label: 'Leads', href: '/dev/leads', icon: MapPin, desc: 'Google Places ingestion' },
+    { key: 'swipe', label: 'Swipe', href: '/dev/leads/swipe', icon: MapPin, desc: 'Website review filter' },
     { key: 'team', label: 'Team', href: '/dev/team', icon: Settings, desc: 'Invites & roles' },
   ] as const
 

@@ -3,7 +3,7 @@ import { cookies } from 'next/headers'
 import * as jose from 'jose'
 
 const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key'
-const COOKIE_NAME = 'auth_token'
+const COOKIE_NAME = 'access_token'
 
 export async function GET() {
   try {
@@ -12,10 +12,11 @@ export async function GET() {
     if (!token) return NextResponse.json({ success: false, code: 'no_token' }, { status: 200 })
 
     const secret = new TextEncoder().encode(JWT_SECRET)
-    await jose.jwtVerify(token, secret)
-    return NextResponse.json({ success: true })
+    const { payload } = await jose.jwtVerify(token, secret)
+    const role = (payload as any)?.role
+    const isAdmin = role === 'admin'
+    return NextResponse.json({ success: true, role, isAdmin })
   } catch (e) {
     return NextResponse.json({ success: false, code: 'invalid' }, { status: 200 })
   }
 }
-

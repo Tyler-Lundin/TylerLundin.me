@@ -1,6 +1,5 @@
 import { requireAdmin } from '@/lib/auth'
 import { redirect } from 'next/navigation'
-import DevFab from '@/components/dev/DevFab'
 import { SiteShell } from '@/components/layout/SiteShell'
 import { ActiveProjectProvider } from '@/components/dev/ActiveProjectContext'
 import { cookies } from 'next/headers'
@@ -26,7 +25,6 @@ export default async function DevLayout({
           {children}
         </ActiveProjectProvider>
       </SiteShell>
-      <DevFab />
     </div>
   )
 }

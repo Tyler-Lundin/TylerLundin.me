@@ -161,8 +161,27 @@ function InviteActions() {
           (process.env.NODE_ENV === 'production' ? '' : 'http://localhost:3000') ||
           ''
         const joinUrl = `${baseUrl}/join?email=${encodeURIComponent(email)}&key=${encodeURIComponent(key)}`
+        console.log('[dev/team] invite: provider=%s resend=%s brevo=%s baseUrl=%s to=%s link=%s',
+          process.env.BREVO_API_KEY ? 'brevo' : (process.env.RESEND_API_KEY ? 'resend' : 'none'),
+          process.env.RESEND_API_KEY ? 'set' : 'unset',
+          process.env.BREVO_API_KEY ? 'set' : 'unset',
+          baseUrl,
+          email,
+          joinUrl,
+        )
+        const { auditLog } = await import('@/lib/audit')
         const sent = await sendInviteEmail({ to: email, message: inviteMessage, link: joinUrl })
         console.log('[dev/team] invite email result:', sent)
+        await auditLog({
+          route: '/dev/team (server action)',
+          action: 'team.invite.send',
+          method: 'SERVER_ACTION',
+          status: 200,
+          actorEmail: null,
+          payload: { email, role },
+          result: sent,
+          error: (sent as any)?.error ? String((sent as any).error) : null,
+        })
       }}
       className="w-full rounded-lg bg-neutral-900 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-neutral-800 focus:ring-2 focus:ring-neutral-200 dark:bg-white dark:text-neutral-900 dark:hover:bg-neutral-200 dark:focus:ring-neutral-700"
     >
@@ -170,4 +189,3 @@ function InviteActions() {
     </button>
   )
 }
-

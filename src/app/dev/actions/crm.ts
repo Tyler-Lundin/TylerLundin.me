@@ -1,9 +1,10 @@
-'use server'
+"use server"
 
 import { createServiceClient } from '@/lib/supabase/server'
 import { revalidatePath } from 'next/cache'
 import { slugify } from '@/lib/utils'
 import { z } from 'zod'
+import { withAuditAction } from '@/lib/audit'
 
 const clientSchema = z.object({
   name: z.string().min(1, 'Name is required'),
@@ -90,7 +91,7 @@ const updateProjectHealthSchema = z.object({
   project_health_enabled: z.union([z.literal('on'), z.literal('true'), z.literal('false'), z.literal('')]).optional(),
 })
 
-export async function createClientAction(prevState: any, formData: FormData) {
+async function _createClientAction(prevState: any, formData: FormData) {
   const raw = {
     name: formData.get('name'),
     company: formData.get('company'),
@@ -126,7 +127,7 @@ export async function createClientAction(prevState: any, formData: FormData) {
   return { success: true, client }
 }
 
-export async function updateClientAction(prevState: any, formData: FormData) {
+async function _updateClientAction(prevState: any, formData: FormData) {
   const raw = {
     id: formData.get('id'),
     name: formData.get('name'),
@@ -152,7 +153,7 @@ export async function updateClientAction(prevState: any, formData: FormData) {
   return { success: true }
 }
 
-export async function createProjectAction(prevState: any, formData: FormData) {
+async function _createProjectAction(prevState: any, formData: FormData) {
   const raw = {
     client_id: formData.get('client_id'),
     title: formData.get('title'),
@@ -179,7 +180,7 @@ export async function createProjectAction(prevState: any, formData: FormData) {
   return { success: true }
 }
 
-export async function createContactAction(prevState: any, formData: FormData) {
+async function _createContactAction(prevState: any, formData: FormData) {
   const raw = {
     client_id: formData.get('client_id'),
     name: formData.get('name'),
@@ -205,7 +206,7 @@ export async function createContactAction(prevState: any, formData: FormData) {
   return { success: true }
 }
 
-export async function addProjectLinkAction(prevState: any, formData: FormData) {
+async function _addProjectLinkAction(prevState: any, formData: FormData) {
   const raw = {
     project_id: formData.get('project_id'),
     type: formData.get('type'),
@@ -225,7 +226,7 @@ export async function addProjectLinkAction(prevState: any, formData: FormData) {
   return { success: true }
 }
 
-export async function createProjectMessageAction(prevState: any, formData: FormData) {
+async function _createProjectMessageAction(prevState: any, formData: FormData) {
   const raw = {
     project_id: formData.get('project_id'),
     author_role: formData.get('author_role'),
@@ -244,7 +245,7 @@ export async function createProjectMessageAction(prevState: any, formData: FormD
   return { success: true }
 }
 
-export async function createProjectListAction(prevState: any, formData: FormData) {
+async function _createProjectListAction(prevState: any, formData: FormData) {
   const raw = {
     project_id: formData.get('project_id'),
     key: formData.get('key'),
@@ -262,7 +263,7 @@ export async function createProjectListAction(prevState: any, formData: FormData
   return { success: true }
 }
 
-export async function createProjectListItemAction(prevState: any, formData: FormData) {
+async function _createProjectListItemAction(prevState: any, formData: FormData) {
   const raw = {
     list_id: formData.get('list_id'),
     title: formData.get('title'),
@@ -284,7 +285,7 @@ export async function createProjectListItemAction(prevState: any, formData: Form
   return { success: true }
 }
 
-export async function updateProjectHealthAction(_prev: any, formData: FormData) {
+async function _updateProjectHealthAction(_prev: any, formData: FormData) {
   const raw = {
     id: formData.get('id'),
     project_health_url: formData.get('project_health_url'),
@@ -316,7 +317,7 @@ export async function updateProjectHealthAction(_prev: any, formData: FormData) 
   return { success: true }
 }
 
-export async function updateProjectAction(_prev: any, formData: FormData) {
+async function _updateProjectAction(_prev: any, formData: FormData) {
   const raw = {
     id: formData.get('id'),
     title: formData.get('title'),
@@ -343,3 +344,14 @@ export async function updateProjectAction(_prev: any, formData: FormData) {
   revalidatePath('/dev/projects', 'layout')
   return { success: true }
 }
+
+export const createClientAction = withAuditAction('crm.client.create', _createClientAction)
+export const updateClientAction = withAuditAction('crm.client.update', _updateClientAction)
+export const createProjectAction = withAuditAction('crm.project.create', _createProjectAction)
+export const createContactAction = withAuditAction('crm.contact.create', _createContactAction)
+export const addProjectLinkAction = withAuditAction('crm.project.link.add', _addProjectLinkAction)
+export const createProjectMessageAction = withAuditAction('crm.project.message.create', _createProjectMessageAction)
+export const createProjectListAction = withAuditAction('crm.project.list.create', _createProjectListAction)
+export const createProjectListItemAction = withAuditAction('crm.project.list.item.create', _createProjectListItemAction)
+export const updateProjectHealthAction = withAuditAction('crm.project.health.update', _updateProjectHealthAction)
+export const updateProjectAction = withAuditAction('crm.project.update', _updateProjectAction)

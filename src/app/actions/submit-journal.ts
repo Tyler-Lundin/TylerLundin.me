@@ -6,14 +6,9 @@ import jwt from 'jsonwebtoken'
 import { headers } from 'next/headers'
 
 const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key'
-const COOKIE_NAME = 'auth_token'
+const COOKIE_NAME = 'access_token'
 
-interface JWTPayload {
-  id: number
-  role: string
-  timestamp: number
-  [key: string]: unknown
-}
+interface JWTPayload { sub?: string; id?: string | number; role?: string; exp?: number; iat?: number }
 
 export async function submitJournal(text: string) {
   console.log('🔵 Starting journal submission...')
@@ -44,7 +39,8 @@ export async function submitJournal(text: string) {
       throw new Error('Invalid token')
     }
 
-    if (!decoded.id) {
+    const uid = (decoded.sub || decoded.id)
+    if (!uid) {
       console.log('🔴 Token verification failed - no id in payload:', decoded)
       throw new Error('Invalid token - missing id')
     }

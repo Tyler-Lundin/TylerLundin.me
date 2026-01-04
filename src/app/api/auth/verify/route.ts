@@ -3,151 +3,64 @@ import { createServiceClient } from '@/lib/supabase/server'
 import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
 
-// JWT secret - should be in env vars in production
 const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key'
-const COOKIE_NAME = 'auth_token'
+const ACCESS_COOKIE = 'access_token'
+const REFRESH_COOKIE = 'refresh_token'
+import crypto from 'crypto'
 
 export async function POST(request: Request) {
   try {
-    const { passwords } = await request.json()
-    console.log('Received passwords:', passwords)
-    if (!Array.isArray(passwords) || passwords.length !== 3) {
-      console.log('Invalid password format')
-      return NextResponse.json(
-        { 
-          success: false,
-          code: 'invalid_format',
-          message: 'Invalid request format' 
-        },
-        { status: 400 }
-      )
+    const { email, passwords } = await request.json()
+    if (!email || !Array.isArray(passwords) || passwords.length !== 3) {
+      return NextResponse.json({ success: false, code: 'invalid_format', message: 'Email and 3 passwords are required' }, { status: 400 })
     }
 
-    const supabase = await createServiceClient()
-    console.log('Supabase service client created')
-
-    // First, try a direct SQL query to verify data access
-    const { data: rawData, error: rawError } = await supabase
-      .from('admin_passwords')
-      .select('*')
-      .limit(1)
-
-    console.log('Direct query result:', { rawData, rawError })
-
-    if (rawError) {
-      console.error('Direct query error:', rawError)
-      return NextResponse.json(
-        { 
-          success: false,
-          code: 'database_error',
-          message: 'Database error',
-          error: rawError.message 
-        },
-        { status: 500 }
-      )
+    const sb = await createServiceClient()
+    // Look up user by email
+    const { data: user, error: userErr } = await sb.from('users').select('id,email,role').ilike('email', String(email)).maybeSingle()
+    if (userErr) {
+      return NextResponse.json({ success: false, code: 'database_error', message: 'Database error', error: userErr.message }, { status: 500 })
+    }
+    if (!user) {
+      return NextResponse.json({ success: false, code: 'no_user', message: 'User not found' }, { status: 401 })
     }
 
-    // Then try the specific query
-    const { data, error } = await supabase
-      .from('admin_passwords')
+    // Load credentials for user
+    const { data: cred, error: credErr } = await sb
+      .from('team_credentials')
       .select('password_1_hash, password_2_hash, password_3_hash')
-      .eq('id', 1)
+      .eq('user_id', user.id)
       .maybeSingle()
-
-    console.log('Database query result:', { data, error })
-    console.log('Query details:', {
-      table: 'admin_passwords',
-      id: 1,
-      columns: ['password_1_hash', 'password_2_hash', 'password_3_hash']
-    })
-
-    if (error) {
-      console.error('Database error:', error)
-      return NextResponse.json(
-        { 
-          success: false,
-          code: 'database_error',
-          message: 'Authentication failed',
-          error: error.message 
-        },
-        { status: 401 }
-      )
+    if (credErr) {
+      return NextResponse.json({ success: false, code: 'database_error', message: 'Database error', error: credErr.message }, { status: 500 })
+    }
+    if (!cred) {
+      return NextResponse.json({ success: false, code: 'no_credentials', message: 'No credentials found for user' }, { status: 401 })
     }
 
-    if (!data) {
-      console.error('No data returned from database')
-      return NextResponse.json(
-        { 
-          success: false,
-          code: 'no_data',
-          message: 'No admin passwords found' 
-        },
-        { status: 401 }
-      )
+    const ok1 = await bcrypt.compare(passwords[0], cred.password_1_hash)
+    const ok2 = await bcrypt.compare(passwords[1], cred.password_2_hash)
+    const ok3 = await bcrypt.compare(passwords[2], cred.password_3_hash)
+    if (!ok1 || !ok2 || !ok3) {
+      return NextResponse.json({ success: false, code: 'invalid_credentials', message: 'Invalid credentials' }, { status: 401 })
     }
 
-    // Verify all three passwords
-    const valid1 = await bcrypt.compare(passwords[0], data.password_1_hash)
-    const valid2 = await bcrypt.compare(passwords[1], data.password_2_hash)
-    const valid3 = await bcrypt.compare(passwords[2], data.password_3_hash)
-
-    console.log('Password validation results:', { valid1, valid2, valid3 })
-
-    if (!valid1 || !valid2 || !valid3) {
-      console.log('Password validation failed:', { valid1, valid2, valid3 })
-      return NextResponse.json(
-        { 
-          success: false,
-          code: 'invalid_credentials',
-          message: 'Invalid credentials' 
-        },
-        { status: 401 }
-      )
-    }
-
-    console.log('All passwords valid, creating JWT token')
-
-    // Create JWT token
-    const token = jwt.sign(
-      { 
-        id: 1,
-        role: 'admin',
-        timestamp: Date.now()
-      },
-      JWT_SECRET,
-      { expiresIn: '7d' } // Token expires in 7 days
-    )
-
-    console.log('JWT token created')
-
-    // Create response with success message
-    const response = NextResponse.json({ 
-      success: true,
-      code: 'success',
-      message: 'Authentication successful'
-    })
-
-    // Set HTTP-only cookie with the JWT
-    response.cookies.set({
-      name: COOKIE_NAME,
-      value: token,
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
-      maxAge: 7 * 24 * 60 * 60 // 7 days in seconds
-    })
-
-    console.log('Cookie set, returning response')
+    const role = user.role || 'member'
+    // Access token 15m
+    const accessExpSec = Math.floor(Date.now() / 1000) + 15 * 60
+    const accessToken = jwt.sign({ sub: user.id, email: user.email, role, exp: accessExpSec }, JWT_SECRET)
+    // Refresh token 30d (random, stored hashed)
+    const rt = crypto.randomBytes(32).toString('base64url')
+    const rtHash = crypto.createHash('sha256').update(rt).digest('hex')
+    const rtExp = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
+    const ua = (request.headers.get('user-agent') || null) as any
+    const ip = ((request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip') || '') as string).split(',')[0]?.trim() || null
+    await sb.from('auth_refresh_tokens').insert({ user_id: user.id, token_hash: rtHash, expires_at: rtExp.toISOString(), user_agent: ua, ip })
+    const response = NextResponse.json({ success: true, code: 'success', message: 'Authentication successful', role })
+    response.cookies.set({ name: ACCESS_COOKIE, value: accessToken, httpOnly: true, secure: process.env.NODE_ENV === 'production', sameSite: 'strict', path: '/', maxAge: 15 * 60 })
+    response.cookies.set({ name: REFRESH_COOKIE, value: rt, httpOnly: true, secure: process.env.NODE_ENV === 'production', sameSite: 'strict', path: '/', maxAge: 30 * 24 * 60 * 60 })
     return response
-  } catch (error) {
-    console.error('Auth error:', error)
-    return NextResponse.json(
-      { 
-        success: false,
-        code: 'server_error',
-        message: 'Internal server error' 
-      },
-      { status: 500 }
-    )
+  } catch (e: any) {
+    return NextResponse.json({ success: false, code: 'server_error', message: e?.message || 'Internal server error' }, { status: 500 })
   }
-} 
+}

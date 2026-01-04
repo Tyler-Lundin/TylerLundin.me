@@ -1,5 +1,6 @@
 import React from 'react'
 import CommandCenter from './components/CommandCenter'
+import LeadsOverview from './components/LeadsOverview'
 import { createClient } from '@/lib/supabase/server'
 import Link from 'next/link'
 import { CrmProject, Invoice } from '@/types/crm'
@@ -162,6 +163,11 @@ export default async function CrmDashboard() {
         <div className="mb-8">
           {/* Server wrapper provides initial projects via service client */}
           <CommandCenter />
+        </div>
+
+        {/* Leads Overview */}
+        <div className="mb-8">
+          <LeadsOverview />
         </div>
 
         {/* 2. Finance Section (High Priority) */}

@@ -18,10 +18,10 @@ type PublicPost = {
 }
 
 async function getPost(slug: string): Promise<PublicPost | null> {
-  const sb: any = await createClient()
+  const sb = await createClient()
   // Prefer public view (aggregated), then load full post body from base table
   const { data: pub } = await sb
-    .from('blog_posts_public' as any)
+    .from('blog_posts_public')
     .select('*')
     .eq('slug', slug)
     .maybeSingle()
@@ -44,13 +44,13 @@ async function getPost(slug: string): Promise<PublicPost | null> {
     cover_image_url: pub.cover_image_url ?? null,
     content_md: base?.content_md ?? null,
     published_at: pub.published_at ?? null,
-    tags: (pub as any).tags ?? [],
+    tags: pub.tags ?? [],
   }
 }
 
 async function recordView(postId: string) {
   try {
-    const sb: any = await createClient()
+    const sb = await createClient()
     const h = await headers()
     const ua = h.get('user-agent') || ''
     const ip = h.get('x-forwarded-for') || ''

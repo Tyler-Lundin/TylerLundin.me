@@ -59,7 +59,8 @@ export default function JoinClient() {
               <label className="block text-[11px] text-gray-600 dark:text-gray-300 mb-1">4-digit key</label>
               <input
                 type="text"
-                pattern="\\d{4}"
+                pattern="[0-9]{4}"
+                title="Enter 4 digits"
                 maxLength={4}
                 inputMode="numeric"
                 required

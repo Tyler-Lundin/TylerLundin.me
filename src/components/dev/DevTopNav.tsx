@@ -5,6 +5,7 @@ import { usePathname } from 'next/navigation'
 
 const NAV = [
   { href: '/dev', label: 'Home' },
+  { href: '/dev/leads', label: 'Leads' },
   { href: '/dev/blog', label: 'Blog' },
   { href: '/dev/msgs', label: 'Inbox' },
 ]
@@ -39,4 +40,3 @@ export default function DevTopNav() {
     </header>
   )
 }
-

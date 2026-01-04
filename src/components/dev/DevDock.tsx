@@ -1,17 +1,19 @@
 "use client"
 
 import { cn } from '@/lib/utils'
-import { BookOpenText, NotebookPen, Inbox, Briefcase } from 'lucide-react'
+import { BookOpenText, NotebookPen, Inbox, Briefcase, MapPin, Hand } from 'lucide-react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 
-type DockItem = { key: 'blog' | 'journal' | 'inbox' | 'projects' | 'settings'; label: string; Icon: any; href: string }
+type DockItem = { key: 'blog' | 'journal' | 'inbox' | 'projects' | 'leads' | 'swipe' | 'settings'; label: string; Icon: any; href: string }
 
 const ITEMS: DockItem[] = [
   { key: 'blog', label: 'Blog', Icon: BookOpenText, href: '/dev/blog' },
   { key: 'journal', label: 'Journal', Icon: NotebookPen, href: '/dev/journal' },
   { key: 'inbox', label: 'Inbox', Icon: Inbox, href: '/dev/msgs' },
   { key: 'projects', label: 'Projects', Icon: Briefcase, href: '/dev/projects' },
+  { key: 'leads', label: 'Leads', Icon: MapPin, href: '/dev/leads' },
+  { key: 'swipe', label: 'Swipe', Icon: Hand, href: '/dev/leads/swipe' },
   { key: 'settings', label: 'Settings', Icon: NotebookPen, href: '/dev/settings' },
 ]
 

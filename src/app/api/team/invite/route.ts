@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { createServiceClient } from '@/lib/supabase/server'
 import { sendInviteEmail } from '@/lib/email'
+import { auditLog } from '@/lib/audit'
 
 function generateKey() {
   return Math.floor(1000 + Math.random() * 9000).toString()
@@ -40,11 +41,42 @@ export async function POST(request: Request) {
     const origin = `${url.protocol}//${url.host}`
     const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || origin
     const joinUrl = `${baseUrl}/join?email=${encodeURIComponent(email)}&key=${encodeURIComponent(key)}`
+    console.log('[api/team/invite] Sending invite', {
+      to: email,
+      provider: process.env.BREVO_API_KEY ? 'brevo' : (process.env.RESEND_API_KEY ? 'resend' : 'none'),
+      resendKeySet: !!process.env.RESEND_API_KEY,
+      brevoKeySet: !!process.env.BREVO_API_KEY,
+      baseUrl,
+      joinUrl,
+    })
     const sent = await sendInviteEmail({ to: email, message: inviteMessage || '', link: joinUrl })
     console.log('[team/invite] email send result:', sent)
 
+    // Audit log
+    const headers = Object.fromEntries(request.headers.entries())
+    const ip = (headers['x-forwarded-for'] || headers['x-real-ip'] || '').split(',')[0]?.trim() || null
+    const ua = headers['user-agent'] || null
+    await auditLog({
+      route: '/api/team/invite',
+      action: 'team.invite.send',
+      method: 'POST',
+      status: 200,
+      actorEmail: null,
+      actorRole: null,
+      ip,
+      userAgent: ua,
+      payload: { role, email },
+      result: sent,
+      error: sent && (sent as any).error ? String((sent as any).error) : null,
+    })
+
     return NextResponse.json({ ok: true, inviteId: data?.id, key })
   } catch (e: any) {
+    try {
+      const headers = (typeof Headers !== 'undefined') ? undefined : undefined
+      // best-effort audit (request not accessible if we threw before parsing)
+      await auditLog({ route: '/api/team/invite', action: 'team.invite.send', method: 'POST', status: 500, error: e?.message || String(e) })
+    } catch {}
     return NextResponse.json({ ok: false, message: e?.message || 'Server error' }, { status: 500 })
   }
 }

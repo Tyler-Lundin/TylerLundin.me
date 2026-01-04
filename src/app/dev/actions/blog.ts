@@ -3,6 +3,7 @@
 import { requireAdmin } from '@/lib/auth'
 import { createServiceClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
+import { withAuditAction } from '@/lib/audit'
 
 function slugify(input: string): string {
   return (input || '')
@@ -13,7 +14,7 @@ function slugify(input: string): string {
     .replace(/-+/g, '-')
 }
 
-export async function savePostAction(status: 'draft' | 'published', payloadJson: string) {
+async function _savePostAction(status: 'draft' | 'published', payloadJson: string) {
   await requireAdmin()
   const supabase: any = await createServiceClient()
 
@@ -74,3 +75,5 @@ export async function savePostAction(status: 'draft' | 'published', payloadJson:
 
   redirect(`/dev/blog/${post.slug}`)
 }
+
+export const savePostAction = withAuditAction('dev.blog.save', _savePostAction)

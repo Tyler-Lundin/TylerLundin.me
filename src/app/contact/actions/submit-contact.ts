@@ -1,10 +1,11 @@
-'use server'
+"use server"
 
 import { z } from 'zod'
 import { ContactSubmissionSchema } from '../schemas/contact'
 import { createServiceClient } from '@/lib/supabase/server'
+import { withAuditAction } from '@/lib/audit'
 
-export async function submitContact(input: unknown) {
+async function _submitContact(input: unknown) {
   const parsed = ContactSubmissionSchema.safeParse(input)
   if (!parsed.success) {
     return { ok: false, error: 'invalid_input', issues: parsed.error.issues }
@@ -29,3 +30,4 @@ export async function submitContact(input: unknown) {
   return { ok: true, id: data?.id }
 }
 
+export const submitContact = withAuditAction('contact.submit', _submitContact)

@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 import { createServiceClient } from '@/lib/supabase/server'
 import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
+import { auditLog } from '@/lib/audit'
 
 const INVITE_SECRET = process.env.INVITE_SECRET || process.env.JWT_SECRET || 'invite-secret'
 
@@ -51,9 +52,27 @@ export async function POST(request: Request) {
       .update({ status: 'accepted', accepted_at: new Date().toISOString() })
       .eq('id', inviteId)
 
+    // Audit
+    const headers = Object.fromEntries(request.headers.entries())
+    const ip = (headers['x-forwarded-for'] || headers['x-real-ip'] || '').split(',')[0]?.trim() || null
+    const ua = headers['user-agent'] || null
+    await auditLog({
+      route: '/api/team/complete-onboarding',
+      action: 'team.onboard.complete',
+      method: 'POST',
+      status: 200,
+      actorEmail: email,
+      actorId: user.id,
+      actorRole: role,
+      ip,
+      userAgent: ua,
+      payload: { profile: { full_name: profile?.full_name || null } },
+      result: { ok: true },
+    })
+
     return NextResponse.json({ ok: true })
   } catch (e: any) {
+    try { await auditLog({ route: '/api/team/complete-onboarding', action: 'team.onboard.complete', method: 'POST', status: 500, error: e?.message || String(e) }) } catch {}
     return NextResponse.json({ ok: false, message: e?.message || 'Server error' }, { status: 500 })
   }
 }
-

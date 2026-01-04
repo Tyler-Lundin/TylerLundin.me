@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import { useState } from 'react'
 
 function LoginForm() {
+  const [email, setEmail] = useState('')
   const [passwords, setPasswords] = useState(['', '', ''])
   const [error, setError] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(false)
@@ -30,7 +31,7 @@ function LoginForm() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ passwords }),
+        body: JSON.stringify({ email, passwords }),
       })
 
       const data = await response.json()
@@ -65,6 +66,21 @@ function LoginForm() {
         </div>
 
         <form onSubmit={handleLogin} className="space-y-6">
+          <div className="space-y-4">
+            <div className="relative">
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder={`Email`}
+                className="w-full px-6 py-4 rounded-2xl text-lg bg-white/80 dark:bg-black shadow-inner border border-gray-300 focus:outline-none focus:ring-4 focus:ring-indigo-400 transition"
+                required
+              />
+              <div className="absolute right-4 top-1/2 -translate-y-1/2">
+                <div className="w-2 h-2 rounded-full bg-gray-300" />
+              </div>
+            </div>
+          </div>
           <div className="space-y-4">
             {passwords.map((password, index) => (
               <div key={index} className="relative">

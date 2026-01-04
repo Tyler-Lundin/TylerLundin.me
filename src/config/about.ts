@@ -45,16 +45,16 @@ export const aboutConfig: AboutConfig = {
     {
       id: 'zevlin-bike',
       name: 'ZevlinBike',
-      role: 'Solo Dev',
+      role: 'Developer',
       tagline: 'E-commerce storefront rebuild for a cycling chamois-cream brand',
       href: 'https://zevlinbike.com',
     },
     {
-      id: 'suncrest-fitness-center',
-      name: 'Suncrest Fitness Center',
-      role: 'Redesign Concept',
-      tagline: 'Concept redesign for a local fitness & therapy gym',
-      href: 'https://sfc-topaz.vercel.app',
+      id: 's1-auto-repair',
+      name: 'S1 Auto Repair',
+      role: 'Developer',
+      tagline: 'Professional, transparent auto repair from an ASE-trained technician.',
+      href: 'https://s1autorepair.com',
     },
   ],
 

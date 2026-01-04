@@ -1,9 +1,10 @@
-'use server'
+"use server"
 
 import { QuoteRequestSchema } from '../schemas/quote'
 import { createServiceClient } from '@/lib/supabase/server'
+import { withAuditAction } from '@/lib/audit'
 
-export async function submitQuote(input: unknown) {
+async function _submitQuote(input: unknown) {
   const parsed = QuoteRequestSchema.safeParse(input)
   if (!parsed.success) {
     return { ok: false, error: 'invalid_input', issues: parsed.error.issues }
@@ -34,3 +35,4 @@ export async function submitQuote(input: unknown) {
   return { ok: true, id: data?.id }
 }
 
+export const submitQuote = withAuditAction('quote.submit', _submitQuote)

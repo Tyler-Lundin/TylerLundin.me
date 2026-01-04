@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { createServiceClient } from '@/lib/supabase/server'
 import jwt from 'jsonwebtoken'
+import { auditLog } from '@/lib/audit'
 
 const INVITE_SECRET = process.env.INVITE_SECRET || process.env.JWT_SECRET || 'invite-secret'
 
@@ -27,9 +28,26 @@ export async function POST(request: Request) {
     }
 
     const token = jwt.sign({ inviteId: data.id, email: data.email, role: data.role }, INVITE_SECRET, { expiresIn: '2h' })
+
+    // Audit log
+    const headers = Object.fromEntries(request.headers.entries())
+    const ip = (headers['x-forwarded-for'] || headers['x-real-ip'] || '').split(',')[0]?.trim() || null
+    const ua = headers['user-agent'] || null
+    await auditLog({
+      route: '/api/team/verify-invite',
+      action: 'team.invite.verify',
+      method: 'POST',
+      status: 200,
+      actorEmail: email,
+      ip,
+      userAgent: ua,
+      payload: { email },
+      result: { ok: true },
+    })
+
     return NextResponse.json({ ok: true, token })
   } catch (e: any) {
+    try { await auditLog({ route: '/api/team/verify-invite', action: 'team.invite.verify', method: 'POST', status: 500, error: e?.message || String(e) }) } catch {}
     return NextResponse.json({ ok: false, message: e?.message || 'Server error' }, { status: 500 })
   }
 }
-

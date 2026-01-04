@@ -669,6 +669,125 @@ export type Database = {
         }
         Relationships: []
       }
+      // --- Leadgen: Leads & Groups ---
+      leads: {
+        Row: {
+          id: string
+          google_place_id: string | null
+          niche: string | null
+          location: string | null
+          name: string | null
+          formatted_address: string | null
+          lat: number | null
+          lng: number | null
+          phone: string | null
+          website: string | null
+          domain: string | null
+          rating: number | null
+          user_ratings_total: number | null
+          price_level: number | null
+          types: string[] | null
+          business_status: string | null
+          google_maps_url: string | null
+          created_at: string
+          updated_at: string | null
+        }
+        Insert: {
+          id?: string
+          google_place_id?: string | null
+          niche?: string | null
+          location?: string | null
+          name?: string | null
+          formatted_address?: string | null
+          lat?: number | null
+          lng?: number | null
+          phone?: string | null
+          website?: string | null
+          domain?: string | null
+          rating?: number | null
+          user_ratings_total?: number | null
+          price_level?: number | null
+          types?: string[] | null
+          business_status?: string | null
+          google_maps_url?: string | null
+          created_at?: string
+          updated_at?: string | null
+        }
+        Update: {
+          id?: string
+          google_place_id?: string | null
+          niche?: string | null
+          location?: string | null
+          name?: string | null
+          formatted_address?: string | null
+          lat?: number | null
+          lng?: number | null
+          phone?: string | null
+          website?: string | null
+          domain?: string | null
+          rating?: number | null
+          user_ratings_total?: number | null
+          price_level?: number | null
+          types?: string[] | null
+          business_status?: string | null
+          google_maps_url?: string | null
+          created_at?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      lead_groups: {
+        Row: {
+          id: string
+          name: string
+          description: string | null
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          name: string
+          description?: string | null
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          name?: string
+          description?: string | null
+          created_at?: string
+        }
+        Relationships: []
+      }
+      lead_group_members: {
+        Row: {
+          group_id: string
+          lead_id: string
+          added_at: string | null
+        }
+        Insert: {
+          group_id: string
+          lead_id: string
+          added_at?: string | null
+        }
+        Update: {
+          group_id?: string
+          lead_id?: string
+          added_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lead_group_members_group_id_fkey",
+            columns: ["group_id"],
+            referencedRelation: "lead_groups",
+            referencedColumns: ["id"],
+          },
+          {
+            foreignKeyName: "lead_group_members_lead_id_fkey",
+            columns: ["lead_id"],
+            referencedRelation: "leads",
+            referencedColumns: ["id"],
+          }
+        ]
+      }
       // --- Blog ---
       blog_posts: {
         Row: {
@@ -681,6 +800,7 @@ export type Database = {
           updated_at: string | null
           published_at: string | null
           reading_time_minutes: number | null
+          content_md?: string | null
         }
         Insert: {
           id?: string
@@ -692,6 +812,7 @@ export type Database = {
           updated_at?: string | null
           published_at?: string | null
           reading_time_minutes?: number | null
+          content_md?: string | null
         }
         Update: {
           id?: string
@@ -703,7 +824,22 @@ export type Database = {
           updated_at?: string | null
           published_at?: string | null
           reading_time_minutes?: number | null
+          content_md?: string | null
         }
+        Relationships: []
+      }
+      blog_posts_public: {
+        Row: {
+          id: string
+          slug: string
+          title: string
+          excerpt: string | null
+          cover_image_url: string | null
+          published_at: string | null
+          tags: string[] | null
+        }
+        Insert: never
+        Update: never
         Relationships: []
       }
       blog_post_views: {
@@ -711,18 +847,21 @@ export type Database = {
           id: string
           post_id: string
           ip_hash: string | null
+          viewer_hash: string | null
           created_at: string | null
         }
         Insert: {
           id?: string
           post_id: string
           ip_hash?: string | null
+          viewer_hash?: string | null
           created_at?: string | null
         }
         Update: {
           id?: string
           post_id?: string
           ip_hash?: string | null
+          viewer_hash?: string | null
           created_at?: string | null
         }
         Relationships: [
@@ -773,6 +912,125 @@ export type Database = {
             referencedColumns: ["id"]
           }
         ]
+      }
+      blog_tags: {
+        Row: { id: string; name: string }
+        Insert: { id?: string; name: string }
+        Update: { id?: string; name?: string }
+        Relationships: []
+      }
+      blog_post_tags: {
+        Row: { post_id: string; tag_id: string }
+        Insert: { post_id: string; tag_id: string }
+        Update: { post_id?: string; tag_id?: string }
+        Relationships: [
+          {
+            foreignKeyName: "blog_post_tags_post_id_fkey",
+            columns: ["post_id"],
+            referencedRelation: "blog_posts",
+            referencedColumns: ["id"],
+          }
+        ]
+      }
+
+      // --- Auth: Refresh Tokens and Credentials ---
+      auth_refresh_tokens: {
+        Row: {
+          id: string
+          user_id: string
+          token_hash: string
+          expires_at: string | null
+          revoked_at: string | null
+          user_agent: string | null
+          ip: string | null
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          token_hash: string
+          expires_at?: string | null
+          revoked_at?: string | null
+          user_agent?: string | null
+          ip?: string | null
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          token_hash?: string
+          expires_at?: string | null
+          revoked_at?: string | null
+          user_agent?: string | null
+          ip?: string | null
+        }
+        Relationships: []
+      }
+      team_credentials: {
+        Row: {
+          user_id: string
+          password_1_hash: string
+          password_2_hash: string
+          password_3_hash: string
+        }
+        Insert: {
+          user_id: string
+          password_1_hash: string
+          password_2_hash: string
+          password_3_hash: string
+        }
+        Update: {
+          user_id?: string
+          password_1_hash?: string
+          password_2_hash?: string
+          password_3_hash?: string
+        }
+        Relationships: []
+      }
+
+      // --- Audit ---
+      audit_logs: {
+        Row: {
+          id: string
+          created_at: string
+          action: string | null
+          method: string | null
+          route: string | null
+          ip: string | null
+          actor_email: string | null
+          actor_role: string | null
+          status: number | null
+          payload: Json | null
+          result: Json | null
+          error: string | null
+        }
+        Insert: {
+          id?: string
+          created_at?: string
+          action?: string | null
+          method?: string | null
+          route?: string | null
+          ip?: string | null
+          actor_email?: string | null
+          actor_role?: string | null
+          status?: number | null
+          payload?: Json | null
+          result?: Json | null
+          error?: string | null
+        }
+        Update: {
+          id?: string
+          created_at?: string
+          action?: string | null
+          method?: string | null
+          route?: string | null
+          ip?: string | null
+          actor_email?: string | null
+          actor_role?: string | null
+          status?: number | null
+          payload?: Json | null
+          result?: Json | null
+          error?: string | null
+        }
+        Relationships: []
       }
     }
     Views: {

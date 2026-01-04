@@ -1,0 +1,26 @@
+{
+  "name": "leadgen",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "bin": {
+    "leadgen": "./dist/index.js"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "dev": "tsx watch src/index.ts",
+    "start": "node dist/index.js",
+    "lint": "echo \"No linter configured\""
+  },
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "@supabase/supabase-js": "^2.43.0",
+    "openai": "^4.54.0",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "tsx": "^4.7.0",
+    "typescript": "^5.6.3"
+  }
+}
+

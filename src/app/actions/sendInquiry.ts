@@ -3,6 +3,7 @@
 import { Resend } from 'resend';
 import { cookies, headers } from 'next/headers';
 import { createServiceClient } from '@/lib/supabase/server'
+import { withAuditAction } from '@/lib/audit'
 
 // Simple in-memory rate limiter per IP (best-effort in serverless)
 type Rate = { count: number; first: number; last: number };
@@ -74,7 +75,7 @@ function sanitize(input: string | undefined | null): string | undefined {
   return String(input).slice(0, 5000);
 }
 
-export async function sendInquiry(formData: FormData) {
+async function _sendInquiry(formData: FormData) {
   const payload: InquiryPayload = {
     name: sanitize(formData.get('name') as string) || '',
     email: sanitize(formData.get('email') as string) || '',
@@ -285,3 +286,5 @@ export async function sendInquiry(formData: FormData) {
     return { ok: false, message: 'Failed to send. Please try again later.' };
   }
 }
+
+export const sendInquiry = withAuditAction('inquiry.send', _sendInquiry)

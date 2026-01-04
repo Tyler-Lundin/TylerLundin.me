@@ -2,10 +2,12 @@
 import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 
+type AuthStatus = 'loading' | 'guest' | 'member' | 'admin'
+
 export default function AdminMenu({ openProp, onClose, onToggle }: { openProp?: boolean; onClose?: () => void; onToggle?: () => void }) {
   const [open, setOpen] = useState(false);
   const isOpen = openProp ?? open;
-  const [authOk, setAuthOk] = useState<boolean | null>(null);
+  const [authStatus, setAuthStatus] = useState<AuthStatus>('loading');
 
   const close = useCallback(() => {
     if (onClose) onClose(); else setOpen(false);
@@ -35,25 +37,38 @@ export default function AdminMenu({ openProp, onClose, onToggle }: { openProp?: 
   }, [toggle, close]);
 
   useEffect(() => {
-    if (!open) return;
+    if (!isOpen) return;
     let active = true;
-    
-    // Simulate check or fetch real status
-    fetch("/api/auth/verify-token")
-      .then((r) => r.json())
-      .then((d) => {
+    const check = async () => {
+      try {
+        setAuthStatus('loading');
+        const res = await fetch('/api/auth/verify-token', { cache: 'no-store' });
+        const d = await res.json();
         if (!active) return;
-        setAuthOk(Boolean(d?.isAdmin ?? d?.success));
-      })
-      .catch(() => {
+        if (d?.success) {
+          setAuthStatus(d.isAdmin ? 'admin' : 'member');
+          return;
+        }
+        // Attempt refresh silently
+        const ref = await fetch('/api/auth/refresh', { method: 'POST' });
+        if (ref.ok) {
+          const res2 = await fetch('/api/auth/verify-token', { cache: 'no-store' });
+          const d2 = await res2.json();
+          if (!active) return;
+          if (d2?.success) {
+            setAuthStatus(d2.isAdmin ? 'admin' : 'member');
+            return;
+          }
+        }
+        setAuthStatus('guest');
+      } catch {
         if (!active) return;
-        setAuthOk(false);
-      });
-      
-    return () => {
-      active = false;
+        setAuthStatus('guest');
+      }
     };
-  }, [open, isOpen]);
+    check();
+    return () => { active = false; };
+  }, [isOpen]);
 
   const signOut = async () => {
     try {
@@ -88,9 +103,9 @@ export default function AdminMenu({ openProp, onClose, onToggle }: { openProp?: 
             <div>
               <h2 className="text-sm font-semibold text-white tracking-wide">COMMAND MENU</h2>
               <div className="flex items-center gap-1.5">
-                <span className={`h-1.5 w-1.5 rounded-full ${authOk ? 'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]' : 'bg-red-500'}`} />
+                <span className={`h-1.5 w-1.5 rounded-full ${authStatus === 'admin' ? 'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]' : authStatus === 'member' ? 'bg-sky-500' : authStatus === 'loading' ? 'bg-yellow-500' : 'bg-red-500'}`} />
                 <span className="text-[10px] uppercase font-medium text-white/40">
-                  {authOk === null ? "Checking..." : authOk ? "Authenticated" : "Guest Mode"}
+                  {authStatus === 'loading' ? 'Checking...' : authStatus === 'admin' ? 'Admin' : authStatus === 'member' ? 'Authenticated' : 'Guest Mode'}
                 </span>
               </div>
             </div>
@@ -121,11 +136,11 @@ export default function AdminMenu({ openProp, onClose, onToggle }: { openProp?: 
               </div>
               <div className="mt-4">
                 <Link
-                  href={authOk ? "/dev" : "/login?redirect=/dev"}
+                  href={authStatus === 'admin' ? "/dev" : "/login?redirect=/dev"}
                   onClick={close}
                   className="flex w-full items-center justify-center gap-2 rounded-lg bg-white py-2 text-xs font-semibold text-black transition-transform active:scale-95 hover:bg-zinc-200"
                 >
-                  {authOk ? "Open Console" : "Login to Access"}
+                  {authStatus === 'admin' ? "Open Console" : "Login to Access"}
                   <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
                   </svg>
@@ -145,7 +160,7 @@ export default function AdminMenu({ openProp, onClose, onToggle }: { openProp?: 
                 <p className="mt-1 text-xs text-zinc-400">Manage current active session and permissions.</p>
               </div>
               <div className="mt-4">
-                {authOk ? (
+                {authStatus === 'admin' || authStatus === 'member' ? (
                   <button
                     onClick={signOut}
                     className="flex w-full items-center justify-center gap-2 rounded-lg border border-red-500/20 bg-red-500/10 py-2 text-xs font-semibold text-red-400 transition-all hover:bg-red-500/20 active:scale-95"

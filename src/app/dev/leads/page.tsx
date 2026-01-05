@@ -372,9 +372,9 @@ export default function DevLeadsPage() {
                     </div>
                   </div>
                   
-                  <div className="overflow-x-auto max-h-[600px] custom-scrollbar">
+                  <div className="overflow-x-auto custom-scrollbar">
                     <table className="w-full text-sm text-left">
-                      <thead className="text-xs text-neutral-500 uppercase bg-neutral-50 dark:bg-neutral-800/50 sticky top-0 z-10 backdrop-blur-sm">
+                      <thead className="text-xs text-neutral-500 uppercase bg-neutral-50 dark:bg-neutral-800/50 sticky top-16 z-10 backdrop-blur-sm">
                         <tr>
                           <th className="px-4 py-3 w-10">
                              <input
@@ -456,7 +456,7 @@ export default function DevLeadsPage() {
           </div>
 
           {/* Sidebar */}
-          <div className="space-y-6">
+          <div className="space-y-6 sticky top-24 self-start">
             
             <SuggestionCard 
               title="Recent Searches" 

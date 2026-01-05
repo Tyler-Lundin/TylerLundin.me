@@ -119,7 +119,7 @@ export function AdvancedFiltersMock() {
 
 export function SuggestionCard({ title, icon: Icon, items, onItemClick, action, loading }: any) {
   return (
-    <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl overflow-hidden shadow-sm flex flex-col h-full">
+    <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl overflow-hidden shadow-sm flex flex-col">
       <div className="p-4 border-b border-neutral-100 dark:border-neutral-800 flex items-center justify-between bg-neutral-50/50 dark:bg-neutral-900/50">
         <div className="flex items-center gap-2">
           <div className="p-1.5 bg-white dark:bg-neutral-800 rounded-md shadow-sm border border-neutral-100 dark:border-neutral-700">

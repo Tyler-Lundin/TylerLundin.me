@@ -43,7 +43,7 @@ function ChatInterface({ state, input, setInput, send, loading, error, isFullScr
   return (
     <div className={`flex flex-col flex-1 min-h-0 ${isFullScreen ? 'h-full' : 'h-[600px]'}`}>
       {/* Messages Area */}
-      <div 
+      <div
         ref={scrollRef}
         onScroll={handleScroll}
         className="flex-1 overflow-y-auto overflow-x-hidden p-6 space-y-6 scroll-smooth custom-scrollbar"
@@ -66,9 +66,9 @@ function ChatInterface({ state, input, setInput, send, loading, error, isFullScr
 
           {loading && (
             <motion.div key="loading" initial={{ opacity: 0, y: 5 }} animate={{ opacity: 1, y: 0 }} className="flex justify-start">
-               <div className="bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400 px-4 py-2 rounded-2xl rounded-tl-none text-xs font-medium flex items-center gap-2">
+              <div className="bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400 px-4 py-2 rounded-2xl rounded-tl-none text-xs font-medium flex items-center gap-2">
                 <Loader2 size={12} className="animate-spin" /> Assistant is thinking...
-               </div>
+              </div>
             </motion.div>
           )}
         </AnimatePresence>
@@ -88,11 +88,14 @@ function ChatInterface({ state, input, setInput, send, loading, error, isFullScr
               }
             }}
             placeholder="Refine the angle, add constraints..."
-            className="w-full resize-none rounded-2xl border border-neutral-200 bg-neutral-50 px-4 py-3 pr-12 text-sm transition-all focus:border-blue-500 focus:bg-white focus:outline-none focus:ring-4 focus:ring-blue-500/10 dark:border-neutral-700 dark:bg-neutral-950 dark:text-white dark:focus:border-blue-500"
+            className="w-full resize-none rounded-2xl border border-neutral-200 
+            bg-neutral-50 px-4 py-3 pr-12 text-sm transition-all focus:border-blue-500 
+            focus:bg-white dark:focus:bg-black focus:outline-none focus:ring-4 focus:ring-blue-500/10 
+            dark:border-neutral-700 dark:bg-neutral-950 dark:text-white dark:focus:border-blue-500"
           />
-          <button 
-            onClick={send} 
-            disabled={!input.trim() || loading} 
+          <button
+            onClick={send}
+            disabled={!input.trim() || loading}
             className="absolute right-2 top-1/2 -translate-y-1/2 flex h-8 w-8 items-center justify-center rounded-xl bg-neutral-900 text-white transition hover:scale-105 active:scale-95 disabled:opacity-30 dark:bg-white dark:text-black"
           >
             <CornerDownLeft className="h-4 w-4" />
@@ -106,19 +109,18 @@ function ChatInterface({ state, input, setInput, send, loading, error, isFullScr
 
 function MessageBubble({ message, index }: { message: ChatMessage, index: number }) {
   const isUser = message.role === 'user'
-  
+
   return (
-    <motion.div 
+    <motion.div
       initial={{ opacity: 0, y: 10, scale: 0.98 }}
       animate={{ opacity: 1, y: 0, scale: 1 }}
       transition={{ duration: 0.3, ease: "easeOut" }}
       className={`flex ${isUser ? 'justify-end' : 'justify-start'} w-full`}
     >
-      <div className={`group relative max-w-[85%] sm:max-w-[75%] rounded-2xl px-4 py-3 shadow-sm ${
-        isUser 
-          ? 'bg-neutral-900 text-white rounded-br-none dark:bg-white dark:text-black' 
+      <div className={`group relative max-w-[85%] sm:max-w-[75%] rounded-2xl px-4 py-3 shadow-sm ${isUser
+          ? 'bg-neutral-900 text-white rounded-br-none dark:bg-white dark:text-black'
           : 'bg-white border border-neutral-100 dark:border-neutral-800 dark:bg-neutral-900 dark:text-neutral-200 rounded-bl-none shadow-neutral-200/50 dark:shadow-none'
-      }`}>
+        }`}>
         <div className={`prose prose-sm max-w-none break-words ${isUser ? 'prose-invert font-medium' : 'dark:prose-invert'}`}>
           <ReactMarkdown remarkPlugins={[remarkGfm]}>
             {message.content}
@@ -166,7 +168,7 @@ export default function Step2Chat({ state, setState, onGenerate }: {
       })
       const json = await res.json()
       if (!res.ok) throw new Error(json?.error || 'Failed to chat')
-      
+
       setState({ messages: [...messages, { role: 'assistant', content: json.reply }] })
       complete(actId, 'Reply received')
     } catch (e: any) {
@@ -196,7 +198,7 @@ export default function Step2Chat({ state, setState, onGenerate }: {
         })
         const json = await res.json()
         if (res.ok) setState({ messages: [{ role: 'assistant', content: json.reply }] })
-      } catch (e) { console.error(e) } 
+      } catch (e) { console.error(e) }
       finally { setLoading(false) }
     }
     run()
@@ -209,24 +211,24 @@ export default function Step2Chat({ state, setState, onGenerate }: {
           <div>
             <h2 className="text-sm font-black uppercase tracking-[0.2em] text-neutral-400">Concept Lab</h2>
           </div>
-          <button 
-            onClick={() => setIsFullScreen(true)} 
+          <button
+            onClick={() => setIsFullScreen(true)}
             className="flex items-center gap-2 rounded-full px-3 py-1.5 text-xs font-bold text-neutral-500 hover:bg-neutral-200 dark:hover:bg-neutral-800 transition-all active:scale-95"
           >
             <Maximize className="h-3 w-3" /> Fullscreen
           </button>
         </div>
-        
-        <ChatInterface 
-          state={state} 
-          input={input} 
-          setInput={setInput} 
-          send={send} 
-          loading={loading} 
-          error={error} 
+
+        <ChatInterface
+          state={state}
+          input={input}
+          setInput={setInput}
+          send={send}
+          loading={loading}
+          error={error}
         />
       </div>
-      
+
       <div className="group rounded-3xl border border-neutral-200 bg-white p-6 shadow-sm transition-all hover:border-emerald-200 dark:border-neutral-800 dark:bg-neutral-900 dark:hover:border-emerald-500/30">
         <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
           <div>
@@ -249,7 +251,7 @@ export default function Step2Chat({ state, setState, onGenerate }: {
             exit={{ opacity: 0 }}
             className="fixed inset-0 z-[1200] bg-neutral-950/80 backdrop-blur-md p-4 sm:p-8"
           >
-            <motion.div 
+            <motion.div
               initial={{ scale: 0.9, opacity: 0, y: 20 }}
               animate={{ scale: 1, opacity: 1, y: 0 }}
               exit={{ scale: 0.9, opacity: 0, y: 20 }}
@@ -257,23 +259,23 @@ export default function Step2Chat({ state, setState, onGenerate }: {
             >
               <div className="flex items-center justify-between border-b border-neutral-100 px-8 py-6 dark:border-neutral-800">
                 <div className="flex items-center gap-3">
-                    <div className="h-3 w-3 rounded-full bg-blue-500 animate-pulse" />
-                    <h3 className="text-xs font-black uppercase tracking-widest text-neutral-400">Deep Work Session</h3>
+                  <div className="h-3 w-3 rounded-full bg-blue-500 animate-pulse" />
+                  <h3 className="text-xs font-black uppercase tracking-widest text-neutral-400">Deep Work Session</h3>
                 </div>
                 <button onClick={() => setIsFullScreen(false)} className="rounded-full p-2 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors">
                   <Minimize className="h-5 w-5" />
                 </button>
               </div>
-              
+
               <div className="flex-1 overflow-hidden flex flex-col">
-                <ChatInterface 
-                    state={state} 
-                    input={input} 
-                    setInput={setInput} 
-                    send={send} 
-                    loading={loading} 
-                    error={error} 
-                    isFullScreen={true} 
+                <ChatInterface
+                  state={state}
+                  input={input}
+                  setInput={setInput}
+                  send={send}
+                  loading={loading}
+                  error={error}
+                  isFullScreen={true}
                 />
               </div>
             </motion.div>

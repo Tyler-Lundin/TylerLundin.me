@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { requireAdmin } from '@/lib/auth'
+import { requireRoles } from '@/lib/auth'
 import { createServiceClient } from '@/lib/supabase/server'
 
 function slugify(input: string): string {
@@ -13,7 +13,7 @@ function slugify(input: string): string {
 
 export async function GET() {
   try {
-    await requireAdmin()
+    await requireRoles(['admin', 'head_of_marketing', 'head of marketing'])
     const supabase: any = await createServiceClient()
 
     const { data, error } = await supabase
@@ -40,7 +40,7 @@ export async function GET() {
 
 export async function POST(req: Request) {
   try {
-    await requireAdmin()
+    await requireRoles(['admin', 'head_of_marketing', 'head of marketing'])
   } catch {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }

@@ -8,6 +8,7 @@ import ContactCTA from "@/components/sections/ContactCTA";
 import type { Project, ProjectMedia } from "@/types/projects";
 import { Sora } from "next/font/google";
 import Link from "next/link";
+import ReactiveBackground from "../ReactiveBackground";
 
 const sora = Sora({ subsets: ["latin"] });
 
@@ -323,7 +324,7 @@ export default function AboutFlow({ projects }: Props) {
   const data = aboutConfig;
 
   return (
-    <section aria-label="About Tyler" className="min-h-screen bg-white dark:bg-black selection:bg-emerald-500/30">
+    <section aria-label="About Tyler" className="min-h-screen selection:bg-emerald-500/30 bg-white/50 dark:bg-black/50">
       <HeroSection data={data} />
       <BioAndSkills data={data} />
       <ProjectShowcase highlights={data.projectHighlights} projects={projects} />

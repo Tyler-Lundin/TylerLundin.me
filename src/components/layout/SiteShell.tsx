@@ -1,6 +1,5 @@
 'use client'
 import { useEffect, useState } from 'react'
-import dynamic from 'next/dynamic'
 import { usePathname } from 'next/navigation'
 import { Navbar } from '@/components/layout/Navbar'
 import { Footer } from '@/components/layout/Footer'
@@ -10,11 +9,6 @@ import UserMenu from '../appnav/UserMenu'
 import AuthRefresher from '../dev/AuthRefresher'
 import UserMenuToggle from '../dev/UserMenuToggle'
 
-// Defer loading particles background to idle time to reduce LCP/main-thread
-const ReactiveBackground = dynamic(() => import('@/components/ReactiveBackground'), {
-  ssr: false,
-  loading: () => null,
-})
 
 export function SiteShell({ children }: { children: React.ReactNode }) {
 
@@ -75,12 +69,6 @@ function UserShell({ children }: { children: React.ReactNode }) {
       {/* Global UI elements that should break the page frame */}
       <div className="relative max-w-screen min-h-screen overflow-x-hidden">
         {/* Dimmed particles background */}
-        {showBg && (
-          <div className="hidden sm:fixed inset-0 -z-10 pointer-events-none opacity-50">
-            <ReactiveBackground />
-          </div>
-        )}
-
         <div className="pt-24 pb-2 max-w-7xl mx-auto">
           {children}
           <Footer />
@@ -124,9 +112,6 @@ function DevShell({ children }: { children: React.ReactNode }) {
     <div className="relative max-w-screen min-h-screen overflow-x-hidden">
       {/* Dimmed particles background */}
       {/* Keep background in Dev too, but still deferred by dynamic import */}
-      <div className="hidden sm:fixed inset-0 -z-10 pointer-events-none opacity-50">
-        <ReactiveBackground />
-      </div>
       <div className={`max-w-7xl mx-auto ${!isDisabled && "pt-12"}`}>
       {!isDisabled && (<DashboardNav />)}
         {children}
@@ -153,9 +138,6 @@ function MarketingShell({ children }: { children: React.ReactNode }) {
   }, [])
   return (
     <div className="relative max-w-screen min-h-screen overflow-x-hidden">
-      <div className="hidden sm:fixed inset-0 -z-10 pointer-events-none opacity-50">
-        <ReactiveBackground />
-      </div>
       <div className="max-w-7xl mx-auto pt-12">
         <DashboardNav />
         {children}

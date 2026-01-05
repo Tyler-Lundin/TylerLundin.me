@@ -26,6 +26,7 @@ import SpotlightBundles from '@/components/bundles/SpotlightBundles'
 import { themeConfig, billboardThemes } from '@/config/theme'
 import type { BillboardThemeKey as BillboardThemeKeyFromConfig } from '@/config/themes/billboard'
 import ContactCTA from '@/components/sections/ContactCTA'
+import ReactiveBackground from '@/components/ReactiveBackground'
 
 export const metadata: Metadata = {
   title: 'Services | Tyler Lundin',
@@ -77,10 +78,14 @@ export default function ServicesIndexPage() {
       className={[
         'max-w-full overflow-x-hidden mx-2 md:mx-4 my-4 rounded-2xl',
         'border border-black/10 dark:border-white/10',
+        'bg-white/50 dark:bg-black/50',
         billboardThemes[themeKey].wrap,
         'text-black dark:text-white',
       ].join(' ')}
     >
+      <div className="fixed inset-0 -z-10 opacity-60 ">
+        <ReactiveBackground/>
+      </div>
 
       
       {/* 1. HERO / BILLBOARD */}

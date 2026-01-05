@@ -12,11 +12,14 @@ export default function BlogPreviewToggleButton({ isOpen, onToggle }: BlogPrevie
       type="button"
       aria-label={isOpen ? 'Hide blog preview' : 'Show blog preview'}
       aria-expanded={isOpen}
-      className={`group flex h-10 w-10 items-center justify-center rounded-full border border-neutral-200 bg-white/80 text-neutral-500 shadow-lg backdrop-blur-md transition-all hover:bg-white focus:ring-2 focus:ring-blue-500/50 dark:border-neutral-800 dark:bg-neutral-900/80 dark:text-neutral-400 dark:hover:bg-neutral-800
-        ${isOpen ? 'opacity-0 pointer-events-none scale-90' : 'opacity-100'}`}
+      className={`group flex items-center gap-2 rounded-full border border-neutral-200 bg-white/90 p-2.5 text-neutral-600 shadow-xl backdrop-blur-md transition-all hover:bg-white hover:pr-4 hover:text-neutral-900 focus:ring-2 focus:ring-black/10 dark:border-neutral-800 dark:bg-neutral-900/90 dark:text-neutral-400 dark:hover:bg-neutral-800 dark:hover:text-white
+        ${isOpen ? 'translate-x-full opacity-0 pointer-events-none' : 'opacity-100 translate-x-0'}`}
       onClick={onToggle}
     >
       <Eye className="h-5 w-5" />
+      <span className="max-w-0 overflow-hidden whitespace-nowrap text-sm font-medium transition-all duration-300 group-hover:max-w-[100px]">
+        Preview
+      </span>
     </button>
   )
 }

@@ -33,7 +33,7 @@ export default function BlogPreviewDrawer({ state }: { state: WizardState }) {
       <div className={`fixed inset-0 z-40 ${isOpen ? 'pointer-events-auto' : 'pointer-events-none'}`}>
         {/* Backdrop */}
         <motion.div 
-          className="absolute inset-0 bg-neutral-900/20 dark:bg-black/50"
+          className="absolute inset-0 bg-neutral-900/20 backdrop-blur-sm dark:bg-black/50"
           initial={{ opacity: 0 }}
           animate={{ opacity: isOpen ? 1 : 0 }}
           onClick={() => setOpen(false)}
@@ -44,9 +44,9 @@ export default function BlogPreviewDrawer({ state }: { state: WizardState }) {
           initial={{ x: '100%' }}
           animate={{ x: isOpen ? 0 : '100%' }}
           transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-          className="absolute right-0 top-0 h-full w-full"
+          className="absolute right-0 top-0 h-full w-full max-w-[90vw] md:max-w-[600px]"
         >
-          <div className="flex h-full w-screen flex-col border-l border-neutral-200 bg-white shadow-2xl md:w-[560px] dark:border-neutral-800 dark:bg-neutral-900">
+          <div className="flex h-full flex-col border-l border-neutral-200 bg-white shadow-2xl dark:border-neutral-800 dark:bg-neutral-950">
             <BlogPreviewHeader onClose={() => setOpen(false)} />
             <BlogPreviewContent draft={d} topic={state.topic} coverImageUrl={state.cover_image_url} />
           </div>

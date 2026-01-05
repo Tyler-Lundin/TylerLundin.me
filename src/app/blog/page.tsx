@@ -1,7 +1,8 @@
 import type { Metadata } from 'next'
+import { ensureProfileOrRedirect } from '@/lib/profile'
 import SpotlightPosts, { type BlogSpotlightItem } from '@/components/blog/SpotlightPosts'
 import PostCard, { type PostCardData } from '@/components/blog/PostCard'
-import { createClient } from '@/lib/supabase/server'
+import { createClient, createServiceClient } from '@/lib/supabase/server'
 import { randomUUID } from 'crypto'
 import { themeConfig, billboardThemes } from '@/config/theme'
 import type { BillboardThemeKey as BillboardThemeKeyFromConfig } from '@/config/themes/billboard'
@@ -13,7 +14,9 @@ export const metadata: Metadata = {
 }
 
 export default async function BlogPage() {
-  const sb = await createClient()
+  await ensureProfileOrRedirect()
+  const sb: any = await createClient()
+  const sbAdmin: any = await createServiceClient()
   // Use the public aggregation view
   const { data } = await sb
     .from('blog_posts_public' as any)
@@ -22,6 +25,41 @@ export default async function BlogPage() {
     .limit(24)
 
   const posts = (data || []) as any[]
+
+  // Build author map for small signature
+  const slugs = posts.map((p: any) => p.slug).filter(Boolean)
+  const authorBySlug: Record<string, { name: string | null; avatar: string | null }> = {}
+  if (slugs.length) {
+    const { data: baseRows } = await sb
+      .from('blog_posts')
+      .select('slug, author_id')
+      .in('slug', slugs)
+      .eq('status', 'published')
+    const byId: Record<string, string[]> = {}
+    for (const r of baseRows || []) {
+      if (r.author_id && r.slug) {
+        byId[r.author_id] = byId[r.author_id] || []
+        byId[r.author_id].push(r.slug)
+      }
+    }
+    const authorIds = Object.keys(byId)
+    if (authorIds.length) {
+      // Use service client for author details to avoid RLS issues
+      const { data: users } = await sbAdmin.from('users').select('id, full_name').in('id', authorIds)
+      const { data: profiles } = await sbAdmin.from('user_profiles').select('user_id, avatar_url').in('user_id', authorIds)
+      const userById: Record<string, any> = {}
+      for (const u of users || []) userById[u.id] = u
+      const profById: Record<string, any> = {}
+      for (const p of profiles || []) profById[p.user_id] = p
+      for (const aid of authorIds) {
+        const u = userById[aid]
+        const p = profById[aid]
+        const name = (u?.full_name ?? null) as string | null
+        const avatar = p?.avatar_url || null
+        for (const slug of byId[aid] || []) authorBySlug[slug] = { name, avatar }
+      }
+    }
+  }
 
   const spotlight: BlogSpotlightItem[] = posts.slice(0, 6).map((p) => ({
     id: randomUUID(),
@@ -40,6 +78,8 @@ export default async function BlogPage() {
     cover_image_url: p.cover_image_url,
     tags: p.tags ?? [],
     published_at: p.published_at,
+    authorName: authorBySlug[p.slug]?.name || null,
+    authorAvatarUrl: authorBySlug[p.slug]?.avatar || null,
   })
 
   // Segment by simple categories via tags

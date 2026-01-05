@@ -5,10 +5,10 @@ import { usePathname } from 'next/navigation'
 import { Navbar } from '@/components/layout/Navbar'
 import { Footer } from '@/components/layout/Footer'
 import Greeting from '../Greeting'
-import DevBreadcrumbs from '../dev/DevBreadcrumbs'
-import AdminMenu from '../dev/AdminMenu'
-import AdminMenuToggle from '../dev/AdminMenuToggle'
+import DashboardNav from '../appnav/DashboardNav'
+import UserMenu from '../appnav/UserMenu'
 import AuthRefresher from '../dev/AuthRefresher'
+import UserMenuToggle from '../dev/UserMenuToggle'
 
 // Defer loading particles background to idle time to reduce LCP/main-thread
 const ReactiveBackground = dynamic(() => import('@/components/ReactiveBackground'), {
@@ -20,27 +20,28 @@ export function SiteShell({ children }: { children: React.ReactNode }) {
 
   const pathname = usePathname()
   const isDevRoute = pathname.includes('/dev')
+  const isMarketingRoute = pathname.includes('/marketing')
   // const isHome = pathname === '/'
   // const isAbout = pathname === '/about' || pathname === '/about/'
   // const isProjectSlug = /^\/project\/[^/]+\/?$/.test(pathname) || /^\/projects\/[^/]+\/?$/.test(pathname)
 
-  if (!isDevRoute) return <UserShell children={children} />
-
-  return <DevShell children={children} />
+  if (isDevRoute) return <DevShell children={children} />
+  if (isMarketingRoute) return <MarketingShell children={children} />
+  return <UserShell children={children} />
 }
 
 
 function UserShell({ children }: { children: React.ReactNode }) {
-  const [adminOpen, setAdminOpen] = useState(false)
+  const [adminOpen, setUserOpen] = useState(false)
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (e.code === 'Backquote' || e.key === '`' || e.key === '~') {
         e.preventDefault()
-        setAdminOpen((v) => !v)
+        setUserOpen((v) => !v)
       }
-      if (e.key === 'Escape') setAdminOpen(false)
+      if (e.key === 'Escape') setUserOpen(false)
     }
-    const onEvt = () => setAdminOpen((v) => !v)
+    const onEvt = () => setUserOpen((v) => !v)
     window.addEventListener('keydown', onKey)
     window.addEventListener('admin-menu-host-toggle' as any, onEvt)
     return () => {
@@ -86,23 +87,23 @@ function UserShell({ children }: { children: React.ReactNode }) {
           <Greeting />
         </div>
       </div>
-      <AdminMenu openProp={adminOpen} onClose={() => setAdminOpen(false)} onToggle={() => setAdminOpen((v)=>!v)} />
-      <AdminMenuToggle />
+      <UserMenu openProp={adminOpen} onClose={() => setUserOpen(false)} onToggle={() => setUserOpen((v)=>!v)} />
+      <UserMenuToggle />
     </>
   )
 }
 
 function DevShell({ children }: { children: React.ReactNode }) {
-  const [adminOpen, setAdminOpen] = useState(false)
+  const [adminOpen, setUserOpen] = useState(false)
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (e.code === 'Backquote' || e.key === '`' || e.key === '~') {
         e.preventDefault()
-        setAdminOpen((v) => !v)
+        setUserOpen((v) => !v)
       }
-      if (e.key === 'Escape') setAdminOpen(false)
+      if (e.key === 'Escape') setUserOpen(false)
     }
-    const onEvt = () => setAdminOpen((v) => !v)
+    const onEvt = () => setUserOpen((v) => !v)
     window.addEventListener('keydown', onKey)
     window.addEventListener('admin-menu-host-toggle' as any, onEvt)
     return () => {
@@ -127,13 +128,41 @@ function DevShell({ children }: { children: React.ReactNode }) {
         <ReactiveBackground />
       </div>
       <div className={`max-w-7xl mx-auto ${!isDisabled && "pt-12"}`}>
-      {!isDisabled && (<DevBreadcrumbs />)}
+      {!isDisabled && (<DashboardNav />)}
         {children}
       </div>
       {/* Keep access token fresh while on dev pages */}
       <AuthRefresher />
-      <AdminMenu openProp={adminOpen} onClose={() => setAdminOpen(false)} onToggle={() => setAdminOpen((v)=>!v)} />
-      <AdminMenuToggle />
+      <UserMenu openProp={adminOpen} onClose={() => setUserOpen(false)} onToggle={() => setUserOpen((v)=>!v)} />
+      <UserMenuToggle />
+    </div>
+  )
+}
+
+function MarketingShell({ children }: { children: React.ReactNode }) {
+  const [adminOpen, setUserOpen] = useState(false)
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.code === 'Backquote' || e.key === '`' || e.key === '~') { e.preventDefault(); setUserOpen((v) => !v) }
+      if (e.key === 'Escape') setUserOpen(false)
+    }
+    const onEvt = () => setUserOpen((v) => !v)
+    window.addEventListener('keydown', onKey)
+    window.addEventListener('admin-menu-host-toggle' as any, onEvt)
+    return () => { window.removeEventListener('keydown', onKey); window.removeEventListener('admin-menu-host-toggle' as any, onEvt) }
+  }, [])
+  return (
+    <div className="relative max-w-screen min-h-screen overflow-x-hidden">
+      <div className="hidden sm:fixed inset-0 -z-10 pointer-events-none opacity-50">
+        <ReactiveBackground />
+      </div>
+      <div className="max-w-7xl mx-auto pt-12">
+        <DashboardNav />
+        {children}
+      </div>
+      <AuthRefresher />
+      <UserMenu openProp={adminOpen} onClose={() => setUserOpen(false)} onToggle={() => setUserOpen((v)=>!v)} />
+      <UserMenuToggle />
     </div>
   )
 }

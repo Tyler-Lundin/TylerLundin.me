@@ -50,7 +50,7 @@ function ChatInterface({ state, input, setInput, send, loading, error, isFullScr
       >
         <AnimatePresence mode="popLayout">
           {booting && (
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex gap-3">
+            <motion.div key="booting" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex gap-3">
               <div className="h-8 w-8 rounded-full bg-neutral-100 dark:bg-neutral-800 flex items-center justify-center shrink-0">
                 <Loader2 className="h-4 w-4 animate-spin text-neutral-400" />
               </div>
@@ -61,11 +61,11 @@ function ChatInterface({ state, input, setInput, send, loading, error, isFullScr
           )}
 
           {state.messages?.map((m, i) => (
-            <MessageBubble key={i} message={m} index={i} />
+            <MessageBubble key={`msg-${i}`} message={m} index={i} />
           ))}
 
           {loading && (
-            <motion.div initial={{ opacity: 0, y: 5 }} animate={{ opacity: 1, y: 0 }} className="flex justify-start">
+            <motion.div key="loading" initial={{ opacity: 0, y: 5 }} animate={{ opacity: 1, y: 0 }} className="flex justify-start">
                <div className="bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400 px-4 py-2 rounded-2xl rounded-tl-none text-xs font-medium flex items-center gap-2">
                 <Loader2 size={12} className="animate-spin" /> Assistant is thinking...
                </div>
@@ -247,7 +247,7 @@ export default function Step2Chat({ state, setState, onGenerate }: {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[600] bg-neutral-950/80 backdrop-blur-md p-4 sm:p-8"
+            className="fixed inset-0 z-[1200] bg-neutral-950/80 backdrop-blur-md p-4 sm:p-8"
           >
             <motion.div 
               initial={{ scale: 0.9, opacity: 0, y: 20 }}

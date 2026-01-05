@@ -1,6 +1,7 @@
 import React from 'react'
+import { ensureProfileOrRedirect } from '@/lib/profile'
 import CommandCenter from './components/CommandCenter'
-import LeadsOverview from './components/LeadsOverview'
+import LeadsOverview from '@/components/ops/LeadsOverview'
 import { createClient } from '@/lib/supabase/server'
 import Link from 'next/link'
 import { CrmProject, Invoice } from '@/types/crm'
@@ -153,6 +154,7 @@ async function fetchData() {
 }
 
 export default async function CrmDashboard() {
+  await ensureProfileOrRedirect()
   const { counts, recentProjects, pendingInvites, activityLog, finance } = await fetchData()
 
   return (

@@ -37,9 +37,8 @@ export async function POST(request: Request) {
       return NextResponse.json({ ok: false, message: error.message }, { status: 500 })
     }
 
-    const url = new URL(request.url)
-    const origin = `${url.protocol}//${url.host}`
-    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || origin
+    const { getBaseUrl } = await import('@/lib/url')
+    const baseUrl = getBaseUrl(request as any)
     const joinUrl = `${baseUrl}/join?email=${encodeURIComponent(email)}&key=${encodeURIComponent(key)}`
     console.log('[api/team/invite] Sending invite', {
       to: email,

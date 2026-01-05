@@ -60,7 +60,8 @@ export default function GroupMembersClient({ groupId }: { groupId: string }) {
   async function load(reset = false) {
     setLoading(true);
     try {
-      const res = await fetch(`/api/dev/groups/${groupId}/members?limit=${limit}&offset=${reset ? 0 : offset}`, { cache: 'no-store' });
+      const base = typeof window !== 'undefined' && window.location.pathname.startsWith('/marketing') ? 'marketing' : 'dev'
+      const res = await fetch(`/api/${base}/groups/${groupId}/members?limit=${limit}&offset=${reset ? 0 : offset}`, { cache: 'no-store' });
       const data = await res.json();
       setTotal(data.total || 0);
       const next = (Array.isArray(data.items) ? data.items : []).map((m: any) => ({
@@ -98,7 +99,8 @@ export default function GroupMembersClient({ groupId }: { groupId: string }) {
 
   async function removeMember(leadId: string) {
     if (!confirm('Remove this lead from the group?')) return
-    const res = await fetch(`/api/dev/groups/${groupId}/members/${leadId}`, { method: 'DELETE' })
+    const base = typeof window !== 'undefined' && window.location.pathname.startsWith('/marketing') ? 'marketing' : 'dev'
+    const res = await fetch(`/api/${base}/groups/${groupId}/members/${leadId}`, { method: 'DELETE' })
     const data = await res.json()
     if (!res.ok || data?.error) {
       alert(data?.error || 'Failed to remove')
@@ -115,7 +117,8 @@ export default function GroupMembersClient({ groupId }: { groupId: string }) {
     try {
       // Simple sequential deletion to avoid hammering the API
       for (const id of ids) {
-        const res = await fetch(`/api/dev/groups/${groupId}/members/${id}`, { method: 'DELETE' })
+        const base = typeof window !== 'undefined' && window.location.pathname.startsWith('/marketing') ? 'marketing' : 'dev'
+        const res = await fetch(`/api/${base}/groups/${groupId}/members/${id}`, { method: 'DELETE' })
         // ignore individual failures, but stop on hard failure pattern
         if (!res.ok) {
           // surface first failure

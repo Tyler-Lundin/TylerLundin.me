@@ -75,7 +75,7 @@ export default function DashboardHeader({ title }: DashboardHeaderProps) {
           </button>
         </div>
 
-        {/* Mobile reserved strip (no navigation; DevDock handles nav) */}
+        {/* Mobile reserved strip */}
         <div className="pointer-events-none -mx-3 mt-14 h-0 md:hidden" />
       </div>
     </header>

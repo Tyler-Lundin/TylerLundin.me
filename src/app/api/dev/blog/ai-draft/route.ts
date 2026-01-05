@@ -1,10 +1,11 @@
 import { NextResponse } from 'next/server'
 import { requireRoles } from '@/lib/auth'
 import OpenAI from 'openai'
+import { withAuditRoute } from '@/lib/audit'
 
 const MODEL = process.env.OPENAI_MODEL || 'gpt-4o-mini'
 
-export async function POST(req: Request) {
+async function handler(req: Request) {
   try {
     await requireRoles(['admin', 'head_of_marketing', 'head of marketing'])
   } catch {
@@ -47,3 +48,5 @@ Tags should be 3-6 lowercase tags. excerpt <= 220 chars. content_md in markdown.
     return NextResponse.json({ error: 'Failed to generate draft' }, { status: 500 })
   }
 }
+
+export const POST = withAuditRoute('dev.blog.ai_draft', handler)

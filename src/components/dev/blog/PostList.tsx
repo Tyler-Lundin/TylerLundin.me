@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { formatDate } from '@/lib/utils'
 
 interface PostRow {
@@ -16,6 +17,7 @@ export default function PostList({ onSelect }: { onSelect: (post: any) => void }
   const [rows, setRows] = useState<PostRow[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const router = useRouter()
 
   useEffect(() => {
     const load = async () => {
@@ -56,15 +58,19 @@ export default function PostList({ onSelect }: { onSelect: (post: any) => void }
           </thead>
           <tbody>
             {rows.map((r) => (
-              <tr key={r.id} className="border-t border-black/5 dark:border-white/10">
+              <tr
+                key={r.id}
+                className="border-t border-black/5 dark:border-white/10 hover:bg-black/5 dark:hover:bg-white/5 cursor-pointer"
+                onClick={() => router.push(`/dev/blog/${r.slug}`)}
+              >
                 <td className="p-2">{r.title}</td>
                 <td className="p-2 text-neutral-500">{r.slug}</td>
                 <td className="p-2">{r.status}</td>
                 <td className="p-2 text-neutral-500">{formatDate(r.updated_at)}</td>
                 <td className="p-2 text-neutral-500">{formatDate(r.published_at)}</td>
                 <td className="p-2 flex items-center gap-2">
-                  <button onClick={() => onSelect(r)} className="px-2 py-1 rounded bg-black text-white dark:bg-white dark:text-black text-xs">Edit</button>
-                  <a href={`/dev/blog/${r.slug}`} className="px-2 py-1 rounded bg-neutral-200 dark:bg-neutral-800 text-xs">View</a>
+                  <button onClick={(e) => { e.stopPropagation(); onSelect(r) }} className="px-2 py-1 rounded bg-black text-white dark:bg-white dark:text-black text-xs">Edit</button>
+                  <a onClick={(e) => e.stopPropagation()} href={`/dev/blog/${r.slug}`} className="px-2 py-1 rounded bg-neutral-200 dark:bg-neutral-800 text-xs">View</a>
                 </td>
               </tr>
             ))}

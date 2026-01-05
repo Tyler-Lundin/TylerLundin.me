@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 import { headers } from 'next/headers'
 import { createServiceClient } from '@/lib/supabase/server'
 import { Resend } from 'resend'
+import { withAuditRoute } from '@/lib/audit'
 
 function isRecentEnough(startedAt?: string) {
   if (!startedAt) return false
@@ -11,7 +12,7 @@ function isRecentEnough(startedAt?: string) {
   return delta >= 5000 && delta <= 60 * 60 * 1000 // between 5s and 1h
 }
 
-export async function POST(req: Request) {
+async function handler(req: Request) {
   try {
     const body = await req.json()
     const { post_id, author_name, author_email, website_url, content, hp, startedAt } = body || {}
@@ -114,3 +115,5 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: 'Failed to submit' }, { status: 500 })
   }
 }
+
+export const POST = withAuditRoute('blog.comments.POST', handler)

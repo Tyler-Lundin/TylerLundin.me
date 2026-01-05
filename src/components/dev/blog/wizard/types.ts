@@ -11,6 +11,7 @@ export interface WizardState {
   messages: ChatMessage[]
   edit_messages?: ChatMessage[]
   draft: {
+    id?: string
     title?: string
     excerpt?: string
     tags?: string[]

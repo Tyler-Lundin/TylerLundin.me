@@ -68,6 +68,8 @@ export default function Step5Finalize({ state }: { state: WizardState }) {
   }
 
   const payload = useMemo(() => JSON.stringify({
+    base: 'dev',
+    id: state.draft.id,
     title: state.draft.title,
     excerpt: state.draft.excerpt,
     content_md: state.draft.content_md,

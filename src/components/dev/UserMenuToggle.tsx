@@ -1,5 +1,8 @@
 "use client";
-export default function AdminMenuToggle() {
+
+import { User } from "lucide-react";
+
+export default function UserMenuToggle() {
   return (
     <button
       type="button"
@@ -10,7 +13,7 @@ export default function AdminMenuToggle() {
       className="fixed bottom-4 right-4 z-[999] grid h-10 w-10 place-items-center rounded-full border border-black/10 bg-white text-neutral-700 shadow-lg transition hover:scale-105 dark:border-white/10 dark:bg-neutral-900 dark:text-white/80"
       style={{ fontFamily: 'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace' }}
     >
-      `
+      <User />
     </button>
   );
 }

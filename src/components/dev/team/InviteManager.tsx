@@ -14,6 +14,11 @@ type Invite = {
   accepted_at?: string | null
 }
 
+function formatRole(role: string) {
+  if (!role) return 'Member'
+  return role.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join(' ')
+}
+
 export default function InviteManager({ initialInvites }: { initialInvites: Invite[] }) {
   const [invites, setInvites] = useState<Invite[]>(initialInvites || [])
   const [selected, setSelected] = useState<Invite | null>(null)
@@ -101,7 +106,7 @@ export default function InviteManager({ initialInvites }: { initialInvites: Invi
                <div className="min-w-0">
                   <div className="truncate text-sm font-medium text-neutral-900 dark:text-white">{i.email}</div>
                   <div className="flex items-center gap-2 text-xs text-neutral-500">
-                     <span className="capitalize">{i.role}</span>
+                     <span>{formatRole(i.role)}</span>
                      <span>•</span>
                      <span className={`capitalize ${i.status === 'pending' ? 'text-amber-600 dark:text-amber-500' : 'text-neutral-500'}`}>{i.status}</span>
                   </div>

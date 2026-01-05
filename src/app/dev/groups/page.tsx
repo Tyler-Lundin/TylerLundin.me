@@ -12,7 +12,8 @@ async function fetchGroups() {
   return (groups || []).map((g: any) => ({ ...g, lead_count: counts.get(g.id) || 0 }))
 }
 
-export default async function GroupsIndexPage() {
+export default async function GroupsIndexPage(props: any) {
+  const basePath = typeof props?.basePath === 'string' ? props.basePath : '/dev'
   const groups = await fetchGroups()
 
   return (
@@ -37,7 +38,7 @@ export default async function GroupsIndexPage() {
                 {groups.map((g) => (
                   <tr key={g.id} className="odd:bg-white even:bg-neutral-50 dark:odd:bg-neutral-900 dark:even:bg-neutral-950">
                     <td className="px-4 py-2">
-                      <Link href={`/dev/groups/${g.id}`} className="font-medium text-blue-600 underline">{g.name}</Link>
+                      <Link href={`${basePath}/groups/${g.id}`} className="font-medium text-blue-600 underline">{g.name}</Link>
                       <div className="text-xs text-neutral-500">{new Date(g.created_at).toLocaleString()}</div>
                     </td>
                     <td className="px-4 py-2 text-neutral-600 dark:text-neutral-400">

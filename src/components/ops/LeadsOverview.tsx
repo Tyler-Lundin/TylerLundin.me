@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { createServiceClient } from '@/lib/supabase/server'
-import LeadsOverviewActionsClient from './LeadsOverviewActionsClient'
+import { getUserRole } from '@/lib/auth'
+import LeadsOverviewActionsClient from '@/components/ops/LeadsOverviewActionsClient'
 
 type RankedGroup = {
   group_id: string
@@ -19,6 +20,8 @@ function scoreForReviews(total: number | null | undefined): number {
 export default async function LeadsOverview() {
   // Use service client to bypass RLS for admin dashboard KPIs
   const sb = await createServiceClient()
+  const role = await getUserRole()
+  const base = role === 'admin' ? '/dev' : ((role === 'head_of_marketing' || role === 'head of marketing') ? '/marketing' : '/dev')
 
   // Basic metrics
   const since = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString()
@@ -58,8 +61,8 @@ export default async function LeadsOverview() {
       <div className="flex items-center justify-between border-b border-neutral-100 px-6 py-4 dark:border-neutral-800">
         <h2 className="text-base font-semibold text-neutral-900 dark:text-white">Leads Overview</h2>
         <div className="flex items-center gap-2">
-          <Link href="/dev/leads" className="rounded border px-2 py-1 text-xs font-medium hover:bg-neutral-50 dark:hover:bg-neutral-800">Open Lead Generator</Link>
-          <Link href="/dev/leads/swipe" className="rounded border px-2 py-1 text-xs font-medium hover:bg-neutral-50 dark:hover:bg-neutral-800">Open Swipe</Link>
+          <Link href={`${base}/leads`} className="rounded border px-2 py-1 text-xs font-medium hover:bg-neutral-50 dark:hover:bg-neutral-800">Open Lead Generator</Link>
+          <Link href={`${base}/leads/swipe`} className="rounded border px-2 py-1 text-xs font-medium hover:bg-neutral-50 dark:hover:bg-neutral-800">Open Swipe</Link>
           <LeadsOverviewActionsClient />
         </div>
       </div>
@@ -80,7 +83,7 @@ export default async function LeadsOverview() {
         ) : (
           <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
             {ranked.slice(0, 6).map((g) => (
-              <Link key={g.group_id} href={`/dev/groups/${g.group_id}`} className="flex items-center justify-between rounded border px-3 py-2 hover:bg-neutral-50 dark:hover:bg-neutral-800">
+              <Link key={g.group_id} href={`${base}/groups/${g.group_id}`} className="flex items-center justify-between rounded border px-3 py-2 hover:bg-neutral-50 dark:hover:bg-neutral-800">
                 <div className="truncate mr-3">
                   <div className="truncate font-medium">{g.name}</div>
                   <div className="text-[11px] text-neutral-500">Leads: {g.lead_count} • Score: {g.score.toFixed(2)}</div>

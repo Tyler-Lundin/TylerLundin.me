@@ -1,4 +1,5 @@
 import { Hero } from '@/components/sections/Hero';
+import { ensureProfileOrRedirect } from '@/lib/profile';
 import { loadProjectsFromFolders } from '@/lib/projects.server';
 import { heroFolders } from '@/data/heroFolders';
 import { projects as seededProjects } from '@/data/projects';
@@ -7,6 +8,7 @@ import AutoScrollHeroSpotlights from '@/components/behavior/AutoScrollHeroSpotli
 import Testimonials from '@/components/sections/Testimonials';
 
 export default async function LandingPage() {
+  await ensureProfileOrRedirect()
   // Load media from public/projects/<folder>/ for the hero showcase
   const dynamicProjects = await loadProjectsFromFolders(heroFolders);
 

@@ -1,10 +1,11 @@
 import { NextResponse } from 'next/server'
 import { requireRoles } from '@/lib/auth'
 import OpenAI from 'openai'
+import { withAuditRoute } from '@/lib/audit'
 
 const MODEL = process.env.OPENAI_MODEL || 'gpt-4o-mini'
 
-export async function POST(req: Request) {
+async function handler(req: Request) {
   try {
     await requireRoles(['admin', 'head_of_marketing', 'head of marketing'])
   } catch {
@@ -53,3 +54,4 @@ Keep reply short, describing what changed.
   }
 }
 
+export const POST = withAuditRoute('dev.blog.edit_draft', handler)

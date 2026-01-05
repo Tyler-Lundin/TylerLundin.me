@@ -1,8 +1,9 @@
-import { createClient } from '@/lib/supabase/server'
+import { createClient, createServiceClient } from '@/lib/supabase/server'
+import { ensureProfileOrRedirect } from '@/lib/profile'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
-import CommentsSection from '@/components/blog/CommentsSection'
 import SidebarAds from '@/components/blog/SidebarAds'
+import CommentsClient from './CommentsClient'
 import { notFound } from 'next/navigation'
 import { headers } from 'next/headers'
 
@@ -15,10 +16,13 @@ type PublicPost = {
   content_md?: string | null
   published_at: string | null
   tags?: string[] | null
+  author_id?: string | null
+  author?: { id: string; full_name: string | null; avatar_url: string | null; role: string | null; visibility: 'public' | 'private' }
 }
 
 async function getPost(slug: string): Promise<PublicPost | null> {
-  const sb = await createClient()
+  const sb: any = await createClient()
+  const sbAdmin: any = await createServiceClient()
   // Prefer public view (aggregated), then load full post body from base table
   const { data: pub } = await sb
     .from('blog_posts_public')
@@ -31,10 +35,27 @@ async function getPost(slug: string): Promise<PublicPost | null> {
   // Fetch full markdown body from base table (limited to published only)
   const { data: base } = await sb
     .from('blog_posts')
-    .select('content_md')
+    .select('content_md, author_id')
     .eq('slug', slug)
     .eq('status', 'published')
     .maybeSingle()
+
+  let author: PublicPost['author'] = undefined
+  const author_id = base?.author_id || null
+  if (author_id) {
+    // Use service client to fetch minimal author details even if profile is private
+    const { data: u } = await sbAdmin.from('users').select('id, full_name, role').eq('id', author_id).maybeSingle()
+    const { data: p } = await sbAdmin.from('user_profiles').select('avatar_url, visibility').eq('user_id', author_id).maybeSingle()
+    if (u) {
+      author = {
+        id: u.id,
+        full_name: u.full_name,
+        avatar_url: p?.avatar_url || null,
+        role: u.role,
+        visibility: (p?.visibility as any) || 'public',
+      }
+    }
+  }
 
   return {
     id: pub.id,
@@ -45,6 +66,8 @@ async function getPost(slug: string): Promise<PublicPost | null> {
     content_md: base?.content_md ?? null,
     published_at: pub.published_at ?? null,
     tags: pub.tags ?? [],
+    author_id,
+    author,
   }
 }
 
@@ -60,6 +83,7 @@ async function recordView(postId: string) {
 }
 
 export default async function PublicBlogPost({ params }: { params: Promise<{ slug: string }> }) {
+  await ensureProfileOrRedirect()
   const { slug } = await params
   const post = await getPost(slug)
   if (!post) return notFound()
@@ -88,6 +112,30 @@ export default async function PublicBlogPost({ params }: { params: Promise<{ slu
               </div>
             </header>
 
+            {post.author && (
+              <div className="flex items-center gap-3 mb-6">
+                {post.author.visibility === 'public' ? (
+                  <a href={`/profile/${post.author.id}`} className="flex items-center gap-3">
+                    <img src={post.author.avatar_url && post.author.avatar_url.trim() ? post.author.avatar_url : `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(post.author.full_name || 'Author')}`}
+                         alt="avatar" className="h-8 w-8 rounded-full object-cover border border-black/10 dark:border-white/10" />
+                    <div className="text-sm">
+                      <div className="font-medium">{post.author.full_name || 'Author'}</div>
+                      {post.author.role && <div className="text-xs text-neutral-500">{post.author.role}</div>}
+                    </div>
+                  </a>
+                ) : (
+                  <div className="flex items-center gap-3">
+                    <img src={post.author.avatar_url && post.author.avatar_url.trim() ? post.author.avatar_url : `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(post.author.full_name || 'Author')}`}
+                         alt="avatar" className="h-8 w-8 rounded-full object-cover border border-black/10 dark:border-white/10" />
+                    <div className="text-sm">
+                      <div className="font-medium">{post.author.full_name || 'Author'}</div>
+                      {post.author.role && <div className="text-xs text-neutral-500">{post.author.role}</div>}
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+
             {post.cover_image_url && (
               <div className="relative w-full h-[420px] rounded-xl overflow-hidden mb-6">
                 <img src={post.cover_image_url} alt="cover" className="absolute inset-0 w-full h-full blog-pan-vert" />
@@ -100,7 +148,7 @@ export default async function PublicBlogPost({ params }: { params: Promise<{ slu
               </ReactMarkdown>
             </div>
 
-            <CommentsSection postId={post.id} />
+            <CommentsClient postId={post.id} />
           </article>
 
           {/* Sidebar */}

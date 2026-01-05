@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { requireRoles } from '@/lib/auth'
 import { createServiceClient } from '@/lib/supabase/server'
+import { withAuditRoute } from '@/lib/audit'
 
 function slugify(input: string): string {
   return input
@@ -11,15 +12,24 @@ function slugify(input: string): string {
     .replace(/-+/g, '-')
 }
 
-export async function GET() {
+async function handleGET(req: Request) {
   try {
     await requireRoles(['admin', 'head_of_marketing', 'head of marketing'])
     const supabase: any = await createServiceClient()
 
-    const { data, error } = await supabase
+    const url = new URL(req.url)
+    const status = url.searchParams.get('status')
+    const limit = Number(url.searchParams.get('limit') || '0')
+
+    let query = supabase
       .from('blog_posts')
-      .select('id, title, slug, excerpt, cover_image_url, status, updated_at, published_at, reading_time_minutes')
-      .order('updated_at', { ascending: false })
+      .select('id, title, slug, excerpt, cover_image_url, status, updated_at, published_at, reading_time_minutes, content_md, meta')
+      .order('updated_at', { ascending: false }) as any
+
+    if (status) query = query.eq('status', status)
+    if (limit && !Number.isNaN(limit) && limit > 0) query = query.limit(limit)
+
+    const { data, error } = await query
 
     if (error) throw error
     const posts = Array.isArray(data) ? data : []
@@ -38,9 +48,10 @@ export async function GET() {
   }
 }
 
-export async function POST(req: Request) {
+async function handlePOST(req: Request) {
+  let me: any
   try {
-    await requireRoles(['admin', 'head_of_marketing', 'head of marketing'])
+    me = await requireRoles(['admin', 'head_of_marketing', 'head of marketing'])
   } catch {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
@@ -78,11 +89,23 @@ export async function POST(req: Request) {
       reading_time_minutes,
       meta,
     }
-    if (id) upsertPayload.id = id
+    // Assign author if not already set on record
+    if (me?.id) upsertPayload.author_id = String(me.id)
+    if (id) {
+      upsertPayload.id = id
+    } else {
+      // If a post already exists with this slug, update it instead of inserting
+      const { data: existingBySlug } = await supabase
+        .from('blog_posts')
+        .select('id')
+        .eq('slug', finalSlug)
+        .maybeSingle()
+      if (existingBySlug?.id) upsertPayload.id = existingBySlug.id
+    }
 
     const { data: post, error } = await supabase
       .from('blog_posts')
-      .upsert(upsertPayload)
+      .upsert(upsertPayload, { onConflict: upsertPayload.id ? 'id' : 'slug' })
       .select('*')
       .single()
 
@@ -113,3 +136,6 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: 'Failed to save' }, { status: 500 })
   }
 }
+
+export const GET = withAuditRoute('dev.blog.posts.GET', handleGET)
+export const POST = withAuditRoute('dev.blog.posts.POST', handlePOST)

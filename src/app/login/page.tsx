@@ -11,7 +11,7 @@ function LoginForm() {
   const [isLoading, setIsLoading] = useState(false)
   const router = useRouter()
   const searchParams = useSearchParams()
-  const redirectPath = searchParams.get('redirect') || '/dev'
+  const redirectPath = searchParams.get('redirect') || ''
 
   const handlePasswordChange = (index: number, value: string) => {
     const newPasswords = [...passwords]
@@ -43,9 +43,19 @@ function LoginForm() {
       if (!data.success) {
         throw new Error(data.message || 'Authentication failed')
       }
-
-      // If verification successful, redirect to the original path or default to /dev
-      router.push(redirectPath)
+      // Choose destination based on role + optional redirect
+      const role: string = data.role || 'member'
+      const isAdmin = role === 'admin'
+      const isHoM = role === 'head_of_marketing' || role === 'head of marketing'
+      const allowed = (p: string) => {
+        if (!p) return false
+        if (p.startsWith('/dev')) return isAdmin
+        if (p.startsWith('/marketing')) return isAdmin || isHoM
+        return true
+      }
+      const home = isAdmin ? '/dev' : (isHoM ? '/marketing' : '/')
+      const target = allowed(redirectPath) ? redirectPath : home
+      router.push(target)
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Authentication failed')
     } finally {

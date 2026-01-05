@@ -14,8 +14,10 @@ export async function GET() {
     const secret = new TextEncoder().encode(JWT_SECRET)
     const { payload } = await jose.jwtVerify(token, secret)
     const role = (payload as any)?.role
+    const userId = (payload as any)?.id || (payload as any)?.sub || (payload as any)?.user_id || (payload as any)?.userId || (payload as any)?.uid || null
+    const email = (payload as any)?.email || (payload as any)?.user_email || null
     const isAdmin = role === 'admin'
-    return NextResponse.json({ success: true, role, isAdmin })
+    return NextResponse.json({ success: true, role, isAdmin, userId, email })
   } catch (e) {
     return NextResponse.json({ success: false, code: 'invalid' }, { status: 200 })
   }

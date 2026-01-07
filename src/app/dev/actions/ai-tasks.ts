@@ -88,10 +88,14 @@ async function main() {
   }
 
   for (const file of plan.files) {
-    const filePath = file.path;
+    // FIX: Remove leading slashes to ensure path is relative to current directory
+    // Otherwise '/docs/...' tries to write to the hard drive root (Permission Denied)
+    const relativePath = file.path.replace(/^[\\/]+/, '');
+    const filePath = path.join(process.cwd(), relativePath);
+    
     const dir = path.dirname(filePath);
     
-    if (dir !== '.' && dir !== '') {
+    if (dir !== process.cwd()) {
       fs.mkdirSync(dir, { recursive: true });
     }
     

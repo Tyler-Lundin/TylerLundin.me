@@ -1,10 +1,14 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import { AnimatePresence, motion } from 'framer-motion';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 import { chatForTaskDraft, TaskChatResponse } from '@/app/dev/actions/task-chat';
 import { createAiTaskAction, runAiTaskAction, stopAiTaskAction, getProjectAiTasksAction, syncTaskStatusAction } from '@/app/dev/actions/ai-tasks';
+import { getRepoTree, FileNode, getDocContent, getDirectoryContent } from '@/app/dev/actions/repo-explorer';
+import RepoExplorer from './RepoExplorer';
 import { aiTaskTemplates } from '@/config/ai-task-templates';
 import { AiTask, AiTaskTemplate } from '@/types/ai-tasks';
 import { 
@@ -24,7 +28,10 @@ import {
   Terminal,
   ExternalLink,
   ChevronDown,
-  ChevronUp
+  ChevronUp,
+  FileText,
+  Folder,
+  X
 } from 'lucide-react';
 
 export default function ProjectTasks({ projectId, tasks: initialTasks, repoUrl }: { projectId: string; tasks: AiTask[]; repoUrl?: string | null }) {
@@ -32,6 +39,12 @@ export default function ProjectTasks({ projectId, tasks: initialTasks, repoUrl }
   const [tasks, setTasks] = useState<AiTask[]>(initialTasks);
   const [showWizard, setShowWizard] = useState(false);
   const [isRefreshing, setIsRefreshing] = useState(false);
+
+  useEffect(() => {
+    const handleOpenWizard = () => setShowWizard(true);
+    window.addEventListener('open-ai-task-wizard', handleOpenWizard);
+    return () => window.removeEventListener('open-ai-task-wizard', handleOpenWizard);
+  }, []);
 
   const handleTaskCreated = (newTask: AiTask) => {
     setTasks(prev => [newTask, ...prev]);
@@ -82,11 +95,12 @@ export default function ProjectTasks({ projectId, tasks: initialTasks, repoUrl }
       if (updatedTask) {
         setTasks(prev => prev.map(t => t.id === taskId ? updatedTask : t));
       }
-    } catch (e: any) {
+    } catch (e) {
       console.error('Failed to run task:', e);
       // Status update might have happened in the catch block of the action too
       setTasks(prev => prev.map(t => t.id === taskId ? { ...t, status: 'failed' } : t));
-      alert(e.message || 'Failed to launch task. Ensure a GitHub Repository link is added to this project.');
+      const message = e instanceof Error ? e.message : 'Failed to launch task. Ensure a GitHub Repository link is added to this project.';
+      alert(message);
     }
   };
 
@@ -157,6 +171,7 @@ export default function ProjectTasks({ projectId, tasks: initialTasks, repoUrl }
         {showWizard && (
           <TaskWizard 
             projectId={projectId} 
+            repoUrl={repoUrl}
             onClose={() => setShowWizard(false)} 
             onCreated={handleTaskCreated}
             onUpdate={handleTaskUpdate}
@@ -237,7 +252,7 @@ function TaskRow({ task, repoUrl, onRun, onStop }: { task: AiTask; repoUrl?: str
           
           <button 
             onClick={() => setExpanded(!expanded)}
-            className="p-1.5 text-neutral-400 hover:text-neutral-900 dark:hover:text-white transition-colors"
+            className="p-1.5 text-neutral-400 hover:text-neutral-900 dark:hover:white transition-colors"
           >
             {expanded ? <ChevronUp className="size-4" /> : <ChevronDown className="size-4" />}
           </button>
@@ -291,7 +306,17 @@ function TaskRow({ task, repoUrl, onRun, onStop }: { task: AiTask; repoUrl?: str
   );
 }
 
-function TaskWizard({ projectId, onClose, onCreated, onUpdate }: { projectId: string; onClose: () => void; onCreated: (t: AiTask) => void; onUpdate: (t: AiTask) => void }) {
+function useAutosizeTextArea(textAreaRef: HTMLTextAreaElement | null, value: string) {
+  useEffect(() => {
+    if (textAreaRef) {
+      textAreaRef.style.height = '0px';
+      const scrollHeight = textAreaRef.scrollHeight;
+      textAreaRef.style.height = Math.min(scrollHeight, 160) + 'px';
+    }
+  }, [textAreaRef, value]);
+}
+
+function TaskWizard({ projectId, repoUrl, onClose, onCreated, onUpdate }: { projectId: string; repoUrl?: string | null; onClose: () => void; onCreated: (t: AiTask) => void; onUpdate: (t: AiTask) => void }) {
   const [mode, setMode] = useState<'library' | 'chat'>('library');
   const [selectedTemplate, setSelectedTemplate] = useState<AiTaskTemplate | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -301,6 +326,180 @@ function TaskWizard({ projectId, onClose, onCreated, onUpdate }: { projectId: st
   const [inputValue, setInputValue] = useState('');
   const [isChatting, setIsChatting] = useState(false);
   const [proposedTask, setProposedTask] = useState<TaskChatResponse['proposedTask'] | null>(null);
+  
+  // Context & File Explorer State
+  const [contextFiles, setContextFiles] = useState<{ name: string; path: string; content: string }[]>([]);
+  const [docsList, setDocsList] = useState<FileNode[]>([]);
+  const [mentionQuery, setMentionQuery] = useState<string | null>(null);
+  const [selectedIndex, setSelectedIndex] = useState(0);
+  const [cursorPosition, setCursorPosition] = useState<number>(0);
+  const [showDocsMobile, setShowDocsMobile] = useState(false);
+  
+  const inputRef = useRef<HTMLTextAreaElement>(null);
+  const scrollRef = useRef<HTMLDivElement>(null);
+
+  useAutosizeTextArea(inputRef.current, inputValue);
+
+  // Keyboard Shortcuts for Tabs
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (
+        e.target instanceof HTMLInputElement || 
+        e.target instanceof HTMLTextAreaElement ||
+        (e.target as HTMLElement).isContentEditable
+      ) {
+        return;
+      }
+
+      if (e.key === '1') {
+        setMode('library');
+      } else if (e.key === '2') {
+        setMode('chat');
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
+
+  // Auto-scroll chat
+  useEffect(() => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+    }
+  }, [messages, isChatting]);
+
+  // Load flattened docs list for @ mentions
+  useEffect(() => {
+    async function loadDocs() {
+      try {
+        const tree = await getRepoTree(repoUrl);
+        const flatten = (nodes: FileNode[]): FileNode[] => {
+          return nodes.reduce((acc, node) => {
+            acc.push(node); // Include both files and directories
+            if (node.children) acc.push(...flatten(node.children));
+            return acc;
+          }, [] as FileNode[]);
+        };
+        setDocsList(flatten(tree));
+      } catch (e) {
+        console.error(e);
+      }
+    }
+    loadDocs();
+  }, [repoUrl]);
+
+  // Filter docs based on mention query
+  const filteredDocs = useMemo(() => {
+    if (mentionQuery === null) return [];
+    const q = mentionQuery.toLowerCase();
+    const results = docsList
+      .filter(doc => doc.name.toLowerCase().includes(q))
+      .sort((a, b) => {
+          // Prioritize files over directories? Or just by modified/name?
+          // Let's sort directories first, then files? Or mix.
+          // Let's stick to lastModified if available, else name
+          const timeA = a.lastModified || 0;
+          const timeB = b.lastModified || 0;
+          if (timeA !== timeB) return timeB - timeA;
+          return a.name.localeCompare(b.name);
+      })
+      .slice(0, 10); // Increase limit slightly
+    return results;
+  }, [mentionQuery, docsList]);
+
+  // Reset selection when results change
+  useEffect(() => {
+    setSelectedIndex(0);
+  }, [filteredDocs]);
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const val = e.target.value;
+    setInputValue(val);
+    const pos = e.target.selectionStart || 0;
+    setCursorPosition(pos);
+
+    const lastAt = val.lastIndexOf('@', pos - 1);
+    if (lastAt !== -1) {
+      const query = val.slice(lastAt + 1, pos);
+      if (!query.includes(' ') && !query.includes('\n')) {
+        setMentionQuery(query);
+      } else {
+        setMentionQuery(null);
+      }
+    } else {
+      setMentionQuery(null);
+    }
+  };
+
+  const handleSelectMention = async (doc: FileNode) => {
+    try {
+      if (doc.type === 'file') {
+        if (!contextFiles.find(f => f.path === doc.path)) {
+            const content = await getDocContent(doc.path, repoUrl);
+            if (content) {
+            setContextFiles(prev => [...prev, { name: doc.name, path: doc.path, content }]);
+            }
+        }
+      } else {
+          // Directory
+          const files = await getDirectoryContent(doc.path, repoUrl);
+          if (files.length > 0) {
+              setContextFiles(prev => {
+                  const newFiles = files.filter(f => !prev.find(p => p.path === f.path));
+                  return [...prev, ...files.map(f => ({ name: f.path.split('/').pop() || '', path: f.path, content: f.content }))];
+              });
+          }
+      }
+    } catch (e) {
+      console.error('Failed to fetch doc content', e);
+    }
+
+    if (mentionQuery !== null && inputRef.current) {
+      const before = inputValue.substring(0, inputValue.lastIndexOf('@', cursorPosition - 1));
+      const after = inputValue.substring(cursorPosition);
+      const newValue = `${before}@${doc.name} ${after}`;
+      setInputValue(newValue);
+      setMentionQuery(null);
+      setTimeout(() => inputRef.current?.focus(), 0);
+    }
+  };
+
+  const handleInputKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (mentionQuery !== null && filteredDocs.length > 0) {
+      if (e.key === 'Tab') {
+        e.preventDefault();
+        if (e.shiftKey) {
+            setSelectedIndex(prev => (prev - 1 + filteredDocs.length) % filteredDocs.length);
+        } else {
+            setSelectedIndex(prev => (prev + 1) % filteredDocs.length);
+        }
+      } else if (e.key === 'Enter') {
+        e.preventDefault();
+        handleSelectMention(filteredDocs[selectedIndex]);
+      } else if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        setSelectedIndex(prev => (prev - 1 + filteredDocs.length) % filteredDocs.length);
+      } else if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        setSelectedIndex(prev => (prev + 1) % filteredDocs.length);
+      }
+    } else if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      handleSendMessage();
+    }
+  };
+  
+  const handleAddContext = (files: { name: string; path: string; content: string }[]) => {
+    setContextFiles(prev => {
+        const newFiles = files.filter(f => !prev.find(p => p.path === f.path));
+        return [...prev, ...newFiles];
+    });
+  };
+
+  const removeContextFile = (path: string) => {
+    setContextFiles(prev => prev.filter(f => f.path !== path));
+  };
 
   // Handle standard template launch
   const handleCreateFromTemplate = async () => {
@@ -313,21 +512,15 @@ function TaskWizard({ projectId, onClose, onCreated, onUpdate }: { projectId: st
         title: selectedTemplate.title,
         description: selectedTemplate.description,
         template_id: selectedTemplate.id,
-        // inputs: ... would pass inputs here if we collected them
       });
 
       if (task) {
         onCreated(task);
-        // Automatically try to run it
         try {
           const updatedTask = await runAiTaskAction(task.id);
-          if (updatedTask) {
-            // Update with latest state from server (includes logs/running status)
-            onUpdate(updatedTask);
-          }
+          if (updatedTask) onUpdate(updatedTask);
         } catch (e) {
           console.warn('Task created but failed to run automatically', e);
-          // It stays 'queued', user can run manually
         }
         onClose();
       }
@@ -349,17 +542,13 @@ function TaskWizard({ projectId, onClose, onCreated, onUpdate }: { projectId: st
         project_id: projectId,
         title: proposedTask.title,
         description: proposedTask.description,
-        // inputs: proposedTask.inputs
       });
 
       if (task) {
         onCreated(task);
-        // Automatically try to run it
         try {
           const updatedTask = await runAiTaskAction(task.id);
-          if (updatedTask) {
-            onUpdate(updatedTask);
-          }
+          if (updatedTask) onUpdate(updatedTask);
         } catch (e) {
           console.warn('Task created but failed to run automatically', e);
         }
@@ -376,12 +565,22 @@ function TaskWizard({ projectId, onClose, onCreated, onUpdate }: { projectId: st
   const handleSendMessage = async () => {
     if (!inputValue.trim()) return;
     const userMsg = inputValue.trim();
+    
+    let fullMessage = userMsg;
+    if (contextFiles.length > 0) {
+      fullMessage += '\n\n---\nAdditional Context:\n';
+      contextFiles.forEach(f => {
+        fullMessage += `\nFile: ${f.name}\n\`\`\`\n${f.content}\n\`\`\`\n`;
+      });
+    }
+
     setInputValue('');
+    setContextFiles([]);
     setMessages(prev => [...prev, { role: 'user', content: userMsg }]);
     setIsChatting(true);
 
     try {
-      const { message, proposedTask } = await chatForTaskDraft(messages, userMsg);
+      const { message, proposedTask } = await chatForTaskDraft(messages, fullMessage);
       setMessages(prev => [...prev, { role: 'assistant', content: message }]);
       if (proposedTask) {
         setProposedTask(proposedTask);
@@ -398,192 +597,307 @@ function TaskWizard({ projectId, onClose, onCreated, onUpdate }: { projectId: st
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm"
+      className="fixed inset-0 z-[1000] flex items-center justify-center p-0 sm:p-4 bg-black/60 backdrop-blur-md"
     >
       <motion.div 
-        initial={{ scale: 0.95, opacity: 0 }}
-        animate={{ scale: 1, opacity: 1 }}
-        exit={{ scale: 0.95, opacity: 0 }}
-        className="w-full max-w-2xl bg-white dark:bg-neutral-900 rounded-xl shadow-2xl overflow-hidden border border-neutral-200 dark:border-neutral-800 flex flex-col max-h-[85vh]"
+        initial={{ scale: 0.98, opacity: 0, y: 10 }}
+        animate={{ scale: 1, opacity: 1, y: 0 }}
+        exit={{ scale: 0.98, opacity: 0, y: 10 }}
+        className={`w-full h-full sm:h-[85vh] bg-white dark:bg-neutral-900 sm:rounded-2xl shadow-2xl overflow-hidden border border-neutral-200 dark:border-neutral-800 flex flex-col transition-all duration-500 ease-in-out ${
+          mode === 'chat' ? 'max-w-7xl' : 'max-w-2xl h-auto sm:max-h-[90vh]'
+        }`}
       >
-        <div className="flex items-center justify-between px-6 py-4 border-b border-neutral-100 dark:border-neutral-800 shrink-0">
-          <div className="flex gap-4">
-            <button 
-              onClick={() => setMode('library')} 
-              className={`text-sm font-semibold pb-1 border-b-2 transition-colors ${mode === 'library' ? 'text-neutral-900 dark:text-white border-blue-500' : 'text-neutral-500 border-transparent hover:text-neutral-700 dark:hover:text-neutral-300'}`}
-            >
-              Task Library
-            </button>
-            <button 
-              onClick={() => setMode('chat')} 
-              className={`text-sm font-semibold pb-1 border-b-2 transition-colors ${mode === 'chat' ? 'text-neutral-900 dark:text-white border-blue-500' : 'text-neutral-500 border-transparent hover:text-neutral-700 dark:hover:text-neutral-300'}`}
-            >
-              Draft with AI
+        {/* Header */}
+        <div className="flex items-center justify-between px-6 py-4 border-b border-neutral-100 dark:border-neutral-800 shrink-0 bg-white/80 dark:bg-neutral-900/80 backdrop-blur-xl z-20">
+          <div className="flex items-center gap-6">
+            <div className="flex gap-4">
+              <button 
+                onClick={() => setMode('library')} 
+                className={`text-sm font-bold pb-1 border-b-2 transition-all flex items-center gap-2 ${mode === 'library' ? 'text-neutral-900 dark:text-white border-blue-500' : 'text-neutral-400 border-transparent hover:text-neutral-600 dark:hover:text-neutral-200'}`}
+              >
+                Task Library
+                <span className="text-[10px] px-1 rounded bg-neutral-100 dark:bg-neutral-800 text-neutral-400 font-black">1</span>
+              </button>
+              <button 
+                onClick={() => setMode('chat')} 
+                className={`text-sm font-bold pb-1 border-b-2 transition-all flex items-center gap-2 ${mode === 'chat' ? 'text-neutral-900 dark:text-white border-blue-500' : 'text-neutral-400 border-transparent hover:text-neutral-600 dark:hover:text-neutral-200'}`}
+              >
+                Draft with AI
+                <span className="text-[10px] px-1 rounded bg-neutral-100 dark:bg-neutral-800 text-neutral-400 font-black">2</span>
+              </button>
+            </div>
+          </div>
+          <div className="flex items-center gap-3">
+             {mode === 'chat' && (
+               <button 
+                 onClick={() => setShowDocsMobile(!showDocsMobile)}
+                 className="lg:hidden p-2 text-neutral-400 hover:text-neutral-900 dark:hover:text-white transition-colors"
+               >
+                 <FileText className="size-5" />
+               </button>
+             )}
+            <button onClick={onClose} className="p-1 text-neutral-400 hover:text-neutral-900 dark:hover:text-white transition-colors">
+              <XCircle className="size-6" />
             </button>
           </div>
-          <button onClick={onClose} className="text-neutral-400 hover:text-neutral-900 dark:hover:text-white">
-            <XCircle className="size-5" />
-          </button>
         </div>
 
-        <div className="flex-1 overflow-y-auto p-6">
+        {/* Content Area */}
+        <div className="flex-1 overflow-hidden flex relative">
           {mode === 'library' ? (
-            !selectedTemplate ? (
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {aiTaskTemplates.map(template => (
-                  <button
-                    key={template.id}
-                    onClick={() => setSelectedTemplate(template)}
-                    className="flex flex-col text-left p-4 rounded-xl border border-neutral-200 dark:border-neutral-800 hover:border-blue-500 dark:hover:border-blue-500 hover:bg-blue-50/50 dark:hover:bg-blue-900/10 transition-all group"
-                  >
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="font-medium text-neutral-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400">
-                        {template.title}
-                      </span>
-                      <span className="text-[10px] uppercase font-bold text-neutral-400 bg-neutral-100 dark:bg-neutral-800 px-1.5 py-0.5 rounded">
-                        {template.category}
-                      </span>
-                    </div>
-                    <p className="text-xs text-neutral-500 dark:text-neutral-400 leading-relaxed mb-3">
-                      {template.description}
-                    </p>
-                    <div className="flex items-center gap-2 mt-auto text-xs text-neutral-400">
-                      <Clock className="size-3" />
-                      <span>~{template.estimatedDuration}</span>
-                    </div>
-                  </button>
-                ))}
-              </div>
-            ) : (
-              <div className="space-y-6">
-                <button 
-                  onClick={() => setSelectedTemplate(null)}
-                  className="text-xs font-medium text-neutral-500 hover:text-neutral-900 dark:hover:text-white flex items-center gap-1"
-                >
-                  <ArrowLeft className="size-3" /> Back to Library
-                </button>
-
-                <div>
-                  <h4 className="text-xl font-bold dark:text-white mb-1">{selectedTemplate.title}</h4>
-                  <p className="text-sm text-neutral-500">{selectedTemplate.description}</p>
-                </div>
-
-                {selectedTemplate.inputsSchema && selectedTemplate.inputsSchema.length > 0 && (
-                  <div className="space-y-4 bg-neutral-50 dark:bg-neutral-800/50 p-4 rounded-lg border border-neutral-100 dark:border-neutral-800">
-                    <h5 className="text-xs font-bold uppercase text-neutral-500 tracking-wider">Configuration</h5>
-                    {selectedTemplate.inputsSchema.map(input => (
-                      <div key={input.key}>
-                        <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1.5">
-                          {input.label}
-                        </label>
-                        {input.type === 'select' ? (
-                          <select className="w-full rounded-lg border border-neutral-200 bg-white px-3 py-2 text-sm outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 dark:border-neutral-700 dark:bg-neutral-900 dark:text-white">
-                            {input.options?.map(opt => <option key={opt} value={opt}>{opt}</option>)}
-                          </select>
-                        ) : (
-                          <input 
-                            type="text" 
-                            placeholder={input.placeholder}
-                            defaultValue={String(input.defaultValue || '')}
-                            className="w-full rounded-lg border border-neutral-200 bg-white px-3 py-2 text-sm outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 dark:border-neutral-700 dark:bg-neutral-900 dark:text-white"
-                          />
-                        )}
+            <div className="flex-1 overflow-y-auto p-8 bg-neutral-50/30 dark:bg-neutral-950/30">
+              {!selectedTemplate ? (
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                  {aiTaskTemplates.map(template => (
+                    <button
+                      key={template.id}
+                      onClick={() => setSelectedTemplate(template)}
+                      className="flex flex-col text-left p-5 rounded-2xl border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 hover:border-blue-500 dark:hover:border-blue-500 hover:shadow-lg hover:shadow-blue-500/5 transition-all group relative overflow-hidden"
+                    >
+                      <div className="flex items-center justify-between mb-3">
+                        <span className="font-bold text-neutral-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400">
+                          {template.title}
+                        </span>
+                        <span className="text-[10px] uppercase font-black tracking-widest text-neutral-400 bg-neutral-100 dark:bg-neutral-800 px-2 py-1 rounded-md">
+                          {template.category}
+                        </span>
                       </div>
-                    ))}
-                  </div>
-                )}
-
-                <div className="flex justify-end pt-4">
-                  <button
-                    onClick={handleCreateFromTemplate}
-                    disabled={isSubmitting}
-                    className="flex items-center gap-2 bg-blue-600 text-white px-6 py-2.5 rounded-lg font-medium hover:bg-blue-500 disabled:opacity-50 transition-colors"
-                  >
-                    {isSubmitting ? <Loader2 className="size-4 animate-spin" /> : <Play className="size-4" />}
-                    Launch Task
-                  </button>
-                </div>
-              </div>
-            )
-          ) : (
-            // Chat Mode
-            <div className="flex flex-col h-full">
-              <div className="flex-1 space-y-4 overflow-y-auto mb-4 min-h-[300px]">
-                {messages.length === 0 && (
-                  <div className="text-center text-neutral-500 mt-10">
-                    <Bot className="size-8 mx-auto mb-3 text-blue-500/50" />
-                    <p className="text-sm">Describe what you want to build or change.</p>
-                    <p className="text-xs mt-1">e.g., "Scaffold a new API route for user profile updates"</p>
-                  </div>
-                )}
-                {messages.map((m, i) => (
-                  <div key={i} className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-                    <div className={`max-w-[80%] rounded-xl px-4 py-2.5 text-sm ${
-                      m.role === 'user' 
-                        ? 'bg-blue-600 text-white' 
-                        : 'bg-neutral-100 dark:bg-neutral-800 text-neutral-800 dark:text-neutral-200'
-                    }`}>
-                      {m.content}
-                    </div>
-                  </div>
-                ))}
-                {isChatting && (
-                  <div className="flex justify-start">
-                    <div className="bg-neutral-100 dark:bg-neutral-800 rounded-xl px-4 py-2.5">
-                      <Loader2 className="size-4 animate-spin text-neutral-400" />
-                    </div>
-                  </div>
-                )}
-              </div>
-
-              {proposedTask && (
-                <div className="mb-4 p-4 bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800 rounded-xl animate-in fade-in slide-in-from-bottom-2">
-                  <div className="flex items-center justify-between mb-2">
-                    <div className="font-semibold text-emerald-900 dark:text-emerald-100 flex items-center gap-2">
-                      <Sparkles className="size-4 text-emerald-500" />
-                      Task Proposal
-                    </div>
-                    <span className="text-xs bg-emerald-100 dark:bg-emerald-800 text-emerald-700 dark:text-emerald-200 px-2 py-0.5 rounded-full">
-                      ~{proposedTask.estimatedDuration}
-                    </span>
-                  </div>
-                  <h4 className="font-bold text-neutral-900 dark:text-white text-sm mb-1">{proposedTask.title}</h4>
-                  <p className="text-xs text-neutral-600 dark:text-neutral-300 mb-3">{proposedTask.description}</p>
-                  <div className="flex gap-2">
-                    <button 
-                      onClick={handleCreateCustom}
-                      disabled={isSubmitting}
-                      className="flex-1 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold py-2 rounded-lg transition-colors flex items-center justify-center gap-2"
-                    >
-                      {isSubmitting ? <Loader2 className="size-3 animate-spin" /> : <Play className="size-3" />}
-                      Confirm & Launch
+                      <p className="text-xs text-neutral-500 dark:text-neutral-400 leading-relaxed mb-4">
+                        {template.description}
+                      </p>
+                      <div className="flex items-center gap-2 mt-auto text-xs font-medium text-neutral-400">
+                        <Clock className="size-3.5" />
+                        <span>~{template.estimatedDuration}</span>
+                      </div>
                     </button>
-                    <button 
-                      onClick={() => setProposedTask(null)}
-                      className="px-3 py-2 text-xs font-medium text-neutral-500 hover:text-neutral-900 dark:hover:text-neutral-200"
+                  ))}
+                </div>
+              ) : (
+                <div className="max-w-xl mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-300">
+                  <button 
+                    onClick={() => setSelectedTemplate(null)}
+                    className="text-xs font-bold text-neutral-400 hover:text-neutral-900 dark:hover:text-white flex items-center gap-2 transition-colors"
+                  >
+                    <ArrowLeft className="size-3.5" /> BACK TO LIBRARY
+                  </button>
+
+                  <div>
+                    <h4 className="text-3xl font-black dark:text-white mb-2 tracking-tight">{selectedTemplate.title}</h4>
+                    <p className="text-base text-neutral-500 dark:text-neutral-400 leading-relaxed">{selectedTemplate.description}</p>
+                  </div>
+
+                  {selectedTemplate.inputsSchema && selectedTemplate.inputsSchema.length > 0 && (
+                    <div className="space-y-6 bg-white dark:bg-neutral-900 p-6 rounded-2xl border border-neutral-200 dark:border-neutral-800 shadow-sm">
+                      <h5 className="text-[10px] font-black uppercase text-neutral-400 tracking-[0.2em]">Configuration</h5>
+                      {selectedTemplate.inputsSchema.map(input => (
+                        <div key={input.key}>
+                          <label className="block text-sm font-bold text-neutral-700 dark:text-neutral-300 mb-2">
+                            {input.label}
+                          </label>
+                          {input.type === 'select' ? (
+                            <select className="w-full rounded-xl border border-neutral-200 bg-neutral-50 px-4 py-3 text-sm font-medium outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 dark:border-neutral-700 dark:bg-neutral-800 dark:text-white transition-all">
+                              {input.options?.map(opt => <option key={opt} value={opt}>{opt}</option>)}
+                            </select>
+                          ) : (
+                            <input 
+                              type="text" 
+                              placeholder={input.placeholder}
+                              defaultValue={String(input.defaultValue || '')}
+                              className="w-full rounded-xl border border-neutral-200 bg-neutral-50 px-4 py-3 text-sm font-medium outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 dark:border-neutral-700 dark:bg-neutral-800 dark:text-white transition-all"
+                            />
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
+                  <div className="flex justify-end pt-4">
+                    <button
+                      onClick={handleCreateFromTemplate}
+                      disabled={isSubmitting}
+                      className="flex items-center gap-3 bg-blue-600 text-white px-8 py-4 rounded-xl font-bold hover:bg-blue-500 disabled:opacity-50 transition-all shadow-xl shadow-blue-500/20 active:scale-95"
                     >
-                      Reject
+                      {isSubmitting ? <Loader2 className="size-5 animate-spin" /> : <Play className="size-5 fill-current" />}
+                      Launch Task
                     </button>
                   </div>
                 </div>
               )}
-
-              <div className="relative">
-                <input
-                  value={inputValue}
-                  onChange={(e) => setInputValue(e.target.value)}
-                  onKeyDown={(e) => e.key === 'Enter' && !e.shiftKey && handleSendMessage()}
-                  placeholder="Type your instructions..."
-                  className="w-full bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-xl pl-4 pr-12 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/50 dark:text-white"
-                  autoFocus
-                />
-                <button 
-                  onClick={handleSendMessage}
-                  disabled={!inputValue.trim() || isChatting}
-                  className="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 bg-blue-600 text-white rounded-lg hover:bg-blue-500 disabled:opacity-50 disabled:hover:bg-blue-600 transition-colors"
+            </div>
+          ) : (
+            // Premium Split Layout for Chat Mode
+            <div className="flex w-full h-full lg:flex-row flex-col overflow-hidden">
+              {/* Chat Column (1/2) */}
+              <div className="lg:flex-1 flex flex-col min-w-0 bg-white dark:bg-neutral-900 relative z-10 h-full">
+                <div 
+                  ref={scrollRef}
+                  className="flex-1 overflow-y-auto p-6 space-y-6 scroll-smooth min-h-0"
                 >
-                  <Send className="size-3.5" />
-                </button>
+                  {messages.length === 0 && (
+                    <div className="h-full flex flex-col items-center justify-center text-center px-8 py-20">
+                      <div className="size-16 rounded-3xl bg-blue-50 dark:bg-blue-900/20 flex items-center justify-center mb-6 border border-blue-100 dark:border-blue-800">
+                        <Bot className="size-8 text-blue-600 dark:text-blue-400" />
+                      </div>
+                      <h3 className="text-xl font-bold text-neutral-900 dark:text-white mb-2">How can I help you today?</h3>
+                      <p className="text-sm text-neutral-500 dark:text-neutral-400 max-w-sm mx-auto leading-relaxed">
+                        Describe a feature, fix, or refactor. Use <span className="font-mono bg-neutral-100 dark:bg-neutral-800 px-1.5 py-0.5 rounded text-blue-600 dark:text-blue-400 font-bold">@</span> to pull context from your documentation.
+                      </p>
+                    </div>
+                  )}
+                  {messages.map((m, i) => (
+                    <div key={i} className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'} animate-in fade-in slide-in-from-bottom-2 duration-300`}>
+                      <div className={`max-w-[85%] rounded-2xl px-5 py-3.5 text-sm leading-relaxed shadow-sm ${
+                        m.role === 'user' 
+                          ? 'bg-blue-600 text-white font-medium' 
+                          : 'bg-neutral-50 dark:bg-neutral-800/50 border border-neutral-100 dark:border-neutral-800 text-neutral-800 dark:text-neutral-200'
+                      }`}>
+                        <div className={`prose prose-sm max-w-none ${m.role === 'user' ? 'prose-invert text-white' : 'dark:prose-invert'}`}>
+                          <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                            {m.content}
+                          </ReactMarkdown>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                  {isChatting && (
+                    <div className="flex justify-start animate-pulse">
+                      <div className="bg-neutral-100 dark:bg-neutral-800 rounded-2xl px-5 py-3.5">
+                        <div className="flex gap-1">
+                          <div className="size-1.5 rounded-full bg-neutral-400 animate-bounce" style={{ animationDelay: '0ms' }} />
+                          <div className="size-1.5 rounded-full bg-neutral-400 animate-bounce" style={{ animationDelay: '150ms' }} />
+                          <div className="size-1.5 rounded-full bg-neutral-400 animate-bounce" style={{ animationDelay: '300ms' }} />
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                  {proposedTask && (
+                    <div className="p-5 bg-emerald-50 dark:bg-emerald-900/10 border border-emerald-200/50 dark:border-emerald-800/50 rounded-2xl animate-in zoom-in-95 duration-300 shadow-lg shadow-emerald-500/5">
+                      <div className="flex items-center justify-between mb-4">
+                        <div className="font-bold text-emerald-700 dark:text-emerald-400 flex items-center gap-2 text-xs tracking-wider uppercase">
+                          <Sparkles className="size-4" />
+                          Generated Proposal
+                        </div>
+                        <span className="text-[10px] font-black bg-emerald-100 dark:bg-emerald-900 text-emerald-700 dark:text-emerald-300 px-2 py-1 rounded-md">
+                          {proposedTask.estimatedDuration}
+                        </span>
+                      </div>
+                      <h4 className="font-bold text-neutral-900 dark:text-white text-base mb-2 tracking-tight">{proposedTask.title}</h4>
+                      <div className="prose prose-sm dark:prose-invert max-w-none text-neutral-600 dark:text-neutral-400 mb-5 leading-relaxed">
+                        <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                          {proposedTask.description}
+                        </ReactMarkdown>
+                      </div>
+                      <div className="flex gap-3">
+                        <button 
+                          onClick={handleCreateCustom}
+                          disabled={isSubmitting}
+                          className="flex-1 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold py-3 rounded-xl transition-all flex items-center justify-center gap-2 shadow-lg shadow-emerald-600/20 active:scale-[0.98]"
+                        >
+                          {isSubmitting ? <Loader2 className="size-4 animate-spin" /> : <Play className="size-4 fill-current" />}
+                          Confirm & Launch
+                        </button>
+                        <button 
+                          onClick={() => setProposedTask(null)}
+                          className="px-4 py-3 text-xs font-bold text-neutral-400 hover:text-neutral-900 dark:hover:text-white transition-colors"
+                        >
+                          Dismiss
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {/* Fixed Input Area */}
+                <div className="p-4 border-t border-neutral-100 dark:border-neutral-800 bg-white dark:bg-neutral-900 shrink-0 relative">
+                  {/* Context Files */}
+                  {contextFiles.length > 0 && (
+                    <div className="flex flex-wrap gap-2 mb-3">
+                      {contextFiles.map(f => (
+                        <div key={f.path} className="flex items-center gap-1.5 bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-300 px-2.5 py-1.5 rounded-lg text-[10px] font-bold border border-blue-100 dark:border-blue-800 group animate-in slide-in-from-left-2">
+                           <FileText className="size-3.5" />
+                           <span className="truncate max-w-[120px]">{f.name}</span>
+                           <button onClick={() => removeContextFile(f.path)} className="hover:text-blue-800 dark:hover:text-white transition-colors"><X className="size-3.5" /></button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
+                  {/* Mention Popup */}
+                  <AnimatePresence>
+                    {mentionQuery !== null && filteredDocs.length > 0 && (
+                      <motion.div 
+                        initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                        className="absolute bottom-full left-4 right-4 mb-4 bg-white dark:bg-neutral-800 rounded-2xl shadow-2xl border border-neutral-200 dark:border-neutral-700 overflow-hidden z-30"
+                      >
+                         <div className="text-[10px] font-black uppercase text-neutral-400 bg-neutral-50 dark:bg-neutral-900 px-4 py-2.5 border-b border-neutral-100 dark:border-neutral-700 tracking-widest flex justify-between">
+                           <span>Reference Context</span>
+                           <span className="text-[9px] opacity-70">TAB to navigate • ENTER to select</span>
+                         </div>
+                         <div className="max-h-60 overflow-y-auto">
+                           {filteredDocs.map((doc, index) => (
+                             <button
+                               key={doc.path}
+                               onClick={() => handleSelectMention(doc)}
+                               className={`w-full text-left px-4 py-3 text-sm flex items-center justify-between group transition-colors ${
+                                 index === selectedIndex 
+                                   ? 'bg-blue-50 dark:bg-blue-900/30' 
+                                   : 'hover:bg-neutral-50 dark:hover:bg-neutral-800'
+                               }`}
+                             >
+                               <div className="flex items-center gap-3">
+                                 {doc.type === 'directory' ? (
+                                    <Folder className={`size-4 ${index === selectedIndex ? 'text-blue-500' : 'text-amber-400'}`} />
+                                 ) : (
+                                    <FileText className={`size-4 ${index === selectedIndex ? 'text-blue-500' : 'text-neutral-400'}`} />
+                                 )}
+                                 <span className={`font-bold ${index === selectedIndex ? 'text-blue-700 dark:text-blue-300' : 'text-neutral-700 dark:text-neutral-200'}`}>
+                                   {doc.name}
+                                 </span>
+                               </div>
+                               <span className="text-[10px] font-medium text-neutral-400 italic truncate max-w-[100px] ml-2">
+                                 {doc.path}
+                               </span>
+                             </button>
+                           ))}
+                         </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+
+                  <div className="relative flex items-end gap-2 bg-neutral-50 dark:bg-neutral-800/50 rounded-2xl border border-neutral-200 dark:border-neutral-700 p-2 focus-within:ring-4 focus-within:ring-blue-500/10 focus-within:border-blue-500 transition-all">
+                    <textarea
+                      ref={inputRef}
+                      value={inputValue}
+                      onChange={handleInputChange}
+                      onKeyDown={handleInputKeyDown}
+                      placeholder="Type your instructions... (@ for context)"
+                      className="flex-1 bg-transparent border-0 px-3 py-2 text-sm focus:outline-none focus:ring-0 dark:text-white resize-none min-h-[44px] max-h-[160px]"
+                      rows={1}
+                    />
+                    <button 
+                      onClick={handleSendMessage}
+                      disabled={!inputValue.trim() || isChatting}
+                      className="p-2.5 bg-blue-600 text-white rounded-xl hover:bg-blue-500 disabled:opacity-50 disabled:hover:bg-blue-600 transition-all shadow-lg shadow-blue-500/20 active:scale-90 mb-0.5"
+                    >
+                      <Send className="size-4" />
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              {/* Docs Column (1/2) */}
+              <div className={`lg:flex-1 h-full min-w-0 lg:relative absolute inset-0 bg-white dark:bg-neutral-900 z-20 transition-transform duration-300 lg:translate-x-0 ${showDocsMobile ? 'translate-x-0' : 'translate-x-full lg:translate-x-0'}`}>
+                 <div className="lg:hidden absolute top-4 left-4 z-30">
+                    <button 
+                      onClick={() => setShowDocsMobile(false)}
+                      className="p-2 bg-neutral-100 dark:bg-neutral-800 rounded-full"
+                    >
+                      <ArrowLeft className="size-5" />
+                    </button>
+                 </div>
+                <RepoExplorer onAddContext={handleAddContext} repoUrl={repoUrl} />
               </div>
             </div>
           )}

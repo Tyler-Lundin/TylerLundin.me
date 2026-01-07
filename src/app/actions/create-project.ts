@@ -10,6 +10,7 @@ export interface CreateProjectResult {
   success: boolean;
   repoUrl?: string;
   repoName?: string;
+  slug?: string;
   error?: string;
 }
 
@@ -241,6 +242,7 @@ export async function createProjectAction(formData: FormData): Promise<CreatePro
       success: true,
       repoUrl,
       repoName,
+      slug,
     };
 
   } catch (err: unknown) {

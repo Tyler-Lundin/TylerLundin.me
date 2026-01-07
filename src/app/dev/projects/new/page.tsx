@@ -12,8 +12,8 @@ export default function NewProjectPage() {
   return (
     <div className="max-w-4xl mx-auto px-4 py-12">
       <header className="mb-10">
-        <h1 className="text-3xl font-bold text-white mb-2">Initialize New Project</h1>
-        <p className="text-gray-400">
+        <h1 className="text-3xl font-bold text-neutral-900 dark:text-white mb-2">Initialize New Project</h1>
+        <p className="text-neutral-500 dark:text-gray-400">
           Pick a preset, spin up a working repo and deployment, and store all identifiers.
         </p>
       </header>

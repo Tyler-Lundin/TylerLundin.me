@@ -352,6 +352,60 @@ export async function getWorkflowRuns(owner: string, repo: string, event: string
 }
 
 /**
+ * Fetches all branches for a repository.
+ */
+export async function getBranches(repoUrl: string) {
+  const parsed = parseGitHubUrl(repoUrl)
+  if (!parsed) return []
+
+  const { owner, repo } = parsed
+  const url = `${GITHUB_API_BASE}/repos/${owner}/${repo}/branches`;
+  
+  const token = process.env.GITHUB_TOKEN || process.env.GITHUB_ACCESS_TOKEN;
+  const headers: HeadersInit = {
+    'Accept': 'application/vnd.github.v3+json',
+    'User-Agent': 'TylerLundin-Portfolio-CRM'
+  }
+  if (token) headers['Authorization'] = `token ${token}`
+
+  try {
+    const res = await fetch(url, { headers, next: { revalidate: 60 } })
+    if (!res.ok) return []
+    return await res.json()
+  } catch (err) {
+    console.error(`[GitHub API] Error fetching branches:`, err)
+    return []
+  }
+}
+
+/**
+ * Fetches detailed repository information.
+ */
+export async function getRepoInfo(repoUrl: string) {
+  const parsed = parseGitHubUrl(repoUrl)
+  if (!parsed) return null
+
+  const { owner, repo } = parsed
+  const url = `${GITHUB_API_BASE}/repos/${owner}/${repo}`;
+  
+  const token = process.env.GITHUB_TOKEN || process.env.GITHUB_ACCESS_TOKEN;
+  const headers: HeadersInit = {
+    'Accept': 'application/vnd.github.v3+json',
+    'User-Agent': 'TylerLundin-Portfolio-CRM'
+  }
+  if (token) headers['Authorization'] = `token ${token}`
+
+  try {
+    const res = await fetch(url, { headers, next: { revalidate: 60 } })
+    if (!res.ok) return null
+    return await res.json()
+  } catch (err) {
+    console.error(`[GitHub API] Error fetching repo info:`, err)
+    return null
+  }
+}
+
+/**
  * Triggers a repository_dispatch event to start a workflow.
  */
 export async function triggerWorkflowDispatch({

@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { AnimatePresence, motion } from 'framer-motion';
 import LeadsCleanerClient from './LeadsCleanerClient';
 import { 
   StatsCards, 
@@ -21,7 +22,8 @@ import {
   Star,
   Loader2,
   Trash2,
-  MoreHorizontal
+  MoreHorizontal,
+  X
 } from 'lucide-react';
 
 type Lead = {
@@ -60,6 +62,14 @@ export default function DevLeadsPage() {
   const [history, setHistory] = useState<{ niche: string; location: string; runs: number; last_searched_at?: string | null; sum_deduped: number; sum_saved: number; save_rate: number }[] | null>(null)
   const [suggestions, setSuggestions] = useState<{ niche: string; location: string; reason?: string }[] | null>(null)
   const [loadingSuggest, setLoadingSuggest] = useState(false)
+  const [successToast, setSuccessToast] = useState<{ message: string; type: 'success' | 'info' } | null>(null);
+
+  useEffect(() => {
+    if (successToast) {
+      const timer = setTimeout(() => setSuccessToast(null), 4000);
+      return () => clearTimeout(timer);
+    }
+  }, [successToast]);
 
   useEffect(() => {
     let alive = true;
@@ -93,7 +103,7 @@ export default function DevLeadsPage() {
     }
   }
 
-  useEffect(() => { refreshHistory(); /* eslint-disable-next-line react-hooks/exhaustive-deps */ }, [])
+  useEffect(() => { refreshHistory(); }, [])
 
   async function runSearch() {
     setLoading(true);
@@ -116,12 +126,19 @@ export default function DevLeadsPage() {
       if (!res.ok) throw new Error(data?.error || 'Request failed');
       setOriginalCount(data.originalCount ?? null);
       setDedupedCount(data.dedupedCount ?? (Array.isArray(data.leads) ? data.leads.length : null));
-      if (dryRun && Array.isArray(data.leads)) {
-        setResults(data.leads);
+      
+      if (dryRun) {
+        if (Array.isArray(data.leads)) {
+          setResults(data.leads);
+        }
+      } else {
+        const count = data.count ?? 0;
+        setUpserted(count);
+        setSuccessToast({ message: `Direct Save: ${count} leads saved to database.`, type: 'success' });
       }
-      if (!dryRun) setUpserted(data.count ?? 0);
-    } catch (e: any) {
-      setError(e?.message || 'Unknown error');
+    } catch (e) {
+      const message = e instanceof Error ? e.message : 'Unknown error';
+      setError(message);
     } finally {
       setLoading(false);
       // Keep history/suggestions fresh after each run
@@ -175,15 +192,22 @@ export default function DevLeadsPage() {
       })
       const data = await res.json()
       if (!res.ok || data?.error) throw new Error(data?.error || 'Failed to save')
-      setUpserted(data.count ?? 0)
+      
+      const count = data.count ?? 0;
+      setUpserted(count);
+      setSuccessToast({ message: `Successfully saved ${count} selected leads.`, type: 'success' });
+      setResults([]); // Clear results after save as requested
+      setSelected(new Set());
+
       // Refresh aggregates after saving
       refreshHistory()
       try {
         const d = await fetch('/api/dev/leads/stats', { cache: 'no-store' }).then((r) => r.json())
         setStats(d)
       } catch {}
-    } catch (e: any) {
-      setError(e?.message || 'Failed to save selected')
+    } catch (e) {
+      const message = e instanceof Error ? e.message : 'Failed to save selected';
+      setError(message);
     } finally {
       setSaving(false)
     }
@@ -200,15 +224,22 @@ export default function DevLeadsPage() {
       })
       const data = await res.json()
       if (!res.ok || data?.error) throw new Error(data?.error || 'Failed to save')
-      setUpserted(data.count ?? 0)
+      
+      const count = data.count ?? 0;
+      setUpserted(count);
+      setSuccessToast({ message: `Successfully saved all ${count} leads.`, type: 'success' });
+      setResults([]); // Clear results after save as requested
+      setSelected(new Set());
+
       // Refresh aggregates after saving
       refreshHistory()
       try {
         const d = await fetch('/api/dev/leads/stats', { cache: 'no-store' }).then((r) => r.json())
         setStats(d)
       } catch {}
-    } catch (e: any) {
-      setError(e?.message || 'Failed to save all')
+    } catch (e) {
+      const message = e instanceof Error ? e.message : 'Failed to save all';
+      setError(message);
     } finally {
       setSaving(false)
     }
@@ -217,6 +248,27 @@ export default function DevLeadsPage() {
   return (
     <div className="bg-neutral-50/50 dark:bg-neutral-950/50 min-h-screen flex flex-col">
       
+      <AnimatePresence>
+        {successToast && (
+          <motion.div 
+            initial={{ opacity: 0, y: 50, scale: 0.9 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.9, y: 20 }}
+            className="fixed bottom-8 left-1/2 -translate-x-1/2 z-[2000]"
+          >
+            <div className="bg-emerald-600 text-white px-6 py-3 rounded-2xl shadow-2xl flex items-center gap-3 border border-emerald-500/50 backdrop-blur-md">
+              <div className="size-8 rounded-full bg-white/20 flex items-center justify-center">
+                <CheckSquare className="size-4" />
+              </div>
+              <span className="font-bold text-sm tracking-tight">{successToast.message}</span>
+              <button onClick={() => setSuccessToast(null)} className="ml-2 hover:opacity-70">
+                <X className="size-4" />
+              </button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* Header */}
       <div className="border-b bg-white dark:bg-neutral-900 border-neutral-200 dark:border-neutral-800 sticky top-0 z-10">
         <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
@@ -374,7 +426,7 @@ export default function DevLeadsPage() {
                   
                   <div className="overflow-x-auto custom-scrollbar">
                     <table className="w-full text-sm text-left">
-                      <thead className="text-xs text-neutral-500 uppercase bg-neutral-50 dark:bg-neutral-800/50 sticky top-16 z-10 backdrop-blur-sm">
+                      <thead className="text-xs text-neutral-500 uppercase bg-neutral-50 dark:bg-neutral-800/50 sticky top-0 z-10 backdrop-blur-sm">
                         <tr>
                           <th className="px-4 py-3 w-10">
                              <input
@@ -466,7 +518,7 @@ export default function DevLeadsPage() {
                 location: h.location,
                 meta: `${h.runs} runs • ${h.sum_saved} saved • ${(h.save_rate*100).toFixed(0)}%` + (h.last_searched_at ? ` • ${new Date(h.last_searched_at).toLocaleDateString()}` : ''),
               }))}
-              onItemClick={(h: any) => runQuick(h.niche, h.location)}
+              onItemClick={(h: { niche: string; location: string }) => runQuick(h.niche, h.location)}
               loading={!history}
               action={
                 <button
@@ -482,7 +534,7 @@ export default function DevLeadsPage() {
               title="Smart Suggestions" 
               icon={Sparkles}
               items={(suggestions || []).map((s) => ({ niche: s.niche, location: s.location, meta: s.reason }))}
-              onItemClick={(s: any) => runQuick(s.niche, s.location)}
+              onItemClick={(s: { niche: string; location: string }) => runQuick(s.niche, s.location)}
               loading={loadingSuggest}
               action={
                 <button

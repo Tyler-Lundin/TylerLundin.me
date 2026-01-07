@@ -19,6 +19,7 @@ import { getLatestCommits, GitHubCommit } from '@/lib/github'
 import AddRepoDialog from './components/AddRepoDialog'
 import EditProjectDialog from './components/EditProjectDialog'
 import HealthSettingsButton from './components/HealthSettingsButton'
+import ShortcutMenu from './components/ShortcutMenu'
 import { 
   CrmProject, 
   CrmProjectLink, 
@@ -123,6 +124,7 @@ export default async function ProjectDetailPage(props: PageProps) {
 
   return (
     <div className="min-h-screen bg-neutral-50/50 dark:bg-neutral-950">
+      <ShortcutMenu />
       <div className="max-w-6xl mx-auto px-4 sm:px-6">
         
         {/* Back Link */}
@@ -291,6 +293,8 @@ export default async function ProjectDetailPage(props: PageProps) {
   )
 }
 
+import RepoDetailModal from './components/RepoDetailModal'
+
 function RepoUpdates({ project, repoLink, commits }: { project: CrmProject, repoLink?: CrmProjectLink, commits: GitHubCommit[] }) {
   const repoUrl = repoLink?.url || null
 
@@ -301,43 +305,50 @@ function RepoUpdates({ project, repoLink, commits }: { project: CrmProject, repo
            <Github className="size-4 text-neutral-400" />
            <h2 className="font-semibold text-neutral-900 dark:text-white">Repository Feed</h2>
         </div>
-        {repoUrl && (
-          <a href={repoUrl} target="_blank" rel="noreferrer" className="text-xs font-medium text-blue-600 hover:underline dark:text-blue-400 flex items-center gap-1">
-            View on GitHub <ExternalLink className="size-3" />
-          </a>
-        )}
+        <div className="flex items-center gap-4">
+          {repoUrl && (
+            <RepoDetailModal repoUrl={repoUrl} projectName={project.title} />
+          )}
+          {repoUrl && (
+            <a href={repoUrl} target="_blank" rel="noreferrer" className="text-xs font-medium text-blue-600 hover:underline dark:text-blue-400 flex items-center gap-1">
+              View on GitHub <ExternalLink className="size-3" />
+            </a>
+          )}
+        </div>
       </div>
       <div className="relative min-h-[120px]">
         <div className={repoUrl ? '' : 'blur-[2px] select-none pointer-events-none opacity-50'}>
-          <ul className="divide-y divide-neutral-100 dark:divide-neutral-800">
-            {(commits.length > 0 ? commits : [
-              { sha: '-------', message: 'Connect a repository to see activity', author: { name: 'System', avatar_url: '' }, date: '' },
-              { sha: '-------', message: 'Feed will display latest git commits', author: { name: 'System', avatar_url: '' }, date: '' },
-            ]).map((c, idx) => (
-              <li key={idx} className="px-5 py-4 hover:bg-neutral-50 dark:hover:bg-neutral-800/50 transition-colors">
-                <div className="flex items-start gap-4">
-                   <div className="mt-1 flex size-8 shrink-0 items-center justify-center rounded-full bg-neutral-100 dark:bg-neutral-800">
-                      {c.author.avatar_url ? (
-                        // eslint-disable-next-line @next/next/no-img-element
-                        <img src={c.author.avatar_url} alt="" className="size-full rounded-full" />
-                      ) : (
-                        <GitCommit className="size-4 text-neutral-400" />
-                      )}
-                   </div>
-                   <div className="min-w-0 flex-1">
-                      <div className="flex items-center gap-2">
-                        <span className="text-xs font-bold text-neutral-900 dark:text-neutral-200">{c.author.name}</span>
-                        <span className="text-[10px] text-neutral-400 font-mono">{c.sha}</span>
-                      </div>
-                      <div className="mt-0.5 text-sm text-neutral-600 dark:text-neutral-400 line-clamp-1">{c.message}</div>
-                   </div>
-                   <div className="text-[10px] text-neutral-400 whitespace-nowrap pt-1">
-                      {c.date ? timeAgo(c.date) : ''}
-                   </div>
-                </div>
-              </li>
-            ))}
-          </ul>
+          <RepoDetailModal repoUrl={repoUrl || ''} projectName={project.title}>
+            <ul className="divide-y divide-neutral-100 dark:divide-neutral-800">
+              {(commits.length > 0 ? commits : [
+                { sha: '-------', message: 'Connect a repository to see activity', author: { name: 'System', avatar_url: '' }, date: '' },
+                { sha: '-------', message: 'Feed will display latest git commits', author: { name: 'System', avatar_url: '' }, date: '' },
+              ]).map((c, idx) => (
+                <li key={idx} className="px-5 py-4 hover:bg-neutral-50 dark:hover:bg-neutral-800/50 transition-colors">
+                  <div className="flex items-start gap-4">
+                    <div className="mt-1 flex size-8 shrink-0 items-center justify-center rounded-full bg-neutral-100 dark:bg-neutral-800">
+                        {c.author.avatar_url ? (
+                          // eslint-disable-next-line @next/next/no-img-element
+                          <img src={c.author.avatar_url} alt="" className="size-full rounded-full" />
+                        ) : (
+                          <GitCommit className="size-4 text-neutral-400" />
+                        )}
+                    </div>
+                    <div className="min-w-0 flex-1">
+                        <div className="flex items-center gap-2">
+                          <span className="text-xs font-bold text-neutral-900 dark:text-neutral-200">{c.author.name}</span>
+                          <span className="text-[10px] text-neutral-400 font-mono">{c.sha}</span>
+                        </div>
+                        <div className="mt-0.5 text-sm text-neutral-600 dark:text-neutral-400 line-clamp-1">{c.message}</div>
+                    </div>
+                    <div className="text-[10px] text-neutral-400 whitespace-nowrap pt-1">
+                        {c.date ? timeAgo(c.date) : ''}
+                    </div>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </RepoDetailModal>
         </div>
         
         {!repoUrl && (

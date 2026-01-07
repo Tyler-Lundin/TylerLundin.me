@@ -25,7 +25,7 @@ export default function BlogPreviewDrawer({ state }: { state: WizardState }) {
   return (
     <>
       {/* Toggle Button */}
-      <div className="fixed right-4 top-[88px] z-50">
+      <div className="fixed right-4 top-[88px] z-[1000]">
          <BlogPreviewToggleButton isOpen={isOpen} onToggle={() => setOpen((v) => !v)} />
       </div>
 

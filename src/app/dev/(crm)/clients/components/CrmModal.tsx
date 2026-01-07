@@ -43,7 +43,7 @@ export default function CrmModal({
   return (
     <AnimatePresence>
       {isOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-neutral-950/20 p-4 backdrop-blur-md dark:bg-black/40 sm:p-6 lg:p-8">
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center overflow-y-auto bg-neutral-950/20 p-4 backdrop-blur-md dark:bg-black/40 sm:p-6 lg:p-8">
           <motion.div 
             initial={{ opacity: 0 }} 
             animate={{ opacity: 1 }} 

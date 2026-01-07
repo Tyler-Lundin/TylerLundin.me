@@ -123,7 +123,7 @@ export default function InviteManager({ initialInvites }: { initialInvites: Invi
       </ul>
 
       {open && selected && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-[1000] flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-neutral-900/20 backdrop-blur-sm dark:bg-black/50" onClick={() => setSelected(null)} />
           <div className="relative w-full max-w-lg overflow-hidden rounded-xl border border-neutral-200 bg-white shadow-2xl dark:border-neutral-800 dark:bg-neutral-900">
             

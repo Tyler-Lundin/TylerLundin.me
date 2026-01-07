@@ -47,7 +47,7 @@ export function ProjectWizard({ templates }: ProjectWizardProps) {
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [result, setResult] = useState<{ repoUrl?: string; repoName?: string } | null>(null);
+  const [result, setResult] = useState<{ repoUrl?: string; repoName?: string; slug?: string } | null>(null);
 
   React.useEffect(() => {
     getClientsAction().then(setClients);
@@ -124,7 +124,11 @@ export function ProjectWizard({ templates }: ProjectWizardProps) {
     try {
       const res = await createProjectAction(formData);
       if (res.success) {
-        setResult({ repoUrl: res.repoUrl, repoName: res.repoName });
+        setResult({ 
+          repoUrl: res.repoUrl, 
+          repoName: res.repoName, 
+          slug: res.slug 
+        });
         setStep('success');
       } else {
         setError(res.error || 'An unknown error occurred');
@@ -139,7 +143,7 @@ export function ProjectWizard({ templates }: ProjectWizardProps) {
   }
 
   return (
-    <div className="bg-zinc-900/50 border border-zinc-800 rounded-xl overflow-hidden backdrop-blur-sm">
+    <div className="bg-white dark:bg-zinc-900/50 border border-neutral-200 dark:border-zinc-800 rounded-xl overflow-hidden backdrop-blur-sm shadow-xl dark:shadow-none">
       <AnimatePresence mode="wait">
         {step === 'template' && (
           <motion.div 
@@ -149,9 +153,9 @@ export function ProjectWizard({ templates }: ProjectWizardProps) {
             exit={{ opacity: 0, x: -20 }}
             className="p-8"
           >
-            <div className="flex items-center gap-3 mb-6 text-indigo-400">
+            <div className="flex items-center gap-3 mb-6 text-blue-600 dark:text-indigo-400">
               <Box className="w-6 h-6" />
-              <h2 className="text-xl font-semibold text-white">Choose a Template</h2>
+              <h2 className="text-xl font-semibold text-neutral-900 dark:text-white">Choose a Template</h2>
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
@@ -161,20 +165,20 @@ export function ProjectWizard({ templates }: ProjectWizardProps) {
                   onClick={() => setSelectedTemplateId(t.id)}
                   className={`flex flex-col text-left p-5 rounded-lg border transition-all ${
                     selectedTemplateId === t.id 
-                      ? 'bg-indigo-500/10 border-indigo-500 ring-1 ring-indigo-500' 
-                      : 'bg-zinc-800/50 border-zinc-700 hover:border-zinc-500'
+                      ? 'bg-blue-50 dark:bg-indigo-500/10 border-blue-500 dark:border-indigo-500 ring-1 ring-blue-500 dark:ring-indigo-500 shadow-sm' 
+                      : 'bg-neutral-50 dark:bg-zinc-800/50 border-neutral-200 dark:border-zinc-700 hover:border-blue-300 dark:hover:border-zinc-500'
                   }`}
                 >
                   <div className="flex items-center justify-between mb-2">
-                    <span className="font-bold text-white">{t.name}</span>
-                    <span className="text-xs px-2 py-0.5 rounded-full bg-zinc-700 text-gray-300 uppercase tracking-wider">
+                    <span className={`font-bold ${selectedTemplateId === t.id ? 'text-blue-700 dark:text-white' : 'text-neutral-900 dark:text-white'}`}>{t.name}</span>
+                    <span className="text-xs px-2 py-0.5 rounded-full bg-neutral-200 dark:bg-zinc-700 text-neutral-600 dark:text-gray-300 uppercase tracking-wider font-semibold">
                       {t.framework}
                     </span>
                   </div>
-                  <p className="text-sm text-gray-400 flex-grow">{t.description}</p>
+                  <p className="text-sm text-neutral-600 dark:text-gray-400 flex-grow">{t.description}</p>
                   <div className="mt-4 flex gap-2 flex-wrap">
                     {t.tags.map(tag => (
-                      <span key={tag} className="text-[10px] px-1.5 py-0.5 rounded bg-zinc-900 text-zinc-400 border border-zinc-700">
+                      <span key={tag} className="text-[10px] px-1.5 py-0.5 rounded bg-white dark:bg-zinc-900 text-neutral-500 dark:text-zinc-400 border border-neutral-200 dark:border-zinc-700">
                         #{tag}
                       </span>
                     ))}
@@ -187,7 +191,7 @@ export function ProjectWizard({ templates }: ProjectWizardProps) {
               <button
                 disabled={!selectedTemplateId}
                 onClick={() => setStep('config')}
-                className="flex items-center gap-2 bg-white text-black px-6 py-2.5 rounded-lg font-semibold hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                className="flex items-center gap-2 bg-neutral-900 dark:bg-white text-white dark:text-black px-6 py-2.5 rounded-lg font-semibold hover:bg-neutral-800 dark:hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
                 Continue
                 <ArrowRight className="w-4 h-4" />
@@ -206,29 +210,29 @@ export function ProjectWizard({ templates }: ProjectWizardProps) {
           >
             <button 
               onClick={() => setStep('template')}
-              className="flex items-center gap-1.5 text-sm text-gray-400 hover:text-white mb-6 transition-colors"
+              className="flex items-center gap-1.5 text-sm text-neutral-500 dark:text-gray-400 hover:text-neutral-900 dark:hover:text-white mb-6 transition-colors"
             >
               <ArrowLeft className="w-4 h-4" />
               Back to templates
             </button>
 
-            <div className="flex items-center gap-3 mb-6 text-indigo-400">
+            <div className="flex items-center gap-3 mb-6 text-blue-600 dark:text-indigo-400">
               <Code2 className="w-6 h-6" />
-              <h2 className="text-xl font-semibold text-white">Project Configuration</h2>
+              <h2 className="text-xl font-semibold text-neutral-900 dark:text-white">Project Configuration</h2>
             </div>
 
             <div className="space-y-6 max-w-lg mb-8">
               
               {/* Personal Project Toggle */}
-              <div className="flex items-center gap-3 bg-zinc-800/50 p-3 rounded-lg border border-zinc-700">
+              <div className="flex items-center gap-3 bg-neutral-50 dark:bg-zinc-800/50 p-3 rounded-lg border border-neutral-200 dark:border-zinc-700">
                 <input 
                   type="checkbox" 
                   id="isPersonal"
                   checked={isPersonal}
                   onChange={(e) => setIsPersonal(e.target.checked)}
-                  className="w-4 h-4 rounded border-gray-600 text-indigo-600 focus:ring-indigo-500 bg-zinc-700"
+                  className="w-4 h-4 rounded border-neutral-300 dark:border-gray-600 text-blue-600 dark:text-indigo-600 focus:ring-blue-500 dark:focus:ring-indigo-500 bg-white dark:bg-zinc-700"
                 />
-                <label htmlFor="isPersonal" className="text-sm text-gray-200 select-none cursor-pointer">
+                <label htmlFor="isPersonal" className="text-sm text-neutral-700 dark:text-gray-200 select-none cursor-pointer">
                   This is a <strong>Personal Project</strong> (no client attached)
                 </label>
               </div>
@@ -240,11 +244,11 @@ export function ProjectWizard({ templates }: ProjectWizardProps) {
                   animate={{ opacity: 1, height: 'auto' }}
                   exit={{ opacity: 0, height: 0 }}
                 >
-                  <label className="block text-sm font-medium text-gray-300 mb-1.5">Client</label>
+                  <label className="block text-sm font-medium text-neutral-700 dark:text-gray-300 mb-1.5">Client</label>
                   <select
                     value={selectedClientId}
                     onChange={(e) => setSelectedClientId(e.target.value)}
-                    className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    className="w-full bg-white dark:bg-zinc-800 border border-neutral-200 dark:border-zinc-700 rounded-lg px-4 py-2 text-neutral-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-indigo-500"
                   >
                     <option value="">Select a client...</option>
                     {clients.map(c => (
@@ -256,25 +260,25 @@ export function ProjectWizard({ templates }: ProjectWizardProps) {
 
               {/* Import Mode: Repo Picker */}
               {isImport && (
-                 <div className="bg-zinc-800/30 border border-zinc-700 rounded-lg overflow-hidden">
-                  <div className="p-3 border-b border-zinc-700 flex items-center gap-2">
-                    <Search className="w-4 h-4 text-gray-400" />
+                 <div className="bg-neutral-50 dark:bg-zinc-800/30 border border-neutral-200 dark:border-zinc-700 rounded-lg overflow-hidden">
+                  <div className="p-3 border-b border-neutral-200 dark:border-zinc-700 flex items-center gap-2 bg-white dark:bg-transparent">
+                    <Search className="w-4 h-4 text-neutral-400 dark:text-gray-400" />
                     <input 
                       type="text"
                       placeholder="Search your repositories..."
                       value={repoSearch}
                       onChange={(e) => setRepoSearch(e.target.value)}
-                      className="bg-transparent border-none outline-none text-sm text-white w-full placeholder-gray-500"
+                      className="bg-transparent border-none outline-none text-sm text-neutral-900 dark:text-white w-full placeholder-neutral-400 dark:placeholder-gray-500"
                     />
                   </div>
                   <div className="max-h-48 overflow-y-auto p-1 space-y-1">
                     {isLoadingRepos ? (
-                      <div className="flex items-center justify-center p-4 text-gray-500 gap-2">
+                      <div className="flex items-center justify-center p-4 text-neutral-400 dark:text-gray-500 gap-2">
                         <Loader2 className="w-4 h-4 animate-spin" />
                         <span className="text-xs">Loading repos...</span>
                       </div>
                     ) : filteredRepos.length === 0 ? (
-                      <div className="p-4 text-center text-xs text-gray-500">No repositories found.</div>
+                      <div className="p-4 text-center text-xs text-neutral-400 dark:text-gray-500">No repositories found.</div>
                     ) : (
                       filteredRepos.map(repo => {
                         const isSelected = repoUrlInput === repo.html_url;
@@ -287,10 +291,10 @@ export function ProjectWizard({ templates }: ProjectWizardProps) {
                             onClick={() => handleRepoSelection(repo)}
                             className={`w-full flex items-center justify-between p-2 rounded text-left text-sm transition-colors ${
                               isLinked 
-                                ? 'opacity-50 cursor-not-allowed bg-zinc-800/50' 
+                                ? 'opacity-50 cursor-not-allowed bg-neutral-100 dark:bg-zinc-800/50' 
                                 : isSelected 
-                                  ? 'bg-indigo-500/20 text-indigo-300' 
-                                  : 'hover:bg-zinc-700/50 text-gray-300'
+                                  ? 'bg-blue-100 dark:bg-indigo-500/20 text-blue-700 dark:text-indigo-300' 
+                                  : 'hover:bg-neutral-200 dark:hover:bg-zinc-700/50 text-neutral-700 dark:text-gray-300'
                             }`}
                           >
                             <div className="flex items-center gap-2 min-w-0">
@@ -298,12 +302,12 @@ export function ProjectWizard({ templates }: ProjectWizardProps) {
                               <span className="truncate">{repo.full_name}</span>
                             </div>
                             {isLinked ? (
-                              <span className="flex items-center gap-1 text-[10px] bg-zinc-800 text-zinc-400 px-1.5 py-0.5 rounded border border-zinc-700">
+                              <span className="flex items-center gap-1 text-[10px] bg-neutral-200 dark:bg-zinc-800 text-neutral-500 dark:text-zinc-400 px-1.5 py-0.5 rounded border border-neutral-300 dark:border-zinc-700">
                                 <ExternalLink className="w-3 h-3" />
                                 {repo.existingProject?.slug}
                               </span>
                             ) : isSelected && (
-                              <CheckCircle2 className="w-4 h-4 text-indigo-500" />
+                              <CheckCircle2 className="w-4 h-4 text-blue-600 dark:text-indigo-500" />
                             )}
                           </button>
                         );
@@ -311,20 +315,20 @@ export function ProjectWizard({ templates }: ProjectWizardProps) {
                     )}
                   </div>
                   {/* Manual fallback */}
-                  <div className="p-2 border-t border-zinc-700">
+                  <div className="p-2 border-t border-neutral-200 dark:border-zinc-700 bg-white dark:bg-transparent">
                     <input 
                       type="url"
                       placeholder="Or paste URL manually..."
                       value={repoUrlInput}
                       onChange={(e) => handleRepoUrlChange(e.target.value)}
-                      className="w-full bg-zinc-900 border border-zinc-700 rounded px-2 py-1.5 text-xs text-white focus:outline-none focus:border-indigo-500"
+                      className="w-full bg-neutral-50 dark:bg-zinc-900 border border-neutral-200 dark:border-zinc-700 rounded px-2 py-1.5 text-xs text-neutral-900 dark:text-white focus:outline-none focus:border-blue-500 dark:focus:border-indigo-500"
                     />
                   </div>
                 </div>
               )}
 
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-1.5">
+                <label className="block text-sm font-medium text-neutral-700 dark:text-gray-300 mb-1.5">
                   {isImport ? 'Project Name (Internal)' : 'Project Name'}
                 </label>
                 <input 
@@ -332,24 +336,24 @@ export function ProjectWizard({ templates }: ProjectWizardProps) {
                   placeholder="e.g., my-awesome-saas"
                   value={projectName}
                   onChange={(e) => setProjectName(e.target.value)}
-                  className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  className="w-full bg-white dark:bg-zinc-800 border border-neutral-200 dark:border-zinc-700 rounded-lg px-4 py-2 text-neutral-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-indigo-500"
                 />
-                {!isImport && <p className="text-xs text-gray-500 mt-1">This will be the repository name on GitHub.</p>}
+                {!isImport && <p className="text-xs text-neutral-500 dark:text-gray-500 mt-1">This will be the repository name on GitHub.</p>}
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-1.5">Description (Optional)</label>
+                <label className="block text-sm font-medium text-neutral-700 dark:text-gray-300 mb-1.5">Description (Optional)</label>
                 <textarea 
                   rows={3}
                   placeholder="Briefly describe what this project is about..."
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
-                  className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  className="w-full bg-white dark:bg-zinc-800 border border-neutral-200 dark:border-zinc-700 rounded-lg px-4 py-2 text-neutral-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-indigo-500"
                 />
               </div>
 
               {error && (
-                <div className="flex items-center gap-2 text-red-400 bg-red-400/10 p-4 rounded-lg border border-red-400/20">
+                <div className="flex items-center gap-2 text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-400/10 p-4 rounded-lg border border-red-200 dark:border-red-400/20">
                   <AlertCircle className="w-5 h-5 flex-shrink-0" />
                   <p className="text-sm">{error}</p>
                 </div>
@@ -360,7 +364,7 @@ export function ProjectWizard({ templates }: ProjectWizardProps) {
               <button
                 disabled={!projectName || (!isPersonal && !selectedClientId) || (isImport && !repoUrlInput) || isSubmitting}
                 onClick={handleCreate}
-                className="flex items-center gap-2 bg-indigo-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                className="flex items-center gap-2 bg-blue-600 dark:bg-indigo-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-blue-500 dark:hover:bg-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors shadow-lg shadow-blue-500/20"
               >
                 {isSubmitting ? (
                   <>
@@ -386,28 +390,28 @@ export function ProjectWizard({ templates }: ProjectWizardProps) {
             className="p-16 flex flex-col items-center text-center"
           >
             <div className="relative mb-8">
-              <div className="absolute inset-0 bg-indigo-500/20 blur-3xl rounded-full" />
-              <div className="relative bg-zinc-800 p-6 rounded-2xl border border-zinc-700">
-                <Loader2 className="w-12 h-12 text-indigo-500 animate-spin" />
+              <div className="absolute inset-0 bg-blue-500/20 blur-3xl rounded-full" />
+              <div className="relative bg-white dark:bg-zinc-800 p-6 rounded-2xl border border-neutral-200 dark:border-zinc-700 shadow-xl">
+                <Loader2 className="w-12 h-12 text-blue-600 dark:text-indigo-500 animate-spin" />
               </div>
             </div>
             
-            <h2 className="text-2xl font-bold text-white mb-2">Executing Pipeline</h2>
-            <p className="text-gray-400 max-w-sm">
+            <h2 className="text-2xl font-bold text-neutral-900 dark:text-white mb-2">Executing Pipeline</h2>
+            <p className="text-neutral-500 dark:text-gray-400 max-w-sm">
               We're creating your repository from <strong>{selectedTemplate?.name}</strong> and setting up the initial environment.
             </p>
 
             <div className="mt-10 w-full max-w-xs space-y-4">
-              <div className="flex items-center gap-3 text-sm text-gray-300">
-                <div className="w-2 h-2 rounded-full bg-indigo-500 animate-pulse" />
+              <div className="flex items-center gap-3 text-sm text-neutral-600 dark:text-gray-300 font-medium">
+                <div className="w-2 h-2 rounded-full bg-blue-500 dark:bg-indigo-500 animate-pulse" />
                 Creating GitHub Repository
               </div>
-              <div className="flex items-center gap-3 text-sm text-gray-500">
-                <div className="w-2 h-2 rounded-full bg-zinc-700" />
+              <div className="flex items-center gap-3 text-sm text-neutral-400 dark:text-gray-500">
+                <div className="w-2 h-2 rounded-full bg-neutral-200 dark:bg-zinc-700" />
                 Pushing initial commit (template)
               </div>
-              <div className="flex items-center gap-3 text-sm text-gray-500">
-                <div className="w-2 h-2 rounded-full bg-zinc-700" />
+              <div className="flex items-center gap-3 text-sm text-neutral-400 dark:text-gray-500">
+                <div className="w-2 h-2 rounded-full bg-neutral-200 dark:bg-zinc-700" />
                 Connecting to Vercel (Coming soon)
               </div>
             </div>
@@ -421,12 +425,12 @@ export function ProjectWizard({ templates }: ProjectWizardProps) {
             animate={{ opacity: 1, y: 0 }}
             className="p-12 text-center"
           >
-            <div className="inline-flex p-4 rounded-full bg-green-500/10 text-green-500 mb-6 border border-green-500/20">
+            <div className="inline-flex p-4 rounded-full bg-green-50 dark:bg-green-500/10 text-green-600 dark:text-green-500 mb-6 border border-green-200 dark:border-green-500/20">
               <CheckCircle2 className="w-10 h-10" />
             </div>
             
-            <h2 className="text-3xl font-bold text-white mb-2">Project Ready!</h2>
-            <p className="text-gray-400 mb-8 max-w-md mx-auto">
+            <h2 className="text-3xl font-bold text-neutral-900 dark:text-white mb-2">Project Ready!</h2>
+            <p className="text-neutral-500 dark:text-gray-400 mb-8 max-w-md mx-auto">
               Your new project <strong>{projectName}</strong> has been initialized successfully.
             </p>
 
@@ -435,32 +439,32 @@ export function ProjectWizard({ templates }: ProjectWizardProps) {
                 href={result?.repoUrl} 
                 target="_blank" 
                 rel="noreferrer"
-                className="flex items-center justify-between p-4 bg-zinc-800 hover:bg-zinc-750 border border-zinc-700 rounded-xl transition-colors group"
+                className="flex items-center justify-between p-4 bg-white dark:bg-zinc-800 hover:bg-neutral-50 dark:hover:bg-zinc-750 border border-neutral-200 dark:border-zinc-700 rounded-xl transition-colors group shadow-sm"
               >
                 <div className="flex items-center gap-3">
-                  <Github className="w-5 h-5 text-gray-400 group-hover:text-white" />
+                  <Github className="w-5 h-5 text-neutral-400 dark:text-gray-400 group-hover:text-neutral-900 dark:group-hover:text-white" />
                   <div className="text-left">
-                    <div className="text-sm font-semibold text-white">GitHub Repo</div>
-                    <div className="text-xs text-gray-500">{result?.repoName}</div>
+                    <div className="text-sm font-semibold text-neutral-900 dark:text-white">GitHub Repo</div>
+                    <div className="text-xs text-neutral-500 dark:text-gray-500">{result?.repoName}</div>
                   </div>
                 </div>
-                <ArrowRight className="w-4 h-4 text-gray-600 group-hover:text-white" />
+                <ArrowRight className="w-4 h-4 text-neutral-300 dark:text-gray-600 group-hover:text-neutral-900 dark:group-hover:text-white" />
               </a>
 
-              <div className="flex items-center justify-between p-4 bg-zinc-800/50 border border-zinc-700 rounded-xl grayscale opacity-50 cursor-not-allowed">
+              <div className="flex items-center justify-between p-4 bg-neutral-50 dark:bg-zinc-800/50 border border-neutral-200 dark:border-zinc-700 rounded-xl grayscale opacity-50 cursor-not-allowed shadow-sm">
                 <div className="flex items-center gap-3">
-                  <Globe className="w-5 h-5 text-gray-400" />
+                  <Globe className="w-5 h-5 text-neutral-400 dark:text-gray-400" />
                   <div className="text-left">
-                    <div className="text-sm font-semibold text-white">Live Preview</div>
-                    <div className="text-xs text-gray-500">Deployment pending...</div>
+                    <div className="text-sm font-semibold text-neutral-900 dark:text-white">Live Preview</div>
+                    <div className="text-xs text-neutral-500 dark:text-gray-500">Deployment pending...</div>
                   </div>
                 </div>
               </div>
             </div>
 
             <button 
-              onClick={() => window.location.href = `/dev/projects/${projectName}`}
-              className="inline-flex items-center gap-2 bg-white text-black px-8 py-3 rounded-lg font-bold hover:bg-gray-200 transition-colors"
+              onClick={() => window.location.href = `/dev/projects/${result?.slug}`}
+              className="inline-flex items-center gap-2 bg-neutral-900 dark:bg-white text-white dark:text-black px-8 py-3 rounded-lg font-bold hover:bg-neutral-800 dark:hover:bg-gray-200 transition-colors shadow-lg"
             >
               Go to Project Dashboard
               <ArrowRight className="w-5 h-5" />

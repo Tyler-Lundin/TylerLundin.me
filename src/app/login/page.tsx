@@ -64,8 +64,8 @@ function LoginForm() {
   }
 
   return (
-    <div className="min-h-screen pt-24 flex items-center justify-center bg-gradient-to-br from-indigo-200 dark:from-indigo-900 via-white dark:via-gray-900 to-indigo-200 dark:to-indigo-900 animate-gradient-slow p-6">
-      <div className="w-full max-w-lg text-center space-y-12">
+    <div className="min-h-screen max-w-7xl max-w-full grid place-content-center animate-gradient-slow bg-gradient-to-br via-white dark:via-gray-900 to-indigo-200 dark:to-indigo-900 from-indigo-200 dark:from-indigo-900 overflow-x-hidden backdrop-blur-sm mx-2 md:mx-4  border border-black/10 dark:border-white/10 rounded-lg my-4 min-h-fit z-10 text-black dark:text-white ">
+      <div className="w-full max-w-lg text-center space-y-12 ">
         <div className="space-y-4">
           <h1 className="text-5xl font-extrabold text-gray-900 drop-shadow-lg dark:text-white">
             ENTER THE HAVEN

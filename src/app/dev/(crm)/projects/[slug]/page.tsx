@@ -6,6 +6,8 @@ import HealthRunner from '@/components/dev/health/HealthRunner'
 import HealthHistory from '@/components/dev/health/HealthHistory'
 import HealthTabs from '@/components/dev/health/HealthTabs'
 import React from 'react'
+import ProjectTasks from '@/components/dev/crm/ProjectTasks'
+import { getProjectAiTasksAction } from '@/app/dev/actions/ai-tasks'
 import ProjectMessages from '@/components/dev/crm/ProjectMessages'
 import ProjectLists, { ProjectList as UIProjectList } from '@/components/dev/crm/ProjectLists'
 import ProjectBilling, { Invoice as BillingInvoice } from '@/components/dev/crm/ProjectBilling'
@@ -26,6 +28,8 @@ import {
   Invoice 
 } from '@/types/crm'
 import { slugify } from '@/lib/utils'
+
+export const revalidate = 0;
 
 // Align with app route typing where params is a Promise
 type PageProps = { params: Promise<{ slug: string }> }
@@ -65,6 +69,9 @@ export default async function ProjectDetailPage(props: PageProps) {
   if (pError || !project) {
     return notFound()
   }
+
+  // Fetch AI Tasks
+  const aiTasks = await getProjectAiTasksAction(project.id)
 
   // 2. Parallel Fetch: Links, Lists, Invoices, Messages, Docs
   const [
@@ -154,6 +161,11 @@ export default async function ProjectDetailPage(props: PageProps) {
 
         {/* Repository updates */}
         <RepoUpdates project={typedProject} repoLink={repoLink} commits={commits} />
+
+        {/* AI Tasks */}
+        <div className="mt-6">
+          <ProjectTasks projectId={typedProject.id} tasks={aiTasks} repoUrl={repoLink?.url} />
+        </div>
 
         {/* Health terminal (dev-only UI) */}
         <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-3">

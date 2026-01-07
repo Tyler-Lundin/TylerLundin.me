@@ -11,11 +11,21 @@ function timeAgo(dateStr: string) {
 
 export default async function CommandCenter() {
   const sb = await createServiceClient()
-  // Fetch projects and open item counts using service role to bypass RLS for dashboard
-  const [ { data: rawProjects }, { data: rawLists }, { data: rawOpenItems } ] = await Promise.all([
+  // Fetch projects, open item counts, leads, messages, and quotes
+  const [ 
+    { data: rawProjects }, 
+    { data: rawLists }, 
+    { data: rawOpenItems },
+    { data: rawLeads },
+    { data: rawMessages },
+    { data: rawQuotes }
+  ] = await Promise.all([
     sb.from('crm_projects').select('id, title, status, created_at, client:crm_clients(name)').order('created_at', { ascending: false }),
     sb.from('crm_project_lists').select('id, project_id'),
-    sb.from('crm_project_list_items').select('list_id, status').neq('status', 'done')
+    sb.from('crm_project_list_items').select('list_id, status').neq('status', 'done'),
+    sb.from('leads').select('id, name, domain, status, created_at').order('created_at', { ascending: false }).limit(10),
+    sb.from('contact_submissions').select('id, name, message, status, created_at').order('created_at', { ascending: false }).limit(10),
+    sb.from('quote_requests').select('id, contact_name, project_summary, status, budget_min, budget_max, created_at').order('created_at', { ascending: false }).limit(10)
   ])
 
   const tasksCountByProject = new Map<string, number>()
@@ -39,6 +49,41 @@ export default async function CommandCenter() {
     lastActivity: timeAgo(p.created_at)
   }))
 
-  return <CommandCenterController initialProjects={initialProjects} />
+  const initialLeads = (rawLeads || []).map((l: any) => ({
+    id: l.id,
+    name: l.name || l.domain || 'Unknown Lead',
+    status: l.status || 'new',
+    created_at: l.created_at
+  }))
+
+  const messages = (rawMessages || []).map((m: any) => ({
+    id: m.id,
+    type: 'message' as const,
+    name: m.name,
+    detail: m.message,
+    status: m.status || 'new',
+    created_at: m.created_at
+  }))
+
+  const quotes = (rawQuotes || []).map((q: any) => ({
+    id: q.id,
+    type: 'quote' as const,
+    name: q.contact_name,
+    detail: q.project_summary,
+    status: q.status || 'new',
+    amount: q.budget_max ? `$${q.budget_min} - $${q.budget_max}` : (q.budget_min ? `$${q.budget_min}+` : 'TBD'),
+    created_at: q.created_at
+  }))
+
+  // Combine and sort by newest first
+  const initialInbound = [...messages, ...quotes].sort((a, b) => 
+    new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+  ).slice(0, 15)
+
+  return <CommandCenterController 
+    initialProjects={initialProjects} 
+    initialLeads={initialLeads}
+    initialInbound={initialInbound}
+  />
 }
 

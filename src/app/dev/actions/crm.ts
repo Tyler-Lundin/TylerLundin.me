@@ -345,9 +345,22 @@ async function _updateProjectAction(_prev: any, formData: FormData) {
   return { success: true }
 }
 
+async function _deleteProjectAction(_prev: any, formData: FormData) {
+  const id = formData.get('id')
+  if (!id || typeof id !== 'string') return { error: 'Invalid ID' }
+
+  const sb = await createServiceClient()
+  const { error } = await sb.from('crm_projects').delete().eq('id', id)
+  if (error) return { error: error.message }
+
+  revalidatePath('/dev/projects', 'layout')
+  return { success: true }
+}
+
 export const createClientAction = withAuditAction('crm.client.create', _createClientAction)
 export const updateClientAction = withAuditAction('crm.client.update', _updateClientAction)
 export const createProjectAction = withAuditAction('crm.project.create', _createProjectAction)
+export const deleteProjectAction = withAuditAction('crm.project.delete', _deleteProjectAction)
 export const createContactAction = withAuditAction('crm.contact.create', _createContactAction)
 export const addProjectLinkAction = withAuditAction('crm.project.link.add', _addProjectLinkAction)
 export const createProjectMessageAction = withAuditAction('crm.project.message.create', _createProjectMessageAction)

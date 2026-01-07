@@ -46,8 +46,8 @@ export async function POST(request: Request) {
     }
 
     const role = user.role || 'member'
-    // Access token 15m
-    const accessExpSec = Math.floor(Date.now() / 1000) + 15 * 60
+    // Access token 1h
+    const accessExpSec = Math.floor(Date.now() / 1000) + 60 * 60
     const accessToken = jwt.sign({ sub: user.id, email: user.email, role, exp: accessExpSec }, JWT_SECRET)
     // Refresh token 30d (random, stored hashed)
     const rt = crypto.randomBytes(32).toString('base64url')
@@ -57,7 +57,7 @@ export async function POST(request: Request) {
     const ip = ((request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip') || '') as string).split(',')[0]?.trim() || null
     await sb.from('auth_refresh_tokens').insert({ user_id: user.id, token_hash: rtHash, expires_at: rtExp.toISOString(), user_agent: ua, ip })
     const response = NextResponse.json({ success: true, code: 'success', message: 'Authentication successful', role })
-    response.cookies.set({ name: ACCESS_COOKIE, value: accessToken, httpOnly: true, secure: process.env.NODE_ENV === 'production', sameSite: 'strict', path: '/', maxAge: 15 * 60 })
+    response.cookies.set({ name: ACCESS_COOKIE, value: accessToken, httpOnly: true, secure: process.env.NODE_ENV === 'production', sameSite: 'strict', path: '/', maxAge: 60 * 60 })
     response.cookies.set({ name: REFRESH_COOKIE, value: rt, httpOnly: true, secure: process.env.NODE_ENV === 'production', sameSite: 'strict', path: '/', maxAge: 30 * 24 * 60 * 60 })
     return response
   } catch (e: any) {

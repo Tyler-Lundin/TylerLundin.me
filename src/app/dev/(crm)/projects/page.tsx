@@ -1,37 +1,8 @@
 import Link from 'next/link'
 import { createServiceClient } from '@/lib/supabase/server'
-import { Search, Plus, Folder, Calendar } from 'lucide-react'
+import { Search, Plus } from 'lucide-react'
 import { CrmProject } from '@/types/crm'
-import { slugify } from '@/lib/utils'
-
-function StatusBadge({ value }: { value: string }) {
-  const styles: Record<string, string> = {
-    planned:    'bg-neutral-100 text-neutral-600 dark:bg-neutral-800 dark:text-neutral-400 border-neutral-200 dark:border-neutral-700',
-    in_progress: 'bg-blue-50 text-blue-700 dark:bg-blue-900/20 dark:text-blue-300 border-blue-200 dark:border-blue-800',
-    paused:     'bg-amber-50 text-amber-700 dark:bg-amber-900/20 dark:text-amber-300 border-amber-200 dark:border-amber-800',
-    completed:  'bg-emerald-50 text-emerald-700 dark:bg-emerald-900/20 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800',
-    archived:   'bg-neutral-100 text-neutral-500 dark:bg-neutral-800 dark:text-neutral-500 border-neutral-200 dark:border-neutral-700',
-  }
-  const style = styles[value] || styles.planned
-
-  return (
-    <span className={`inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium border capitalize ${style}`}>
-      {value.replace('_', ' ')}
-    </span>
-  )
-}
-
-function PriorityPill({ value }: { value: string }) {
-  const styles: Record<string, string> = {
-    low:    'text-neutral-500',
-    normal: 'text-neutral-700 dark:text-neutral-300',
-    high:   'text-amber-600 dark:text-amber-400 font-medium',
-    urgent: 'text-rose-600 dark:text-rose-400 font-bold',
-  }
-  const style = styles[value] || styles.normal
-
-  return <span className={`text-xs capitalize ${style}`}>{value}</span>
-}
+import ProjectsTable from './ProjectsTable'
 
 export default async function CrmProjectsPage() {
   const sb = await createServiceClient()
@@ -62,10 +33,10 @@ export default async function CrmProjectsPage() {
               />
             </div>
             {/* Future: Add Project Wizard from projects index */}
-            <button className="flex h-10 items-center gap-2 rounded-lg bg-neutral-900 px-4 text-sm font-medium text-white transition hover:bg-neutral-800 disabled:opacity-60 dark:bg-white dark:text-neutral-900 dark:hover:bg-neutral-200">
+            <Link href="/dev/projects/new" className="flex h-10 items-center gap-2 rounded-lg bg-neutral-900 px-4 text-sm font-medium text-white transition hover:bg-neutral-800 disabled:opacity-60 dark:bg-white dark:text-neutral-900 dark:hover:bg-neutral-200">
               <Plus className="h-4 w-4" />
               <span className="hidden sm:inline">New Project</span>
-            </button>
+            </Link>
           </div>
         </div>
 
@@ -74,57 +45,7 @@ export default async function CrmProjectsPage() {
           <div className="border-b border-neutral-100 bg-neutral-50/50 px-6 py-4 dark:border-neutral-800 dark:bg-neutral-900/50">
              <h3 className="text-sm font-semibold text-neutral-900 dark:text-white">All Projects</h3>
           </div>
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-sm">
-              <thead className="bg-neutral-50 text-neutral-500 dark:bg-neutral-900 dark:text-neutral-400">
-                <tr>
-                  <th className="px-6 py-3 font-medium">Title</th>
-                  <th className="px-6 py-3 font-medium">Client</th>
-                  <th className="px-6 py-3 font-medium">Status</th>
-                  <th className="px-6 py-3 font-medium">Priority</th>
-                  <th className="px-6 py-3 font-medium text-right">Created</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-neutral-100 dark:divide-neutral-800">
-                {projectsList.map((p) => (
-                  <tr key={p.id} className="group transition-colors hover:bg-neutral-50 dark:hover:bg-neutral-800/50">
-                    <td className="px-6 py-4">
-                      <div className="flex items-center gap-3">
-                        <div className="flex h-8 w-8 items-center justify-center rounded bg-neutral-100 text-neutral-500 dark:bg-neutral-800 dark:text-neutral-400">
-                          <Folder className="size-4" />
-                        </div>
-                        <Link className="font-medium text-neutral-900 hover:underline dark:text-white" href={`/dev/projects/${p.slug}`}>
-                          {p.title}
-                        </Link>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4">
-                      <Link className="text-neutral-600 hover:text-neutral-900 hover:underline dark:text-neutral-300 dark:hover:text-white" href={`/dev/clients/${slugify(p.client?.name || '')}`}>
-                        {p.client?.name || 'Unknown'}
-                      </Link>
-                    </td>
-                    <td className="px-6 py-4">
-                      <StatusBadge value={p.status} />
-                    </td>
-                    <td className="px-6 py-4">
-                      <PriorityPill value={p.priority} />
-                    </td>
-                    <td className="px-6 py-4 text-right text-xs text-neutral-500 tabular-nums">
-                      <div className="flex items-center justify-end gap-1.5">
-                        <Calendar className="h-3 w-3" />
-                        {new Date(p.created_at).toLocaleDateString()}
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-                {projectsList.length === 0 && (
-                  <tr>
-                    <td colSpan={5} className="p-8 text-center text-neutral-500">No projects found.</td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
-          </div>
+          <ProjectsTable initialProjects={projectsList} />
         </div>
       </div>
     </div>

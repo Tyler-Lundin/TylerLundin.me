@@ -40,11 +40,11 @@ export async function POST(req: NextRequest) {
     await sb.from('auth_refresh_tokens').update({ revoked_at: new Date().toISOString() }).eq('id', row.id)
     await sb.from('auth_refresh_tokens').insert({ user_id: row.user_id, token_hash: newHash, expires_at: rtExp.toISOString(), user_agent: ua, ip })
 
-    // Issue new access token (15 minutes)
-    const accessExpSec = Math.floor(Date.now() / 1000) + 15 * 60
+    // Issue new access token (1 hour)
+    const accessExpSec = Math.floor(Date.now() / 1000) + 60 * 60
     const accessToken = jwt.sign({ sub: row.user_id, role: user?.role || 'member', exp: accessExpSec }, JWT_SECRET)
     const res = NextResponse.json({ ok: true })
-    res.cookies.set({ name: ACCESS_COOKIE, value: accessToken, httpOnly: true, sameSite: 'strict', secure: process.env.NODE_ENV === 'production', path: '/', maxAge: 15 * 60 })
+    res.cookies.set({ name: ACCESS_COOKIE, value: accessToken, httpOnly: true, sameSite: 'strict', secure: process.env.NODE_ENV === 'production', path: '/', maxAge: 60 * 60 })
     res.cookies.set({ name: REFRESH_COOKIE, value: newRt, httpOnly: true, sameSite: 'strict', secure: process.env.NODE_ENV === 'production', path: '/', maxAge: 30 * 24 * 60 * 60 })
     return res
   } catch (e: any) {

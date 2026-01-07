@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Menu, X, Copy, Check, Home as HomeIcon, Users, Folder, Layers, MessageSquareText, Newspaper, Settings, MapPin, BarChart3, Loader2 } from 'lucide-react'
+import { Menu, X, Copy, Check, Home as HomeIcon, Users, Folder, Layers, MessageSquareText, Rocket, Newspaper, Settings, MapPin, BarChart3, Loader2 } from 'lucide-react'
 import { useEffect, useRef, useState, useMemo } from 'react'
 import { useRouter, usePathname as useCurrentPathname } from 'next/navigation'
 
@@ -116,6 +116,7 @@ function MenuOverlay({ onClose, pathname, base, triggerRef }: { onClose: () => v
       { key: 'groups', label: 'Groups', href: `${b}/groups`, icon: Layers, desc: 'Organize prospects' },
       { key: 'messages', label: 'Messages', href: `${b}/msgs`, icon: MessageSquareText, desc: 'Inbox & outreach' },
       { key: 'team', label: 'Team', href: `/dev/team`, icon: Settings, desc: 'Invites & roles' },
+      { key: 'new-project', label: 'New Project', href: `/dev/projects/new`, icon: Rocket, desc: 'Spin up a repo' },
       { key: 'projects', label: 'Projects', href: `/dev/projects`, icon: Folder, desc: 'Workspaces & artifacts' },
       { key: 'clients', label: 'Clients', href: `/dev/clients`, icon: Users, desc: 'Organizations & contacts' },
     ]

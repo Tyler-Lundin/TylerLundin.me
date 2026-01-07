@@ -102,6 +102,34 @@ export type Database = {
           }
         ]
       }
+      crm_client_users: {
+        Row: {
+          client_id: string
+          user_id: string
+          role: Database["public"]["Enums"]["crm_client_user_role"]
+          created_at: string
+        }
+        Insert: {
+          client_id: string
+          user_id: string
+          role?: Database["public"]["Enums"]["crm_client_user_role"]
+          created_at?: string
+        }
+        Update: {
+          client_id?: string
+          user_id?: string
+          role?: Database["public"]["Enums"]["crm_client_user_role"]
+          created_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "crm_client_users_client_id_fkey"
+            columns: ["client_id"]
+            referencedRelation: "crm_clients"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
       crm_projects: {
         Row: {
           id: string
@@ -384,6 +412,72 @@ export type Database = {
         ]
       }
 
+      // --- CRM: AI Tasks ---
+      crm_ai_tasks: {
+        Row: {
+          id: string
+          project_id: string
+          template_id: string | null
+          title: string
+          description: string | null
+          status: Database["public"]["Enums"]["crm_ai_task_status"]
+          inputs: Json | null
+          branch_name: string | null
+          pr_url: string | null
+          run_id: string | null
+          logs: Json | null
+          created_by: string
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          project_id: string
+          template_id?: string | null
+          title: string
+          description?: string | null
+          status?: Database["public"]["Enums"]["crm_ai_task_status"]
+          inputs?: Json | null
+          branch_name?: string | null
+          pr_url?: string | null
+          run_id?: string | null
+          logs?: Json | null
+          created_by: string
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          project_id?: string
+          template_id?: string | null
+          title?: string
+          description?: string | null
+          status?: Database["public"]["Enums"]["crm_ai_task_status"]
+          inputs?: Json | null
+          branch_name?: string | null
+          pr_url?: string | null
+          run_id?: string | null
+          logs?: Json | null
+          created_by?: string
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "crm_ai_tasks_project_id_fkey"
+            columns: ["project_id"]
+            referencedRelation: "crm_projects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "crm_ai_tasks_created_by_fkey"
+            columns: ["created_by"]
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+
       // --- CRM: Team & Activity ---
       crm_profiles: {
         Row: {
@@ -597,6 +691,12 @@ export type Database = {
           message: string
           name: string
           status: string | null
+          phone: string | null
+          subject: string | null
+          source: string | null
+          handled_at: string | null
+          handled_by: string | null
+          updated_at: string | null
         }
         Insert: {
           budget?: string | null
@@ -606,6 +706,12 @@ export type Database = {
           message: string
           name: string
           status?: string | null
+          phone?: string | null
+          subject?: string | null
+          source?: string | null
+          handled_at?: string | null
+          handled_by?: string | null
+          updated_at?: string | null
         }
         Update: {
           budget?: string | null
@@ -615,6 +721,75 @@ export type Database = {
           message?: string
           name?: string
           status?: string | null
+          phone?: string | null
+          subject?: string | null
+          source?: string | null
+          handled_at?: string | null
+          handled_by?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      quote_requests: {
+        Row: {
+          id: string
+          contact_name: string
+          contact_email: string
+          company: string | null
+          phone: string | null
+          project_summary: string
+          scope: Json | null
+          budget_min: number | null
+          budget_max: number | null
+          currency: string | null
+          timeline: string | null
+          priority: string | null
+          status: string | null
+          source: string | null
+          tags: string[] | null
+          internal_notes: string | null
+          created_at: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          id?: string
+          contact_name: string
+          contact_email: string
+          company?: string | null
+          phone?: string | null
+          project_summary: string
+          scope?: Json | null
+          budget_min?: number | null
+          budget_max?: number | null
+          currency?: string | null
+          timeline?: string | null
+          priority?: string | null
+          status?: string | null
+          source?: string | null
+          tags?: string[] | null
+          internal_notes?: string | null
+          created_at?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          id?: string
+          contact_name?: string
+          contact_email?: string
+          company?: string | null
+          phone?: string | null
+          project_summary?: string
+          scope?: Json | null
+          budget_min?: number | null
+          budget_max?: number | null
+          currency?: string | null
+          timeline?: string | null
+          priority?: string | null
+          status?: string | null
+          source?: string | null
+          tags?: string[] | null
+          internal_notes?: string | null
+          created_at?: string | null
+          updated_at?: string | null
         }
         Relationships: []
       }
@@ -1087,7 +1262,9 @@ export type Database = {
       }
     }
     Enums: {
+      crm_client_user_role: "owner" | "stakeholder" | "viewer"
       crm_health_status: "ok" | "warn" | "error" | "pending"
+      crm_ai_task_status: "queued" | "running" | "review" | "success" | "failed"
       // --- CRM Enums ---
       crm_project_status: "planned" | "in_progress" | "paused" | "completed" | "archived"
       crm_priority: "low" | "normal" | "high" | "urgent"
@@ -1224,7 +1401,9 @@ export const Constants = {
   },
   public: {
     Enums: {
+      crm_client_user_role: ["owner", "stakeholder", "viewer"],
       crm_health_status: ["ok", "warn", "error", "pending"],
+      crm_ai_task_status: ["queued", "running", "review", "success", "failed"],
       crm_project_status: [
         "planned",
         "in_progress",

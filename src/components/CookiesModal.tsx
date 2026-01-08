@@ -79,7 +79,7 @@ export default function CookiesModal({ isOpen, onClose }: CookiesModalProps) {
                 </div>
                 <div>
                   <h2 className="text-2xl font-bold text-neutral-900 dark:text-white">Cookie Preferences</h2>
-                  <p className="text-neutral-500 dark:text-neutral-400 text-sm">We use cookies to enhance your experience.</p>
+                  <p className="text-neutral-500 dark:text-neutral-400 text-sm">I use cookies to enhance your experience.</p>
                 </div>
               </div>
 
@@ -104,7 +104,7 @@ export default function CookiesModal({ isOpen, onClose }: CookiesModalProps) {
                     className={`h-6 w-11 rounded-full transition-colors relative ${consent.analytics ? 'bg-blue-600' : 'bg-neutral-300 dark:bg-neutral-700'}`}
                   >
                     <motion.div
-                      animate={{ x: consent.analytics ? 22 : 4 }}
+                      animate={{ x: consent.analytics ? 30 : 4 }}
                       className="absolute top-1 h-4 w-4 rounded-full bg-white shadow-sm"
                     />
                   </button>
@@ -120,7 +120,7 @@ export default function CookiesModal({ isOpen, onClose }: CookiesModalProps) {
                     className={`h-6 w-11 rounded-full transition-colors relative ${consent.marketing ? 'bg-blue-600' : 'bg-neutral-300 dark:bg-neutral-700'}`}
                   >
                     <motion.div
-                      animate={{ x: consent.marketing ? 22 : 4 }}
+                      animate={{ x: consent.marketing ? 30 : 4 }}
                       className="absolute top-1 h-4 w-4 rounded-full bg-white shadow-sm"
                     />
                   </button>

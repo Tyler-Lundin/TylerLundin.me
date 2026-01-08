@@ -135,6 +135,10 @@ Tyler`
       })
 
       if (!res.ok) throw new Error('Failed to send message')
+      
+      // Refresh activity feed
+      window.dispatchEvent(new Event('lead-activity-refresh'));
+      
       setStep('success')
     } catch (e: any) {
       setError(e.message)

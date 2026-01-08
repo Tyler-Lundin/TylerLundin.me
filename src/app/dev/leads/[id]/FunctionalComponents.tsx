@@ -97,15 +97,21 @@ export function RealLeadActivity({ leadId }: { leadId: string }) {
   const [events, setEvents] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
 
-  useEffect(() => {
-    // We can use the existing leads/stats or similar if we have an activity route
-    // For now let's assume we fetch from a new endpoint or just query lead_events
+  const fetchActivity = () => {
     fetch(`/api/dev/leads/${leadId}/activity`)
       .then(res => res.json())
       .then(data => {
         setEvents(data.items || [])
         setLoading(false)
       })
+  }
+
+  useEffect(() => {
+    fetchActivity()
+    
+    const handleRefresh = () => fetchActivity()
+    window.addEventListener('lead-activity-refresh', handleRefresh)
+    return () => window.removeEventListener('lead-activity-refresh', handleRefresh)
   }, [leadId])
 
   if (loading) return <div className="p-4 flex justify-center"><Loader2 className="animate-spin" /></div>
@@ -129,7 +135,18 @@ export function RealLeadActivity({ leadId }: { leadId: string }) {
               />
               <p className="text-sm font-semibold text-neutral-900 dark:text-white capitalize">
                 {e.type.replace(/_/g, ' ')}
+                {e.type === 'outreach_sent' && e.payload?.channel && (
+                  <span className="ml-2 text-[10px] px-1.5 py-0.5 rounded bg-neutral-100 dark:bg-neutral-800 text-neutral-500 lowercase font-normal">
+                    via {e.payload.channel}
+                  </span>
+                )}
               </p>
+              {e.type === 'outreach_sent' && e.payload?.to && (
+                <p className="text-[10px] text-neutral-400 font-medium">To: {e.payload.to}</p>
+              )}
+              {e.type === 'outreach_sent' && e.payload?.subject && (
+                <p className="text-xs text-neutral-600 dark:text-neutral-400 mt-1 italic">"{e.payload.subject}"</p>
+              )}
               <p className="text-[10px] text-neutral-500 mt-0.5">{new Date(e.created_at).toLocaleString()}</p>
             </div>
           ))

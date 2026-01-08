@@ -12,31 +12,47 @@ export default function UserMenuToggle() {
   };
 
   return (
-    <div className="fixed right-0 top-1/2 -translate-y-1/2 z-[9998] flex flex-row-reverse items-center group">
-      <button
+    <div className="fixed right-0 top-24 z-50 flex items-center justify-end pr-2"> {/* Added pr-2 for breathing room */}
+      <motion.button
         onClick={toggleMenu}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
-        aria-label="User Menu"
-        className="relative flex items-center justify-center w-12 h-14 bg-white/10 dark:bg-black/20 backdrop-blur-xl border-y border-l border-white/20 dark:border-white/10 rounded-l-3xl shadow-[0_8px_32px_0_rgba(0,0,0,0.3)] hover:bg-white/20 dark:hover:bg-white/10 transition-all duration-500 hover:w-16 group-hover:pr-2"
+        layout
+        initial={{ borderRadius: 24 }} // Start fully rounded
+        className="relative flex items-center flex-row-reverse bg-white/80 dark:bg-black/60 backdrop-blur-md border border-white/20 dark:border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.12)] overflow-hidden group"
+        // Dynamic styling based on hover state for size
+        style={{ height: '48px' }}
       >
-        <div className="relative w-8 h-8 transition-all duration-500 group-hover:rotate-[360deg] group-hover:scale-125 flex items-center justify-center">
-          <User className="w-6 h-6 text-neutral-700 dark:text-white" />
-        </div>
-      </button>
-
-      <AnimatePresence>
-        {isHovered && (
+        {/* The Icon (Always Visible) */}
+        <div className="w-12 h-12 flex items-center justify-center shrink-0 z-10">
           <motion.div
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: 20 }}
-            className="mr-4 px-4 py-2 bg-white dark:bg-neutral-900 rounded-2xl shadow-xl border border-neutral-200 dark:border-neutral-800 pointer-events-none whitespace-nowrap"
+            animate={{ rotate: isHovered ? 35 : 0 }}
+            transition={{ type: "spring", stiffness: 300 }}
           >
-            <p className="text-sm font-medium text-neutral-900 dark:text-white">Account Menu</p>
+             <User className="w-5 h-5 text-neutral-600 dark:text-neutral-200" />
           </motion.div>
-        )}
-      </AnimatePresence>
+        </div>
+
+        {/* The Text (Reveals on Hover) */}
+        <div className="overflow-hidden flex items-center">
+            <motion.div
+                initial={{ width: 0, opacity: 0 }}
+                animate={{ 
+                    width: isHovered ? "auto" : 0, 
+                    opacity: isHovered ? 1 : 0 
+                }}
+                transition={{ duration: 0.3, ease: "circOut" }}
+                className="flex items-center"
+            >
+                <span className="whitespace-nowrap pl-4 text-sm font-medium text-neutral-600 dark:text-neutral-200">
+                    User Menu
+                </span>
+            </motion.div>
+        </div>
+        
+        {/* Subtle background glow effect on hover */}
+        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:animate-shimmer pointer-events-none" />
+      </motion.button>
     </div>
   );
 }

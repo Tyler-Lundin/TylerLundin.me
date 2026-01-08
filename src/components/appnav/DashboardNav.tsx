@@ -58,7 +58,7 @@ export default function DashboardNav() {
     <div className="fixed top-4 left-4 right-4 z-[500] flex justify-center">
       <div className="w-full max-w-5xl h-11 px-2 flex items-center justify-between gap-2 rounded-full border border-neutral-200 bg-white/90 shadow-sm backdrop-blur-md dark:border-neutral-800 dark:bg-neutral-900/90">
         <div className="relative flex-1 min-w-0 h-full flex items-center">
-          <div ref={scrollRef} className="flex items-center gap-0.5 overflow-x-auto no-scrollbar mask-fade-right h-full w-full px-1" style={{ scrollbarWidth: 'none' }}>
+          <div ref={scrollRef} className="flex items-center gap-0.5 overflow-x-auto no-scrollbar mask-fade-right h-full w-full " style={{ scrollbarWidth: 'none' }}>
             <Link href={baseHref} className="flex-shrink-0 flex items-center justify-center h-8 w-8 rounded-full text-neutral-400 hover:bg-neutral-100 hover:text-neutral-900 dark:hover:bg-neutral-800 dark:hover:text-white transition-colors">
               <HomeIcon size={14} />
             </Link>
@@ -82,8 +82,7 @@ export default function DashboardNav() {
           </div>
         </div>
         <div className="flex-shrink-0 pl-1">
-          <button ref={triggerRef} onClick={() => setOpen(true)} className="flex items-center gap-2 h-8 px-4 rounded-full bg-neutral-900 text-white text-[11px] font-black uppercase tracking-widest hover:bg-neutral-800 transition-all dark:bg-white dark:text-black dark:hover:bg-neutral-200 shadow-lg shadow-neutral-200 dark:shadow-none">
-            Menu
+          <button ref={triggerRef} onClick={() => setOpen(true)} className="flex items-center gap-2 h-8 grid place-content-center aspect-square rounded-full bg-neutral-900 text-white text-[11px] font-black uppercase tracking-widest hover:bg-neutral-800 transition-all dark:bg-white dark:text-black dark:hover:bg-neutral-200 shadow-lg shadow-neutral-200 dark:shadow-none">
             <Menu size={14} strokeWidth={3} />
           </button>
         </div>

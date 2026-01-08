@@ -8,54 +8,77 @@ import { motion, AnimatePresence } from 'framer-motion';
 export default function CookiesFAB() {
   const [isOpen, setIsOpen] = useState(false);
   const [showInitialPrompt, setShowInitialPrompt] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
+
+  // Combine hover state and initial prompt to determine if we expand
+  const isExpanded = isHovered || showInitialPrompt;
 
   useEffect(() => {
     const consent = localStorage.getItem('cookie-consent');
     if (!consent) {
-      // Show prompt after a short delay if no consent yet
+      // Show prompt (auto-expand the pill) after 2 seconds
       const timer = setTimeout(() => setShowInitialPrompt(true), 2000);
       return () => clearTimeout(timer);
     }
   }, []);
 
+  const handleOpen = () => {
+    setIsOpen(true);
+    // Dismiss the initial prompt permanently once clicked
+    setShowInitialPrompt(false);
+  };
+
   return (
     <>
-      <div className="fixed left-0 top-1/2 -translate-y-1/2 z-[9998] flex items-center group">
-        <button
-          onClick={() => {
-            setIsOpen(true);
-            setShowInitialPrompt(false);
-          }}
-          aria-label="Cookie Settings"
-          className="relative flex items-center justify-center w-12 h-14 bg-white/10 dark:bg-black/20 backdrop-blur-xl border-y border-r border-white/20 dark:border-white/10 rounded-r-3xl shadow-[0_8px_32px_0_rgba(0,0,0,0.3)] hover:bg-white/20 dark:hover:bg-white/10 transition-all duration-500 hover:w-16 group-hover:pl-2"
+      <div className="fixed left-0 top-24 z-50 flex items-center pl-2">
+        <motion.button
+          onClick={handleOpen}
+          onMouseEnter={() => setIsHovered(true)}
+          onMouseLeave={() => setIsHovered(false)}
+          layout
+          initial={{ borderRadius: 24 }}
+          className="relative flex items-center bg-white/80 dark:bg-neutral-900/80 backdrop-blur-md border border-white/20 dark:border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.12)] overflow-hidden group"
+          style={{ height: '48px' }}
         >
-          <div className="relative w-8 h-8 transition-all duration-500 group-hover:rotate-[360deg] group-hover:scale-125">
-            <Image
-              src="/images/cookie.webp"
-              alt="Cookie"
-              fill
-              className="object-contain drop-shadow-lg"
-            />
-          </div>
-          
-          {/* Subtle pulse for initial prompt */}
-          {showInitialPrompt && (
-            <span className="absolute inset-0 rounded-r-3xl animate-ping bg-white/20 pointer-events-none" />
-          )}
-        </button>
-
-        <AnimatePresence>
-          {showInitialPrompt && (
+          {/* The Icon (Always Visible - Left Aligned) */}
+          <div className="w-12 h-12 flex items-center justify-center shrink-0 z-10">
             <motion.div
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -20 }}
-              className="ml-4 px-4 py-2 bg-white dark:bg-neutral-900 rounded-2xl shadow-xl border border-neutral-200 dark:border-neutral-800 pointer-events-none whitespace-nowrap"
+              animate={{ 
+                rotate: isExpanded ? -35 : 0,
+                scale: isExpanded ? 1.1 : 1
+              }}
+              transition={{ type: "spring", stiffness: 300 }}
+              className="relative w-7 h-7"
             >
-              <p className="text-sm font-medium text-neutral-900 dark:text-white">Cookie Preferences</p>
+              <Image
+                src="/images/cookie.webp"
+                alt="Cookie"
+                fill
+                className="object-contain drop-shadow-sm"
+              />
             </motion.div>
-          )}
-        </AnimatePresence>
+          </div>
+
+          {/* The Text (Reveals to the Right) */}
+          <div className="overflow-hidden flex items-center">
+            <motion.div
+              initial={{ width: 0, opacity: 0 }}
+              animate={{ 
+                width: isExpanded ? "auto" : 0, 
+                opacity: isExpanded ? 1 : 0 
+              }}
+              transition={{ duration: 0.3, ease: "circOut" }}
+              className="flex items-center"
+            >
+              <span className="whitespace-nowrap pr-5 pl-1 text-sm font-medium text-neutral-600 dark:text-neutral-200">
+                Cookie Preferences
+              </span>
+            </motion.div>
+          </div>
+
+          {/* Subtle background shimmer effect */}
+          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:animate-shimmer pointer-events-none" />
+        </motion.button>
       </div>
 
       <CookiesModal isOpen={isOpen} onClose={() => setIsOpen(false)} />

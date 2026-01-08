@@ -17,7 +17,12 @@ export async function POST(req: NextRequest) {
 
   try {
     const { channel, items } = await req.json()
-    if (!channel || !Array.isArray(items)) return NextResponse.json({ error: 'Invalid payload' }, { status: 400 })
+    console.log(`[Outreach API] Received request for channel: ${channel}, items count: ${items?.length}`);
+    
+    if (!channel || !Array.isArray(items)) {
+      console.error('[Outreach API] Invalid payload:', { channel, items });
+      return NextResponse.json({ error: 'Invalid payload' }, { status: 400 })
+    }
 
     const supa = getAdminClient();
 
@@ -29,9 +34,13 @@ export async function POST(req: NextRequest) {
       const sent: string[] = []
       const failed: { lead_id: string; error: string }[] = []
 
+      console.log(`[Outreach API] Email Config - Provider: ${brevoKey ? 'Brevo' : resendKey ? 'Resend' : 'Simulation'}, From: ${fromEmail}`);
+
       for (const raw of items as (EmailItem & { ctaLink?: string, useBranding?: boolean })[]) {
         const to = (raw.to || '').trim()
         const subject = String(raw.subject || '').trim()
+        
+        console.log(`[Outreach API] Processing item for lead ${raw.lead_id} - To: ${to}, Subject: ${subject}`);
         
         let html = '';
         if (raw.useBranding) {
@@ -81,32 +90,58 @@ export async function POST(req: NextRequest) {
 
         try {
           if (brevoKey) {
+            console.log('[Outreach API] Sending via Brevo...');
             const res = await fetch('https://api.brevo.com/v3/smtp/email', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json', 'api-key': brevoKey },
-              body: JSON.stringify({ from: { email: fromEmail }, to: [{ email: to }], subject, htmlContent: html }),
+              body: JSON.stringify({ 
+                sender: { email: fromEmail, name: 'Tyler Lundin' }, 
+                to: [{ email: to }], 
+                subject, 
+                htmlContent: html 
+              }),
             })
             if (!res.ok) {
               const text = await res.text().catch(() => '')
+              console.error(`[Outreach API] Brevo error ${res.status}: ${text}`);
               throw new Error(`Brevo ${res.status}: ${text}`)
             }
+            console.log('[Outreach API] Brevo send success');
           } else if (resendKey) {
+            console.log('[Outreach API] Sending via Resend...');
             const resend = new Resend(resendKey)
-            await resend.emails.send({ from: fromEmail, to, subject, html })
+            const result = await resend.emails.send({ from: fromEmail, to, subject, html })
+            if (result.error) {
+              console.error('[Outreach API] Resend error:', result.error);
+              throw new Error(result.error.message);
+            }
+            console.log('[Outreach API] Resend send success', result.data?.id);
           } else {
-            console.log('[Outreach email]', { to, subject })
+            console.log('[Outreach API] Simulation - no API key found for Brevo or Resend');
           }
           sent.push(raw.lead_id)
 
           // Log success event
           if (supa) {
-            await supa.from('lead_events').insert({
+            const { error: eventError } = await supa.from('lead_events').insert({
               lead_id: raw.lead_id,
               type: 'outreach_sent',
-              payload: { channel: 'email', to, subject }
+              payload: { 
+                channel: 'email', 
+                to, 
+                subject,
+                body: raw.body,
+                ctaLink: raw.ctaLink
+              }
             });
+            if (eventError) console.error('[Outreach API] Error logging event:', eventError);
+            
+            // Also update last_contacted_at
+            const { error: updateError } = await supa.from('leads').update({ last_contacted_at: new Date().toISOString() }).eq('id', raw.lead_id);
+            if (updateError) console.error('[Outreach API] Error updating last_contacted_at:', updateError);
           }
         } catch (e: any) {
+          console.error(`[Outreach API] Exception sending to ${to}:`, e);
           failed.push({ lead_id: raw.lead_id, error: e?.message || 'send failed' })
         }
       }
@@ -114,8 +149,47 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ ok: true, sent, failed })
     }
 
-    if (channel === 'sms' || channel === 'call') {
-      return NextResponse.json({ error: 'Not implemented' }, { status: 501 })
+    if (channel === 'sms') {
+      const sent: string[] = []
+      const failed: { lead_id: string; error: string }[] = []
+
+      for (const raw of items) {
+        const to = (raw.to || '').trim()
+        const body = (raw.body || '').trim()
+
+        if (!to || !body) {
+          failed.push({ lead_id: raw.lead_id, error: 'Missing to/body' })
+          continue
+        }
+
+        try {
+          // Log simulation for now since no SMS key is provided
+          console.log('[Outreach SMS simulation]', { to, body })
+          
+          sent.push(raw.lead_id)
+
+          // Log success event
+          if (supa) {
+            await supa.from('lead_events').insert({
+              lead_id: raw.lead_id,
+              type: 'outreach_sent',
+              payload: { 
+                channel: 'sms', 
+                to, 
+                body,
+                ctaLink: raw.ctaLink
+              }
+            });
+
+            // Also update last_contacted_at
+            await supa.from('leads').update({ last_contacted_at: new Date().toISOString() }).eq('id', raw.lead_id);
+          }
+        } catch (e: any) {
+          failed.push({ lead_id: raw.lead_id, error: e?.message || 'send failed' })
+        }
+      }
+
+      return NextResponse.json({ ok: true, sent, failed })
     }
 
     return NextResponse.json({ error: 'Unsupported channel' }, { status: 400 })

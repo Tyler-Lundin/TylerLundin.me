@@ -2,6 +2,9 @@
 
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
+import { useState, useRef, useEffect } from 'react'
+import { Trash2, Edit, ExternalLink } from 'lucide-react'
+import { deletePostAction } from '@/app/dev/actions/blog'
 
 type PostRow = {
   id: string
@@ -16,10 +19,83 @@ type PostRow = {
   views_count?: number
 }
 
+type ContextMenuState = {
+  visible: boolean
+  x: number
+  y: number
+  postId: string | null
+  postSlug: string | null
+}
+
 export default function PostTableBody({ posts, base }: { posts: PostRow[]; base: string }) {
   const router = useRouter()
+  const [contextMenu, setContextMenu] = useState<ContextMenuState>({ visible: false, x: 0, y: 0, postId: null, postSlug: null })
+  const menuRef = useRef<HTMLDivElement>(null)
+
   const onRowClick = (href: string) => () => router.push(href)
   const stop = (e: React.MouseEvent) => { e.stopPropagation() }
+
+  const handleContextMenu = (e: React.MouseEvent, postId: string, postSlug: string) => {
+    e.preventDefault()
+    e.stopPropagation()
+
+    const menuWidth = 180
+    const menuHeight = 140
+    let x = e.clientX
+    let y = e.clientY
+
+    if (x + menuWidth > window.innerWidth) {
+      x -= menuWidth
+    }
+    if (y + menuHeight > window.innerHeight) {
+      y -= menuHeight
+    }
+
+    setContextMenu({
+      visible: true,
+      x,
+      y,
+      postId,
+      postSlug
+    })
+  }
+
+  const handleDelete = async () => {
+    if (!contextMenu.postId) return
+    if (!confirm('Are you sure you want to delete this post? This action cannot be undone.')) return
+
+    const formData = new FormData()
+    formData.append('id', contextMenu.postId)
+    const res = await deletePostAction(null, formData)
+    
+    if (res?.success) {
+      router.refresh()
+    }
+    setContextMenu({ ...contextMenu, visible: false })
+  }
+
+  const handleEdit = () => {
+    if (!contextMenu.postSlug) return
+    router.push(`${base}/blog/${contextMenu.postSlug}`)
+    setContextMenu({ ...contextMenu, visible: false })
+  }
+
+  const handleView = () => {
+    if (!contextMenu.postSlug) return
+    window.open(`/blog/${contextMenu.postSlug}`, '_blank')
+    setContextMenu({ ...contextMenu, visible: false })
+  }
+
+  // Close context menu on click outside
+  useEffect(() => {
+    const handleClick = (e: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
+        setContextMenu({ ...contextMenu, visible: false })
+      }
+    }
+    document.addEventListener('click', handleClick)
+    return () => document.removeEventListener('click', handleClick)
+  }, [contextMenu])
 
   return (
     <tbody className="divide-y divide-neutral-100 dark:divide-neutral-800">
@@ -27,6 +103,7 @@ export default function PostTableBody({ posts, base }: { posts: PostRow[]; base:
         <tr
           key={p.id}
           onClick={onRowClick(`${base}/blog/${p.slug}`)}
+          onContextMenu={(e) => handleContextMenu(e, p.id, p.slug)}
           className="group cursor-pointer transition-colors hover:bg-neutral-50 dark:hover:bg-neutral-800/50"
         >
           <td className="px-6 py-4">
@@ -57,6 +134,38 @@ export default function PostTableBody({ posts, base }: { posts: PostRow[]; base:
           </td>
         </tr>
       ))}
+
+      {/* Context Menu Overlay */}
+      {contextMenu.visible && (
+        <div 
+          ref={menuRef}
+          className="fixed z-[100] min-w-[180px] overflow-hidden rounded-xl border border-neutral-200 bg-white/90 p-1.5 shadow-2xl backdrop-blur-md dark:border-neutral-800 dark:bg-neutral-900/90"
+          style={{ top: contextMenu.y, left: contextMenu.x }}
+        >
+          <button 
+            onClick={handleEdit}
+            className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium text-neutral-700 hover:bg-neutral-100 transition-colors dark:text-neutral-200 dark:hover:bg-neutral-800"
+          >
+            <Edit className="size-4 opacity-70" />
+            Edit Post
+          </button>
+          <button 
+            onClick={handleView}
+            className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium text-neutral-700 hover:bg-neutral-100 transition-colors dark:text-neutral-200 dark:hover:bg-neutral-800"
+          >
+            <ExternalLink className="size-4 opacity-70" />
+            View Live
+          </button>
+          <div className="my-1 h-px bg-neutral-100 dark:bg-neutral-800" />
+          <button 
+            onClick={handleDelete}
+            className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-bold text-rose-600 hover:bg-rose-50 transition-colors dark:text-rose-400 dark:hover:bg-rose-900/20"
+          >
+            <Trash2 className="size-4" />
+            Delete Post
+          </button>
+        </div>
+      )}
     </tbody>
   )
 }

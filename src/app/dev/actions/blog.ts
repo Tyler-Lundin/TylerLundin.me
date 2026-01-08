@@ -129,4 +129,31 @@ async function _savePostAction(status: 'draft' | 'published', payloadJson: strin
   }
 }
 
+async function _deletePostAction(_prevState: any, formData: FormData) {
+  const me = await getAuthUser()
+  if (!me) throw new Error('Unauthorized')
+  
+  const id = formData.get('id') as string
+  if (!id) throw new Error('Post ID required')
+
+  const role = String((me as any).role || '')
+  const canDelete = ['admin', 'head_of_marketing', 'head of marketing'].includes(role)
+  
+  const supabase: any = await createServiceClient()
+  
+  // If not admin/HoM, verify ownership
+  if (!canDelete) {
+    const { data: post } = await supabase.from('blog_posts').select('author_id').eq('id', id).maybeSingle()
+    if (!post || String(post.author_id) !== String(me.id)) {
+      throw new Error('Forbidden')
+    }
+  }
+
+  const { error } = await supabase.from('blog_posts').delete().eq('id', id)
+  if (error) throw error
+
+  return { success: true }
+}
+
 export const savePostAction = withAuditAction('dev.blog.save', _savePostAction)
+export const deletePostAction = withAuditAction('dev.blog.delete', _deletePostAction)

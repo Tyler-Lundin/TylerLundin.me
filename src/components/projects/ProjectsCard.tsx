@@ -10,24 +10,24 @@ import { usePrefersDark } from '@/hooks/usePrefersDark'
 function getThemeMedia(media: ProjectMedia[], isDark: boolean): ProjectMedia[] {
   if (!media?.length) return []
   const pref: 'dark' | 'light' = isDark ? 'dark' : 'light'
-  
+
   // 1. Get media matching theme
   const matching = media.filter((m) => (m.variant ? m.variant === pref : true))
-  
+
   // 2. If no matching (e.g. only dark variants and we are in light mode), fallback to all
   if (matching.length === 0) return media
-  
+
   return matching
 }
 
-export default function ProjectsCard({ 
-  project, 
-  state, 
-  onClick 
-}: { 
-  project: Project; 
-  state: 'prev' | 'current' | 'next'; 
-  onClick?: () => void 
+export default function ProjectsCard({
+  project,
+  state,
+  onClick
+}: {
+  project: Project;
+  state: 'prev' | 'current' | 'next';
+  onClick?: () => void
 }) {
   const isDark = usePrefersDark()
   const themeMedia = useMemo(() => getThemeMedia(project.media, isDark), [project.media, isDark])
@@ -48,9 +48,9 @@ export default function ProjectsCard({
   const scale = isCurrent ? 1 : 0.94
   const blur = isCurrent ? 'none' : 'blur-[1px] opacity-50'
 
-  // Infinite Scroll Logic
-  const canLoop = images.length >= 2
-  const duplicatedImages = canLoop ? [...images, ...images] : images
+  // Infinite Scroll Logic - allow looping with even 1 image
+  const canLoop = images.length >= 1
+  const duplicatedImages = [...images, ...images]
   const loopControls = useAnimation()
 
   useEffect(() => {
@@ -58,22 +58,20 @@ export default function ProjectsCard({
       loopControls.start({
         y: ['0%', '-50%'],
         transition: {
-          duration: images.length * 12, // 12s per image pair roughly
+          duration: images.length * 12, // 12s per image roughly
           ease: 'linear',
           repeat: Infinity,
         }
       })
     } else {
       loopControls.stop()
+      loopControls.set({ y: '0%' })
     }
   }, [isCurrent, canLoop, images.length, loopControls])
 
   const handleInteraction = (type: 'enter' | 'leave') => {
     if (!canLoop) return
-    const speed = type === 'enter' ? 0.2 : 1
-    // Framer motion doesn't have a direct playbackRate setter on controls,
-    // but we can adjust duration or use a manual transform.
-    // For this implementation, we will keep the linear loop simple.
+    // Simple linear loop remains the same
   }
 
   return (
@@ -88,35 +86,35 @@ export default function ProjectsCard({
       animate={{ opacity: isCurrent ? 1 : 0.6, scale }}
       transition={{ type: 'spring', stiffness: 420, damping: 42, mass: 0.6 }}
       onClick={() => { if (onClick) { onClick() } else { window.location.href = `/project/${project.slug}` } }}
-      role="link" 
+      role="link"
       tabIndex={0}
       onMouseEnter={() => handleInteraction('enter')}
       onMouseLeave={() => handleInteraction('leave')}
     >
       {/* --- MEDIA LAYER --- */}
       <div className="absolute inset-0 bg-neutral-100 dark:bg-neutral-900">
-        
+
         {images.length > 0 ? (
-          <div className="h-full w-full overflow-hidden">
+          <div className="h-full w-full overflow-hidden relative">
             <motion.div
               className="flex flex-col w-full"
               animate={loopControls}
             >
               {duplicatedImages.map((media, idx) => (
-                <div key={`${media.id}-${idx}`} className="relative aspect-[9/11] w-full shrink-0">
+                <div key={`${media.id}-${idx}`} className="relative w-full shrink-0 bg-white dark:bg-black">
                   <img
                     src={media.src}
                     alt={media.alt ?? project.title}
-                    className="h-full w-full object-cover object-top"
+                    className="w-full h-auto object-top mb-6"
                     onLoad={() => setIsLoaded(true)}
                   />
-                  
-                  {/* Blending Gradients between images */}
-                  <div className="absolute inset-x-0 top-0 h-64 bg-gradient-to-b from-white dark:from-red-400 to-transparent  z-10" />
-                  <div className="absolute inset-x-0 bottom-0 h-64 bg-gradient-to-t from-white dark:from-red-400 to-transparent  z-10" />
+
+                  <div className="absolute inset-x-0 bottom-5 h-12 bg-gradient-to-t from-white via-white dark:from-black dark:via-black to-transparent z-10 pointer-events-none" />
                 </div>
               ))}
             </motion.div>
+
+            {/* Fixed Blending Gradients at top and bottom of the card viewport */}
           </div>
         ) : themeMedia[0]?.type === 'video' ? (
           <video
@@ -133,7 +131,7 @@ export default function ProjectsCard({
           <div className="absolute inset-0 flex items-center justify-center text-neutral-400">No Media</div>
         )}
 
-        {/* Loading Placeholder */ }
+        {/* Loading Placeholder */}
         {!isLoaded && (
           <div className="absolute inset-0 bg-neutral-200/40 dark:bg-neutral-800/30 animate-pulse" />
         )}
@@ -160,7 +158,7 @@ export default function ProjectsCard({
                       bg-gradient-to-t from-white via-white/95 to-transparent 
                       dark:from-black dark:via-black/95 dark:to-transparent
                       group-hover:opacity-0 transition-opacity duration-300 ease-in-out">
-        
+
         <h3
           className={[
             'font-black text-black dark:text-white drop-shadow-sm',
@@ -170,7 +168,7 @@ export default function ProjectsCard({
         >
           {project.title}
         </h3>
-        
+
         {project.tagline && (
           <p className="mt-2 text-sm sm:text-base font-medium text-black/70 dark:text-white/70 line-clamp-2">
             {project.tagline}

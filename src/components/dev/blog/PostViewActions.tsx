@@ -1,13 +1,17 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Edit3, X, Maximize2, Minimize2 } from 'lucide-react'
+import { Edit3, X, Maximize2, Minimize2, Trash2 } from 'lucide-react'
 import EditorForm, { EditablePost } from './EditorForm'
 import { motion, AnimatePresence } from 'framer-motion'
+import { deletePostAction } from '@/app/dev/actions/blog'
+import { useRouter } from 'next/navigation'
 
 export default function PostViewActions({ initial }: { initial: EditablePost }) {
+  const router = useRouter()
   const [isOpen, setIsOpen] = useState(false)
   const [isExpanded, setIsExpanded] = useState(false)
+  const [isDeleting, setIsDeleting] = useState(false)
 
   // Prevent body scroll when open
   useEffect(() => {
@@ -40,15 +44,45 @@ export default function PostViewActions({ initial }: { initial: EditablePost }) 
     return () => window.removeEventListener('keydown', handleKeyDown)
   }, [])
 
+  const handleDelete = async () => {
+    if (!initial.id) return
+    if (!confirm('Are you sure you want to delete this post? This action cannot be undone.')) return
+
+    setIsDeleting(true)
+    try {
+      const formData = new FormData()
+      formData.append('id', initial.id)
+      const res = await deletePostAction(null, formData)
+      if (res?.success) {
+        router.push('/dev/blog')
+        router.refresh()
+      }
+    } catch (e) {
+      alert('Failed to delete post')
+    } finally {
+      setIsDeleting(false)
+    }
+  }
+
   return (
     <>
-      <button
-        onClick={() => setIsOpen(true)}
-        className="fixed bottom-6 left-6 z-40 flex h-14 w-14 items-center justify-center rounded-full bg-neutral-900 text-white shadow-lg shadow-neutral-900/20 transition-transform hover:scale-105 active:scale-95 dark:bg-white dark:text-neutral-900"
-        title="Edit Post"
-      >
-        <Edit3 size={24} />
-      </button>
+      <div className="fixed bottom-6 left-6 z-40 flex flex-col gap-3">
+        <button
+          onClick={handleDelete}
+          disabled={isDeleting}
+          className="flex h-12 w-12 items-center justify-center rounded-full bg-rose-600 text-white shadow-lg shadow-rose-600/20 transition-transform hover:scale-105 active:scale-95 disabled:opacity-50"
+          title="Delete Post"
+        >
+          <Trash2 size={20} />
+        </button>
+        <button
+          onClick={() => setIsOpen(true)}
+          className="flex h-14 w-14 items-center justify-center rounded-full bg-neutral-900 text-white shadow-lg shadow-neutral-900/20 transition-transform hover:scale-105 active:scale-95 dark:bg-white dark:text-neutral-900"
+          title="Edit Post"
+        >
+          <Edit3 size={24} />
+        </button>
+      </div>
 
       <AnimatePresence>
         {isOpen && (

@@ -1,0 +1,62 @@
+name: AI Task Runner
+on:
+  repository_dispatch:
+    types: [ai_task_run]
+
+jobs:
+  run-task:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install Dependencies
+        run: npm ci || npm install
+
+      - name: Log Inputs
+        env:
+          TASK_TITLE: ${{ github.event.client_payload.title }}
+          HAS_KEY: ${{ github.event.client_payload.openai_key != '' }}
+        run: |
+          echo "Processing task: $TASK_TITLE"
+          echo "OpenAI Key in payload: $HAS_KEY"
+
+      - name: Ensure Agent Script Exists
+        run: |
+          if [ ! -f "scripts/ai-agent.ts" ]; then
+            echo "Agent script missing! This workflow expects scripts/ai-agent.ts to exist."
+            echo "Listing scripts directory:"
+            ls -R scripts || echo "scripts dir not found"
+            exit 1
+          fi
+
+      - name: Execute Agent
+        env:
+          TASK_ID: ${{ github.event.client_payload.task_id }}
+          TASK_TITLE: ${{ github.event.client_payload.title }}
+          TASK_DESC: ${{ github.event.client_payload.description }}
+          TASK_INPUTS: ${{ toJson(github.event.client_payload.inputs) }}
+          OPENAI_API_KEY: ${{ github.event.client_payload.openai_key }}
+        run: |
+          npx --yes tsx scripts/ai-agent.ts
+
+      - name: Commit and Push
+        if: success()
+        run: |
+          git config --global user.name "ai-task-bot"
+          git config --global user.email "ai-task-bot@users.noreply.github.com"
+          git add .
+          if ! git diff-index --quiet HEAD; then
+            git commit -m "AI Task: ${{ github.event.client_payload.title }}"
+            git push
+          else
+            echo "No changes to commit."
+          fi

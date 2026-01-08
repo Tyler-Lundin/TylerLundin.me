@@ -1,9 +1,9 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import Image from 'next/image';
 import CookiesModal from './CookiesModal';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 
 export default function CookiesFAB() {
   const [isOpen, setIsOpen] = useState(false);
@@ -13,14 +13,6 @@ export default function CookiesFAB() {
   // Combine hover state and initial prompt to determine if we expand
   const isExpanded = isHovered || showInitialPrompt;
 
-  useEffect(() => {
-    const consent = localStorage.getItem('cookie-consent');
-    if (!consent) {
-      // Show prompt (auto-expand the pill) after 2 seconds
-      const timer = setTimeout(() => setShowInitialPrompt(true), 2000);
-      return () => clearTimeout(timer);
-    }
-  }, []);
 
   const handleOpen = () => {
     setIsOpen(true);
@@ -30,7 +22,7 @@ export default function CookiesFAB() {
 
   return (
     <>
-      <div className="fixed left-0 top-24 z-50 flex items-center pl-2">
+      <div className="fixed left-0 top-1/2 z-50 flex items-center pl-2">
         <motion.button
           onClick={handleOpen}
           onMouseEnter={() => setIsHovered(true)}

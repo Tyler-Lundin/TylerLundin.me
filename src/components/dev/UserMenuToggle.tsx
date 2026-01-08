@@ -12,7 +12,7 @@ export default function UserMenuToggle() {
   };
 
   return (
-    <div className="fixed right-0 top-24 z-50 flex items-center justify-end pr-2"> {/* Added pr-2 for breathing room */}
+    <div className="fixed right-0 top-1/2 z-50 flex items-center justify-end pr-2"> {/* Added pr-2 for breathing room */}
       <motion.button
         onClick={toggleMenu}
         onMouseEnter={() => setIsHovered(true)}

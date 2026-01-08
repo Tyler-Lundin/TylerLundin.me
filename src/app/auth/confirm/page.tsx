@@ -3,7 +3,7 @@
 import { useEffect, useState, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
-import { Loader2 } from 'lucide-react';
+import BeautifulLoading from '@/components/ui/BeautifulLoading';
 
 function ConfirmContent() {
   const router = useRouter();
@@ -96,12 +96,7 @@ function ConfirmContent() {
   }
 
   return (
-    <div className="flex h-screen items-center justify-center bg-white dark:bg-black">
-      <div className="text-center">
-        <Loader2 className="mx-auto h-8 w-8 animate-spin text-neutral-400" />
-        <p className="mt-2 text-sm text-neutral-500">Verifying session...</p>
-      </div>
-    </div>
+    <BeautifulLoading message="Verifying session..." />
   );
 }
 

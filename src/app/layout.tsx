@@ -3,11 +3,13 @@ import { Inter } from "next/font/google";
 import { Suspense } from "react";
 import "./globals.css";
 import { SiteShell } from "@/components/layout/SiteShell";
-import { Analytics } from "@vercel/analytics/next";
 import Script from "next/script";
 import GoogleAnalytics from "@/components/analytics/GoogleAnalytics";
 import AdPlacement from "@/components/marketing/AdPlacement";
 import BannerWrapper from "@/components/marketing/BannerWrapper";
+import CookiesFAB from "@/components/CookiesFAB";
+import TopLoader from "@/components/ui/TopLoader";
+import AnalyticsWrapper from "@/components/analytics/AnalyticsWrapper";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -103,6 +105,9 @@ export default async function RootLayout({
       </head>
       <body className={[inter.className, "max-w-screen overflow-x-hidden"].join(" ")}>
         <Suspense fallback={null}>
+          <TopLoader />
+        </Suspense>
+        <Suspense fallback={null}>
           <BannerWrapper>
             <AdPlacement placement="top_banner" />
           </BannerWrapper>
@@ -110,13 +115,14 @@ export default async function RootLayout({
             {children}
           </SiteShell>
         </Suspense>
+        <CookiesFAB />
         {process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID ? (
           <Suspense fallback={null}>
             <GoogleAnalytics measurementId={process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID} />
           </Suspense>
         ) : null}
         <Suspense fallback={null}>
-          <Analytics />
+          <AnalyticsWrapper />
         </Suspense>
       </body>
     </html>

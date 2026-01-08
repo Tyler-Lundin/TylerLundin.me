@@ -40,7 +40,7 @@ function LoginForm() {
         </div>
         <h2 className="text-2xl font-bold text-neutral-900 dark:text-white mb-2">Check your email</h2>
         <p className="text-neutral-600 dark:text-neutral-400 mb-6">
-          We sent a magic login link to <strong>{email}</strong>.
+          I sent a magic login link to <strong>{email}</strong>.
         </p>
         <button 
           onClick={() => setStatus('idle')}

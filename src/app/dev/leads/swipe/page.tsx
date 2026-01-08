@@ -520,7 +520,7 @@ export default function SwipePage() {
               </div>
               <h3 className="text-lg font-bold text-neutral-900 dark:text-white mb-2">No Preview Available</h3>
               <p className="text-sm text-neutral-500 dark:text-neutral-400 mb-6 leading-relaxed">
-                We couldn&apos;t generate a secure preview for this website. You can still review the lead info or open it directly.
+                I couldn&apos;t generate a secure preview for this website. You can still review the lead info or open it directly.
               </p>
               {lead?.website && (
                 <a 

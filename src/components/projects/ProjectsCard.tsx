@@ -112,8 +112,8 @@ export default function ProjectsCard({
                   />
                   
                   {/* Blending Gradients between images */}
-                  <div className="absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-white dark:from-black to-transparent opacity-60 z-10" />
-                  <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-white dark:from-black to-transparent opacity-60 z-10" />
+                  <div className="absolute inset-x-0 top-0 h-64 bg-gradient-to-b from-white dark:from-red-400 to-transparent  z-10" />
+                  <div className="absolute inset-x-0 bottom-0 h-64 bg-gradient-to-t from-white dark:from-red-400 to-transparent  z-10" />
                 </div>
               ))}
             </motion.div>

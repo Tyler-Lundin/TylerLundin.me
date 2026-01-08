@@ -155,7 +155,7 @@ export default async function BundleDetailPage({ params }: { params: Promise<Rou
               <h2 className="text-xl font-bold text-neutral-900 dark:text-white mb-6">Implementation Plan</h2>
               <div className="grid sm:grid-cols-3 gap-4">
                 {[
-                  { step: "01", title: "Scope & Strategy", desc: "We define the exact deliverables and timeline." },
+                  { step: "01", title: "Scope & Strategy", desc: "I define the exact deliverables and timeline." },
                   { step: "02", title: "Build & Refine", desc: "Development cycles with regular check-ins." },
                   { step: "03", title: "Launch & Support", desc: "Deployment, final testing, and hand-off." },
                 ].map((s) => (

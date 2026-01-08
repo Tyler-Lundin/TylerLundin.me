@@ -125,7 +125,7 @@ export default async function BlogDashboard({ base = '/dev', searchParams }: { b
           <form className="flex flex-col gap-3 sm:flex-row sm:items-center">
             <div className="relative flex-1">
               <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-neutral-400"><Icons.Search /></div>
-              <input name="q" defaultValue={q} placeholder="Search posts..." className="block w-full rounded-lg border border-neutral-200 bg-neutral-50 py-2 pl-10 pr-4 text-sm outline-none focus:border-neutral-300 focus:bg-white focus:ring-2 focus:ring-neutral-100 dark:border-neutral-700 dark:bg-neutral-900 dark:focus:border-neutral-600" />
+              <input name="q" defaultValue={q} placeholder="Search posts..." className="block w-full rounded-lg border border-neutral-200 bg-neutral-50 py-2 pl-10 pr-4 text-sm outline-none focus:border-neutral-300 focus:bg-white focus:ring-2 focus:ring-neutral-100 dark:border-neutral-700 dark:bg-neutral-900 dark:focus:border-neutral-600 dark:focus:bg-neutral-950" />
             </div>
             <select name="status" defaultValue={statusFilter} className="rounded-lg border border-neutral-200 bg-white px-3 py-2 text-sm outline-none focus:border-neutral-300 dark:border-neutral-700 dark:bg-neutral-900">
               <option value="">All Statuses</option>

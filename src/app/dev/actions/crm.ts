@@ -91,6 +91,15 @@ const updateProjectHealthSchema = z.object({
   project_health_enabled: z.union([z.literal('on'), z.literal('true'), z.literal('false'), z.literal('')]).optional(),
 })
 
+const individualLeadSchema = z.object({
+  name: z.string().min(1, 'Business name is required'),
+  niche: z.string().min(1, 'Niche is required'),
+  location: z.string().min(1, 'Location is required'),
+  website: z.string().url().optional().or(z.literal('')),
+  phone: z.string().optional(),
+  email: z.string().email().optional().or(z.literal('')),
+})
+
 async function _createClientAction(prevState: any, formData: FormData) {
   const raw = {
     name: formData.get('name'),
@@ -180,6 +189,14 @@ async function _createProjectAction(prevState: any, formData: FormData) {
   return { success: true }
 }
 
+const updateContactSchema = z.object({
+  id: z.string().uuid(),
+  name: z.string().min(1, 'Name is required'),
+  email: z.string().email().optional().or(z.literal('')),
+  phone: z.string().optional(),
+  title: z.string().optional(),
+})
+
 async function _createContactAction(prevState: any, formData: FormData) {
   const raw = {
     client_id: formData.get('client_id'),
@@ -203,6 +220,36 @@ async function _createContactAction(prevState: any, formData: FormData) {
     const slug = client?.name ? slugify(client.name) : ''
     if (slug) revalidatePath(`/dev/clients/${slug}`)
   } catch {}
+  return { success: true }
+}
+
+async function _updateContactAction(prevState: any, formData: FormData) {
+  const raw = {
+    id: formData.get('id'),
+    name: formData.get('name'),
+    email: formData.get('email'),
+    phone: formData.get('phone'),
+    title: formData.get('title'),
+  }
+
+  const result = updateContactSchema.safeParse(raw)
+  if (!result.success) return { error: result.error.flatten().fieldErrors }
+
+  const { id, ...data } = result.data
+  const sb = await createServiceClient()
+  const { data: contact } = await sb.from('crm_client_contacts').select('client_id').eq('id', id).single()
+  const { error } = await sb.from('crm_client_contacts').update(data as any).eq('id', id)
+  if (error) return { error: error.message }
+
+  if (contact?.client_id) {
+    revalidatePath(`/dev/clients/${contact.client_id}`)
+    try {
+      const { data: client } = await sb.from('crm_clients').select('name').eq('id', contact.client_id).single()
+      const slug = client?.name ? slugify(client.name) : ''
+      if (slug) revalidatePath(`/dev/clients/${slug}`)
+    } catch {}
+  }
+  
   return { success: true }
 }
 
@@ -357,14 +404,193 @@ async function _deleteProjectAction(_prev: any, formData: FormData) {
   return { success: true }
 }
 
+async function _deleteClientAction(_prev: any, formData: FormData) {
+  const id = formData.get('id')
+  if (!id || typeof id !== 'string') return { error: 'Invalid ID' }
+
+  const sb = await createServiceClient()
+  const { error } = await sb.from('crm_clients').delete().eq('id', id)
+  if (error) return { error: error.message }
+
+  revalidatePath('/dev/clients')
+  return { success: true }
+}
+
+async function _createIndividualLeadAction(_prev: any, formData: FormData) {
+  const raw = {
+    name: formData.get('name'),
+    niche: formData.get('niche'),
+    location: formData.get('location'),
+    website: formData.get('website'),
+    phone: formData.get('phone'),
+    email: formData.get('email'),
+  }
+
+  const result = individualLeadSchema.safeParse(raw)
+  if (!result.success) return { error: result.error.flatten().fieldErrors }
+
+  const sb = await createServiceClient()
+  
+  // Extract domain if website exists
+  let domain = null
+  if (result.data.website) {
+    try {
+      domain = new URL(result.data.website).hostname.replace(/^www\./, '')
+    } catch {}
+  }
+
+  const { data, error } = await sb
+    .from('leads')
+    .insert({
+      ...result.data,
+      domain,
+      google_place_id: `manual-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
+      status: 'new'
+    })
+    .select('id')
+    .single()
+
+  if (error) return { error: error.message }
+
+  revalidatePath('/dev/leads')
+  return { success: true, id: data.id }
+}
+
+async function _convertSignupAction(_prev: any, formData: FormData) {
+  const signupId = formData.get('signup_id') as string;
+  if (!signupId) return { error: 'Signup ID is required' };
+
+  const sb = await createServiceClient();
+
+  // 1. Get Signup
+  const { data: signup, error: signupErr } = await sb
+    .from('project_signups')
+    .select('*')
+    .eq('id', signupId)
+    .single();
+
+  if (signupErr || !signup) return { error: 'Signup not found' };
+
+  // 2. Create or Find Client
+  let clientId: string;
+  const { data: existingClient } = await sb
+    .from('crm_clients')
+    .select('id')
+    .eq('name', signup.company_name)
+    .maybeSingle();
+
+  if (existingClient) {
+    clientId = existingClient.id;
+  } else {
+    const { data: newClient, error: clientErr } = await sb
+      .from('crm_clients')
+      .insert({
+        name: signup.company_name,
+        company: signup.company_name,
+        website_url: signup.company_website || null,
+      })
+      .select('id')
+      .single();
+
+    if (clientErr) return { error: `Failed to create client: ${clientErr.message}` };
+    clientId = newClient.id;
+  }
+
+  // 3. Create Contact
+  await sb.from('crm_client_contacts').insert({
+    client_id: clientId,
+    name: signup.contact_name,
+    email: signup.contact_email,
+  });
+
+  // 4. Create Project
+  const projectTitle = `${signup.company_name} - Initial Project`;
+  const projectSlug = slugify(projectTitle) + '-' + Math.random().toString(36).substring(2, 5);
+  
+  const { data: project, error: projectErr } = await sb.from('crm_projects').insert({
+    client_id: clientId,
+    title: projectTitle,
+    slug: projectSlug,
+    description: signup.project_description || 'Created from public signup.',
+    status: 'planned',
+    priority: 'normal',
+  }).select('id, slug').single();
+
+  if (projectErr) return { error: `Failed to create project: ${projectErr.message}` };
+
+  // 5. Update Signup Status
+  await sb.from('project_signups').update({ status: 'processed' }).eq('id', signupId);
+
+  // 6. Handle User Auth & Notification
+  try {
+    const { sendClientWelcomeEmail } = await import('@/lib/email');
+    
+    // 6.1 Ensure Auth User exists
+    let authUser = null;
+    const { data: { users } } = await sb.auth.admin.listUsers();
+    const foundUser = users.find((u: any) => u.email === signup.contact_email);
+
+    if (foundUser) {
+      authUser = foundUser;
+    } else {
+      const { data: newUser, error: createError } = await sb.auth.admin.createUser({
+        email: signup.contact_email,
+        email_confirm: true,
+        user_metadata: { full_name: signup.contact_name }
+      });
+      if (!createError) authUser = newUser.user;
+    }
+
+    if (authUser) {
+      // 6.2 Link User to Client
+      await sb.from('crm_client_users').upsert({
+        client_id: clientId,
+        user_id: authUser.id,
+        role: 'owner'
+      }, { onConflict: 'client_id,user_id' });
+
+      // 6.3 Generate Magic Link
+      const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
+      const { data: linkData } = await sb.auth.admin.generateLink({
+        type: 'magiclink',
+        email: signup.contact_email,
+        options: {
+          redirectTo: `${siteUrl}/auth/confirm?next=/portal`
+        }
+      });
+
+      if (linkData?.properties?.action_link) {
+        // 6.4 Send Branded Email
+        await sendClientWelcomeEmail({
+          to: signup.contact_email,
+          name: signup.contact_name,
+          link: linkData.properties.action_link
+        });
+      }
+    }
+  } catch (emailErr) {
+    console.warn('[convertSignupAction] Email/Auth phase failed:', emailErr);
+    // We don't fail the whole action if just the email fails, as the CRM records are already created.
+  }
+
+  revalidatePath('/dev/projects');
+  revalidatePath('/dev/clients');
+  
+  return { success: true, projectSlug: project?.slug };
+}
+
 export const createClientAction = withAuditAction('crm.client.create', _createClientAction)
 export const updateClientAction = withAuditAction('crm.client.update', _updateClientAction)
+export const deleteClientAction = withAuditAction('crm.client.delete', _deleteClientAction)
 export const createProjectAction = withAuditAction('crm.project.create', _createProjectAction)
 export const deleteProjectAction = withAuditAction('crm.project.delete', _deleteProjectAction)
 export const createContactAction = withAuditAction('crm.contact.create', _createContactAction)
+export const updateContactAction = withAuditAction('crm.contact.update', _updateContactAction)
 export const addProjectLinkAction = withAuditAction('crm.project.link.add', _addProjectLinkAction)
 export const createProjectMessageAction = withAuditAction('crm.project.message.create', _createProjectMessageAction)
 export const createProjectListAction = withAuditAction('crm.project.list.create', _createProjectListAction)
 export const createProjectListItemAction = withAuditAction('crm.project.list.item.create', _createProjectListItemAction)
 export const updateProjectHealthAction = withAuditAction('crm.project.health.update', _updateProjectHealthAction)
 export const updateProjectAction = withAuditAction('crm.project.update', _updateProjectAction)
+export const convertSignupAction = withAuditAction('crm.signup.convert', _convertSignupAction)
+export const createIndividualLeadAction = withAuditAction('crm.lead.create', _createIndividualLeadAction)

@@ -450,3 +450,49 @@ export async function triggerWorkflowDispatch({
 
   return true;
 }
+
+export async function getDeployments(owner: string, repo: string) {
+  const token = process.env.GITHUB_ACCESS_TOKEN;
+  if (!token) throw new Error('Missing GITHUB_ACCESS_TOKEN');
+
+  const url = `${GITHUB_API_BASE}/repos/${owner}/${repo}/deployments`;
+  try {
+    const res = await fetch(url, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        Accept: 'application/vnd.github+json',
+        'X-GitHub-Api-Version': '2022-11-28',
+      },
+      next: { revalidate: 60 }
+    });
+
+    if (!res.ok) return [];
+    return await res.json();
+  } catch (e) {
+    console.error(`[GitHub] Error fetching deployments:`, e);
+    return [];
+  }
+}
+
+export async function getDeploymentStatuses(owner: string, repo: string, deploymentId: number) {
+  const token = process.env.GITHUB_ACCESS_TOKEN;
+  if (!token) throw new Error('Missing GITHUB_ACCESS_TOKEN');
+
+  const url = `${GITHUB_API_BASE}/repos/${owner}/${repo}/deployments/${deploymentId}/statuses`;
+  try {
+    const res = await fetch(url, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        Accept: 'application/vnd.github+json',
+        'X-GitHub-Api-Version': '2022-11-28',
+      },
+      next: { revalidate: 60 }
+    });
+
+    if (!res.ok) return [];
+    return await res.json();
+  } catch (e) {
+    console.error(`[GitHub] Error fetching deployment statuses:`, e);
+    return [];
+  }
+}

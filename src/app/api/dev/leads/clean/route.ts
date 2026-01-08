@@ -1,29 +1,17 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { cookies } from 'next/headers'
-import jwt from 'jsonwebtoken'
+import { requireRoles } from '@/lib/auth';
 import { getAdminClient } from '@/lib/leadgen/supabaseServer'
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
 
-async function requireAdmin() {
-  const cookieStore = await cookies()
-  const token = cookieStore.get('access_token')?.value
-  const secret = process.env.JWT_SECRET || 'your-secret-key'
-  if (!token) return { ok: false, status: 401 as const, error: 'Unauthorized' }
-  try {
-    const decoded = jwt.verify(token, secret) as any
-    if (!decoded || decoded.role !== 'admin') return { ok: false, status: 403 as const, error: 'Forbidden' }
-    return { ok: true as const }
-  } catch {
-    return { ok: false, status: 401 as const, error: 'Unauthorized' }
-  }
-}
-
 export async function POST(req: NextRequest) {
-  const admin = await requireAdmin()
-  console.log('[leads.clean] admin.ok =', admin.ok)
-  if (!admin.ok) return NextResponse.json({ error: admin.error }, { status: admin.status })
+  try {
+    await requireRoles(['admin', 'owner']);
+  } catch {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
   try {
     const body = await req.json().catch(() => ({})) as { deleteConvertedInGroups?: boolean; dryRun?: boolean }
     console.log('[leads.clean] body =', body)

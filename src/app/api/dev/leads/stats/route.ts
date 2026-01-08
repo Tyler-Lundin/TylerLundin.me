@@ -1,23 +1,18 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { cookies } from 'next/headers';
-import jwt from 'jsonwebtoken';
+import { requireRoles } from '@/lib/auth';
 import { getAdminClient } from '@/lib/leadgen/supabaseServer';
-
-const COOKIE_NAME = 'access_token';
-const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
 export async function GET(req: NextRequest) {
   try {
-    // Admin guard
-    const cookieStore = await cookies();
-    const token = cookieStore.get(COOKIE_NAME)?.value;
-    const secret = JWT_SECRET;
-    if (!token) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    const decoded = jwt.verify(token, secret) as any;
-    if (!decoded || decoded.role !== 'admin') return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+    // Admin guard using Supabase Auth
+    try {
+      await requireRoles(['admin', 'owner']);
+    } catch {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
 
     const supa = getAdminClient();
     if (!supa) return NextResponse.json({ error: 'Supabase not configured' }, { status: 500 });

@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { requireRoles } from '@/lib/auth';
 import { getAdminClient } from '@/lib/leadgen/supabaseServer'
 
 export const runtime = 'nodejs'
@@ -6,6 +7,12 @@ export const dynamic = 'force-dynamic'
 
 export async function POST(req: NextRequest) {
   try {
+    try {
+      await requireRoles(['admin', 'owner']);
+    } catch {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
     const { leads } = await req.json()
     if (!Array.isArray(leads) || leads.length === 0) {
       return NextResponse.json({ error: 'leads array required' }, { status: 400 })

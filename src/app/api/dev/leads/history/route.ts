@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server'
+import { requireRoles } from '@/lib/auth';
 import { getAdminClient } from '@/lib/leadgen/supabaseServer'
 
 export const runtime = 'nodejs'
@@ -6,6 +7,12 @@ export const dynamic = 'force-dynamic'
 
 export async function GET() {
   try {
+    try {
+      await requireRoles(['admin', 'owner']);
+    } catch {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
     const supa = getAdminClient()
     if (!supa) return NextResponse.json({ items: [] })
     // Aggregate by niche+location

@@ -1,151 +1,116 @@
 'use client'
 
-import { Suspense } from 'react'
+import { Suspense, useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { useState } from 'react'
+import { Mail, ArrowRight, Loader2, CheckCircle2 } from 'lucide-react'
+import { sendLoginLinkAction } from '@/app/actions/auth'
+import ReactiveBackground from '@/components/ReactiveBackground'
 
 function LoginForm() {
   const [email, setEmail] = useState('')
-  const [passwords, setPasswords] = useState(['', '', ''])
+  const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle')
   const [error, setError] = useState<string | null>(null)
-  const [isLoading, setIsLoading] = useState(false)
-  const router = useRouter()
   const searchParams = useSearchParams()
-  const redirectPath = searchParams.get('redirect') || ''
-
-  const handlePasswordChange = (index: number, value: string) => {
-    const newPasswords = [...passwords]
-    newPasswords[index] = value
-    setPasswords(newPasswords)
-  }
+  const redirectPath = searchParams.get('redirect')
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
-    setIsLoading(true)
+    setStatus('loading')
     setError(null)
 
     try {
-      // Call server-side API to verify passwords
-      const response = await fetch('/api/auth/verify', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email, passwords }),
-      })
-
-      const data = await response.json()
-
-      if (!response.ok) {
-        throw new Error(data.message || 'Authentication failed')
+      const res = await sendLoginLinkAction(email, redirectPath || undefined)
+      if (res.success) {
+        setStatus('success')
+      } else {
+        setStatus('error')
+        setError(res.message || 'Login failed')
       }
-
-      if (!data.success) {
-        throw new Error(data.message || 'Authentication failed')
-      }
-      // Choose destination based on role + optional redirect
-      const role: string = data.role || 'member'
-      const isAdmin = role === 'admin'
-      const isHoM = role === 'head_of_marketing' || role === 'head of marketing'
-      const allowed = (p: string) => {
-        if (!p) return false
-        if (p.startsWith('/dev')) return isAdmin
-        if (p.startsWith('/marketing')) return isAdmin || isHoM
-        return true
-      }
-      const home = isAdmin ? '/dev' : (isHoM ? '/marketing' : '/')
-      const target = allowed(redirectPath) ? redirectPath : home
-      router.push(target)
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Authentication failed')
-    } finally {
-      setIsLoading(false)
+      setStatus('error')
+      setError('An unexpected error occurred')
     }
   }
 
+  if (status === 'success') {
+    return (
+      <div className="w-full max-w-md p-8 bg-white/90 dark:bg-neutral-900/90 rounded-2xl shadow-xl border border-neutral-200 dark:border-neutral-800 text-center animate-in fade-in zoom-in-95">
+        <div className="inline-flex p-4 rounded-full bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400 mb-6">
+          <CheckCircle2 className="size-12" />
+        </div>
+        <h2 className="text-2xl font-bold text-neutral-900 dark:text-white mb-2">Check your email</h2>
+        <p className="text-neutral-600 dark:text-neutral-400 mb-6">
+          We sent a magic login link to <strong>{email}</strong>.
+        </p>
+        <button 
+          onClick={() => setStatus('idle')}
+          className="text-sm text-blue-600 hover:underline"
+        >
+          Try another email
+        </button>
+      </div>
+    )
+  }
+
   return (
-    <div className="min-h-screen max-w-7xl max-w-full grid place-content-center animate-gradient-slow bg-gradient-to-br via-white dark:via-gray-900 to-indigo-200 dark:to-indigo-900 from-indigo-200 dark:from-indigo-900 overflow-x-hidden backdrop-blur-sm mx-2 md:mx-4  border border-black/10 dark:border-white/10 rounded-lg my-4 min-h-fit z-10 text-black dark:text-white ">
-      <div className="w-full max-w-lg text-center space-y-12 ">
-        <div className="space-y-4">
-          <h1 className="text-5xl font-extrabold text-gray-900 drop-shadow-lg dark:text-white">
-            ENTER THE HAVEN
-          </h1>
-          <p className="text-gray-600 uppercase tracking-widest text-sm dark:text-white">
-            Authorized Entry Only
-          </p>
+    <div className="w-full max-w-md p-8 bg-white/80 dark:bg-black/80 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 dark:border-white/10">
+      <div className="text-center mb-8">
+        <h1 className="text-3xl font-extrabold text-neutral-900 dark:text-white tracking-tight mb-2">
+          Welcome Back
+        </h1>
+        <p className="text-sm text-neutral-500 dark:text-neutral-400">
+          Enter your email to access your dashboard.
+        </p>
+      </div>
+
+      <form onSubmit={handleLogin} className="space-y-6">
+        <div>
+          <label className="block text-xs font-bold text-neutral-500 uppercase mb-1.5 ml-1">Email Address</label>
+          <div className="relative">
+            <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-400 size-5" />
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="you@example.com"
+              className="w-full pl-12 pr-4 py-3.5 rounded-xl border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 focus:ring-2 focus:ring-blue-500 outline-none transition-all"
+              required
+              autoFocus
+            />
+          </div>
         </div>
 
-        <form onSubmit={handleLogin} className="space-y-6">
-          <div className="space-y-4">
-            <div className="relative">
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder={`Email`}
-                className="w-full px-6 py-4 rounded-2xl text-lg bg-white/80 dark:bg-black shadow-inner border border-gray-300 focus:outline-none focus:ring-4 focus:ring-indigo-400 transition"
-                required
-              />
-              <div className="absolute right-4 top-1/2 -translate-y-1/2">
-                <div className="w-2 h-2 rounded-full bg-gray-300" />
-              </div>
-            </div>
+        {status === 'error' && (
+          <div className="p-3 bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 text-sm rounded-lg text-center border border-red-100 dark:border-red-800/50">
+            {error}
           </div>
-          <div className="space-y-4">
-            {passwords.map((password, index) => (
-              <div key={index} className="relative">
-                <input
-                  type="password"
-                  value={password}
-                  onChange={(e) => handlePasswordChange(index, e.target.value)}
-                  placeholder={`Password ${index + 1}`}
-                  className="w-full px-6 py-4 rounded-2xl text-lg bg-white/80 dark:bg-black shadow-inner border border-gray-300 focus:outline-none focus:ring-4 focus:ring-indigo-400 transition"
-                  required
-                />
-                <div className="absolute right-4 top-1/2 -translate-y-1/2">
-                  <div className="w-2 h-2 rounded-full bg-gray-300" />
-                </div>
-              </div>
-            ))}
-          </div>
+        )}
 
-          {error && (
-            <div className="bg-red-100 border border-red-300 text-red-700 px-4 py-3 rounded-xl text-sm">
-              {error}
-            </div>
-          )}
-
-          <button
-            type="submit"
-            disabled={isLoading}
-            className="w-full bg-gradient-to-r from-indigo-500 via-purple-500 to-indigo-500 hover:from-indigo-600 hover:to-purple-600 text-white text-lg font-semibold py-4 rounded-full shadow-lg hover:shadow-2xl transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-indigo-300 disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            {isLoading ? (
-              <span className="flex items-center justify-center">
-                <svg className="animate-spin mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                </svg>
-                Gaining Access...
-              </span>
-            ) : (
-              'Unlock Portal'
-            )}
-          </button>
-        </form>
-      </div>
+        <button
+          type="submit"
+          disabled={status === 'loading'}
+          className="w-full bg-neutral-900 dark:bg-white text-white dark:text-black font-bold text-lg py-3.5 rounded-xl shadow-lg hover:scale-[1.02] transition-transform disabled:opacity-70 disabled:scale-100 flex items-center justify-center gap-2"
+        >
+          {status === 'loading' ? <Loader2 className="animate-spin size-5" /> : <>Sign In <ArrowRight className="size-5" /></>}
+        </button>
+      </form>
     </div>
   )
 }
 
 export default function LoginPage() {
-  return (
-    <Suspense fallback={
-      <div className="min-h-screen pt-24 flex items-center justify-center bg-gradient-to-br from-indigo-200 dark:from-indigo-900 via-white dark:via-gray-900 to-indigo-200 dark:to-indigo-900 animate-gradient-slow p-6">
-        <div className="text-gray-600 dark:text-gray-300">Loading...</div>
-      </div>
-    }>
-      <LoginForm />
-    </Suspense>
-  )
+  return (<>
+    <div className="fixed inset-0 -z-10 opacity-60 ">
+      <ReactiveBackground />
+    </div>
+    <main className="max-w-full h-[700px] grid place-content-center overflow-hidden backdrop-blur-sm mx-2 md:mx-4 bg-white/50 dark:bg-black/50 border border-black/10 dark:border-white/10 rounded-lg my-4 min-h-fit z-10 text-black dark:text-white ">
+      {/* Background decoration */}
+      <div className="absolute top-[-20%] left-[-10%] w-[50%] h-[50%] bg-blue-500/20 blur-[120px] rounded-full pointer-events-none" />
+      <div className="absolute bottom-[-20%] right-[-10%] w-[50%] h-[50%] bg-purple-500/20 blur-[120px] rounded-full pointer-events-none" />
+      
+      <Suspense fallback={null}>
+        <LoginForm />
+      </Suspense>
+    </main>
+  </>)
 }

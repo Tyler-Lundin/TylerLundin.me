@@ -14,11 +14,6 @@ export async function updateUserRole(userId: string, newRole: string) {
     return { error: error.message }
   }
 
-  // Also update crm_profiles if it exists and has a role column, just in case
-  // The fetchTeamStats used crm_profiles, so it's likely important.
-  // We ignore error here as crm_profiles might be a view or linked differently
-  await sb.from('crm_profiles').update({ role: newRole }).eq('id', userId)
-
   revalidatePath('/dev/team')
   return { success: true }
 }

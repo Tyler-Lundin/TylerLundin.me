@@ -137,7 +137,7 @@ const ViewToggle = ({ current, onChange }: { current: HeroTypes, onChange: (v: H
       <div className="absolute inset-0 p-1 pointer-events-none">
         <motion.div
           layout
-          className="h-full w-[calc(50%-4px)] bg-white dark:bg-neutral-800 rounded-full shadow-sm border border-black/5 dark:border-white/5"
+          className="h-full w-[calc(50%)] bg-white dark:bg-neutral-800 rounded-full shadow-sm border border-black/5 dark:border-white/5"
           initial={false}
           animate={{ x: current === "bundles" ? "0%" : "100%" }}
           transition={{ type: "spring", stiffness: 500, damping: 30 }}
@@ -209,8 +209,28 @@ const Heading = ({ current }: { current: HeroTypes }) => {
         {current === "projects" && ("Building fast, modern websites. Take a look.")}
       </p>
 
+      {/* Spacer */}
+      <div className="h-12" />
+
+      {/* CTA Button */}
+      <div className="flex justify-center mt-4">
+        <Link 
+          href="/start-now?promo=FREEFIRST"
+          className="group relative inline-flex items-center gap-2 rounded-full bg-emerald-600 px-8 py-3.5 text-sm font-bold text-white shadow-xl shadow-emerald-500/20 transition-all hover:bg-emerald-500 hover:scale-[1.02] active:scale-[0.98]"
+        >
+          <span>Start Your Project</span>
+          <svg className="size-4 transition-transform group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+          </svg>
+          <div className="absolute -top-1 -right-1 flex h-4 w-4">
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+            <span className="relative inline-flex rounded-full h-4 w-4 bg-emerald-500 border-2 border-white dark:border-black"></span>
+          </div>
+        </Link>
+      </div>
+
       {/* Spacer - Adjusted width to not force scroll on tiny screens */}
-      <div className="w-64 sm:w-80 h-6" />
+      <div className="w-64 sm:w-80 h-2" />
       
       <Arrow />
     </div>

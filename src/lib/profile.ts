@@ -19,5 +19,9 @@ export async function ensureProfileOrRedirect() {
     .select('user_id')
     .eq('user_id', String(userId))
     .maybeSingle()
-  if (!prof) redirect(`/profile/${String(userId)}`)
+  
+  if (!prof) {
+    // Auto-create missing profile row to avoid redirect loop
+    await sb.from('user_profiles').insert({ user_id: String(userId) });
+  }
 }

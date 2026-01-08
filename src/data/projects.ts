@@ -160,9 +160,9 @@ export const projects: Project[] = [
       { type: 'live', url: 'https://s1autorepair.com/', label: 'Live' },
     ],
     media: [
-      { id: 's1-root', type: 'image', src: '/projects/s1-auto-repair/s1-root.webp', alt: 'Suncrest Fitness Center preview', featured: true, },
-      { id: 's1-admin', type: 'image', src: '/projects/s1-auto-repair/s1-admin.webp', alt: 'Suncrest Fitness Center preview', featured: true, },
-      { id: 's1-admin-vehicles', type: 'image', src: '/projects/s1-auto-repair/s1-admin-vehicles.webp', alt: 'Suncrest Fitness Center preview', featured: true, },
+      { id: 's1-root', type: 'image', src: '/projects/s1-auto-repair/s1-root.webp', alt: 'S1 Root', featured: true, },
+      { id: 's1-admin', type: 'image', src: '/projects/s1-auto-repair/s1-admin.webp', alt: 'S1 Admin', featured: true, },
+      { id: 's1-admin-vehicles', type: 'image', src: '/projects/s1-auto-repair/s1-work-orders.webp', alt: 'S1 Auto Work Orders', featured: true, },
     ],
     weight: 0,
     heroShowcase: true,

@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Menu, X, Copy, Check, Home as HomeIcon, Users, Folder, Layers, MessageSquareText, Rocket, Newspaper, Settings, MapPin, BarChart3, Loader2 } from 'lucide-react'
+import { Menu, X, Copy, Check, Home as HomeIcon, Users, Folder, Layers, MessageSquareText, Rocket, Newspaper, Settings, MapPin, BarChart3, Loader2, Megaphone } from 'lucide-react'
 import { useEffect, useRef, useState, useMemo } from 'react'
 import { useRouter, usePathname as useCurrentPathname } from 'next/navigation'
 
@@ -42,7 +42,8 @@ export default function DashboardNav() {
 
   const parts = pathname.split('/').filter(Boolean)
   const isMarketing = parts.includes('marketing')
-  const base = isMarketing ? 'marketing' : 'dev'
+  const isPortal = parts.includes('portal')
+  const base = isMarketing ? 'marketing' : isPortal ? 'portal' : 'dev'
   const baseHref = `/${base}`
   const trail = parts.indexOf(base) >= 0 ? parts.slice(parts.indexOf(base) + 1) : []
 
@@ -98,7 +99,7 @@ export default function DashboardNav() {
   )
 }
 
-function MenuOverlay({ onClose, pathname, base, triggerRef }: { onClose: () => void; pathname: string; base: 'dev' | 'marketing'; triggerRef: React.RefObject<HTMLButtonElement | null> }) {
+function MenuOverlay({ onClose, pathname, base, triggerRef }: { onClose: () => void; pathname: string; base: 'dev' | 'marketing' | 'portal'; triggerRef: React.RefObject<HTMLButtonElement | null> }) {
   const containerRef = useRef<HTMLDivElement>(null)
   const menuRef = useRef<HTMLUListElement>(null)
   const router = useRouter()
@@ -107,6 +108,15 @@ function MenuOverlay({ onClose, pathname, base, triggerRef }: { onClose: () => v
 
   const b = `/${base}`
   const items = useMemo(() => {
+    if (base === 'portal') {
+      return [
+        { key: 'home', label: 'Dashboard', href: `${b}`, icon: HomeIcon, desc: 'Project overview' },
+        { key: 'messages', label: 'Messages', href: `${b}/messages`, icon: MessageSquareText, desc: 'Contact support' },
+        { key: 'billing', label: 'Billing', href: `${b}/billing`, icon: BarChart3, desc: 'Invoices & subscriptions' },
+        { key: 'profile', label: 'Profile', href: `${b}/profile`, icon: Users, desc: 'Account settings' },
+      ]
+    }
+
     const raw = [
       { key: 'home', label: 'Dashboard', href: `${b}`, icon: HomeIcon, desc: 'Overview' },
       { key: 'analytics', label: 'Analytics', href: `${b}/analytics`, icon: BarChart3, desc: 'Signals & events' },
@@ -115,7 +125,8 @@ function MenuOverlay({ onClose, pathname, base, triggerRef }: { onClose: () => v
       { key: 'swipe', label: 'Swipe', href: `${b}/leads/swipe`, icon: MapPin, desc: 'Website review filter' },
       { key: 'groups', label: 'Groups', href: `${b}/groups`, icon: Layers, desc: 'Organize prospects' },
       { key: 'messages', label: 'Messages', href: `${b}/msgs`, icon: MessageSquareText, desc: 'Inbox & outreach' },
-      { key: 'team', label: 'Team', href: `/dev/team`, icon: Settings, desc: 'Invites & roles' },
+      { key: 'ads', label: 'Ads', href: base === 'marketing' ? `${b}/ads` : `${b}/marketing/ads`, icon: Megaphone, desc: 'Manage in-house ads' },
+      { key: 'team', label: 'Team', href: `${b}/team`, icon: Settings, desc: 'Invites & roles' },
       { key: 'new-project', label: 'New Project', href: `/dev/projects/new`, icon: Rocket, desc: 'Spin up a repo' },
       { key: 'projects', label: 'Projects', href: `/dev/projects`, icon: Folder, desc: 'Workspaces & artifacts' },
       { key: 'clients', label: 'Clients', href: `/dev/clients`, icon: Users, desc: 'Organizations & contacts' },

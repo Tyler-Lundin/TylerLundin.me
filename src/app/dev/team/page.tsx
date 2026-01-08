@@ -3,6 +3,8 @@ import { getAuthUser } from '@/lib/auth'
 import { Users, Mail, Shield } from 'lucide-react'
 import TeamManager from '@/components/dev/team/TeamManager'
 
+export const dynamic = 'force-dynamic'
+
 async function fetchInvites() {
   const sb: any = await createServiceClient()
   const { data, error } = await sb
@@ -17,10 +19,11 @@ async function fetchInvites() {
 async function fetchMembers() {
   const sb: any = await createServiceClient()
 
-  // Fetch users first
+  // Fetch users first - filter out non-team roles (guest, client)
   const { data: users, error: usersError } = await sb
     .from('users')
     .select('id, email, full_name, role, created_at')
+    .not('role', 'in', '("guest","client")')
     .order('created_at', { ascending: false })
 
   if (usersError) {

@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { requireRoles } from '@/lib/auth';
 import { getAdminClient } from '@/lib/leadgen/supabaseServer';
-import { cookies } from 'next/headers';
-import jwt from 'jsonwebtoken';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -9,12 +8,11 @@ export const dynamic = 'force-dynamic';
 export async function POST(req: NextRequest) {
   try {
     // Admin guard
-    const cookieStore = await cookies();
-    const token = cookieStore.get('access_token')?.value;
-    const secret = process.env.JWT_SECRET || 'your-secret-key';
-    if (!token) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    const decoded = jwt.verify(token, secret) as any;
-    if (!decoded || decoded.role !== 'admin') return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+    try {
+      await requireRoles(['admin', 'owner']);
+    } catch {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
 
     const { lead_id, filter_key = 'website_swipe', decision, reason, group_id } = await req.json();
     if (!lead_id || !decision) return NextResponse.json({ error: 'lead_id and decision required' }, { status: 400 });

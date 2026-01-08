@@ -293,9 +293,9 @@ export async function createAiTaskAction(task: Partial<AiTask> & { project_id: s
 
   // Verify Profile Exists
   const { data: profile } = await sb
-    .from('crm_profiles')
-    .select('user_id')
-    .eq('user_id', userId)
+    .from('users')
+    .select('id')
+    .eq('id', userId)
     .single();
 
   if (!profile) {
@@ -333,11 +333,11 @@ export async function createAiTaskAction(task: Partial<AiTask> & { project_id: s
     }
 
     // Create missing profile
-    const { error: createProfileError } = await sb.from('crm_profiles').insert({
-      user_id: userId,
+    const { error: createProfileError } = await sb.from('users').insert({
+      id: userId,
       email: userEmail || 'unknown@example.com',
       role: (user.role as any) || 'admin', 
-      name: 'Dev User'
+      full_name: 'Dev User'
     });
 
     if (createProfileError) {

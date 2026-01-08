@@ -1,6 +1,6 @@
 "use client"
 
-import { useCallback } from 'react'
+import { useCallback, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import DevCommandCenterHero, { ProjectMeta, LeadMeta, InboundItem } from './DevCommandCenterHero'
 import { createClient } from '@/lib/supabase/client'
@@ -24,8 +24,12 @@ type ControllerProps = {
 
 export default function CommandCenterController({ initialProjects, initialLeads, initialInbound }: ControllerProps) {
   const router = useRouter()
+  const [activeAction, setActiveAction] = useState<string | null>(null)
+  const [activeCtx, setActiveCtx] = useState<any>(null)
 
   const handleAction = useCallback(async (action: string, ctx: { projectId?: string }) => {
+    setActiveAction(action)
+    setActiveCtx(ctx)
     
     if (action === 'new_project') {
       router.push('/dev/clients')
@@ -39,6 +43,8 @@ export default function CommandCenterController({ initialProjects, initialLeads,
     }
 
     console.log('Action:', action, ctx)
+    setActiveAction(null)
+    setActiveCtx(null)
 
   }, [router])
 
@@ -48,6 +54,8 @@ export default function CommandCenterController({ initialProjects, initialLeads,
       initialProjects={initialProjects}
       initialLeads={initialLeads}
       initialInbound={initialInbound}
+      activeAction={activeAction}
+      activeCtx={activeCtx}
     />
   )
 }

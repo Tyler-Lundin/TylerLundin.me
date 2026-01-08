@@ -8,6 +8,7 @@ import InviteManager from '@/components/dev/team/InviteManager'
 export default function TeamManager({ members, invites, currentUser }: any) {
   const [tab, setTab] = useState<'members' | 'invites'>('members')
   const [isInviteOpen, setIsInviteOpen] = useState(false)
+  const pendingCount = invites.filter((i: any) => i.status === 'pending').length
 
   return (
     <div className="space-y-6">
@@ -31,7 +32,7 @@ export default function TeamManager({ members, invites, currentUser }: any) {
                 : 'text-neutral-500 hover:text-neutral-900 dark:hover:text-neutral-300'
             }`}
           >
-            Pending Invites ({invites.length})
+            Invites ({pendingCount})
           </button>
         </div>
 

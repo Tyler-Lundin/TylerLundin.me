@@ -1,10 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { cookies } from 'next/headers';
-import jwt from 'jsonwebtoken';
+import { requireRoles } from '@/lib/auth';
 import { getAdminClient } from '@/lib/leadgen/supabaseServer';
-
-const COOKIE_NAME = 'auth_token';
-const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -26,11 +22,11 @@ function scoreForReviews(total: number | null): number {
 
 export async function GET(_req: NextRequest) {
   try {
-    const cookieStore = await cookies();
-    const token = cookieStore.get(COOKIE_NAME)?.value;
-    if (!token) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    const decoded = jwt.verify(token, JWT_SECRET) as any;
-    if (!decoded || decoded.role !== 'admin') return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+    try {
+      await requireRoles(['admin', 'owner']);
+    } catch {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
 
     const supa = getAdminClient();
     if (!supa) return NextResponse.json({ items: [] });

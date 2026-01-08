@@ -28,6 +28,7 @@ interface TeamInvite {
   email: string
   role: string
   expires_at?: string | null
+  created_at: string
 }
 
 // --- Components ---
@@ -161,171 +162,109 @@ export default async function CrmDashboard() {
     <div className="min-h-screen bg-neutral-50/50 pb-20 dark:bg-neutral-950">
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
         
-        {/* 1. Command Center */}
+        {/* 1. Command Center (Driver Seat) */}
         <div className="mb-8">
-          {/* Server wrapper provides initial projects via service client */}
           <CommandCenter />
         </div>
 
-        {/* Leads Overview */}
+        {/* 2. Leads Overview (Intelligence) */}
         <div className="mb-8">
           <LeadsOverview />
         </div>
 
-        {/* 2. Finance Section (High Priority) */}
-        <section className="mb-8">
-          <h3 className="mb-3 text-sm font-semibold text-neutral-900 dark:text-white">Financial Health</h3>
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-            <KpiCard 
-              title="MRR" 
-              value={formatCurrency(finance.mrr_cents)} 
-              subtext="vs last month" 
-              trend="neutral"
-              icon={<Icons.TrendingUp />}
-            />
-            <KpiCard 
-              title="Outstanding" 
-              value={formatCurrency(finance.open_invoices_cents)} 
-              subtext="All open invoices"
-              icon={<span className="text-amber-500">●</span>}
-            />
-             <KpiCard 
-              title="Overdue" 
-              value={formatCurrency(finance.overdue_cents)} 
-              subtext="Action needed"
-              icon={<span className="text-rose-500">●</span>}
-            />
-          </div>
-        </section>
-
-        {/* 3. Operational Grid */}
-        <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
+        {/* 3. System Status (Operations) */}
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
           
-          {/* Left Column: Projects Table (2/3 width) */}
-          <div className="lg:col-span-2">
-            
-            {/* Stats Row */}
-            <div className="mb-6 grid grid-cols-2 gap-4 sm:grid-cols-4">
-              {[
-                { label: "Active Clients", val: counts.clients, icon: <Icons.Users /> },
-                { label: "Active Projects", val: counts.projects, icon: <Icons.Folder /> },
-                { label: "Open Tasks", val: counts.openItems, icon: <Icons.Clock /> },
-                { label: "Invites", val: counts.invites, icon: <span className="flex size-2 rounded-full bg-blue-500" /> },
-              ].map((s) => (
-                <div key={s.label} className="rounded-lg border border-neutral-200 bg-white p-3 shadow-sm dark:border-neutral-800 dark:bg-neutral-900">
-                  <div className="flex items-center gap-2 text-[10px] font-medium text-neutral-500 uppercase">
-                    {s.icon} {s.label}
-                  </div>
-                  <div className="mt-1 text-lg font-bold text-neutral-900 dark:text-white">{s.val}</div>
+          {/* Finance Card */}
+          <div className="flex flex-col rounded-2xl border border-neutral-200 bg-white shadow-sm dark:border-neutral-800 dark:bg-neutral-950 h-96">
+            <div className="flex items-center justify-between border-b border-neutral-100 p-4 dark:border-neutral-800 shrink-0">
+              <div className="flex items-center gap-2">
+                <div className="flex size-8 items-center justify-center rounded-lg bg-amber-50 text-amber-600 dark:bg-amber-900/20 dark:text-amber-400">
+                  <Icons.TrendingUp />
                 </div>
-              ))}
+                <span className="font-semibold text-neutral-900 dark:text-neutral-100">Financials</span>
+              </div>
             </div>
-
-            {/* Recent Projects Card */}
-            <section className="overflow-hidden rounded-xl border border-neutral-200 bg-white shadow-sm dark:border-neutral-800 dark:bg-neutral-900">
-              <div className="flex items-center justify-between border-b border-neutral-100 px-6 py-4 dark:border-neutral-800">
-                <h2 className="text-base font-semibold text-neutral-900 dark:text-white">Recent Projects</h2>
-                <Link href="/dev/projects" className="group flex items-center gap-1 text-xs font-medium text-blue-600 hover:text-blue-700 dark:text-blue-400">
-                  View all <Icons.ArrowRight />
-                </Link>
-              </div>
-              <div className="overflow-x-auto">
-                <table className="w-full text-left text-sm">
-                  <thead className="bg-neutral-50 text-neutral-500 dark:bg-neutral-900 dark:text-neutral-400">
-                    <tr>
-                      <th className="px-6 py-3 font-medium">Project Name</th>
-                      <th className="px-6 py-3 font-medium">Status</th>
-                      <th className="px-6 py-3 font-medium">Priority</th>
-                      <th className="px-6 py-3 font-medium text-right">Created</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-neutral-100 dark:divide-neutral-800">
-                    {recentProjects.map((p) => (
-                      <tr key={p.id} className="group transition-colors hover:bg-neutral-50 dark:hover:bg-neutral-800/50">
-                        <td className="px-6 py-4">
-                          <div className="font-medium text-neutral-900 dark:text-neutral-100">{p.title}</div>
-                          <div className="text-xs text-neutral-500">{p.client?.name || 'Unknown'}</div>
-                        </td>
-                        <td className="px-6 py-4">
-                          <StatusBadge value={p.status} />
-                        </td>
-                        <td className="px-6 py-4">
-                          <PriorityPill value={p.priority} />
-                        </td>
-                        <td className="px-6 py-4 text-right text-xs text-neutral-400 tabular-nums">
-                          {new Date(p.created_at).toLocaleDateString()}
-                        </td>
-                      </tr>
-                    ))}
-                    {recentProjects.length === 0 && (
-                      <tr>
-                        <td colSpan={4} className="p-8 text-center text-neutral-500">No active projects</td>
-                      </tr>
-                    )}
-                  </tbody>
-                </table>
-              </div>
-            </section>
+            <div className="flex-1 p-4 space-y-3">
+               <div className="p-4 rounded-xl bg-neutral-50 dark:bg-neutral-900/50 border border-neutral-100 dark:border-neutral-800">
+                  <div className="text-[10px] font-bold text-neutral-500 uppercase">Monthly Revenue</div>
+                  <div className="text-2xl font-black text-neutral-900 dark:text-white">{formatCurrency(finance.mrr_cents)}</div>
+               </div>
+               <div className="p-4 rounded-xl bg-neutral-50 dark:bg-neutral-900/50 border border-neutral-100 dark:border-neutral-800">
+                  <div className="text-[10px] font-bold text-neutral-500 uppercase">Outstanding Invoices</div>
+                  <div className="text-2xl font-black text-amber-600 dark:text-amber-400">{formatCurrency(finance.open_invoices_cents)}</div>
+               </div>
+               <div className="p-4 rounded-xl bg-neutral-50 dark:bg-neutral-900/50 border border-neutral-100 dark:border-neutral-800">
+                  <div className="text-[10px] font-bold text-neutral-500 uppercase">Overdue Amount</div>
+                  <div className="text-2xl font-black text-rose-600 dark:text-rose-400">{formatCurrency(finance.overdue_cents)}</div>
+               </div>
+            </div>
           </div>
 
-          {/* Right Column: Feeds (1/3 width) */}
-          <div className="flex flex-col gap-6">
-            
-            {/* Pending Invites */}
-            <section className="rounded-xl border border-neutral-200 bg-white shadow-sm dark:border-neutral-800 dark:bg-neutral-900">
-              <div className="border-b border-neutral-100 px-5 py-3 dark:border-neutral-800">
-                <h3 className="text-sm font-semibold text-neutral-900 dark:text-white">Pending Invites</h3>
+          {/* Pending Team Card */}
+          <div className="flex flex-col rounded-2xl border border-neutral-200 bg-white shadow-sm dark:border-neutral-800 dark:bg-neutral-950 h-96">
+            <div className="flex items-center justify-between border-b border-neutral-100 p-4 dark:border-neutral-800 shrink-0">
+              <div className="flex items-center gap-2">
+                <div className="flex size-8 items-center justify-center rounded-lg bg-blue-50 text-blue-600 dark:bg-blue-900/20 dark:text-blue-400">
+                  <Icons.Users />
+                </div>
+                <span className="font-semibold text-neutral-900 dark:text-neutral-100">Team Status</span>
               </div>
-              <ul className="divide-y divide-neutral-100 dark:divide-neutral-800">
-                {pendingInvites.map((i) => (
-                  <li key={i.id} className="flex items-center justify-between px-5 py-3">
-                    <div>
-                      <div className="text-sm font-medium text-neutral-900 dark:text-neutral-200">{i.email}</div>
-                      <div className="text-xs text-neutral-500">{i.role}</div>
+              <div className="text-[10px] font-bold text-neutral-400 uppercase">{pendingInvites.length} Pending</div>
+            </div>
+            <div className="flex-1 overflow-y-auto p-2">
+              {pendingInvites.length === 0 ? (
+                <div className="p-8 text-center text-sm text-neutral-400 italic">No pending invitations.</div>
+              ) : (
+                <div className="flex flex-col gap-1">
+                  {pendingInvites.map(i => (
+                    <div key={i.id} className="flex items-center justify-between p-3 rounded-xl hover:bg-neutral-50 dark:hover:bg-neutral-900 transition-colors">
+                      <div className="min-w-0">
+                        <div className="text-sm font-semibold text-neutral-900 dark:text-white truncate">{i.email}</div>
+                        <div className="text-[10px] text-neutral-500 uppercase">{i.role}</div>
+                      </div>
+                      <span className="text-[10px] text-neutral-400">Sent {new Date(i.created_at).toLocaleDateString()}</span>
                     </div>
-                    <div className="rounded bg-neutral-100 px-2 py-1 text-[10px] text-neutral-600 dark:bg-neutral-800 dark:text-neutral-400">
-                      {i.expires_at ? new Date(i.expires_at).toLocaleDateString() : 'No Expiry'}
-                    </div>
-                  </li>
-                ))}
-                {pendingInvites.length === 0 && (
-                  <li className="px-5 py-3 text-sm text-neutral-500">No pending invites</li>
-                )}
-              </ul>
-              <div className="border-t border-neutral-100 bg-neutral-50 p-2 text-center dark:border-neutral-800 dark:bg-neutral-900/50">
-                 <Link href="/dev/team" className="text-xs font-medium text-neutral-500 hover:text-neutral-900 dark:hover:text-neutral-300">Manage Team</Link>
-              </div>
-            </section>
-
-            {/* Activity Feed */}
-            <section className="rounded-xl border border-neutral-200 bg-white shadow-sm dark:border-neutral-800 dark:bg-neutral-900">
-              <div className="border-b border-neutral-100 px-5 py-3 dark:border-neutral-800">
-                <h3 className="text-sm font-semibold text-neutral-900 dark:text-white">Recent Activity</h3>
-              </div>
-              <ul className="relative space-y-4 px-5 py-4">
-                {/* Connector Line */}
-                <div className="absolute left-[29px] top-6 bottom-6 w-px bg-neutral-200 dark:bg-neutral-800" />
-                
-                {activityLog.map((a) => (
-                  <li key={a.id} className="relative flex gap-3">
-                    <div className={`relative z-10 flex size-2.5 mt-1.5 flex-none rounded-full ring-4 ring-white dark:ring-neutral-900 
-                      ${a.action_type === 'deploy' ? 'bg-emerald-500' : a.action_type === 'money' ? 'bg-amber-500' : 'bg-blue-500'}`} 
-                    />
-                    <div>
-                      <p className="text-sm text-neutral-600 dark:text-neutral-300">
-                        {a.description}
-                      </p>
-                      <p className="text-xs text-neutral-400">{new Date(a.created_at).toLocaleString()}</p>
-                    </div>
-                  </li>
-                ))}
-                {activityLog.length === 0 && (
-                  <li className="text-sm text-neutral-500 pl-4">No recent activity logged.</li>
-                )}
-              </ul>
-            </section>
-
+                  ))}
+                </div>
+              )}
+            </div>
+            <div className="border-t border-neutral-100 p-3 text-center text-xs text-neutral-400 dark:border-neutral-800 shrink-0">
+               <Link href="/dev/team" className="hover:text-neutral-600 dark:hover:text-neutral-300">Manage Team &rarr;</Link>
+            </div>
           </div>
+
+          {/* Activity Card */}
+          <div className="flex flex-col rounded-2xl border border-neutral-200 bg-white shadow-sm dark:border-neutral-800 dark:bg-neutral-950 h-96">
+            <div className="flex items-center justify-between border-b border-neutral-100 p-4 dark:border-neutral-800 shrink-0">
+              <div className="flex items-center gap-2">
+                <div className="flex size-8 items-center justify-center rounded-lg bg-neutral-100 text-neutral-600 dark:bg-neutral-900 dark:text-neutral-400">
+                  <Icons.Clock />
+                </div>
+                <span className="font-semibold text-neutral-900 dark:text-neutral-100">System Activity</span>
+              </div>
+            </div>
+            <div className="flex-1 overflow-y-auto p-4">
+              {activityLog.length === 0 ? (
+                <div className="p-8 text-center text-sm text-neutral-400 italic">No recent activity.</div>
+              ) : (
+                <div className="relative space-y-6">
+                  <div className="absolute left-[5px] top-2 bottom-2 w-px bg-neutral-100 dark:bg-neutral-800" />
+                  {activityLog.map(a => (
+                    <div key={a.id} className="relative pl-6">
+                      <div className="absolute left-0 top-1.5 size-2.5 rounded-full bg-blue-500 ring-4 ring-white dark:ring-neutral-950" />
+                      <p className="text-xs text-neutral-600 dark:text-neutral-300 leading-relaxed">{a.description}</p>
+                      <p className="text-[10px] text-neutral-400 mt-1">{new Date(a.created_at).toLocaleTimeString()}</p>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+            <div className="border-t border-neutral-100 p-3 text-center text-xs text-neutral-400 dark:border-neutral-800 shrink-0">
+               <Link href="/dev/logs" className="hover:text-neutral-600 dark:hover:text-neutral-300">View Audit Logs &rarr;</Link>
+            </div>
+          </div>
+
         </div>
       </div>
     </div>

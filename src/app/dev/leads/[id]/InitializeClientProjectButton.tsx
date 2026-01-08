@@ -43,17 +43,17 @@ export default function InitializeClientProjectButton({
   }
 
   return (
-    <div className="space-y-2">
+    <div className="flex flex-col items-end gap-2">
       <button
         onClick={handleClick}
         disabled={loading || initiallyDisabled || !!result}
-        className="inline-flex items-center rounded-md bg-blue-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-60"
+        className="h-8 rounded-lg bg-emerald-600 px-4 text-xs font-bold text-white shadow-lg shadow-emerald-500/20 hover:bg-emerald-700 transition-all active:scale-95 disabled:opacity-60"
       >
         {loading
           ? 'Initializing…'
           : initiallyDisabled || result
             ? 'Initialized'
-            : 'Initialize Client + Project'}
+            : 'Convert to Client'}
       </button>
 
       {error && (

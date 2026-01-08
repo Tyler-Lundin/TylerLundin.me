@@ -1,55 +1,55 @@
-import { cookies } from 'next/headers'
-import jwt from 'jsonwebtoken'
+import { createClient } from '@/lib/supabase/server';
+import { redirect } from 'next/navigation';
 
-const COOKIE_NAME = 'access_token'
-const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key'
-
-export interface JWTPayload { sub?: string; id?: string | number; role?: string; exp?: number; email?: string }
-
-export async function requireAdmin(): Promise<JWTPayload> {
-  // Allow admins and head of marketing roles
-  return requireRoles(['admin', 'head_of_marketing', 'head of marketing'])
+export interface AuthUser {
+  id: string;
+  email: string;
+  role: string;
 }
 
-export async function requireRoles(roles: string[]): Promise<JWTPayload> {
-  const cookieStore = await cookies()
-  const token = cookieStore.get(COOKIE_NAME)?.value
-  if (!token) throw new Error('Unauthorized')
-  const decoded = jwt.verify(token, JWT_SECRET) as JWTPayload
-  const role = (decoded as any)?.role
-  if (!decoded || !roles.includes(String(role))) throw new Error('Forbidden')
-  return decoded
+export async function getAuthUser(): Promise<AuthUser | null> {
+  try {
+    const supabase = await createClient();
+    const { data: { user }, error } = await supabase.auth.getUser();
+    
+    if (error || !user) return null;
+
+    // Fetch role
+    const { data: roleData } = await supabase
+      .from('users')
+      .select('role')
+      .eq('id', user.id)
+      .maybeSingle();
+      
+    return {
+      id: user.id,
+      email: user.email!,
+      role: roleData?.role || 'viewer'
+    };
+  } catch (e) {
+    console.error('[Auth] getAuthUser error:', e);
+    return null;
+  }
+}
+
+export async function requireRoles(roles: string[]): Promise<AuthUser> {
+  const user = await getAuthUser();
+  if (!user) redirect('/login');
+  
+  if (!roles.includes(user.role)) {
+    console.warn(`[Auth] User ${user.id} (${user.role}) denied access. Required: ${roles.join(', ')}`);
+    // Redirect to portal if they are a viewer/client, otherwise login
+    redirect('/portal');
+  }
+  
+  return user;
+}
+
+export async function requireAdmin(): Promise<AuthUser> {
+  return requireRoles(['admin', 'owner', 'head_of_marketing']);
 }
 
 export async function getUserRole(): Promise<string | null> {
-  try {
-    const cookieStore = await cookies()
-    const token = cookieStore.get(COOKIE_NAME)?.value
-    if (!token) return null
-    const decoded = jwt.verify(token, JWT_SECRET) as JWTPayload
-    return (decoded as any)?.role || null
-  } catch {
-    return null
-  }
-}
-
-// Non-throwing helper to get current auth payload (id, role, etc.) or null
-export async function getAuthUser(): Promise<JWTPayload | null> {
-  try {
-    const cookieStore = await cookies()
-    const token = cookieStore.get(COOKIE_NAME)?.value
-    if (!token) return null
-    const decoded = jwt.verify(token, JWT_SECRET) as JWTPayload
-    if (!decoded) return null
-    const id =
-      (decoded as any).id ??
-      (decoded as any).sub ??
-      (decoded as any).user_id ??
-      (decoded as any).userId ??
-      (decoded as any).uid
-    if (id && !(decoded as any).id) (decoded as any).id = String(id)
-    return decoded
-  } catch {
-    return null
-  }
+  const user = await getAuthUser();
+  return user?.role || null;
 }

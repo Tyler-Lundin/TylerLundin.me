@@ -20,6 +20,12 @@ type PublicPost = {
   author?: { id: string; full_name: string | null; avatar_url: string | null; role: string | null; visibility: 'public' | 'private' }
 }
 
+function formatRole(role: string | null) {
+  if (!role) return ''
+  if (role === 'head_of_marketing' || role === 'head of marketing') return 'Head of Marketing'
+  return role.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join(' ')
+}
+
 async function getPost(slug: string): Promise<PublicPost | null> {
   const sb: any = await createClient()
   const sbAdmin: any = await createServiceClient()
@@ -120,7 +126,7 @@ export default async function PublicBlogPost({ params }: { params: Promise<{ slu
                          alt="avatar" className="h-8 w-8 rounded-full object-cover border border-black/10 dark:border-white/10" />
                     <div className="text-sm">
                       <div className="font-medium">{post.author.full_name || 'Author'}</div>
-                      {post.author.role && <div className="text-xs text-neutral-500">{post.author.role}</div>}
+                      {post.author.role && <div className="text-xs text-neutral-500">{formatRole(post.author.role)}</div>}
                     </div>
                   </a>
                 ) : (
@@ -129,7 +135,7 @@ export default async function PublicBlogPost({ params }: { params: Promise<{ slu
                          alt="avatar" className="h-8 w-8 rounded-full object-cover border border-black/10 dark:border-white/10" />
                     <div className="text-sm">
                       <div className="font-medium">{post.author.full_name || 'Author'}</div>
-                      {post.author.role && <div className="text-xs text-neutral-500">{post.author.role}</div>}
+                      {post.author.role && <div className="text-xs text-neutral-500">{formatRole(post.author.role)}</div>}
                     </div>
                   </div>
                 )}

@@ -1,9 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { cookies } from 'next/headers';
-import jwt from 'jsonwebtoken';
-
-const COOKIE_NAME = 'access_token';
-const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
+import { requireRoles } from '@/lib/auth';
 
 function isAllowedUrl(u: URL) {
   if (!/^https?:$/.test(u.protocol)) return false;
@@ -25,11 +21,11 @@ function computeBaseHref(u: URL) {
 
 export async function GET(req: NextRequest) {
   try {
-    const cookieStore = await cookies();
-    const token = cookieStore.get(COOKIE_NAME)?.value;
-    if (!token) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    const decoded = jwt.verify(token, JWT_SECRET) as any;
-    if (!decoded || decoded.role !== 'admin') return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+    try {
+      await requireRoles(['admin', 'owner']);
+    } catch {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
 
     const { searchParams } = new URL(req.url);
     const url = searchParams.get('url');

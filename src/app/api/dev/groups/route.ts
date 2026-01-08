@@ -1,19 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { requireRoles } from '@/lib/auth';
 import { getAdminClient } from '@/lib/leadgen/supabaseServer';
-import { cookies } from 'next/headers';
-import jwt from 'jsonwebtoken';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
 export async function GET() {
-  // Admin guard
-  const cookieStore = await cookies();
-  const token = cookieStore.get('access_token')?.value;
-  const secret = process.env.JWT_SECRET || 'your-secret-key';
-  if (!token) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-  const decoded = jwt.verify(token, secret) as any;
-  if (!decoded || decoded.role !== 'admin') return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+  try {
+    await requireRoles(['admin', 'owner']);
+  } catch {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
 
   const supa = getAdminClient();
   if (!supa) return NextResponse.json({ items: [] });
@@ -24,13 +21,11 @@ export async function GET() {
 
 export async function POST(req: NextRequest) {
   try {
-    // Admin guard
-    const cookieStore = await cookies();
-    const token = cookieStore.get('access_token')?.value;
-    const secret = process.env.JWT_SECRET || 'your-secret-key';
-    if (!token) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    const decoded = jwt.verify(token, secret) as any;
-    if (!decoded || decoded.role !== 'admin') return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+    try {
+      await requireRoles(['admin', 'owner']);
+    } catch {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
 
     const { name, description } = await req.json();
     if (!name) return NextResponse.json({ error: 'name required' }, { status: 400 });

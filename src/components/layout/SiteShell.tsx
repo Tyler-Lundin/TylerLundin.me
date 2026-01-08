@@ -6,7 +6,6 @@ import { Footer } from '@/components/layout/Footer'
 import Greeting from '../Greeting'
 import DashboardNav from '../appnav/DashboardNav'
 import UserMenu from '../appnav/UserMenu'
-import AuthRefresher from '../dev/AuthRefresher'
 import UserMenuToggle from '../dev/UserMenuToggle'
 
 
@@ -15,12 +14,14 @@ export function SiteShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
   const isDevRoute = pathname.includes('/dev')
   const isMarketingRoute = pathname.includes('/marketing')
+  const isPortalRoute = pathname.includes('/portal')
   // const isHome = pathname === '/'
   // const isAbout = pathname === '/about' || pathname === '/about/'
   // const isProjectSlug = /^\/project\/[^/]+\/?$/.test(pathname) || /^\/projects\/[^/]+\/?$/.test(pathname)
 
   if (isDevRoute) return <DevShell children={children} />
   if (isMarketingRoute) return <MarketingShell children={children} />
+  if (isPortalRoute) return <PortalShell children={children} />
   return <UserShell children={children} />
 }
 
@@ -116,8 +117,6 @@ function DevShell({ children }: { children: React.ReactNode }) {
       {!isDisabled && (<DashboardNav />)}
         {children}
       </div>
-      {/* Keep access token fresh while on dev pages */}
-      <AuthRefresher />
       <UserMenu openProp={adminOpen} onClose={() => setUserOpen(false)} onToggle={() => setUserOpen((v)=>!v)} />
       <UserMenuToggle />
     </div>
@@ -142,7 +141,30 @@ function MarketingShell({ children }: { children: React.ReactNode }) {
         <DashboardNav />
         {children}
       </div>
-      <AuthRefresher />
+      <UserMenu openProp={adminOpen} onClose={() => setUserOpen(false)} onToggle={() => setUserOpen((v)=>!v)} />
+      <UserMenuToggle />
+    </div>
+  )
+}
+
+function PortalShell({ children }: { children: React.ReactNode }) {
+  const [adminOpen, setUserOpen] = useState(false)
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.code === 'Backquote' || e.key === '`' || e.key === '~') { e.preventDefault(); setUserOpen((v) => !v) }
+      if (e.key === 'Escape') setUserOpen(false)
+    }
+    const onEvt = () => setUserOpen((v) => !v)
+    window.addEventListener('keydown', onKey)
+    window.addEventListener('admin-menu-host-toggle' as any, onEvt)
+    return () => { window.removeEventListener('keydown', onKey); window.removeEventListener('admin-menu-host-toggle' as any, onEvt) }
+  }, [])
+  return (
+    <div className="relative max-w-screen min-h-screen overflow-x-hidden">
+      <div className="max-w-7xl mx-auto pt-12">
+        <DashboardNav />
+        {children}
+      </div>
       <UserMenu openProp={adminOpen} onClose={() => setUserOpen(false)} onToggle={() => setUserOpen((v)=>!v)} />
       <UserMenuToggle />
     </div>

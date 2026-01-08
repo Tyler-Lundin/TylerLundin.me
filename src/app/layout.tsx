@@ -6,6 +6,8 @@ import { SiteShell } from "@/components/layout/SiteShell";
 import { Analytics } from "@vercel/analytics/next";
 import Script from "next/script";
 import GoogleAnalytics from "@/components/analytics/GoogleAnalytics";
+import AdPlacement from "@/components/marketing/AdPlacement";
+import BannerWrapper from "@/components/marketing/BannerWrapper";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -101,6 +103,9 @@ export default async function RootLayout({
       </head>
       <body className={[inter.className, "max-w-screen overflow-x-hidden"].join(" ")}>
         <Suspense fallback={null}>
+          <BannerWrapper>
+            <AdPlacement placement="top_banner" />
+          </BannerWrapper>
           <SiteShell>
             {children}
           </SiteShell>

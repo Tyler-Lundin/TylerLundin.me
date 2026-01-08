@@ -96,7 +96,7 @@ export default function InviteManager({ initialInvites }: { initialInvites: Invi
         {sorted.map((i) => (
           <li
             key={i.id}
-            className="flex cursor-pointer items-center justify-between gap-3 p-4 transition-colors hover:bg-neutral-50 dark:hover:bg-neutral-800/50"
+            className={`flex cursor-pointer items-center justify-between gap-3 p-4 transition-colors hover:bg-neutral-50 dark:hover:bg-neutral-800/50 ${i.status === 'accepted' ? 'opacity-60' : ''}`}
             onClick={() => setSelected(i)}
           >
             <div className="flex items-center gap-3 min-w-0">
@@ -152,7 +152,9 @@ export default function InviteManager({ initialInvites }: { initialInvites: Invi
                     onChange={(e) => setSelected({ ...selected, role: e.target.value })}
                   >
                     <option value="member">Member</option>
-                    <option value="editor">Editor</option>
+                    <option value="marketing_editor">Marketing Editor</option>
+                    <option value="marketing_analyst">Marketing Analyst</option>
+                    <option value="head_of_marketing">Head of Marketing</option>
                     <option value="admin">Admin</option>
                   </select>
                 </div>

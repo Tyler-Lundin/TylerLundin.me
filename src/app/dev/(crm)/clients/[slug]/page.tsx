@@ -3,6 +3,7 @@ import { createServiceClient } from '@/lib/supabase/server'
 import { notFound } from 'next/navigation'
 import { ExternalLink, Building2, Phone, Mail, User, Folder, ChevronLeft } from 'lucide-react'
 import EditClientDialog from '../components/EditClientDialog'
+import EditContactDialog from '../components/EditContactDialog'
 import NewProjectDialog from '../components/NewProjectDialog'
 import NewContactDialog from '../components/NewContactDialog'
 import { CrmClient, CrmProject } from '@/types/crm'
@@ -210,7 +211,10 @@ export default async function ClientDetailPage(props: PageProps) {
                           <User className="size-4" />
                         </div>
                         <div className="min-w-0 flex-1">
-                          <div className="font-medium text-neutral-900 dark:text-white truncate">{contact.name}</div>
+                          <div className="flex items-center justify-between gap-2">
+                            <div className="font-medium text-neutral-900 dark:text-white truncate">{contact.name}</div>
+                            <EditContactDialog contact={contact} />
+                          </div>
                           {contact.title && <div className="text-xs text-neutral-500 truncate">{contact.title}</div>}
                           
                           <div className="mt-3 space-y-1.5">

@@ -105,6 +105,64 @@ export async function sendInviteEmail({ to, message, link }: InviteEmailParams) 
   }
 }
 
+export async function sendClientWelcomeEmail({ to, name, link }: { to: string; name: string; link: string }) {
+  const from = process.env.CONTACT_FROM || 'hello@tylerlundin.me';
+  const subject = 'Welcome to your Project Dashboard';
+  
+  const html = `
+    <div style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;max-width:600px;margin:0 auto;padding:20px;color:#111">
+      <h2 style="margin-bottom:16px">Welcome, ${name}!</h2>
+      <p style="font-size:16px;line-height:1.5">
+        Thanks for starting your project with us. We've created a secure dashboard where you can track progress, view quotes, and communicate with the team.
+      </p>
+      <p style="font-size:16px;line-height:1.5">
+        Click the button below to sign in instantly (no password required):
+      </p>
+      <div style="margin:24px 0">
+        <a href="${link}" style="display:inline-block;background-color:#000;color:#fff;padding:12px 24px;border-radius:6px;text-decoration:none;font-weight:bold;font-size:16px">Access Dashboard</a>
+      </div>
+      <p style="font-size:14px;color:#666;margin-top:24px">
+        Or copy this link: <br/>
+        <a href="${link}" style="color:#666">${link}</a>
+      </p>
+    </div>
+  `;
+
+  return sendEmail({ to, subject, html, from });
+}
+
+async function sendEmail({ to, subject, html, from }: { to: string; subject: string; html: string; from: string }) {
+  const resendKey = process.env.RESEND_API_KEY;
+  const brevoKey = process.env.BREVO_API_KEY;
+
+  if (brevoKey) {
+    try {
+      await fetch('https://api.brevo.com/v3/smtp/email', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'api-key': brevoKey },
+        body: JSON.stringify({ sender: { email: from }, to: [{ email: to }], subject, htmlContent: html }),
+      });
+      return { ok: true };
+    } catch (e) { console.error(e); }
+  }
+
+  if (resendKey) {
+    const resend = new Resend(resendKey);
+    try {
+      await resend.emails.send({ from, to, subject, html });
+      return { ok: true };
+    } catch (e) { 
+        // Fallback
+        try {
+            await resend.emails.send({ from: 'onboarding@resend.dev', to, subject, html });
+            return { ok: true };
+        } catch(e2) { return { ok: false, error: e2 }; }
+    }
+  }
+  
+  return { ok: false, error: 'No email provider' };
+}
+
 function escapeHtml(s: string) {
   return s
     .replace(/&/g, '&amp;')

@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { createServiceClient } from '@/lib/supabase/server'
 import { Search, Plus, Building2, ExternalLink, Calendar } from 'lucide-react'
 import NewClientWizard from './components/NewClientWizard'
+import ClientsTable from './components/ClientsTable'
 import { slugify } from '@/lib/utils'
 
 export default async function CrmClientsPage() {
@@ -15,7 +16,7 @@ export default async function CrmClientsPage() {
     console.error('[CrmClientsPage] fetch error:', error)
   }
 
-  const clientsList = clients || []
+  const clientsList = (clients || []) as any[]
 
   return (
     <div className="min-h-screen bg-neutral-50/50 pb-20 pt-20 dark:bg-neutral-950">
@@ -45,56 +46,7 @@ export default async function CrmClientsPage() {
           <div className="border-b border-neutral-100 bg-neutral-50/50 px-6 py-4 dark:border-neutral-800 dark:bg-neutral-900/50">
              <h3 className="text-sm font-semibold text-neutral-900 dark:text-white">All Clients</h3>
           </div>
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-sm">
-              <thead className="bg-neutral-50 text-neutral-500 dark:bg-neutral-900 dark:text-neutral-400">
-                <tr>
-                  <th className="px-6 py-3 font-medium">Name</th>
-                  <th className="px-6 py-3 font-medium">Company</th>
-                  <th className="px-6 py-3 font-medium">Website</th>
-                  <th className="px-6 py-3 font-medium text-right">Created</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-neutral-100 dark:divide-neutral-800">
-                {clientsList.map((c: any) => (
-                  <tr key={c.id} className="group transition-colors hover:bg-neutral-50 dark:hover:bg-neutral-800/50">
-                    <td className="px-6 py-4">
-                      <div className="flex items-center gap-3">
-                        <div className="flex h-8 w-8 items-center justify-center rounded bg-neutral-100 text-neutral-500 dark:bg-neutral-800 dark:text-neutral-400">
-                          <Building2 className="h-4 w-4" />
-                        </div>
-                        <Link className="font-medium text-neutral-900 hover:underline dark:text-white" href={`/dev/clients/${slugify(c.name)}`}>
-                          {c.name}
-                        </Link>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 text-neutral-600 dark:text-neutral-300">{c.company || '—'}</td>
-                    <td className="px-6 py-4">
-                      {c.website_url ? (
-                        <a href={c.website_url} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 text-blue-600 hover:underline dark:text-blue-400">
-                          {new URL(c.website_url).hostname}
-                          <ExternalLink className="h-3 w-3" />
-                        </a>
-                      ) : (
-                        <span className="text-neutral-400">—</span>
-                      )}
-                    </td>
-                    <td className="px-6 py-4 text-right text-xs text-neutral-500 tabular-nums">
-                      <div className="flex items-center justify-end gap-1.5">
-                        <Calendar className="h-3 w-3" />
-                        {new Date(c.created_at).toLocaleDateString()}
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-                {clientsList.length === 0 && (
-                  <tr>
-                    <td colSpan={4} className="p-8 text-center text-neutral-500">No clients found.</td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
-          </div>
+          <ClientsTable initialClients={clientsList} />
         </div>
       </div>
     </div>

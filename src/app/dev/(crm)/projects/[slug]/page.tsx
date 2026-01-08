@@ -20,6 +20,7 @@ import AddRepoDialog from './components/AddRepoDialog'
 import EditProjectDialog from './components/EditProjectDialog'
 import HealthSettingsButton from './components/HealthSettingsButton'
 import ShortcutMenu from './components/ShortcutMenu'
+import DeploymentChecker from './components/DeploymentChecker'
 import { 
   CrmProject, 
   CrmProjectLink, 
@@ -122,8 +123,11 @@ export default async function ProjectDetailPage(props: PageProps) {
   const healthEnabled = (project as any).project_health_enabled as boolean | undefined
   const healthUrl = (project as any).project_health_url as string | undefined
 
+  const hasDeployment = typedLinks.some(l => l.type === 'live')
+
   return (
     <div className="min-h-screen bg-neutral-50/50 dark:bg-neutral-950">
+      <DeploymentChecker projectId={typedProject.id} repoUrl={repoLink?.url} hasDeployment={hasDeployment} />
       <ShortcutMenu />
       <div className="max-w-6xl mx-auto px-4 sm:px-6">
         

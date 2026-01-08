@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { requireRoles } from '@/lib/auth';
 import { getAdminClient } from '@/lib/leadgen/supabaseServer'
 import { generateSmartSuggestions, Suggestion } from '@/lib/leadgen/suggestions'
 
@@ -16,6 +17,12 @@ interface SearchRun {
 
 export async function POST(req: NextRequest) {
   try {
+    try {
+      await requireRoles(['admin', 'owner']);
+    } catch {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
     const { count = 10 } = await req.json().catch(() => ({}))
     const supa = getAdminClient()
     if (!supa) return NextResponse.json({ items: [] })

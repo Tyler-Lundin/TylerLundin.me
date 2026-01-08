@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { AnimatePresence, motion } from 'framer-motion';
 import LeadsCleanerClient from './LeadsCleanerClient';
+import IndividualLeadWizard from './IndividualLeadWizard';
 import { 
   StatsCards, 
   EmptyState, 
@@ -277,6 +278,7 @@ export default function DevLeadsPage() {
             Lead Generator
           </h1>
           <div className="flex items-center gap-4">
+             <IndividualLeadWizard />
              <Link
               href="/dev/leads/swipe"
               className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-800 text-xs font-medium hover:bg-neutral-50 dark:hover:bg-neutral-700 transition-colors"

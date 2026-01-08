@@ -4,7 +4,6 @@ import { loadProjectsFromFolders } from '@/lib/projects.server';
 import { heroFolders } from '@/data/heroFolders';
 import { projects as seededProjects } from '@/data/projects';
 import ContactCTA from '@/components/sections/ContactCTA';
-import AutoScrollHeroSpotlights from '@/components/behavior/AutoScrollHeroSpotlights';
 import Testimonials from '@/components/sections/Testimonials';
 import ReactiveBackground from '@/components/ReactiveBackground';
 
@@ -22,13 +21,11 @@ export default async function LandingPage() {
     .sort((a, b) => (a.weight ?? 0) - (b.weight ?? 0));
 
   return (<>
-      <div className="fixed inset-0 -z-10 opacity-60 ">
+    <div className="fixed inset-0 -z-10 opacity-60 ">
       <ReactiveBackground />
-      </div>
+    </div>
     <main className="max-w-full overflow-x-hidden backdrop-blur-sm mx-2 md:mx-4 bg-white/50 dark:bg-black/50 border border-black/10 dark:border-white/10 rounded-lg my-4 min-h-fit z-10 text-black dark:text-white ">
       <Hero projects={combined} />
-      {/* Auto-scroll toward Hero spotlights on first visit until user cancels */}
-      <AutoScrollHeroSpotlights />
       <ContactCTA />
       <Testimonials />
     </main>

@@ -1,29 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { cookies } from 'next/headers'
-import jwt from 'jsonwebtoken'
+import { requireRoles } from '@/lib/auth'
 import { getAdminClient } from '@/lib/leadgen/supabaseServer'
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
 
-function requireAdminCookie() {
-  return cookies().then((cookieStore) => {
-    const token = cookieStore.get('access_token')?.value
-    const secret = process.env.JWT_SECRET || 'your-secret-key'
-    if (!token) return { ok: false, status: 401 as const, error: 'Unauthorized' }
-    try {
-      const decoded = jwt.verify(token, secret) as any
-      if (!decoded || decoded.role !== 'admin') return { ok: false, status: 403 as const, error: 'Forbidden' }
-      return { ok: true as const }
-    } catch (e) {
-      return { ok: false, status: 401 as const, error: 'Unauthorized' }
-    }
-  })
-}
-
 export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
-  const admin = await requireAdminCookie()
-  if (!admin.ok) return NextResponse.json({ error: admin.error }, { status: admin.status })
+  try {
+    await requireRoles(['admin', 'owner']);
+  } catch {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
   try {
     const { name, description } = await req.json()
     if (!name && typeof description === 'undefined') return NextResponse.json({ error: 'Nothing to update' }, { status: 400 })
@@ -42,8 +29,11 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
 }
 
 export async function DELETE(_req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
-  const admin = await requireAdminCookie()
-  if (!admin.ok) return NextResponse.json({ error: admin.error }, { status: admin.status })
+  try {
+    await requireRoles(['admin', 'owner']);
+  } catch {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
   try {
     const supa = getAdminClient()
     if (!supa) return NextResponse.json({ error: 'Supabase not configured' }, { status: 500 })

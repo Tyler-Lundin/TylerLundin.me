@@ -3,15 +3,22 @@ import { createServiceClient } from '@/lib/supabase/server'
 import { Search, Plus } from 'lucide-react'
 import { CrmProject } from '@/types/crm'
 import ProjectsTable from './ProjectsTable'
+import PendingSignups from './components/PendingSignups'
 
 export default async function CrmProjectsPage() {
   const sb = await createServiceClient()
-  const { data: projects } = await sb
-    .from('crm_projects')
-    .select('*, client:crm_clients(name)')
-    .order('created_at', { ascending: false })
+  
+  // Parallel fetch: Projects and Pending Signups
+  const [
+    { data: projects },
+    { data: signups }
+  ] = await Promise.all([
+    sb.from('crm_projects').select('*, client:crm_clients(name)').order('created_at', { ascending: false }),
+    sb.from('project_signups').select('*').eq('status', 'pending').order('created_at', { ascending: false })
+  ])
 
   const projectsList = (projects || []) as CrmProject[]
+  const pendingSignups = (signups || [])
 
   return (
     <div className="min-h-screen bg-neutral-50/50 pb-20 pt-20 dark:bg-neutral-950">
@@ -39,6 +46,9 @@ export default async function CrmProjectsPage() {
             </Link>
           </div>
         </div>
+
+        {/* Pending Signups (Only shows if there are any) */}
+        <PendingSignups initialSignups={pendingSignups} />
 
         {/* Projects Table */}
         <div className="overflow-hidden rounded-xl border border-neutral-200 bg-white shadow-sm dark:border-neutral-800 dark:bg-neutral-900">

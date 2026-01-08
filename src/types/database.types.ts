@@ -34,6 +34,125 @@ export type Database = {
   }
   public: {
     Tables: {
+      // --- Marketing: Advertisements ---
+      advertisements: {
+        Row: {
+          id: string
+          title: string
+          description: string | null
+          placement: string
+          priority: number
+          cta_text: string | null
+          cta_link: string
+          promo_code: string | null
+          is_active: boolean
+          starts_at: string
+          ends_at: string | null
+          styles: Json | null
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          title: string
+          description?: string | null
+          placement?: string
+          priority?: number
+          cta_text?: string | null
+          cta_link: string
+          promo_code?: string | null
+          is_active?: boolean
+          starts_at?: string
+          ends_at?: string | null
+          styles?: Json | null
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          title?: string
+          description?: string | null
+          placement?: string
+          priority?: number
+          cta_text?: string | null
+          cta_link?: string
+          promo_code?: string | null
+          is_active?: boolean
+          starts_at?: string
+          ends_at?: string | null
+          styles?: Json | null
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      
+      project_signups: {
+        Row: {
+          id: string
+          company_name: string
+          company_website: string | null
+          contact_name: string
+          contact_email: string
+          project_description: string | null
+          promo_code: string | null
+          need_logo: boolean | null
+          status: string
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          company_name: string
+          company_website?: string | null
+          contact_name: string
+          contact_email: string
+          project_description?: string | null
+          promo_code?: string | null
+          need_logo?: boolean | null
+          status?: string
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          company_name?: string
+          company_website?: string | null
+          contact_name?: string
+          contact_email?: string
+          project_description?: string | null
+          promo_code?: string | null
+          need_logo?: boolean | null
+          status?: string
+          created_at?: string
+        }
+        Relationships: []
+      }
+      
+      user_roles: {
+        Row: {
+          user_id: string
+          role: string
+          created_at: string
+        }
+        Insert: {
+          user_id: string
+          role?: string
+          created_at?: string
+        }
+        Update: {
+          user_id?: string
+          role?: string
+          created_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_roles_user_id_fkey"
+            columns: ["user_id"]
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          }
+        ]
+      },
+      
       // --- CRM: Core ---
       crm_clients: {
         Row: {
@@ -1107,6 +1226,44 @@ export type Database = {
           }
         ]
       }
+
+      user_profiles: {
+        Row: {
+          user_id: string
+          headline: string | null
+          bio: string | null
+          avatar_url: string | null
+          visibility: "public" | "private"
+          socials: Json | null
+          updated_at: string | null
+        }
+        Insert: {
+          user_id: string
+          headline?: string | null
+          bio?: string | null
+          avatar_url?: string | null
+          visibility?: "public" | "private"
+          socials?: Json | null
+          updated_at?: string | null
+        }
+        Update: {
+          user_id?: string
+          headline?: string | null
+          bio?: string | null
+          avatar_url?: string | null
+          visibility?: "public" | "private"
+          socials?: Json | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_profiles_user_id_fkey"
+            columns: ["user_id"]
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          }
+        ]
+      },
 
       // --- Auth: Refresh Tokens and Credentials ---
       auth_refresh_tokens: {

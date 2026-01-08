@@ -1,87 +1,122 @@
-import { NextResponse } from 'next/server'
-import type { NextRequest } from 'next/server'
-import * as jose from 'jose'
-
-const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key'
-const COOKIE_NAME = 'access_token'
-
-// Add paths that should be protected
-const PROTECTED_PATHS = ['/dev', '/marketing', '/api/admin', '/api/dev']
+import { createServerClient, type CookieOptions } from '@supabase/ssr'
+import { NextResponse, type NextRequest } from 'next/server'
 
 export async function middleware(request: NextRequest) {
+  let response = NextResponse.next({
+    request: {
+      headers: request.headers,
+    },
+  })
+
+  const supabase = createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      cookies: {
+        get(name: string) {
+          return request.cookies.get(name)?.value
+        },
+        set(name: string, value: string, options: CookieOptions) {
+          request.cookies.set({ name, value, ...options })
+          response = NextResponse.next({
+            request: {
+              headers: request.headers,
+            },
+          })
+          response.cookies.set({ name, value, ...options })
+        },
+        remove(name: string, options: CookieOptions) {
+          request.cookies.set({ name, value: '', ...options })
+          response = NextResponse.next({
+            request: {
+              headers: request.headers,
+            },
+          })
+          response.cookies.set({ name, value: '', ...options })
+        },
+      },
+    }
+  )
+
+  let user = null;
+  try {
+    const { data: { user: authUser }, error } = await supabase.auth.getUser();
+    if (error) throw error;
+    user = authUser;
+  } catch (e: any) {
+    // If any auth error occurs, we need to clear the session and redirect
+    // to prevent downstream components from trying to use a broken token.
+    const hasAuthCookies = request.cookies.getAll().some(c => c.name.startsWith('sb-') || c.name.includes('auth-token'));
+    
+    if (hasAuthCookies) {
+      console.warn('[Middleware] Nuclear auth cleanup triggered:', e.message);
+      
+      // Create a redirect response to the same URL to "refresh" the state
+      const redirectResponse = NextResponse.redirect(request.nextUrl.href);
+      
+      // Clear ALL possible auth cookies
+      request.cookies.getAll().forEach(cookie => {
+        if (cookie.name.startsWith('sb-') || cookie.name.includes('auth-token') || cookie.name === 'access_token' || cookie.name === 'refresh_token') {
+          redirectResponse.cookies.delete(cookie.name);
+        }
+      });
+      
+      return redirectResponse;
+    }
+  }
+
   const path = request.nextUrl.pathname
 
-  // Check if the path should be protected
-  const isProtectedPath = PROTECTED_PATHS.some(protectedPath => path.startsWith(protectedPath))
+  // 1. Handle Protected Paths (/dev, /marketing)
+  const isAdminPath = path.startsWith('/dev')
+  const isMarketingPath = path.startsWith('/marketing')
 
-  // If visiting /login and already authenticated, redirect to role home
-  if (path === '/login') {
-    const token = request.cookies.get(COOKIE_NAME)?.value
-    if (token) {
-      try {
-        const encoder = new TextEncoder()
-        const secret = encoder.encode(JWT_SECRET)
-        const { payload } = await jose.jwtVerify(token, secret)
-        const role = (payload as any)?.role
-        if (role === 'admin') {
-          const url = new URL('/dev', request.url)
-          return NextResponse.redirect(url)
-        }
-        if (role === 'head_of_marketing' || role === 'head of marketing') {
-          const url = new URL('/marketing', request.url)
-          return NextResponse.redirect(url)
-        }
-      } catch {}
-    }
-    return NextResponse.next()
-  }
-
-  if (!isProtectedPath) {
-    return NextResponse.next()
-  }
-
-  // Protected paths require admin token (short-lived access token)
-  const token = request.cookies.get(COOKIE_NAME)?.value
-  if (!token) {
-    const url = new URL('/login', request.url)
-    url.searchParams.set('redirect', path)
-    return NextResponse.redirect(url)
-  }
-
-  try {
-    const encoder = new TextEncoder()
-    const secret = encoder.encode(JWT_SECRET)
-    const { payload } = await jose.jwtVerify(token, secret)
-    const role = (payload as any)?.role
-    // /dev requires admin; /marketing allows admin or head_of_marketing
-    if (path.startsWith('/dev')) {
-      if (role !== 'admin') {
-        const url = new URL('/login', request.url)
-        url.searchParams.set('redirect', path)
-        return NextResponse.redirect(url)
-      }
-    } else if (path.startsWith('/marketing')) {
-      if (role !== 'admin' && role !== 'head_of_marketing' && role !== 'head of marketing') {
-        const url = new URL('/login', request.url)
-        url.searchParams.set('redirect', path)
-        return NextResponse.redirect(url)
-      }
-    } else if (!path.startsWith('/api')) {
+  if (isAdminPath || isMarketingPath) {
+    if (!user) {
       const url = new URL('/login', request.url)
       url.searchParams.set('redirect', path)
       return NextResponse.redirect(url)
     }
-    return NextResponse.next()
-  } catch (error) {
-    const url = new URL('/login', request.url)
-    url.searchParams.set('redirect', path)
-    const response = NextResponse.redirect(url)
-    response.cookies.delete(COOKIE_NAME)
-    return response
+
+    // Fetch role from public.users
+    const { data: profile } = await supabase
+      .from('users')
+      .select('role')
+      .eq('id', user.id)
+      .single()
+
+    const role = profile?.role || 'guest'
+
+    if (isAdminPath && !(role === 'admin' || role === 'owner')) {
+      return NextResponse.redirect(new URL('/portal', request.url))
+    }
+
+    if (isMarketingPath && !(role === 'admin' || role === 'owner' || role === 'head_of_marketing')) {
+      return NextResponse.redirect(new URL('/portal', request.url))
+    }
   }
+
+  // 2. Redirect logged-in users away from /login
+  if (path === '/login' && user) {
+    // We don't fetch role again here for speed, just go to portal 
+    // and let portal or middleware redirect again if needed.
+    // Or better, fetch it once.
+    const { data: profile } = await supabase
+      .from('users')
+      .select('role')
+      .eq('id', user.id)
+      .single()
+    
+    const role = profile?.role || 'guest'
+    if (role === 'admin' || role === 'owner') {
+      return NextResponse.redirect(new URL('/dev', request.url))
+    }
+    return NextResponse.redirect(new URL('/portal', request.url))
+  }
+
+  return response
 }
 
-// Configure which paths the middleware should run on
 export const config = {
   matcher: [
     '/login',

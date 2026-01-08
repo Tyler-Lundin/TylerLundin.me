@@ -1,4 +1,5 @@
 import React from 'react';
+import Link from 'next/link';
 import { 
   Users, 
   Globe, 
@@ -17,21 +18,23 @@ export function StatsCards({ stats }: { stats: any }) {
 
   return (
     <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4 mb-8">
-      <div className="rounded-xl border border-neutral-200 bg-white p-4 shadow-sm dark:border-neutral-800 dark:bg-neutral-900/50">
-        <div className="flex items-center justify-between mb-2">
-          <span className="text-xs font-semibold text-neutral-500 uppercase tracking-wider">Total Leads</span>
-          <Users className="h-4 w-4 text-blue-500" />
+      <Link href="/dev/leads/all" className="block group">
+        <div className="rounded-xl border border-neutral-200 bg-white p-4 shadow-sm dark:border-neutral-800 dark:bg-neutral-900/50 transition-all hover:border-blue-500/50 hover:shadow-md active:scale-[0.98]">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-xs font-semibold text-neutral-500 uppercase tracking-wider">Total Leads</span>
+            <Users className="h-4 w-4 text-blue-500" />
+          </div>
+          <div className="flex items-baseline gap-2">
+            <span className="text-2xl font-bold text-neutral-900 dark:text-neutral-50 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">{totals.leads ?? '—'}</span>
+            {totals.leads24h > 0 && (
+               <span className="text-xs font-medium text-emerald-600 flex items-center gap-0.5">
+                 <TrendingUp className="h-3 w-3" /> +{totals.leads24h}
+               </span>
+            )}
+          </div>
+          <div className="mt-1 text-xs text-neutral-400">View all database records &rarr;</div>
         </div>
-        <div className="flex items-baseline gap-2">
-          <span className="text-2xl font-bold text-neutral-900 dark:text-neutral-50">{totals.leads ?? '—'}</span>
-          {totals.leads24h > 0 && (
-             <span className="text-xs font-medium text-emerald-600 flex items-center gap-0.5">
-               <TrendingUp className="h-3 w-3" /> +{totals.leads24h}
-             </span>
-          )}
-        </div>
-        <div className="mt-1 text-xs text-neutral-400">Total database records</div>
-      </div>
+      </Link>
 
       <div className="rounded-xl border border-neutral-200 bg-white p-4 shadow-sm dark:border-neutral-800 dark:bg-neutral-900/50">
         <div className="flex items-center justify-between mb-2">

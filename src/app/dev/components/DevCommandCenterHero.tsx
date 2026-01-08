@@ -38,6 +38,8 @@ export type DevCommandCenterHeroProps = {
   initialProjects?: ProjectMeta[]
   initialLeads?: LeadMeta[]
   initialInbound?: InboundItem[]
+  activeAction?: string | null
+  activeCtx?: any
 }
 
 // --- Icons ---
@@ -47,6 +49,7 @@ const Icons = {
   Inbox: () => <svg className="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" /></svg>,
   Plus: () => <svg className="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" /></svg>,
   ExternalLink: () => <svg className="size-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg>,
+  Loader: () => <svg className="size-3 animate-spin" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>,
 }
 
 // --- Helper Functions ---
@@ -77,15 +80,19 @@ export default function DevCommandCenterHero({
   className, 
   initialProjects = [], 
   initialLeads = [], 
-  initialInbound = [] 
+  initialInbound = [],
+  activeAction = null,
+  activeCtx = null
 }: DevCommandCenterHeroProps) {
   const router = useRouter()
 
   const handleProjectClick = (projectId: string) => {
+    if (activeAction) return
     if (onAction) onAction('view_project', { projectId })
   }
 
   const handleNewProject = () => {
+    if (activeAction) return
     if (onAction) onAction('new_project', {})
   }
 
@@ -113,9 +120,11 @@ export default function DevCommandCenterHero({
             </div>
             <button 
               onClick={handleNewProject}
-              className="flex items-center gap-1 rounded-lg bg-neutral-900 px-3 py-1.5 text-xs font-medium text-white transition hover:bg-neutral-800 dark:bg-white dark:text-neutral-950 dark:hover:bg-neutral-200"
+              disabled={activeAction === 'new_project'}
+              className="flex items-center gap-1 rounded-lg bg-neutral-900 px-3 py-1.5 text-xs font-medium text-white transition hover:bg-neutral-800 dark:bg-white dark:text-neutral-950 dark:hover:bg-neutral-200 disabled:opacity-50"
             >
-              <Icons.Plus /> New
+              {activeAction === 'new_project' ? <Icons.Loader /> : <Icons.Plus />} 
+              {activeAction === 'new_project' ? 'Opening...' : 'New'}
             </button>
           </div>
           
@@ -124,31 +133,41 @@ export default function DevCommandCenterHero({
               <div className="p-4 text-center text-sm text-neutral-400">No active projects.</div>
             ) : (
               <div className="flex flex-col gap-1">
-                {initialProjects.map(p => (
-                  <button 
-                    key={p.id}
-                    onClick={() => handleProjectClick(p.id)}
-                    className="group flex w-full items-center justify-between rounded-xl p-3 text-left transition hover:bg-neutral-50 dark:hover:bg-neutral-900 cursor-pointer"
-                  >
-                    <div className="flex items-center gap-3">
-                      <div className={`size-2 rounded-full ${getStatusColor(p.deploy)}`} />
-                      <div>
-                        <div className="text-sm font-semibold text-neutral-900 dark:text-white">{p.name}</div>
-                        <div className="text-xs text-neutral-500">{p.client}</div>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-3">
-                      {p.tasksDue > 0 && (
-                        <div className="flex items-center gap-1 text-xs text-amber-600 dark:text-amber-500">
-                           <span className="font-bold">{p.tasksDue}</span> due
+                {initialProjects.map(p => {
+                  const isViewing = activeAction === 'view_project' && activeCtx?.projectId === p.id
+                  return (
+                    <button 
+                      key={p.id}
+                      onClick={() => handleProjectClick(p.id)}
+                      disabled={!!activeAction}
+                      className="group flex w-full items-center justify-between rounded-xl p-3 text-left transition hover:bg-neutral-50 dark:hover:bg-neutral-900 cursor-pointer disabled:cursor-wait"
+                    >
+                      <div className="flex items-center gap-3">
+                        <div className={`size-2 rounded-full ${getStatusColor(p.deploy)}`} />
+                        <div>
+                          <div className="text-sm font-semibold text-neutral-900 dark:text-white">{p.name}</div>
+                          <div className="text-xs text-neutral-500">{p.client}</div>
                         </div>
-                      )}
-                      <div className="text-neutral-400 opacity-0 transition-opacity group-hover:opacity-100">
-                        <Icons.ExternalLink />
                       </div>
-                    </div>
-                  </button>
-                ))}
+                      <div className="flex items-center gap-3">
+                        {isViewing ? (
+                          <Icons.Loader />
+                        ) : (
+                          <>
+                            {p.tasksDue > 0 && (
+                              <div className="flex items-center gap-1 text-xs text-amber-600 dark:text-amber-500">
+                                <span className="font-bold">{p.tasksDue}</span> due
+                              </div>
+                            )}
+                            <div className="text-neutral-400 opacity-0 transition-opacity group-hover:opacity-100">
+                              <Icons.ExternalLink />
+                            </div>
+                          </>
+                        )}
+                      </div>
+                    </button>
+                  )
+                })}
               </div>
             )}
           </div>

@@ -5,7 +5,7 @@ import InitializeClientProjectButton from './InitializeClientProjectButton';
 import DeleteLeadButton from './DeleteLeadButton';
 import LeadDetailBackConfirm from './LeadDetailBackConfirm';
 import ContactLeadOnDetail from './ContactLeadOnDetail';
-import { LeadNotes, LeadActivity, LeadAIInsights } from './MockComponents';
+import { RealLeadNotes, RealLeadActivity, RealLeadAIStrategy } from './FunctionalComponents';
 import { 
   ArrowLeft, 
   MapPin, 
@@ -27,7 +27,7 @@ async function fetchLead(id: string) {
   // 1) Fetch lead
   const { data: lead } = await supa
     .from('leads')
-    .select('id, google_place_id, niche, location, name, formatted_address, lat, lng, phone, website, domain, rating, user_ratings_total, price_level, types, business_status, google_maps_url, created_at, updated_at')
+    .select('id, google_place_id, niche, location, name, formatted_address, lat, lng, phone, website, domain, rating, user_ratings_total, price_level, types, business_status, google_maps_url, created_at, updated_at, strategy, email')
     .eq('id', id)
     .maybeSingle();
 
@@ -252,8 +252,8 @@ export default async function LeadDetailPage({ params }: { params: Promise<{ id:
               </div>
             </div>
 
-            {/* Notes Mock */}
-            <LeadNotes />
+            {/* Real Notes Feed */}
+            <RealLeadNotes leadId={lead.id} />
 
             {/* Groups */}
             <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl p-5 shadow-sm">
@@ -288,7 +288,7 @@ export default async function LeadDetailPage({ params }: { params: Promise<{ id:
           {/* Sidebar Column */}
           <div className="space-y-6">
             
-            <LeadAIInsights />
+            <RealLeadAIStrategy leadId={lead.id} initialStrategy={lead.strategy} />
 
             <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl p-5 shadow-sm">
               <h2 className="text-sm font-semibold mb-3 flex items-center gap-2">
@@ -319,7 +319,7 @@ export default async function LeadDetailPage({ params }: { params: Promise<{ id:
               )}
             </div>
             
-            <LeadActivity />
+            <RealLeadActivity leadId={lead.id} />
 
             {/* Metadata Card */}
             <div className="bg-neutral-50 dark:bg-neutral-900/30 border border-neutral-200 dark:border-neutral-800 rounded-xl p-4">

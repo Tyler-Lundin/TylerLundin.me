@@ -32,7 +32,7 @@ export default function CommandCenterController({ initialProjects, initialLeads,
     setActiveCtx(ctx)
     
     if (action === 'new_project') {
-      router.push('/dev/clients')
+      router.push('/dev/projects')
       return
     }
 

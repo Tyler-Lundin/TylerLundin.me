@@ -5,6 +5,7 @@ import { usePathname } from 'next/navigation'
 import { Menu, X, Copy, Check, Home as HomeIcon, Users, Folder, Layers, MessageSquareText, Rocket, Newspaper, Settings, MapPin, BarChart3, Loader2, Megaphone } from 'lucide-react'
 import { useEffect, useRef, useState, useMemo } from 'react'
 import { useRouter, usePathname as useCurrentPathname } from 'next/navigation'
+import UserButton from './UserButton'
 
 function titleize(segment: string) {
   try { return segment.replace(/-/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase()) } catch { return segment }
@@ -81,7 +82,8 @@ export default function DashboardNav() {
             <div className="flex-shrink-0 w-12 h-px" />
           </div>
         </div>
-        <div className="flex-shrink-0 pl-1">
+        <div className="flex-shrink-0 pl-1 flex items-center gap-2">
+          <UserButton variant="dashboard" />
           <button ref={triggerRef} onClick={() => setOpen(true)} className="flex items-center gap-2 h-8 grid place-content-center aspect-square rounded-full bg-neutral-900 text-white text-[11px] font-black uppercase tracking-widest hover:bg-neutral-800 transition-all dark:bg-white dark:text-black dark:hover:bg-neutral-200 shadow-lg shadow-neutral-200 dark:shadow-none">
             <Menu size={14} strokeWidth={3} />
           </button>

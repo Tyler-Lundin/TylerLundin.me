@@ -21,6 +21,7 @@ import EditProjectDialog from './components/EditProjectDialog'
 import HealthSettingsButton from './components/HealthSettingsButton'
 import ShortcutMenu from './components/ShortcutMenu'
 import DeploymentChecker from './components/DeploymentChecker'
+import NewLinkDialog from './components/NewLinkDialog'
 import { 
   CrmProject, 
   CrmProjectLink, 
@@ -252,9 +253,7 @@ export default async function ProjectDetailPage(props: PageProps) {
           <section className="rounded-xl border border-neutral-200 bg-white overflow-hidden shadow-sm dark:border-neutral-800 dark:bg-neutral-900">
             <div className="px-5 py-4 border-b border-neutral-100 flex items-center justify-between dark:border-neutral-800/50">
               <h2 className="font-semibold text-neutral-900 dark:text-white">Artifacts & Links</h2>
-              <button className="rounded-lg border border-neutral-200 bg-white px-2 py-1 text-xs font-medium text-neutral-600 hover:bg-neutral-50 dark:border-neutral-800 dark:bg-neutral-950 dark:text-neutral-400 dark:hover:bg-neutral-800 transition-colors">
-                Add Link
-              </button>
+              <NewLinkDialog projectId={typedProject.id} />
             </div>
             {typedLinks.length === 0 ? (
               <div className="p-10 text-center text-sm text-neutral-500">No project links added yet.</div>

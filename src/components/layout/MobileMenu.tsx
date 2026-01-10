@@ -7,6 +7,9 @@ import { siteConfig } from '@/config/site';
 import { Logo } from './Logo';
 import { services } from '@/data/services';
 import { usePathname } from 'next/navigation';
+import { useUser } from '@/hooks/useUser';
+import { createClient } from '@/lib/supabase/client';
+import { LogOut, User, LayoutDashboard, Shield } from 'lucide-react';
 
 interface MobileMenuProps {
   isOpen: boolean;
@@ -15,6 +18,16 @@ interface MobileMenuProps {
 
 export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
   const pathname = usePathname();
+  const { user, role, loading } = useUser();
+  const isAdmin = role === 'admin' || role === 'owner';
+  const isMarketing = role === 'head_of_marketing' || role === 'head of marketing';
+
+  const signOut = async () => {
+    const supabase = createClient();
+    await supabase.auth.signOut();
+    window.location.href = "/login";
+  };
+
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = 'hidden';
@@ -188,6 +201,63 @@ export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
                           })()}
                         </motion.li>
                       ))}
+                    </ul>
+                  </li>
+
+                  {/* Account Group */}
+                  <li className="pt-2 pb-12">
+                    <div className="text-xs uppercase text-center tracking-wide text-neutral-500 dark:text-neutral-400 mb-2">Account</div>
+                    <ul className="space-y-2">
+                       {loading ? (
+                          <div className="h-10 bg-neutral-100 dark:bg-neutral-800 rounded-md animate-pulse" />
+                       ) : user ? (
+                          <>
+                            <div className="px-3 py-2 text-center">
+                                <p className="text-sm font-medium text-neutral-900 dark:text-white">{user.fullName || 'User'}</p>
+                                <p className="text-xs text-neutral-500">{user.email}</p>
+                            </div>
+                            {isAdmin && (
+                              <motion.li initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.18 }}>
+                                <Link href="/dev" onClick={onClose} className="group flex items-center gap-3 rounded-md px-3 py-3 hover:bg-neutral-100/60 dark:hover:bg-neutral-800/60 text-neutral-900 dark:text-neutral-100">
+                                  <Shield className="w-5 h-5 text-neutral-500" />
+                                  <span className="font-medium">Admin Console</span>
+                                </Link>
+                              </motion.li>
+                            )}
+                            {(isAdmin || isMarketing) && (
+                              <motion.li initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.18 }}>
+                                <Link href="/marketing" onClick={onClose} className="group flex items-center gap-3 rounded-md px-3 py-3 hover:bg-neutral-100/60 dark:hover:bg-neutral-800/60 text-neutral-900 dark:text-neutral-100">
+                                  <LayoutDashboard className="w-5 h-5 text-neutral-500" />
+                                  <span className="font-medium">Marketing Console</span>
+                                </Link>
+                              </motion.li>
+                            )}
+                            <motion.li initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.18 }}>
+                                <Link href="/portal" onClick={onClose} className="group flex items-center gap-3 rounded-md px-3 py-3 hover:bg-neutral-100/60 dark:hover:bg-neutral-800/60 text-neutral-900 dark:text-neutral-100">
+                                  <LayoutDashboard className="w-5 h-5 text-neutral-500" />
+                                  <span className="font-medium">Client Portal</span>
+                                </Link>
+                            </motion.li>
+                            <motion.li initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.18 }}>
+                                <Link href={`/profile/${user.id}`} onClick={onClose} className="group flex items-center gap-3 rounded-md px-3 py-3 hover:bg-neutral-100/60 dark:hover:bg-neutral-800/60 text-neutral-900 dark:text-neutral-100">
+                                  <User className="w-5 h-5 text-neutral-500" />
+                                  <span className="font-medium">My Profile</span>
+                                </Link>
+                            </motion.li>
+                            <motion.li initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.18 }}>
+                                <button onClick={signOut} className="w-full group flex items-center gap-3 rounded-md px-3 py-3 hover:bg-red-50 dark:hover:bg-red-900/20 text-red-600 dark:text-red-400">
+                                  <LogOut className="w-5 h-5" />
+                                  <span className="font-medium">Sign Out</span>
+                                </button>
+                            </motion.li>
+                          </>
+                       ) : (
+                          <motion.li initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.18 }}>
+                            <Link href="/login" onClick={onClose} className="group flex items-center justify-center gap-2 rounded-md bg-neutral-900 dark:bg-white text-white dark:text-black px-3 py-3 font-medium transition-opacity hover:opacity-90">
+                              Sign In
+                            </Link>
+                          </motion.li>
+                       )}
                     </ul>
                   </li>
                 </ul>

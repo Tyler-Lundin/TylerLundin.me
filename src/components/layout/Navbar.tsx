@@ -10,6 +10,7 @@ import { cn } from '@/lib/utils';
 import { Section } from '@/types/site';
 import { services } from '@/data/services';
 import { Sora } from "next/font/google";
+import UserButton from "../appnav/UserButton";
 
 const sora = Sora({ subsets: ["latin"], display: "swap" });
 
@@ -169,6 +170,9 @@ const PrimaryNav = ({ isScrolled, setIsMenuOpen }: NavProps) => (
         <Logo />
       </LogoWrapper>
       <NavLinks isScrolled={isScrolled} />
+      <div className="hidden lg:block absolute right-8 top-1/2 -translate-y-1/2 z-50">
+        <UserButton />
+      </div>
     </div>
     <span className="absolute top-1/2 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-black/30 to-transparent dark:invert hidden lg:block" />
   </nav>
@@ -185,7 +189,12 @@ const StickyNav = ({ bannerVisible, isScrolled, setIsMenuOpen }: NavProps) => (
     <div className="px-4 h-6 flex items-center justify-between">
       <Logo />
       { isScrolled && (<NavLinks minimal />)}
-      <MenuButton onClick={() => setIsMenuOpen(true)} minimal />
+      <div className="flex items-center gap-4">
+        <div className="hidden lg:block">
+          <UserButton />
+        </div>
+        <MenuButton onClick={() => setIsMenuOpen(true)} minimal />
+      </div>
     </div>
   </div>
 );

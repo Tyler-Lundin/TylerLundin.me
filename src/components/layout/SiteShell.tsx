@@ -6,7 +6,6 @@ import { Footer } from '@/components/layout/Footer'
 import Greeting from '../Greeting'
 import DashboardNav from '../appnav/DashboardNav'
 import UserMenu from '../appnav/UserMenu'
-import UserMenuToggle from '../dev/UserMenuToggle'
 
 
 export function SiteShell({ children }: { children: React.ReactNode }) {
@@ -77,7 +76,6 @@ function UserShell({ children }: { children: React.ReactNode }) {
         </div>
       </div>
       <UserMenu openProp={adminOpen} onClose={() => setUserOpen(false)} onToggle={() => setUserOpen((v)=>!v)} />
-      <UserMenuToggle />
     </>
   )
 }
@@ -118,7 +116,6 @@ function DevShell({ children }: { children: React.ReactNode }) {
         {children}
       </div>
       <UserMenu openProp={adminOpen} onClose={() => setUserOpen(false)} onToggle={() => setUserOpen((v)=>!v)} />
-      <UserMenuToggle />
     </div>
   )
 }
@@ -142,7 +139,6 @@ function MarketingShell({ children }: { children: React.ReactNode }) {
         {children}
       </div>
       <UserMenu openProp={adminOpen} onClose={() => setUserOpen(false)} onToggle={() => setUserOpen((v)=>!v)} />
-      <UserMenuToggle />
     </div>
   )
 }
@@ -166,7 +162,6 @@ function PortalShell({ children }: { children: React.ReactNode }) {
         {children}
       </div>
       <UserMenu openProp={adminOpen} onClose={() => setUserOpen(false)} onToggle={() => setUserOpen((v)=>!v)} />
-      <UserMenuToggle />
     </div>
   )
 }

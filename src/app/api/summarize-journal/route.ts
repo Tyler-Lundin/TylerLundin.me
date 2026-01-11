@@ -1,9 +1,18 @@
 import { NextResponse } from 'next/server'
 import OpenAI from 'openai'
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-})
+let openaiInstance: OpenAI | null = null
+
+function getOpenAI(): OpenAI {
+  if (!openaiInstance) {
+    const apiKey = process.env.OPENAI_API_KEY
+    if (!apiKey) {
+      throw new Error('The OPENAI_API_KEY environment variable is not set.')
+    }
+    openaiInstance = new OpenAI({ apiKey })
+  }
+  return openaiInstance
+}
 
 export async function POST(request: Request) {
   console.log('🔵 Summarize Journal API: Request received')
@@ -22,8 +31,22 @@ export async function POST(request: Request) {
       )
     }
 
+    let openaiClient: OpenAI
+    try {
+      openaiClient = getOpenAI()
+    } catch (error: any) {
+      console.error('🔴 Error getting OpenAI client:', {
+        error: error.message,
+        stack: error.stack
+      })
+      return NextResponse.json(
+        { error: error.message },
+        { status: 500 } 
+      )
+    }
+
     console.log('🔵 Initializing OpenAI completion request')
-    const completion = await openai.chat.completions.create({
+    const completion = await openaiClient.chat.completions.create({
       model: "gpt-3.5-turbo",
       messages: [
         {

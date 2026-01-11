@@ -36,7 +36,15 @@ export async function POST(req: Request) {
     const anchorsArr = field === 'keywords' ? cleanKeywords(value) : cleanKeywords((body?.context?.anchors || []).join(', '))
     const anchors = anchorsArr.join(', ')
 
-    const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY })
+    const apiKey = process.env.OPENAI_API_KEY
+    if (!apiKey) {
+      console.error('🔴 Error: OPENAI_API_KEY is not set.')
+      return NextResponse.json(
+        { error: 'Server configuration error: OPENAI_API_KEY is missing.' },
+        { status: 500 }
+      )
+    }
+    const client = new OpenAI({ apiKey })
 
     const system = field === 'goal'
       ? 'You refine a blog post goal into sharper variants. Keep intent, improve clarity, be concise. Return JSON.'

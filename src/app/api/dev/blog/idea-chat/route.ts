@@ -14,7 +14,16 @@ async function handler(req: Request) {
 
   try {
     const { messages, context } = await req.json()
-    const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY })
+    
+    const apiKey = process.env.OPENAI_API_KEY
+    if (!apiKey) {
+      console.error('🔴 Error: OPENAI_API_KEY is not set.')
+      return NextResponse.json(
+        { error: 'Server configuration error: OPENAI_API_KEY is missing.' },
+        { status: 500 }
+      )
+    }
+    const client = new OpenAI({ apiKey })
 
     const system = `You are a ruthless editor and ideation partner for a dev blogger.
 Keep replies short, focused, and easy to scan on a narrow chat UI.

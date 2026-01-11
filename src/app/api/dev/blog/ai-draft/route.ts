@@ -14,7 +14,16 @@ async function handler(req: Request) {
 
   try {
     const { title, brief, tone, points, anchors } = await req.json()
-    const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY })
+    
+    const apiKey = process.env.OPENAI_API_KEY
+    if (!apiKey) {
+      console.error('🔴 Error: OPENAI_API_KEY is not set.')
+      return NextResponse.json(
+        { error: 'Server configuration error: OPENAI_API_KEY is missing.' },
+        { status: 500 }
+      )
+    }
+    const client = new OpenAI({ apiKey })
 
     const system = `You are an opinionated web-dev blogger. Write in a concise, confident, first-person style. Use markdown. Include a strong intro, clear sections, and a short conclusion with a call-to-thought. Use the optional anchor keywords as themes to weave through the post where appropriate.`
 

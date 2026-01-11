@@ -17,7 +17,15 @@ async function handler(req: Request) {
     const draft = body?.draft || {}
     const context = body?.context || {}
 
-    const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY })
+    const apiKey = process.env.OPENAI_API_KEY
+    if (!apiKey) {
+      console.error('🔴 Error: OPENAI_API_KEY is not set.')
+      return NextResponse.json(
+        { error: 'Server configuration error: OPENAI_API_KEY is missing.' },
+        { status: 500 }
+      )
+    }
+    const client = new OpenAI({ apiKey })
 
     const system = `You propose surgical improvements to a blog draft. Return JSON with discrete changes that can be individually applied. Avoid reformatting unrelated text.`
 

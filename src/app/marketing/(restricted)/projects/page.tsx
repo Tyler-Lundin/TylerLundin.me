@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { createServiceClient } from '@/lib/supabase/server'
+import { getSupabaseAdmin } from '@/lib/supabase/admin'
 import { Search, Plus, Folder, Calendar } from 'lucide-react'
 import { slugify } from '@/lib/utils'
 import { requireRoles } from '@/lib/auth'
@@ -31,11 +31,12 @@ export default async function MarketingProjectsPage() {
   // Restrict to Head of Marketing and Admin
   await requireRoles(['admin', 'head_of_marketing', 'head of marketing'])
 
-  const sb = await createServiceClient()
-  const { data: projects } = await sb
+  let sb: any
+  try { sb = getSupabaseAdmin() } catch { sb = null }
+  const { data: projects } = sb ? await sb
     .from('crm_projects')
     .select('*, client:crm_clients(name)')
-    .order('created_at', { ascending: false })
+    .order('created_at', { ascending: false }) : { data: [] }
 
   const projectsList = (projects || []) as any[]
 
@@ -115,4 +116,3 @@ export default async function MarketingProjectsPage() {
     </div>
   )
 }
-

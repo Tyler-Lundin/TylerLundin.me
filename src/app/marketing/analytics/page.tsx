@@ -1,3 +1,4 @@
+export const dynamic = 'force-dynamic'
 import AnalyticsOverview from '@/components/ops/AnalyticsOverview'
 
 export default async function MarketingAnalyticsPage() {
@@ -10,4 +11,3 @@ export default async function MarketingAnalyticsPage() {
     </div>
   )
 }
-

@@ -1,3 +1,4 @@
+export const dynamic = 'force-dynamic'
 import { requireRoles } from '@/lib/auth'
 import { redirect } from 'next/navigation'
 import { SiteShell } from '@/components/layout/SiteShell'

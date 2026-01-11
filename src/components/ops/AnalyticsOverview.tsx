@@ -1,4 +1,4 @@
-import { createServiceClient } from '@/lib/supabase/server'
+import { getSupabaseAdmin } from '@/lib/supabase/admin'
 
 type Kpi = { label: string; value: number; hint?: string }
 
@@ -17,7 +17,22 @@ function formatTime(s: string) {
 }
 
 export default async function AnalyticsOverview() {
-  const sb = await createServiceClient()
+  // Lazily create admin client; if not configured, render a fallback
+  let sb
+  try {
+    sb = getSupabaseAdmin()
+  } catch (e) {
+    return (
+      <section className="rounded-xl border border-neutral-200 bg-white shadow-sm dark:border-neutral-800 dark:bg-neutral-900">
+        <div className="flex items-center justify-between border-b border-neutral-100 px-6 py-4 dark:border-neutral-800">
+          <h2 className="text-base font-semibold text-neutral-900 dark:text-white">Analytics Overview</h2>
+        </div>
+        <div className="px-6 py-4 text-sm text-neutral-500">
+          Analytics backend is not configured.
+        </div>
+      </section>
+    )
+  }
 
   const since24 = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString()
   const since7d = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString()
@@ -106,4 +121,3 @@ export default async function AnalyticsOverview() {
     </section>
   )
 }
-

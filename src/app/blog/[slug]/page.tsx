@@ -1,4 +1,6 @@
-import { createClient, createServiceClient } from '@/lib/supabase/server'
+export const dynamic = 'force-dynamic'
+import { getSupabasePublic } from '@/lib/supabase/public'
+import { getSupabaseAdmin } from '@/lib/supabase/admin'
 import { ensureProfileOrRedirect } from '@/lib/profile'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
@@ -27,8 +29,11 @@ function formatRole(role: string | null) {
 }
 
 async function getPost(slug: string): Promise<PublicPost | null> {
-  const sb: any = await createClient()
-  const sbAdmin: any = await createServiceClient()
+  let sb: any = null
+  let sbAdmin: any = null
+  try { sb = getSupabasePublic() } catch {}
+  try { sbAdmin = getSupabaseAdmin() } catch {}
+  if (!sb) return null
   // Prefer public view (aggregated), then load full post body from base table
   const { data: pub } = await sb
     .from('blog_posts_public')
@@ -48,7 +53,7 @@ async function getPost(slug: string): Promise<PublicPost | null> {
 
   let author: PublicPost['author'] = undefined
   const author_id = base?.author_id || null
-  if (author_id) {
+  if (sbAdmin && author_id) {
     // Use service client to fetch minimal author details even if profile is private
     const { data: u } = await sbAdmin.from('users').select('id, full_name, role').eq('id', author_id).maybeSingle()
     const { data: p } = await sbAdmin.from('user_profiles').select('avatar_url, visibility').eq('user_id', author_id).maybeSingle()
@@ -79,7 +84,7 @@ async function getPost(slug: string): Promise<PublicPost | null> {
 
 async function recordView(postId: string) {
   try {
-    const sb = await createClient()
+    const sb = getSupabasePublic()
     const h = await headers()
     const ua = h.get('user-agent') || ''
     const ip = h.get('x-forwarded-for') || ''

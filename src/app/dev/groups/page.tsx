@@ -1,15 +1,20 @@
 import Link from 'next/link'
-import { createServiceClient } from '@/lib/supabase/server'
+import { getSupabaseAdmin } from '@/lib/supabase/admin'
 
 async function fetchGroups() {
-  const sb = await createServiceClient()
-  const [{ data: groups }, { data: members }] = await Promise.all([
-    sb.from('lead_groups').select('id,name,description,created_at').order('created_at', { ascending: false }),
-    sb.from('lead_group_members').select('group_id').limit(10000),
-  ])
-  const counts = new Map<string, number>()
-  ;(members || []).forEach((m: any) => counts.set(m.group_id, (counts.get(m.group_id) || 0) + 1))
-  return (groups || []).map((g: any) => ({ ...g, lead_count: counts.get(g.id) || 0 }))
+  try {
+    const sb = getSupabaseAdmin()
+    const [{ data: groups }, { data: members }] = await Promise.all([
+      sb.from('lead_groups').select('id,name,description,created_at').order('created_at', { ascending: false }),
+      sb.from('lead_group_members').select('group_id').limit(10000),
+    ])
+    const counts = new Map<string, number>()
+    ;(members || []).forEach((m: any) => counts.set(m.group_id, (counts.get(m.group_id) || 0) + 1))
+    return (groups || []).map((g: any) => ({ ...g, lead_count: counts.get(g.id) || 0 }))
+  } catch (e) {
+    // If not configured, return empty list
+    return [] as any[]
+  }
 }
 
 export default async function GroupsIndexPage(props: any) {
@@ -66,7 +71,7 @@ function CreateGroupClient() {
     <form
       action={async (formData: FormData) => {
         'use server'
-        const sb = await createServiceClient()
+        const sb = getSupabaseAdmin()
         const name = String(formData.get('name') || '').trim()
         const description = String(formData.get('description') || '').trim()
         if (!name) return

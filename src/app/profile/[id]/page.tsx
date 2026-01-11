@@ -1,4 +1,4 @@
-import { createServiceClient } from '@/lib/supabase/server'
+import { getSupabaseAdmin } from '@/lib/supabase/admin'
 import { getAuthUser } from '@/lib/auth'
 import { notFound } from 'next/navigation'
 import ProfileView from '@/components/profile/ProfileView'
@@ -8,18 +8,19 @@ export const dynamic = 'force-dynamic'
 export default async function PublicOrEditableProfile({ params, searchParams }: { params: Promise<{ id: string }>; searchParams?: Promise<{ view?: string; mode?: string }> }) {
   const { id } = await params
   const sp = (await (searchParams || Promise.resolve({} as any))) as any
-  const sb: any = await createServiceClient()
+  let sb: any
+  try { sb = getSupabaseAdmin() } catch { sb = null }
   const me = await getAuthUser()
   let meId: any = (me as any)?.id || (me as any)?.sub || null
-  if (!meId && (me as any)?.email) {
+  if (sb && !meId && (me as any)?.email) {
     const { data: u } = await sb.from('users').select('id').ilike('email', String((me as any).email)).maybeSingle()
     if (u?.id) meId = String(u.id)
   }
   const isOwner = meId && String(meId) === String(id)
 
   // Load user (service role to bypass users RLS for public display)
-  const { data: user } = await sb.from('users').select('id, full_name, role').eq('id', id).maybeSingle()
-  const { data: profile } = await sb.from('user_profiles').select('headline, bio, avatar_url, visibility, socials, created_at').eq('user_id', id).maybeSingle()
+  const { data: user } = sb ? await sb.from('users').select('id, full_name, role').eq('id', id).maybeSingle() : { data: null }
+  const { data: profile } = sb ? await sb.from('user_profiles').select('headline, bio, avatar_url, visibility, socials, created_at').eq('user_id', id).maybeSingle() : { data: null }
 
   if (!user && !isOwner) return notFound()
   
@@ -36,7 +37,7 @@ export default async function PublicOrEditableProfile({ params, searchParams }: 
   let clientProjects: any[] = [];
   let clientInvoices: any[] = [];
   
-  if (isProfileClient) {
+  if (sb && isProfileClient) {
       // Find client_ids
       const { data: clientUsers } = await sb.from('crm_client_users').select('client_id').eq('user_id', id);
       const clientIds = clientUsers?.map((cu: any) => cu.client_id) || [];
@@ -54,7 +55,7 @@ export default async function PublicOrEditableProfile({ params, searchParams }: 
   }
 
   // Load published posts by this author (only if NOT client)
-  const { data: posts } = !isProfileClient ? await sb
+  const { data: posts } = (sb && !isProfileClient) ? await sb
     .from('blog_posts')
     .select('slug, title, excerpt, cover_image_url, published_at')
     .eq('status', 'published')

@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { createServiceClient } from '@/lib/supabase/server'
+import { getSupabaseAdmin } from '@/lib/supabase/admin'
 import { Search, Building2, ExternalLink, Calendar } from 'lucide-react'
 import { slugify } from '@/lib/utils'
 import { requireRoles } from '@/lib/auth'
@@ -8,11 +8,12 @@ export default async function MarketingClientsPage() {
   // Restrict to Head of Marketing and Admin
   await requireRoles(['admin', 'head_of_marketing', 'head of marketing'])
 
-  const sb = await createServiceClient()
-  const { data: clients, error } = await sb
+  let sb: any
+  try { sb = getSupabaseAdmin() } catch { sb = null }
+  const { data: clients, error } = sb ? await sb
     .from('crm_clients')
     .select('*')
-    .order('created_at', { ascending: false })
+    .order('created_at', { ascending: false }) : { data: [], error: null as any }
 
   if (error) {
     console.error('[MarketingClientsPage] fetch error:', error)
@@ -95,4 +96,3 @@ export default async function MarketingClientsPage() {
     </div>
   )
 }
-

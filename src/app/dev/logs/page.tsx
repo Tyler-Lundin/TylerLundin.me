@@ -1,4 +1,4 @@
-import { createServiceClient } from '@/lib/supabase/server'
+import { getSupabaseAdmin } from '@/lib/supabase/admin'
 import { Suspense } from 'react'
 
 function formatJson(val: any) {
@@ -14,15 +14,15 @@ export default async function DevLogsPage({ searchParams }: { searchParams?: Pro
   const qTo = (Array.isArray(sp.to) ? sp.to[0] : sp.to) || ''
   const limit = Math.min(500, Number((Array.isArray(sp.limit) ? sp.limit[0] : sp.limit) || '200'))
 
-  const sb: any = await createServiceClient()
-  let query = sb.from('audit_logs').select('*').order('created_at', { ascending: false }).limit(limit)
-  if (qAction) query = query.ilike('action', `%${qAction}%`)
-  if (qRoute) query = query.ilike('route', `%${qRoute}%`)
-  if (qEmail) query = query.ilike('actor_email', `%${qEmail}%`)
-  if (qFrom) query = query.gte('created_at', new Date(qFrom).toISOString())
-  if (qTo) query = query.lte('created_at', new Date(qTo).toISOString())
-
-  const { data: rows } = await query
+  let sb: any
+  try { sb = getSupabaseAdmin() } catch { sb = null }
+  let query = sb ? sb.from('audit_logs').select('*').order('created_at', { ascending: false }).limit(limit) : null as any
+  if (query && qAction) query = query.ilike('action', `%${qAction}%`)
+  if (query && qRoute) query = query.ilike('route', `%${qRoute}%`)
+  if (query && qEmail) query = query.ilike('actor_email', `%${qEmail}%`)
+  if (query && qFrom) query = query.gte('created_at', new Date(qFrom).toISOString())
+  if (query && qTo) query = query.lte('created_at', new Date(qTo).toISOString())
+  const rows = query ? (await query).data : []
 
   return (
     <div className="min-h-screen bg-neutral-50/50 pb-20 pt-20 dark:bg-neutral-950">

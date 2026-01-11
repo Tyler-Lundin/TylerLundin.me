@@ -2,9 +2,9 @@ import type { Metadata } from 'next'
 import { ensureProfileOrRedirect } from '@/lib/profile'
 import SpotlightPosts, { type BlogSpotlightItem } from '@/components/blog/SpotlightPosts'
 import PostCard, { type PostCardData } from '@/components/blog/PostCard'
-import { createServiceClient } from '@/lib/supabase/server'
-import { createClient as createSupabaseClient } from '@supabase/supabase-js'
-import { Database } from '@/types/database.types'
+export const dynamic = 'force-dynamic'
+import { getSupabasePublic } from '@/lib/supabase/public'
+import { getSupabaseAdmin } from '@/lib/supabase/admin'
 import { randomUUID } from 'crypto'
 import { themeConfig, billboardThemes } from '@/config/theme'
 import type { BillboardThemeKey as BillboardThemeKeyFromConfig } from '@/config/themes/billboard'
@@ -16,24 +16,26 @@ export const metadata: Metadata = {
 }
 
 export default async function BlogPage() {
-  const sb = createSupabaseClient<Database>(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-  )
-  const sbAdmin: any = await createServiceClient()
+  // Try to init public and admin clients lazily; fall back gracefully
+  let sb: any = null
+  let sbAdmin: any = null
+  try { sb = getSupabasePublic() } catch {}
+  try { sbAdmin = getSupabaseAdmin() } catch {}
   // Use the public aggregation view
-  const { data } = await sb
-    .from('blog_posts_public' as any)
-    .select('*')
-    .order('published_at', { ascending: false })
-    .limit(24)
-
-  const posts = (data || []) as any[]
+  let posts: any[] = []
+  if (sb) {
+    const { data } = await sb
+      .from('blog_posts_public' as any)
+      .select('*')
+      .order('published_at', { ascending: false })
+      .limit(24)
+    posts = (data || []) as any[]
+  }
 
   // Build author map for small signature
   const slugs = posts.map((p: any) => p.slug).filter(Boolean)
   const authorBySlug: Record<string, { name: string | null; avatar: string | null }> = {}
-  if (slugs.length) {
+  if (sb && slugs.length) {
     const { data: baseRows } = await sb
       .from('blog_posts')
       .select('slug, author_id')
@@ -47,8 +49,8 @@ export default async function BlogPage() {
       }
     }
     const authorIds = Object.keys(byId)
-    if (authorIds.length) {
-      // Use service client for author details to avoid RLS issues
+    if (sbAdmin && authorIds.length) {
+      // Use admin client for author details to avoid RLS issues
       const { data: users } = await sbAdmin.from('users').select('id, full_name').in('id', authorIds)
       const { data: profiles } = await sbAdmin.from('user_profiles').select('user_id, avatar_url').in('user_id', authorIds)
       const userById: Record<string, any> = {}

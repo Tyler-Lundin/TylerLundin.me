@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { createServiceClient } from '@/lib/supabase/server'
+import { getSupabaseAdmin } from '@/lib/supabase/admin'
 import { notFound } from 'next/navigation'
 import { HealthTerminal } from '@/components/dev/health'
 import HealthRunner from '@/components/dev/health/HealthRunner'
@@ -60,7 +60,8 @@ function PriorityPill({ value }: { value: string }) {
 
 export default async function ProjectDetailPage(props: PageProps) {
   const { slug } = await props.params
-  const sb = await createServiceClient()
+  let sb: any
+  try { sb = getSupabaseAdmin() } catch { return notFound() }
 
   // 1. Fetch Project
   const { data: project, error: pError } = await sb

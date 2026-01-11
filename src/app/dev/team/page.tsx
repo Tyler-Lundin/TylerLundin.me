@@ -1,4 +1,4 @@
-import { createServiceClient } from '@/lib/supabase/server'
+import { getSupabaseAdmin } from '@/lib/supabase/admin'
 import { getAuthUser } from '@/lib/auth'
 import { Users, Mail, Shield } from 'lucide-react'
 import TeamManager from '@/components/dev/team/TeamManager'
@@ -6,7 +6,8 @@ import TeamManager from '@/components/dev/team/TeamManager'
 export const dynamic = 'force-dynamic'
 
 async function fetchInvites() {
-  const sb: any = await createServiceClient()
+  let sb: any
+  try { sb = getSupabaseAdmin() } catch { return [] }
   const { data, error } = await sb
     .from('team_invites')
     .select('id, email, role, status, created_at, expires_at, accepted_at, message')
@@ -17,7 +18,8 @@ async function fetchInvites() {
 }
 
 async function fetchMembers() {
-  const sb: any = await createServiceClient()
+  let sb: any
+  try { sb = getSupabaseAdmin() } catch { return [] }
 
   // Fetch users first - filter out non-team roles (guest, client)
   const { data: users, error: usersError } = await sb

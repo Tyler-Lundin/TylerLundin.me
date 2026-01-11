@@ -1,12 +1,28 @@
+export const dynamic = 'force-dynamic'
 import Link from 'next/link'
-import { createServiceClient } from '@/lib/supabase/server'
+import { getSupabaseAdmin } from '@/lib/supabase/admin'
 import { Search, Plus } from 'lucide-react'
 import { CrmProject } from '@/types/crm'
 import ProjectsTable from './ProjectsTable'
 import PendingSignups from './components/PendingSignups'
 
 export default async function CrmProjectsPage() {
-  const sb = await createServiceClient()
+  let sb: any
+  try {
+    sb = getSupabaseAdmin()
+  } catch (e) {
+    // Render a minimal page explaining config is missing
+    return (
+      <div className="min-h-screen bg-neutral-50/50 pb-20 pt-20 dark:bg-neutral-950">
+        <div className="mx-auto max-w-6xl px-4 sm:px-6">
+          <div className="mb-8">
+            <h1 className="text-2xl font-bold text-neutral-900 dark:text-white">Projects</h1>
+            <p className="text-sm text-neutral-500">Backend is not configured.</p>
+          </div>
+        </div>
+      </div>
+    )
+  }
   
   // Parallel fetch: Projects and Pending Signups
   const [

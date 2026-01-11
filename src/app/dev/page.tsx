@@ -2,7 +2,7 @@ import React from 'react'
 import { ensureProfileOrRedirect } from '@/lib/profile'
 import CommandCenter from './components/CommandCenter'
 import LeadsOverview from '@/components/ops/LeadsOverview'
-import { createClient } from '@/lib/supabase/server'
+import { getSupabaseAdmin } from '@/lib/supabase/admin'
 import Link from 'next/link'
 import { CrmProject, Invoice } from '@/types/crm'
 
@@ -89,7 +89,8 @@ function formatCurrency(cents: number) {
 }
 
 async function fetchData() {
-  const sb = await createClient()
+  let sb: any
+  try { sb = getSupabaseAdmin() } catch { return { counts: { clients: 0, projects: 0, openItems: 0, invites: 0 }, recentProjects: [], pendingInvites: [], activityLog: [], finance: { mrr_cents: 0, open_invoices_cents: 0, overdue_cents: 0 } } }
   
   // Parallel fetch for dashboard stats
   const [

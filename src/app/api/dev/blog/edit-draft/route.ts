@@ -7,7 +7,7 @@ const MODEL = process.env.OPENAI_MODEL || 'gpt-4o-mini'
 
 async function handler(req: Request) {
   try {
-    await requireRoles(['admin', 'head_of_marketing', 'head of marketing'])
+    await requireRoles(['admin', 'head_of_marketing', 'head of marketing', 'owner'])
   } catch {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }

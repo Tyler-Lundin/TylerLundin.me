@@ -4,6 +4,7 @@ import { getAdminClient } from '@/lib/leadgen/supabaseServer'
 import OpenAI from 'openai'
 
 export const runtime = 'nodejs'
+export const maxDuration = 60
 
 export async function POST(_req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {

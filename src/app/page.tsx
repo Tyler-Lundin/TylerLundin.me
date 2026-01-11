@@ -8,7 +8,6 @@ import Testimonials from '@/components/sections/Testimonials';
 import ReactiveBackground from '@/components/ReactiveBackground';
 
 export default async function LandingPage() {
-  await ensureProfileOrRedirect()
   // Load media from public/projects/<folder>/ for the hero showcase
   const dynamicProjects = await loadProjectsFromFolders(heroFolders);
 

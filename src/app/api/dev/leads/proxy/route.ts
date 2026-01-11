@@ -19,6 +19,9 @@ function computeBaseHref(u: URL) {
   return `${u.origin}${dir}`;
 }
 
+export const runtime = 'nodejs';
+export const maxDuration = 60;
+
 export async function GET(req: NextRequest) {
   try {
     try {

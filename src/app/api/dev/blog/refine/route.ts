@@ -23,7 +23,7 @@ function cleanKeywords(input: any): string[] {
 
 export async function POST(req: Request) {
   try {
-    await requireRoles(['admin', 'head_of_marketing', 'head of marketing'])
+    await requireRoles(['admin', 'head_of_marketing', 'head of marketing', 'owner'])
   } catch {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }

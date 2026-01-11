@@ -14,7 +14,7 @@ function slugify(input: string): string {
 
 async function handleGET(req: Request) {
   try {
-    await requireRoles(['admin', 'head_of_marketing', 'head of marketing'])
+    await requireRoles(['admin', 'head_of_marketing', 'head of marketing', 'owner'])
     const supabase: any = await createServiceClient()
 
     const url = new URL(req.url)
@@ -51,7 +51,7 @@ async function handleGET(req: Request) {
 async function handlePOST(req: Request) {
   let me: any
   try {
-    me = await requireRoles(['admin', 'head_of_marketing', 'head of marketing'])
+    me = await requireRoles(['admin', 'head_of_marketing', 'head of marketing', 'owner'])
   } catch {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }

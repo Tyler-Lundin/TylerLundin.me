@@ -2,7 +2,9 @@ import type { Metadata } from 'next'
 import { ensureProfileOrRedirect } from '@/lib/profile'
 import SpotlightPosts, { type BlogSpotlightItem } from '@/components/blog/SpotlightPosts'
 import PostCard, { type PostCardData } from '@/components/blog/PostCard'
-import { createClient, createServiceClient } from '@/lib/supabase/server'
+import { createServiceClient } from '@/lib/supabase/server'
+import { createClient as createSupabaseClient } from '@supabase/supabase-js'
+import { Database } from '@/types/database.types'
 import { randomUUID } from 'crypto'
 import { themeConfig, billboardThemes } from '@/config/theme'
 import type { BillboardThemeKey as BillboardThemeKeyFromConfig } from '@/config/themes/billboard'
@@ -14,8 +16,10 @@ export const metadata: Metadata = {
 }
 
 export default async function BlogPage() {
-  await ensureProfileOrRedirect()
-  const sb: any = await createClient()
+  const sb = createSupabaseClient<Database>(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  )
   const sbAdmin: any = await createServiceClient()
   // Use the public aggregation view
   const { data } = await sb
@@ -36,7 +40,7 @@ export default async function BlogPage() {
       .in('slug', slugs)
       .eq('status', 'published')
     const byId: Record<string, string[]> = {}
-    for (const r of baseRows || []) {
+    for (const r of (baseRows || []) as any[]) {
       if (r.author_id && r.slug) {
         byId[r.author_id] = byId[r.author_id] || []
         byId[r.author_id].push(r.slug)

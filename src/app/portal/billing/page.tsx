@@ -1,17 +1,19 @@
-import { createClient } from '@/lib/supabase/server';
+export const dynamic = 'force-dynamic'
+import { getSupabasePublic } from '@/lib/supabase/public';
 import { redirect } from 'next/navigation';
 import { CreditCard, FileText, Download, CheckCircle2, Clock, AlertCircle, ArrowRight } from 'lucide-react';
 import Link from 'next/link';
 import { Invoice } from '@/types/crm';
 
 export default async function PortalBillingPage() {
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  let supabase: any
+  try { supabase = getSupabasePublic() } catch { supabase = null }
+  const { data: { user } } = supabase ? await supabase.auth.getUser() : { data: { user: null } };
 
   if (!user) return redirect('/login');
 
   // 1. Fetch Invoices for all user's projects
-  const { data: invoices } = await supabase
+  const { data: invoices } = supabase ? await supabase
     .from('invoices')
     .select(`
         *,
@@ -20,7 +22,7 @@ export default async function PortalBillingPage() {
             slug
         )
     `)
-    .order('created_at', { ascending: false });
+    .order('created_at', { ascending: false }) : { data: [] };
 
   const typedInvoices = (invoices || []) as (Invoice & { crm_projects: { title: string; slug: string } })[];
 

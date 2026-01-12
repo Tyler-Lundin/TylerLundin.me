@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
-import { createServiceClient } from '@/lib/supabase/server'
+import { getSupabaseAdmin } from '@/lib/supabase/admin'
 import HealthItem from '@/components/dev/health/HealthItem'
 import { ChevronLeft, Clock, Globe, Zap, AlertCircle } from 'lucide-react'
 
@@ -8,7 +8,8 @@ type PageProps = { params: Promise<{ slug: string; runId: string }> }
 
 export default async function ProjectHealthRunPage(props: PageProps) {
   const { slug, runId } = await props.params
-  const sb = await createServiceClient()
+  let sb: any
+  try { sb = getSupabaseAdmin() } catch { return notFound() }
   
   const { data: project } = await sb
     .from('crm_projects')

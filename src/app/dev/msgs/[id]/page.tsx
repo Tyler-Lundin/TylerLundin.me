@@ -1,5 +1,5 @@
 import { notFound } from 'next/navigation'
-import { createServiceClient } from '@/lib/supabase/server'
+import { getSupabaseAdmin } from '@/lib/supabase/admin'
 import Link from 'next/link'
 
 type Props = {
@@ -8,7 +8,8 @@ type Props = {
 
 export default async function MessageDetailPage({ params }: Props) {
   const { id } = await params
-  const sb = await createServiceClient()
+  let sb: any
+  try { sb = getSupabaseAdmin() } catch { return notFound() }
 
   // Try fetching from both tables in parallel
   const [msgRes, quoteRes] = await Promise.all([

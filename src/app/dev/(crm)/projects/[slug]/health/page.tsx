@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
-import { createServiceClient } from '@/lib/supabase/server'
+import { getSupabaseAdmin } from '@/lib/supabase/admin'
 import { ChevronLeft, ChevronRight, Activity, ExternalLink, AlertCircle, CheckCircle2 } from 'lucide-react'
 
 type PageProps = { 
@@ -16,7 +16,8 @@ export default async function ProjectHealthIndex(props: PageProps) {
   const from = (page - 1) * perPage
   const to = from + perPage - 1
 
-  const sb = await createServiceClient()
+  let sb: any
+  try { sb = getSupabaseAdmin() } catch { return notFound() }
   const { data: project } = await sb
     .from('crm_projects')
     .select('id, title')
@@ -40,7 +41,16 @@ export default async function ProjectHealthIndex(props: PageProps) {
 
   const total = count || 0
   const totalPages = Math.max(1, Math.ceil(total / perPage))
-  const runs = data || []
+  type Run = {
+    id: string
+    started_at: string | Date
+    finished_at: string | null
+    duration_ms: number | null
+    overall_status: string
+    error: string | null
+  }
+
+  const runs = (data || []) as Run[]
 
   return (
     <div className="min-h-screen bg-[#fafafa] text-neutral-900 dark:bg-[#050505] dark:text-neutral-100 font-sans antialiased">

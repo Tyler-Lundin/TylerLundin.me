@@ -1,4 +1,4 @@
-import { createServiceClient } from '@/lib/supabase/server';
+import { getSupabaseAdmin } from '@/lib/supabase/admin';
 import { requireRoles } from '@/lib/auth';
 import Link from 'next/link';
 import { ArrowLeft, Search, MapPin, Globe, Phone, Star, ExternalLink, Filter } from 'lucide-react';
@@ -16,26 +16,24 @@ export default async function AllLeadsPage({ searchParams }: { searchParams: Pro
   const limit = 50;
   const offset = (page - 1) * limit;
 
-  const sb = await createServiceClient();
+  let sb: any
+  try { sb = getSupabaseAdmin() } catch { sb = null }
 
-  let query = sb
+  let query = sb ? sb
     .from('leads')
     .select('*', { count: 'exact' })
     .order('created_at', { ascending: false })
-    .range(offset, offset + limit - 1);
+    .range(offset, offset + limit - 1) : null as any;
 
-  if (q) {
-    query = query.or(`name.ilike.%${q}%,domain.ilike.%${q}%,formatted_address.ilike.%${q}%`);
-  }
-  if (niche) {
-    query = query.eq('niche', niche);
-  }
+  if (query && q) query = query.or(`name.ilike.%${q}%,domain.ilike.%${q}%,formatted_address.ilike.%${q}%`);
+  if (query && niche) query = query.eq('niche', niche);
 
-  const { data: leads, count, error } = await query;
+  const { data: leads, count, error } = query ? await query : { data: [], count: 0, error: null } as any;
 
   // Get unique niches for filter
-  const { data: nichesData } = await sb.from('leads').select('niche');
-  const uniqueNiches = Array.from(new Set((nichesData || []).map(l => l.niche).filter(Boolean))) as string[];
+  type NicheRow = { niche: string | null }
+  const { data: nichesData } = sb ? await sb.from('leads').select('niche') : { data: [] as NicheRow[] };
+  const uniqueNiches = Array.from(new Set(((nichesData || []) as NicheRow[]).map((l: NicheRow) => l.niche).filter(Boolean))) as string[];
   uniqueNiches.sort();
 
   const totalPages = Math.ceil((count || 0) / limit);

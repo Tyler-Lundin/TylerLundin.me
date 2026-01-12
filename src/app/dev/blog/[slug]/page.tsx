@@ -1,5 +1,5 @@
 import { requireAdmin } from '@/lib/auth'
-import { createServiceClient } from '@/lib/supabase/server'
+import { getSupabaseAdmin } from '@/lib/supabase/admin'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import ReactMarkdown from 'react-markdown'
@@ -21,7 +21,8 @@ type Post = {
 }
 
 async function getData(slug: string) {
-  const sb: any = await createServiceClient()
+  let sb: any
+  try { sb = getSupabaseAdmin() } catch { throw new Error('Post not found') }
   const { data: post, error } = await sb
     .from('blog_posts')
     .select('*')

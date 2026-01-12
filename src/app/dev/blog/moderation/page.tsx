@@ -1,16 +1,17 @@
 import { requireAdmin } from '@/lib/auth'
-import { createServiceClient } from '@/lib/supabase/server'
+import { getSupabaseAdmin } from '@/lib/supabase/admin'
 import { approveCommentAction, deleteCommentAction } from '@/app/dev/actions/comments'
 
 export default async function ModerationPage() {
   await requireAdmin()
-  const sb: any = await createServiceClient()
+  let sb: any
+  try { sb = getSupabaseAdmin() } catch { sb = null }
 
-  const { data } = await sb
+  const { data } = sb ? await sb
     .from('blog_comments')
     .select('id, content, author_name, author_email, website_url, created_at, post_id, blog_posts ( slug, title )')
     .eq('status', 'pending')
-    .order('created_at', { ascending: false })
+    .order('created_at', { ascending: false }) : { data: [] }
 
   const pending = (data || []) as any[]
 
@@ -55,4 +56,3 @@ export default async function ModerationPage() {
     </main>
   )
 }
-

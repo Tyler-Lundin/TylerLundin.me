@@ -1,4 +1,5 @@
-import { createClient } from '@/lib/supabase/server';
+export const dynamic = 'force-dynamic'
+import { getSupabasePublic } from '@/lib/supabase/public';
 import { notFound, redirect } from 'next/navigation';
 import Link from 'next/link';
 import { ChevronLeft, Calendar, Activity } from 'lucide-react';
@@ -7,27 +8,28 @@ import { CrmProjectMessage } from '@/types/crm';
 
 export default async function PortalProjectPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  let supabase: any
+  try { supabase = getSupabasePublic() } catch { supabase = null }
+  const { data: { user } } = supabase ? await supabase.auth.getUser() : { data: { user: null } };
 
   if (!user) return redirect('/login');
 
   // Fetch Project
   // RLS should filter this to only projects the user has access to via crm_client_users
-  const { data: project } = await supabase
+  const { data: project } = supabase ? await supabase
     .from('crm_projects')
     .select('*')
     .eq('slug', slug)
-    .single();
+    .single() : { data: null };
 
   if (!project) return notFound();
 
   // Fetch Messages
-  const { data: messages } = await supabase
+  const { data: messages } = supabase ? await supabase
     .from('crm_project_messages')
     .select('*')
     .eq('project_id', project.id)
-    .order('created_at', { ascending: true });
+    .order('created_at', { ascending: true }) : { data: [] };
 
   const typedMessages = (messages || []) as CrmProjectMessage[];
 

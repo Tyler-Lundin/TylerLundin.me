@@ -1,39 +1,43 @@
-import { createClient } from '@/lib/supabase/server';
+export const dynamic = 'force-dynamic'
+import { getSupabasePublic } from '@/lib/supabase/public';
 import { redirect } from 'next/navigation';
 import { MessageSquareText, Inbox, ArrowRight } from 'lucide-react';
 import Link from 'next/link';
 
 export default async function PortalMessagesPage() {
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  let supabase: any
+  try { supabase = getSupabasePublic() } catch { supabase = null }
+  const { data: { user } } = supabase ? await supabase.auth.getUser() : { data: { user: null } };
 
   if (!user) return redirect('/login');
 
   // Fetch Projects for this user
   // First get client_ids the user is a member of
-  const { data: clientUsers } = await supabase
+  const { data: clientUsers } = supabase ? await supabase
     .from('crm_client_users')
     .select('client_id')
-    .eq('user_id', user.id);
+    .eq('user_id', user.id) : { data: [] };
   
-  const clientIds = clientUsers?.map(cu => cu.client_id) || [];
+  type ClientUser = { client_id: string }
+  const clientIds = (clientUsers as ClientUser[] | undefined)?.map((cu: ClientUser) => cu.client_id) || [];
   
   let projects: any[] = [];
   if (clientIds.length > 0) {
-    const { data: activeProjects } = await supabase
+    const { data: activeProjects } = supabase ? await supabase
         .from('crm_projects')
         .select('id, title, description, slug, status, updated_at')
         .in('client_id', clientIds)
-        .order('updated_at', { ascending: false });
+        .order('updated_at', { ascending: false }) : { data: [] };
     projects = activeProjects || [];
   }
 
   // Fetch Signups
-  const { data: signups } = await supabase
+  type Signup = { id: string; company_name: string; status: string }
+  const { data: signups } = supabase ? await supabase
     .from('project_signups')
     .select('*')
     .eq('contact_email', user.email || '')
-    .order('created_at', { ascending: false });
+    .order('created_at', { ascending: false }) : { data: [] };
 
   const hasItems = projects.length > 0 || (signups && signups.length > 0);
 
@@ -74,7 +78,7 @@ export default async function PortalMessagesPage() {
             </Link>
           ))}
 
-          {signups?.map(s => (
+          {signups?.map((s: Signup) => (
             <div key={s.id} className="flex items-center justify-between p-6 bg-neutral-50/50 dark:bg-neutral-900/30 border border-neutral-200 dark:border-neutral-800 rounded-2xl shadow-sm opacity-80">
                <div className="flex items-center gap-4">
                   <div className="p-3 rounded-xl bg-neutral-100 dark:bg-neutral-800 text-neutral-400">

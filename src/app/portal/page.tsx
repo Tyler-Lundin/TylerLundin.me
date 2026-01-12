@@ -1,37 +1,40 @@
-import { createClient } from '@/lib/supabase/server';
+export const dynamic = 'force-dynamic'
+import { getSupabasePublic } from '@/lib/supabase/public';
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
 import { Layers, Rocket, MessageSquareText, Settings, ArrowRight } from 'lucide-react';
 
 export default async function PortalPage() {
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  let supabase: any
+  try { supabase = getSupabasePublic() } catch { supabase = null }
+  const { data: { user } } = supabase ? await supabase.auth.getUser() : { data: { user: null } }
 
   if (!user) return redirect('/login');
 
   // 1. Fetch Signups
-  const { data: signups } = await supabase
+  const { data: signups } = supabase ? await supabase
     .from('project_signups')
     .select('*')
     .eq('contact_email', user.email || '')
-    .order('created_at', { ascending: false });
+    .order('created_at', { ascending: false }) : { data: [] };
 
   // 2. Fetch Active Projects
   // Get client_ids for user
-  const { data: clientUsers } = await supabase
+  const { data: clientUsers } = supabase ? await supabase
     .from('crm_client_users')
     .select('client_id')
-    .eq('user_id', user.id);
+    .eq('user_id', user.id) : { data: [] };
   
-  const clientIds = clientUsers?.map(cu => cu.client_id) || [];
+  type ClientUser = { client_id: string }
+  const clientIds = (clientUsers as ClientUser[] | undefined)?.map((cu: ClientUser) => cu.client_id) || [];
   
   let projects: any[] = [];
   if (clientIds.length > 0) {
-    const { data: activeProjects } = await supabase
+    const { data: activeProjects } = supabase ? await supabase
         .from('crm_projects')
         .select('*')
         .in('client_id', clientIds)
-        .order('updated_at', { ascending: false });
+        .order('updated_at', { ascending: false }) : { data: [] };
     projects = activeProjects || [];
   }
 
@@ -56,7 +59,7 @@ export default async function PortalPage() {
             
             {signups && signups.length > 0 ? (
                 <div className="space-y-3">
-                    {signups.map(s => (
+                    {signups.map((s: { id: string; company_name: string; status: string; project_description?: string; created_at: string }) => (
                         <div key={s.id} className="p-4 rounded-xl bg-neutral-50 dark:bg-neutral-900 border border-neutral-100 dark:border-neutral-800">
                             <div className="flex justify-between items-start mb-1">
                                 <div className="font-bold text-sm text-neutral-900 dark:text-white">{s.company_name}</div>

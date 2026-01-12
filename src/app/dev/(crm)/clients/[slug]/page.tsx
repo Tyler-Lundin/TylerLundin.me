@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { createServiceClient } from '@/lib/supabase/server'
+import { getSupabaseAdmin } from '@/lib/supabase/admin'
 import { notFound } from 'next/navigation'
 import { ExternalLink, Building2, Phone, Mail, User, Folder, ChevronLeft } from 'lucide-react'
 import EditClientDialog from '../components/EditClientDialog'
@@ -41,7 +41,8 @@ function StatusBadge({ value }: { value: string }) {
 
 export default async function ClientDetailPage(props: PageProps) {
   const { slug } = await props.params
-  const sb = await createServiceClient()
+  let sb: any
+  try { sb = getSupabaseAdmin() } catch { return notFound() }
 
   // Determine if param is a UUID; if so, fetch directly by id
   const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(slug)

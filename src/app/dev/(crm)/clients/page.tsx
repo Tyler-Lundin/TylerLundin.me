@@ -1,16 +1,17 @@
 import Link from 'next/link'
-import { createServiceClient } from '@/lib/supabase/server'
+import { getSupabaseAdmin } from '@/lib/supabase/admin'
 import { Search, Plus, Building2, ExternalLink, Calendar } from 'lucide-react'
 import NewClientWizard from './components/NewClientWizard'
 import ClientsTable from './components/ClientsTable'
 import { slugify } from '@/lib/utils'
 
 export default async function CrmClientsPage() {
-  const sb = await createServiceClient()
-  const { data: clients, error } = await sb
+  let sb: any
+  try { sb = getSupabaseAdmin() } catch { sb = null }
+  const { data: clients, error } = sb ? await sb
     .from('crm_clients')
     .select('*')
-    .order('created_at', { ascending: false })
+    .order('created_at', { ascending: false }) : { data: [], error: null as any }
 
   if (error) {
     console.error('[CrmClientsPage] fetch error:', error)

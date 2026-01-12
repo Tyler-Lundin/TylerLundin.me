@@ -1,7 +1,8 @@
-import { createServiceClient } from '@/lib/supabase/server'
+import { getSupabaseAdmin } from '@/lib/supabase/admin'
 
 async function fetchProfile() {
-  const sb: any = await createServiceClient()
+  let sb: any
+  try { sb = getSupabaseAdmin() } catch { return { user: null, profile: null } }
   // In a real app, determine current user; for now, pick the first user
   const { data: user } = await sb.from('users').select('id, full_name, email, role').limit(1).maybeSingle()
   if (!user) return { user: null, profile: null }
@@ -52,8 +53,8 @@ function ProfileActions() {
       <button
         formAction={async (formData) => {
           'use server'
-          const { createServiceClient } = await import('@/lib/supabase/server')
-          const sb: any = await createServiceClient()
+          const { getSupabaseAdmin } = await import('@/lib/supabase/admin')
+          const sb: any = getSupabaseAdmin()
           const user_id = String(formData.get('user_id') || '')
           const full_name = String(formData.get('full_name') || '')
           const headline = String(formData.get('headline') || '')
@@ -72,4 +73,3 @@ function ProfileActions() {
     </div>
   )
 }
-
